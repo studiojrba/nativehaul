@@ -19,6 +19,7 @@ struct SidebarView: View {
             Section("Organize") {
                 Label("Series", systemImage: "books.vertical").tag(SidebarDestination.series)
                 Label("Collections", systemImage: "square.stack.3d.up").tag(SidebarDestination.collections)
+                Label("Stats & Badges", systemImage: "chart.bar").tag(SidebarDestination.stats)
             }
             Section("Providers") {
                 Label("Steam", systemImage: "cloud").tag(SidebarDestination.steam)

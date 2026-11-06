@@ -73,4 +73,9 @@ extension AppEnvironment {
     func makeCollectionDetailViewModel(for collection: GameCollection) -> CollectionDetailViewModel {
         CollectionDetailViewModel(collection: collection, repository: repository)
     }
+
+    /// Builds the stats view model.
+    func makeStatsViewModel() -> StatsViewModel {
+        StatsViewModel(provider: RepositorySnapshotProvider(repository: repository))
+    }
 }

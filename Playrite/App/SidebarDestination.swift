@@ -8,6 +8,8 @@ enum SidebarDestination: Hashable, Sendable {
     case series
     /// Collections / compilations.
     case collections
+    /// Statistics and badges.
+    case stats
     /// Steam provider dashboard.
     case steam
     /// Playtime tracking.
