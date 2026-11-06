@@ -3,10 +3,12 @@ import SwiftUI
 /// Steam sidebar screen: sync status and recently played games.
 struct SteamDashboardView: View {
     @State private var viewModel: SteamDashboardViewModel
+    private let connection: SteamConnectionViewModel
 
-    /// Creates the view.
-    init(viewModel: SteamDashboardViewModel) {
+    /// Creates the view. `connection` drives the setup flow shown until Steam is ready to sync.
+    init(viewModel: SteamDashboardViewModel, connection: SteamConnectionViewModel) {
         _viewModel = State(initialValue: viewModel)
+        self.connection = connection
     }
 
     var body: some View {
@@ -14,11 +16,14 @@ struct SteamDashboardView: View {
             if viewModel.isConfigured {
                 configuredContent
             } else {
-                SteamNotConfiguredView()
+                SteamNotConfiguredView(viewModel: connection)
             }
         }
         .navigationTitle("Steam")
         .task { await viewModel.refreshRecent() }
+        .onReceive(NotificationCenter.default.publisher(for: LibraryChangeNotification.name)) { _ in
+            Task { await viewModel.accountChanged() }
+        }
     }
 
     private var configuredContent: some View {
@@ -49,9 +54,27 @@ struct SteamDashboardView: View {
 }
 
 #Preview("Configured") {
-    SteamDashboardView(viewModel: SteamDashboardViewModel(sync: MockSteamSyncService(isConfigured: true)) {})
+    let account = MockSteamAccountStore(configured: true)
+    SteamDashboardView(
+        viewModel: SteamDashboardViewModel(sync: MockSteamSyncService(isConfigured: true)) {},
+        connection: SteamConnectionViewModel(
+            account: account,
+            signIn: MockSteamSignInService(account: account),
+            sync: MockSteamSyncService(isConfigured: true),
+            opener: RecordingURLOpener()
+        )
+    )
 }
 
-#Preview("No key") {
-    SteamDashboardView(viewModel: SteamDashboardViewModel(sync: MockSteamSyncService(isConfigured: false)) {})
+#Preview("Signed out") {
+    let account = MockSteamAccountStore(configured: false)
+    SteamDashboardView(
+        viewModel: SteamDashboardViewModel(sync: MockSteamSyncService(isConfigured: false)) {},
+        connection: SteamConnectionViewModel(
+            account: account,
+            signIn: MockSteamSignInService(account: account),
+            sync: MockSteamSyncService(isConfigured: false),
+            opener: RecordingURLOpener()
+        )
+    )
 }

@@ -16,6 +16,7 @@ final class SteamDashboardViewModel {
 
     private let sync: any SteamSyncing
     private let onLibraryChanged: @MainActor () -> Void
+    private var revision = 0
 
     /// Creates the view model. `onLibraryChanged` is called after a successful sync.
     init(sync: any SteamSyncing, onLibraryChanged: @escaping @MainActor () -> Void) {
@@ -25,7 +26,14 @@ final class SteamDashboardViewModel {
 
     /// Whether Steam credentials are configured.
     var isConfigured: Bool {
-        sync.isConfigured
+        _ = revision
+        return sync.isConfigured
+    }
+
+    /// Re-reads the configuration after sign-in, a key change or sign-out.
+    func accountChanged() async {
+        revision += 1
+        await refreshRecent()
     }
 
     /// Imports owned games, then refreshes recently played.

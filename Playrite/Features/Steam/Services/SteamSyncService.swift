@@ -25,6 +25,10 @@ final class SteamSyncService: SteamSyncing {
         account.hasAPIKey && account.steamID != nil
     }
 
+    func loadProfile() async throws -> SteamProfileSummary? {
+        try await client.playerSummary(credentials: account.credentials())
+    }
+
     func syncOwnedGames() async throws -> SteamSyncSummary {
         let credentials = try account.credentials()
         let owned = try await client.ownedGames(credentials: credentials)

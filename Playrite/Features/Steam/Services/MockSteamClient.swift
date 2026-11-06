@@ -25,6 +25,12 @@ struct MockSteamClient: SteamClientProtocol {
         SteamAchievement(apiname: "FIRST_LIGHT", achieved: 1, unlocktime: nil, name: "First Light", description: nil),
         SteamAchievement(apiname: "ALL_LANTERNS", achieved: 0, unlocktime: nil, name: "All Lanterns", description: nil),
     ])
+    /// Profile to return.
+    var profile: SteamProfileSummary? = SteamProfileSummary(
+        personaName: "Lantern Keeper",
+        avatarURL: nil,
+        isProfilePublic: true
+    )
     /// Error to throw from every call, if set.
     var error: SteamError?
 
@@ -43,6 +49,13 @@ struct MockSteamClient: SteamClientProtocol {
             throw error
         }
         return recent
+    }
+
+    func playerSummary(credentials _: SteamCredentials) async throws -> SteamProfileSummary? {
+        if let error {
+            throw error
+        }
+        return profile
     }
 
     func playerAchievements(appID _: Int, credentials _: SteamCredentials) async throws -> SteamPlayerAchievements {

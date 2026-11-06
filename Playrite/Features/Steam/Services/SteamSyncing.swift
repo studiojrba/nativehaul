@@ -5,6 +5,8 @@ import Foundation
 protocol SteamSyncing: AnyObject {
     /// `true` when a key and SteamID are configured.
     var isConfigured: Bool { get }
+    /// Checks the stored key with one lightweight call and returns the account's name and avatar.
+    func loadProfile() async throws -> SteamProfileSummary?
     /// Imports owned games and SteamSynced playtime.
     func syncOwnedGames() async throws -> SteamSyncSummary
     /// Recently played games (not persisted).

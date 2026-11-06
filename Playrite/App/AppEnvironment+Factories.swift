@@ -18,9 +18,16 @@ extension AppEnvironment {
         GameDetailViewModel(game: game, repository: repository, hltb: hltb)
     }
 
-    /// Builds the Steam settings view model.
-    func makeSteamSettingsViewModel() -> SteamSettingsViewModel {
-        SteamSettingsViewModel(account: steamAccount)
+    /// Builds the Steam setup flow (Settings → Steam and the Steam screen's empty state).
+    func makeSteamConnectionViewModel() -> SteamConnectionViewModel {
+        SteamConnectionViewModel(
+            account: steamAccount,
+            signIn: steamSignIn,
+            sync: steamSync,
+            opener: urlOpener,
+            http: imageHTTP,
+            onChanged: LibraryChangeNotification.post
+        )
     }
 
     /// Builds the Steam dashboard view model.

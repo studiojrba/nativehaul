@@ -309,6 +309,27 @@ fixtures.
 - ⚠️ **Not verified live:** no request has been made to the real Steam store or SteamGridDB, and the hero carousel
   hasn't been checked on screen.
 
+## 13 · feature/steam-signin
+Adds "Sign in through Steam" and a guided API key step (ADR 0015). 256 tests (+24), all mocked.
+- ✅🧪 **Explicit states** in Settings → Steam and on the Steam screen: **Not signed in** → **Signed in · API
+  key needed** → **Ready to sync**.
+- ✅🧪 **Sign in through Steam:**
+  - Uses Steam OpenID in `ASWebAuthenticationSession`.
+  - The reply is fully checked locally, then confirmed by Steam with `check_authentication`. Only then is the
+    SteamID64 stored.
+  - The copy says plainly that sign-in only confirms the account and gives no access to the library.
+- ✅🧪 **Guided key step:**
+  - J.R's explanation of why a key is needed, then four numbered steps, including a button that opens
+    steamcommunity.com/dev/apikey.
+  - Paste → Save puts the key in the Keychain, then checks it with one `GetPlayerSummaries` call, which shows the
+    account name and avatar.
+  - A rejected key isn't kept, and the screen says so. **Sync Now** appears once the setup is ready.
+- ✅🧪 **Private profile:** the screen says plainly that game details are private, names the exact settings
+  (Game details → Public; untick "Always keep my total playtime private"), and links to Steam's privacy page.
+- ✅🧪 **Manual fallback** for the SteamID64 and key, under "Enter details manually".
+- ⚠️ **Not verified live:** the sign-in has not been run against Steam. Steam may refuse the custom-scheme
+  return URL (`retriever://`); ADR 0015 describes the fallback. The flow hasn't been viewed on screen.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -325,6 +346,7 @@ fixtures.
 | 10 | `feature/steam-provenance` | ✅ | ✅ | 183 | ✅ |
 | 11 | `feature/launch-ui` | ✅ | ✅ | 189 | ✅ |
 | 12 | `feature/metadata-artwork` | ✅ | ✅ | 232 | ✅ |
+| 13 | `feature/steam-signin` | ✅ | ✅ | 256 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -364,7 +386,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0014)
+## Key decisions (see `docs/decisions/` ADR 0001–0015)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -387,7 +409,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 12 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 13 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

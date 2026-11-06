@@ -18,6 +18,20 @@ enum SteamEndpoint {
         url(path: "/IPlayerService/GetRecentlyPlayedGames/v1/", credentials: credentials, extra: [])
     }
 
+    /// `ISteamUser/GetPlayerSummaries/v2` (takes `steamids`, so it is built without the `steamid` parameter).
+    static func playerSummaries(_ credentials: SteamCredentials) -> URL? {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = host
+        components.path = "/ISteamUser/GetPlayerSummaries/v2/"
+        components.queryItems = [
+            URLQueryItem(name: "key", value: credentials.apiKey),
+            URLQueryItem(name: "steamids", value: credentials.steamID.rawValue),
+            URLQueryItem(name: "format", value: "json"),
+        ]
+        return components.url
+    }
+
     /// `ISteamUserStats/GetPlayerAchievements/v1`.
     static func playerAchievements(appID: Int, credentials: SteamCredentials) -> URL? {
         url(path: "/ISteamUserStats/GetPlayerAchievements/v1/", credentials: credentials, extra: [

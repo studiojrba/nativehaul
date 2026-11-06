@@ -82,7 +82,10 @@ struct RootView: View {
         case .stats:
             StatsView(viewModel: environment.makeStatsViewModel())
         case .steam:
-            SteamDashboardView(viewModel: environment.makeSteamDashboardViewModel { libraryViewModel.reload() })
+            SteamDashboardView(
+                viewModel: environment.makeSteamDashboardViewModel { libraryViewModel.reload() },
+                connection: environment.makeSteamConnectionViewModel()
+            )
         case .tracking:
             TrackingDashboardView(viewModel: environment.makeTrackingViewModel { libraryViewModel.reload() })
         case .nxnative:

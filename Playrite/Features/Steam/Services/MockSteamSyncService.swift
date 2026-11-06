@@ -12,6 +12,11 @@ final class MockSteamSyncService: SteamSyncing {
         self.isConfigured = isConfigured
     }
 
+    func loadProfile() async throws -> SteamProfileSummary? {
+        guard isConfigured else { throw SteamError.missingAPIKey }
+        return client.profile
+    }
+
     func syncOwnedGames() async throws -> SteamSyncSummary {
         guard isConfigured else { throw SteamError.missingAPIKey }
         return SteamSyncSummary(added: client.owned.count, updated: 0, finishedAt: .now)

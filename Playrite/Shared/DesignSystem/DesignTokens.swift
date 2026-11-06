@@ -53,6 +53,7 @@ enum DesignTokens {
         static let badgeSize: CGFloat = 56
         static let logMinHeight: CGFloat = 200
         static let formLabelWidth: CGFloat = 140
+        static let setupMaxWidth: CGFloat = 640
     }
 
     /// Icon rail (collapsed: icons only; expanded on hover: icons + labels).

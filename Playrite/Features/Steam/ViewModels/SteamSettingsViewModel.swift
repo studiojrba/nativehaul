@@ -15,6 +15,8 @@ final class SteamSettingsViewModel {
     private(set) var isError = false
     /// Whether a key is in the Keychain.
     private(set) var hasAPIKey: Bool
+    /// Called after a successful save or key removal.
+    var onSaved: (@MainActor () -> Void)?
 
     private let account: any SteamAccountStoring
 
@@ -44,6 +46,7 @@ final class SteamSettingsViewModel {
             account.saveSteamID(SteamID(steamIDInput))
             hasAPIKey = account.hasAPIKey
             report("Saved. The API key is stored only in your Keychain.", isError: false)
+            onSaved?()
         } catch {
             report(error.localizedDescription, isError: true)
         }
@@ -55,6 +58,7 @@ final class SteamSettingsViewModel {
             try account.removeAPIKey()
             hasAPIKey = account.hasAPIKey
             report("API key removed from Keychain.", isError: false)
+            onSaved?()
         } catch {
             report(error.localizedDescription, isError: true)
         }

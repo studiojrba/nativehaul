@@ -23,7 +23,9 @@ enum SteamError: Error, Equatable, LocalizedError {
         case .missingAPIKey: "No Steam Web API key configured. Add one in Settings → Steam."
         case .missingSteamID: "No valid SteamID64 configured. Add it in Settings → Steam."
         case .invalidAPIKey: "Steam rejected the API key. Check it in Settings → Steam."
-        case .profileNotPublic: "Steam returned no games. Make sure your profile's game details are public."
+        case .profileNotPublic:
+            "Steam returned no games because your profile's game details are private. In Steam's privacy settings, "
+                + "set Game details to Public."
         case let .noStats(message): "No achievements available: \(message)"
         case let .http(status): "Steam returned HTTP \(status)."
         case .decoding: "Steam's response could not be read."

@@ -7,7 +7,7 @@ struct SettingsView: View {
 
     var body: some View {
         TabView {
-            SteamSettingsView(viewModel: environment.makeSteamSettingsViewModel())
+            SteamSettingsView(viewModel: environment.makeSteamConnectionViewModel())
                 .tabItem { Label("Steam", systemImage: "cloud") }
             ArtworkSettingsView(viewModel: environment.makeArtworkSettingsViewModel())
                 .tabItem { Label("Artwork", systemImage: "photo.on.rectangle") }

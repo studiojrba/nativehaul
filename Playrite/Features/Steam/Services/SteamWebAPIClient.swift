@@ -30,6 +30,11 @@ struct SteamWebAPIClient: SteamClientProtocol {
         return envelope.response.games ?? []
     }
 
+    func playerSummary(credentials: SteamCredentials) async throws -> SteamProfileSummary? {
+        let envelope: SteamPlayerSummariesEnvelope = try await get(SteamEndpoint.playerSummaries(credentials))
+        return envelope.response.players.first?.summary
+    }
+
     func playerAchievements(appID: Int, credentials: SteamCredentials) async throws -> SteamPlayerAchievements {
         let url = SteamEndpoint.playerAchievements(appID: appID, credentials: credentials)
         let envelope: SteamPlayerStatsEnvelope = try await get(url, acceptingBadRequestBody: true)

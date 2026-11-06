@@ -1,18 +1,30 @@
 import SwiftUI
 
-/// Empty state shown when no Steam key is configured. The rest of the app keeps working.
+/// Steam screen empty state: the same guided setup as Settings → Steam. The rest of the app keeps working.
 struct SteamNotConfiguredView: View {
+    @State private var viewModel: SteamConnectionViewModel
+
+    /// Creates the view.
+    init(viewModel: SteamConnectionViewModel) {
+        _viewModel = State(initialValue: viewModel)
+    }
+
     var body: some View {
-        ContentUnavailableView {
-            Label("Steam Not Connected", systemImage: "cloud.slash")
-        } description: {
-            Text("Add your Steam Web API key and SteamID64 to import your Steam library and playtime.")
-        } actions: {
-            SettingsLink { Text("Open Settings…") }
+        ScrollView {
+            SteamConnectionView(viewModel: viewModel)
+                .frame(maxWidth: DesignTokens.Layout.setupMaxWidth, alignment: .leading)
+                .padding(DesignTokens.Spacing.xxl)
+                .frame(maxWidth: .infinity)
         }
     }
 }
 
 #Preview {
-    SteamNotConfiguredView()
+    let account = MockSteamAccountStore(configured: false)
+    SteamNotConfiguredView(viewModel: SteamConnectionViewModel(
+        account: account,
+        signIn: MockSteamSignInService(account: account),
+        sync: MockSteamSyncService(isConfigured: false),
+        opener: RecordingURLOpener()
+    ))
 }
