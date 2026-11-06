@@ -12,7 +12,8 @@ struct GameQuickList: View {
     var body: some View {
         List(games, selection: Binding(get: { selectedID }, set: { $0.map(onSelect) })) { game in
             Text(game.title)
-                .lineLimit(DesignTokens.Lines.single)
+                .lineLimit(DesignTokens.Lines.wrappedTitle)
+                .fixedSize(horizontal: false, vertical: true)
                 .tag(game.id)
         }
         .listStyle(.sidebar)

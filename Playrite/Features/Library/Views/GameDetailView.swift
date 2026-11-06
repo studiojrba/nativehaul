@@ -1,6 +1,9 @@
 import SwiftUI
 
 /// Three-column details screen (Playnite-style): quick list · hero, genres, description and sections · rail.
+///
+/// Layout contract (QA Finding #2): the quick list and the right rail are fixed-width parents that always stay fully
+/// visible; the centre is the child — it takes whatever width is left, wraps its text, and scrolls vertically.
 struct GameDetailView: View {
     @State private var viewModel: GameDetailViewModel
     @State private var launchViewModel: GameLaunchViewModel
@@ -27,10 +30,14 @@ struct GameDetailView: View {
     var body: some View {
         HStack(spacing: DesignTokens.Spacing.none) {
             GameQuickList(games: quickListGames, selectedID: viewModel.game.id, onSelect: onSelectGame)
+                .layoutPriority(1)
             Divider()
             centre
+                .frame(minWidth: DesignTokens.Spacing.none, maxWidth: .infinity)
+                .clipped()
             Divider()
             GameDetailRail(viewModel: viewModel, launchViewModel: launchViewModel) { isManaging = true }
+                .layoutPriority(1)
         }
         .navigationTitle(viewModel.game.title)
         .sheet(isPresented: $isManaging) {
@@ -46,7 +53,9 @@ struct GameDetailView: View {
                     coverImagePath: viewModel.game.coverImagePath,
                     carouselImagePaths: viewModel.game.carouselImagePaths
                 )
-                Text(viewModel.game.title).font(DesignTokens.Typography.largeTitle)
+                Text(viewModel.game.title)
+                    .font(DesignTokens.Typography.largeTitle)
+                    .fixedSize(horizontal: false, vertical: true)
                 if !viewModel.game.genres.isEmpty {
                     FlowLayout {
                         ForEach(viewModel.game.genres, id: \.self) {
@@ -57,6 +66,7 @@ struct GameDetailView: View {
                 Text(viewModel.game.summary.isEmpty ? "No description yet." : viewModel.game.summary)
                     .foregroundStyle(viewModel.game.summary.isEmpty ? Theme.secondaryText : Theme.primaryText)
                     .textSelection(.enabled)
+                    .fixedSize(horizontal: false, vertical: true)
                 SeriesMembershipSection(viewModel: environment.makeSeriesMembershipViewModel(for: viewModel.game))
                 PlaytimeBreakdownView(breakdown: viewModel.breakdown)
                 SessionListView(sessions: viewModel.sessions)

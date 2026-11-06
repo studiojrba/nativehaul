@@ -13,13 +13,19 @@ struct LaunchButton: View {
                         Button(option.title) { Task { await viewModel.launch(option) } }
                     }
                 } label: {
-                    label(primary.title == "Play" ? "Play" : "Play · \(primary.title)", isEnabled: true)
+                    label("Play", isEnabled: true)
                 } primaryAction: {
                     Task { await viewModel.launch() }
                 }
                 .menuStyle(.button)
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
+                if primary.title != "Play" {
+                    Text("via \(primary.title)")
+                        .font(DesignTokens.Typography.caption)
+                        .foregroundStyle(Theme.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             } else {
                 Button {} label: { label("Play", isEnabled: false) }
                     .buttonStyle(.borderedProminent)

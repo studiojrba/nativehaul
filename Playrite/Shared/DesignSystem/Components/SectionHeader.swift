@@ -8,15 +8,15 @@ struct SectionHeader: View {
     var caption: String?
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: DesignTokens.Spacing.sm) {
+        FlowLayout(spacing: DesignTokens.Spacing.sm) {
             Text(title).font(DesignTokens.Typography.title)
             if let caption {
                 Text(caption)
                     .font(DesignTokens.Typography.caption)
                     .foregroundStyle(Theme.secondaryText)
             }
-            Spacer(minLength: DesignTokens.Spacing.none)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 

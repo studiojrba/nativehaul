@@ -476,6 +476,33 @@ approved by J.R when he set the rule). 333 tests (+6).
 - ✅ This closes the gap flagged in branch 15: onboarding's "Completely open source" line is now strictly true.
 - No other release prep. J.R's "no release prep yet" rule still stands.
 
+## 21 · feature/detail-layout-fit — QA Finding #2 fix
+- 🐞 **Found live by J.R** (screenshot reviewed by Ollie; this was the launch UI's first real visual check): the
+  detail page overflowed the window. The right rail was clipped (Play running off, the helper text cut
+  mid-sentence, Manage and the info values cut at the edge), quick-list titles were clipped mid-word, and the
+  centre took more than its share.
+- ✅🧪 **J.R's layout contract, now the spec:** contents always fit inside the window and are never cut off. The
+  games list (left) and the rail (right: cover, Play, Manage, HLTB chips, info list) are fixed-width parents that
+  stay fully visible. The centre is the child: it takes whatever width is left, wraps its text, its Up Next cards
+  reflow, and vertical scrolling absorbs the rest.
+- ✅ **What changed:**
+  - **Side columns:** fixed widths with higher layout priority. The centre is `minWidth 0`, `maxWidth .infinity`.
+  - **Hero:** the main culprit. A `scaledToFill` image reported its natural width and pushed the row wider than
+    the window. It now fills an overlay instead.
+  - **Up Next:** the cards wrap onto new rows (a `FlowLayout`) instead of an intrinsic-width row.
+    `FlowLayout` now never places an item wider than its row.
+  - **Wrapping:** section headers, session rows and guide rows wrap. The title, description, info values and
+    quick-list titles (up to four lines) wrap instead of clipping.
+  - **Play:** the button reads "Play", and the route ("via Steam (CrossOver — …)") wraps underneath it. The
+    helper text wraps.
+  - **HLTB chips:** labels shrink slightly rather than clip.
+  - **Minimum window width:** lowered from 960 to 800 so 900 px is reachable. The layout adapts on its own merits
+    and doesn't rely on the minimum.
+- ✅🧪 **Verified** by measuring the laid-out detail page at **900, 1100 and 1280 px** (default) with long titles,
+  genres, descriptions and a long bottle name: nothing is wider than the window. Rail and centre parts are also
+  checked at narrow widths. Offscreen renders at each width were inspected by eye. 336 tests (+3).
+- ⚠️ Pending J.R's look on his real window.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -500,6 +527,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 18 | `feature/steam-signin-loopback` (QA #1) | ✅ | ✅ | 327 | ✅ |
 | 19 | `feature/nxnative-file-prompts` | ✅ | ✅ | 333 | ✅ |
 | 20 | `feature/mit-license` | ✅ | ✅ | 333 | ✅ |
+| 21 | `feature/detail-layout-fit` (QA #2) | ✅ | ✅ | 336 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -562,7 +590,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 20 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 21 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

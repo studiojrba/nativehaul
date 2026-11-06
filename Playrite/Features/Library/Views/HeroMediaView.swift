@@ -14,25 +14,27 @@ struct HeroMediaView: View {
     @State private var index = 0
 
     var body: some View {
-        ZStack {
-            Theme.placeholder
-            if let image = currentImage {
-                Image(nsImage: image).resizable().scaledToFill()
-            } else {
-                Image(systemName: "photo.on.rectangle.angled")
-                    .font(DesignTokens.Typography.largeTitle)
-                    .foregroundStyle(Theme.secondaryText)
+        Theme.placeholder
+            .frame(maxWidth: .infinity)
+            .frame(height: DesignTokens.Details.heroHeight)
+            .overlay {
+                // An overlay takes the placeholder's size, so a wide image fills it without widening the column.
+                if let image = currentImage {
+                    Image(nsImage: image).resizable().scaledToFill()
+                } else {
+                    Image(systemName: "photo.on.rectangle.angled")
+                        .font(DesignTokens.Typography.largeTitle)
+                        .foregroundStyle(Theme.secondaryText)
+                }
             }
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: DesignTokens.Details.heroHeight)
-        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
-        .overlay(alignment: .bottomTrailing) {
-            if slides.count > 1 {
-                controls
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+            .overlay(alignment: .bottomTrailing) {
+                if slides.count > 1 {
+                    controls
+                }
             }
-        }
-        .accessibilityElement(children: .contain)
+            .accessibilityElement(children: .contain)
     }
 
     private var controls: some View {

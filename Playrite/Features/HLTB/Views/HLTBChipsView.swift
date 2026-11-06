@@ -11,7 +11,11 @@ struct HLTBChipsView: View {
                 ForEach(chips) { chip in
                     VStack(spacing: DesignTokens.Spacing.xxs) {
                         Text(chip.title).font(DesignTokens.Typography.captionEmphasis)
+                            .lineLimit(DesignTokens.Lines.single)
+                            .minimumScaleFactor(DesignTokens.Typography.minimumScale)
                         Text(chip.value).font(DesignTokens.Typography.monospacedSmall)
+                            .lineLimit(DesignTokens.Lines.single)
+                            .minimumScaleFactor(DesignTokens.Typography.minimumScale)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(DesignTokens.Spacing.xs)

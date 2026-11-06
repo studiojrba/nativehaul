@@ -16,6 +16,8 @@ struct GameInfoList: View {
                     Text(row.value)
                         .font(DesignTokens.Typography.caption)
                         .textSelection(.enabled)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
         }

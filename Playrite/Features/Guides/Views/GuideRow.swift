@@ -11,10 +11,8 @@ struct GuideRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
-            HStack(spacing: DesignTokens.Spacing.md) {
-                Image(systemName: "book")
-                Text(guide.title).font(DesignTokens.Typography.headline)
-                Spacer(minLength: DesignTokens.Spacing.none)
+            FlowLayout(spacing: DesignTokens.Spacing.md) {
+                Label(guide.title, systemImage: "book").font(DesignTokens.Typography.headline)
                 Button(guide.currentChapter.map { "Continue: \($0.title)" } ?? "Open Guide") {
                     viewModel.continueReading(guide)
                 }
@@ -28,13 +26,12 @@ struct GuideRow: View {
                     Text("Not started").tag(UUID?.none)
                     ForEach(guide.chapters) { Text($0.title).tag(Optional($0.id)) }
                 }
-                .fixedSize()
                 ForEach(guide.chapters) { chapter in
                     Button(chapter.title, systemImage: "arrow.up.right.square") { viewModel.open(chapter) }
                         .buttonStyle(.link)
                 }
             }
-            HStack(spacing: DesignTokens.Spacing.md) {
+            FlowLayout(spacing: DesignTokens.Spacing.md) {
                 Button("Add Chapter…", action: onAddChapter)
                 Button("Remove Link", role: .destructive) { viewModel.remove(guide) }
             }

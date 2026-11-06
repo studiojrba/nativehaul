@@ -13,10 +13,8 @@ struct UpNextStrip: View {
             if items.isEmpty {
                 Label("Series complete", systemImage: "checkmark.seal").foregroundStyle(Theme.success)
             } else {
-                ScrollView(.horizontal) {
-                    HStack(alignment: .top, spacing: DesignTokens.Spacing.lg) {
-                        ForEach(items) { UpNextCard(item: $0) }
-                    }
+                FlowLayout(spacing: DesignTokens.Spacing.lg) {
+                    ForEach(items) { UpNextCard(item: $0) }
                 }
             }
         }

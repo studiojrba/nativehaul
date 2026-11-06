@@ -47,7 +47,7 @@ enum DesignTokens {
     enum Layout {
         static let sidebarMinWidth: CGFloat = 200
         static let detailMinWidth: CGFloat = 420
-        static let windowMinWidth: CGFloat = 960
+        static let windowMinWidth: CGFloat = 800
         static let windowMinHeight: CGFloat = 600
         static let statTileMinWidth: CGFloat = 160
         static let badgeSize: CGFloat = 56
@@ -95,6 +95,8 @@ enum DesignTokens {
         static let monospacedSmall: Font = .system(.caption, design: .monospaced)
         static let statValue: Font = .system(.title, design: .rounded).weight(.bold)
         static let launch: Font = .title3.weight(.bold)
+        /// Smallest scale a fixed-width label may shrink to before it would otherwise clip.
+        static let minimumScale: CGFloat = 0.75
     }
 
     /// Animation durations (seconds).
@@ -107,6 +109,8 @@ enum DesignTokens {
     enum Lines {
         static let single = 1
         static let title = 2
+        /// Titles in narrow fixed columns (the details quick list): wrap rather than clip.
+        static let wrappedTitle = 4
         static let summary = 6
     }
 }

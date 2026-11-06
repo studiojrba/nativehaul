@@ -12,12 +12,11 @@ struct SessionListView: View {
                 Text("No sessions yet.").foregroundStyle(Theme.secondaryText)
             }
             ForEach(sessions) { session in
-                HStack(spacing: DesignTokens.Spacing.md) {
+                FlowLayout(spacing: DesignTokens.Spacing.md) {
                     Text(session.startedAt, format: .dateTime.year().month().day().hour().minute())
                     Text(DurationFormatting.compact(seconds: session.durationSeconds))
                         .font(DesignTokens.Typography.monospaced)
                     PlaytimeSourceTag(source: session.source)
-                    Spacer(minLength: DesignTokens.Spacing.none)
                 }
             }
         }
