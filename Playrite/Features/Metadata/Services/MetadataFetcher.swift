@@ -14,6 +14,7 @@ final class MetadataFetcher: MetadataFetching {
     private let steamGridDB: any MetadataProviding
     private let downloader: ArtworkDownloader
     private let now: () -> Date
+    private var attemptedThisSession: Set<UUID> = []
 
     /// Creates the fetcher.
     init(
@@ -33,8 +34,17 @@ final class MetadataFetcher: MetadataFetching {
     }
 
     func fetchMissing() async throws -> MetadataFetchSummary {
+        try await fillMissing(skippingAttempted: false)
+    }
+
+    func fetchMissingInBackground() async throws -> MetadataFetchSummary {
+        try await fillMissing(skippingAttempted: true)
+    }
+
+    private func fillMissing(skippingAttempted: Bool) async throws -> MetadataFetchSummary {
         var summary = MetadataFetchSummary(finishedAt: now())
-        for game in try repository.fetchGames() {
+        for game in try repository.fetchGames() where !(skippingAttempted && attemptedThisSession.contains(game.id)) {
+            attemptedThisSession.insert(game.id)
             await process(game, mode: .fillMissing, summary: &summary)
             try repository.save()
         }

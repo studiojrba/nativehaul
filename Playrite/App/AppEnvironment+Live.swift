@@ -48,7 +48,8 @@ extension AppEnvironment {
                 verifier: SteamOpenIDVerifier(http: URLSessionHTTPClient()),
                 account: steamAccount
             ),
-            imageHTTP: URLSessionHTTPClient()
+            imageHTTP: URLSessionHTTPClient(),
+            bottleInstaller: makeLiveBottleInstaller(repository: repository, account: steamAccount)
         )
     }
 
@@ -61,6 +62,38 @@ extension AppEnvironment {
             knowledgeBase: BundledKnowledgeBase(),
             backupDirectory: ScriptBackupService.defaultDirectory(),
             appBundlePath: Bundle.main.bundlePath
+        )
+    }
+
+    private static func makeLiveBottleInstaller(
+        repository: any LibraryRepository,
+        account: any SteamAccountStoring
+    ) -> BottleInstallService {
+        let files = LocalFileOperations()
+        let runner = ProcessCommandRunner()
+        let detector = CrossOverDetector(files: files)
+        let client = SteamBottleClient(http: URLSessionHTTPClient(), files: files, runner: runner)
+        let golden = GoldenBottleManager(
+            detector: detector,
+            account: account,
+            store: UserDefaultsGoldenBottleStore(),
+            locator: GoldenBottleLocator(files: files),
+            files: files,
+            runner: runner,
+            client: client,
+            timing: .live,
+            sleeper: { try await Task.sleep(for: $0) }
+        )
+        return BottleInstallService(
+            golden: golden,
+            detector: detector,
+            recipes: BundledRecipeDatabase.load(),
+            disk: VolumeDiskSpaceProvider(),
+            files: files,
+            runner: runner,
+            planner: PerGameBottlePlanner(files: files),
+            client: client,
+            repository: repository
         )
     }
 

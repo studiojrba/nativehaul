@@ -126,17 +126,19 @@ final class SteamConnectionViewModel {
         await work { await checkKey() }
     }
 
-    /// Imports owned games and Steam playtime.
+    /// Imports owned games and Steam playtime. Also runs by itself right after the key checks out (zero-tinker).
     func syncNow() async {
         guard stage == .readyToSync else { return }
-        await work {
-            do {
-                lastSummary = try await sync.syncOwnedGames()
-                notice = nil
-                onChanged()
-            } catch {
-                notice = Self.notice(for: error)
-            }
+        await work { await syncLibrary() }
+    }
+
+    private func syncLibrary() async {
+        do {
+            lastSummary = try await sync.syncOwnedGames()
+            notice = nil
+            onChanged()
+        } catch {
+            notice = Self.notice(for: error)
         }
     }
 
@@ -145,6 +147,9 @@ final class SteamConnectionViewModel {
             profile = try await sync.loadProfile()
             notice = profile?.isProfilePublic == false ? .privateGameDetails : nil
             await loadAvatar()
+            if notice == nil, lastSummary == nil {
+                await syncLibrary()
+            }
         } catch SteamError.invalidAPIKey {
             try? account.removeAPIKey()
             accountDidChange()

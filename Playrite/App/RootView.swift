@@ -43,12 +43,16 @@ struct RootView: View {
         }
         .environment(environment)
         .onChange(of: selection) { path.removeAll() }
-        .task { environment.watcher.start() }
+        .task {
+            environment.watcher.start()
+            await libraryViewModel.runAutomaticUpkeep()
+        }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.willTerminateNotification)) { _ in
             environment.watcher.stop()
         }
         .onReceive(NotificationCenter.default.publisher(for: LibraryChangeNotification.name)) { _ in
             libraryViewModel.reload()
+            Task { await libraryViewModel.fetchMetadataQuietly() }
         }
         .toolbar { libraryToolbar }
         .sheet(isPresented: $isAddingGame) {

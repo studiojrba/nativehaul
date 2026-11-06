@@ -41,6 +41,18 @@ Start with `README.md` (quickstart + where things live), then `docs/PLAN.md` and
 - **No force unwraps**, no `try!`, no `as!`, no implicitly unwrapped optionals.
 - **No magic numbers** — name constants; visual constants live in DesignTokens.
 
+## Zero-tinker defaults (owner directive, ADR 0016)
+J.R: the app should be "literally just install and play, and then view hours played, progress, and guide" — no
+customizing or tinkering needed (the option is there for those who want it).
+- Every headline feature delivers its full value **on defaults alone**. Settings and overrides exist, but no
+  configuration, key paste or manual step may be a prerequisite for the core loop: **install → play → hours,
+  progress and guide**.
+- The only allowed prerequisites are credentials only the user can provide (Steam sign-in, a Steam API key), and
+  each is asked for once, inline, with plain guidance — never "go to Settings first".
+- Work that can run by itself does: dedupe, metadata, Steam sync, installed-game detection, recipes.
+- When a design choice trades default convenience against configurability, **convenience wins** — say so in the
+  branch's ADR.
+
 ## UI / UX — Figma-ready, token-driven (owner directive, ADR 0004)
 Figma designs will arrive later. Until then, **structure and function beat bespoke polish**.
 - Every visual value (spacing, sizes, radii, colours, fonts, opacity, durations, grid metrics) comes from

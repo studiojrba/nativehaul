@@ -8,11 +8,13 @@ struct GameDetailRail: View {
     let launchViewModel: GameLaunchViewModel
     /// Opens the Manage sheet.
     let onManage: () -> Void
+    @Environment(AppEnvironment.self) private var environment
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
                 CoverArtView(imagePath: viewModel.game.coverImagePath, title: viewModel.game.title)
+                BottleInstallPanel(viewModel: environment.makeBottleInstallViewModel(for: viewModel.game))
                 LaunchButton(viewModel: launchViewModel)
                 Button("Manage…", systemImage: "slider.horizontal.3", action: onManage)
                     .frame(maxWidth: .infinity)
@@ -33,6 +35,7 @@ struct GameDetailRail: View {
             viewModel: environment.makeGameDetailViewModel(for: game),
             launchViewModel: environment.makeGameLaunchViewModel(for: game)
         ) {}
+            .environment(environment)
             .frame(height: DesignTokens.Layout.windowMinHeight)
     }
 }

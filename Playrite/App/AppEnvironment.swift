@@ -46,6 +46,8 @@ final class AppEnvironment {
     let steamSignIn: any SteamSigningIn
     /// Downloads small images such as the Steam avatar (`nil` in previews).
     let imageHTTP: (any HTTPClient)?
+    /// One-click Windows installs through CrossOver.
+    let bottleInstaller: any BottleInstalling
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -68,7 +70,8 @@ final class AppEnvironment {
         metadataFetcher: any MetadataFetching,
         steamGridDBKey: any SteamGridDBKeyStoring,
         steamSignIn: any SteamSigningIn,
-        imageHTTP: (any HTTPClient)?
+        imageHTTP: (any HTTPClient)?,
+        bottleInstaller: any BottleInstalling
     ) {
         self.container = container
         self.repository = repository
@@ -90,6 +93,7 @@ final class AppEnvironment {
         self.steamGridDBKey = steamGridDBKey
         self.steamSignIn = steamSignIn
         self.imageHTTP = imageHTTP
+        self.bottleInstaller = bottleInstaller
     }
 
     /// Seeded in-memory environment with mock services for SwiftUI previews.
@@ -120,7 +124,8 @@ final class AppEnvironment {
                 metadataFetcher: MockMetadataFetcher(),
                 steamGridDBKey: MockSteamGridDBKeyStore(),
                 steamSignIn: MockSteamSignInService(account: steamAccount),
-                imageHTTP: nil
+                imageHTTP: nil,
+                bottleInstaller: MockBottleInstaller(goldenStatus: .notSetUp)
             )
         } catch {
             fatalError("Preview environment could not be created: \(error)")

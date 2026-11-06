@@ -13,11 +13,40 @@ struct CrossOverLaunchConfiguration: Equatable, Sendable {
 
     /// CrossOver's wine launcher inside the app bundle.
     var wineExecutablePath: String {
-        (crossOverAppPath as NSString).appendingPathComponent("Contents/SharedSupport/CrossOver/bin/wine")
+        tool("wine")
+    }
+
+    /// CrossOver's bottle manager (`cxbottle`) inside the app bundle.
+    var cxbottleExecutablePath: String {
+        tool("cxbottle")
     }
 
     /// Arguments that start `steamExe` in `bottle` and ask Steam to launch `appID`.
     func arguments(bottle: String, steamExe: String, appID: Int) -> [String] {
-        ["--bottle", bottle, "--cx-app", steamExe, "-applaunch", String(appID)]
+        runArguments(bottle: bottle, windowsExecutable: steamExe, arguments: ["-applaunch", String(appID)])
+    }
+
+    /// Arguments that run any Windows program in `bottle` through `wine`.
+    func runArguments(bottle: String, windowsExecutable: String, arguments: [String] = []) -> [String] {
+        ["--bottle", bottle, "--cx-app", windowsExecutable] + arguments
+    }
+
+    /// Arguments that create `bottle` from a template with `cxbottle`.
+    func createBottleArguments(bottle: String, template: BottleTemplate, description: String) -> [String] {
+        ["--bottle", bottle, "--create", "--template", template.cxbottleTemplate, "--description", description]
+    }
+
+    /// Arguments that clone `source` into a new bottle `bottle` with `cxbottle` (unverified against a live CrossOver).
+    func cloneBottleArguments(bottle: String, source: String) -> [String] {
+        ["--bottle", bottle, "--clone", source]
+    }
+
+    /// Arguments that set a bottle's Windows version through `winecfg` (unverified against a live CrossOver).
+    func setWindowsVersionArguments(bottle: String, template: BottleTemplate) -> [String] {
+        runArguments(bottle: bottle, windowsExecutable: "winecfg.exe", arguments: ["-v", template.rawValue])
+    }
+
+    private func tool(_ name: String) -> String {
+        (crossOverAppPath as NSString).appendingPathComponent("Contents/SharedSupport/CrossOver/bin/\(name)")
     }
 }

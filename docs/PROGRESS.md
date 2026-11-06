@@ -330,6 +330,37 @@ Adds "Sign in through Steam" and a guided API key step (ADR 0015). 256 tests (+2
 - ⚠️ **Not verified live:** the sign-in has not been run against Steam. Steam may refuse the custom-scheme
   return URL (`retriever://`); ADR 0015 describes the fallback. The flow hasn't been viewed on screen.
 
+## 14 · feature/bottle-automation
+Adds one-click Windows Steam installs through CrossOver, with a golden bottle (ADR 0017), and adopts the
+**zero-tinker defaults** rule (ADR 0016, now in `CLAUDE.md`). Tests mock the CrossOver command line, the file
+system and HTTP. 283 tests (+27).
+- ✅🧪 **Recipes:** a versioned, bundled `BottleRecipes.json` with seven seed titles (three that work or mostly
+  work, four blocked by anti-cheat) and an untested default. Recipes are applied per game, in each game's own
+  bottle.
+- ✅🧪 **Golden bottle:**
+  - A lean bottle whose Steam is signed in to the SteamID linked in Retriever is adopted automatically.
+  - Otherwise Retriever offers to set up Steam in CrossOver, in J.R's words. Accepting creates "Retriever
+    Steam", installs Valve's SteamSetup silently, and the user signs in once in Steam's window.
+- ✅🧪 **Download:**
+  - Clones the golden bottle into "Retriever – <title>", then backs up `cxbottle.conf` and applies the recipe.
+  - Runs `steam.exe -applaunch <id>` and watches the appmanifest, showing percent progress.
+  - Records the bottle install, so Launch routes to it.
+- ✅🧪 **Lost Steam session:** the screen says "Steam needs a sign-in in this bottle" once, with Open Steam,
+  then stops with the reason. It never loops and never asks for credentials.
+- ✅🧪 **Gates:**
+  - A verdict blocked by anti-cheat or known to be broken shows the reason instead of a button.
+  - CrossOver missing → a link to CodeWeavers.
+  - Free space must cover the game plus Steam (the size is labelled when it's an estimate).
+  - Golden bottle not ready → the offer.
+- ✅🧪 **Zero-tinker audit:**
+  - At launch, Retriever quietly scans for installed games, syncs Steam when it's set up, and fills missing
+    metadata.
+  - Steam syncs by itself once the key checks out.
+  - Metadata runs after library changes, skipping games already tried this session.
+- ⚠️ **Not verified live:** no real CrossOver was used. The `--clone` syntax, the graphics-backend key, `winecfg
+  -v` and the silent Steam install are unverified and each kept in one place. The panel hasn't been viewed on
+  screen.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -347,6 +378,7 @@ Adds "Sign in through Steam" and a guided API key step (ADR 0015). 256 tests (+2
 | 11 | `feature/launch-ui` | ✅ | ✅ | 189 | ✅ |
 | 12 | `feature/metadata-artwork` | ✅ | ✅ | 232 | ✅ |
 | 13 | `feature/steam-signin` | ✅ | ✅ | 256 | ✅ |
+| 14 | `feature/bottle-automation` | ✅ | ✅ | 283 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -386,7 +418,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0015)
+## Key decisions (see `docs/decisions/` ADR 0001–0017)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -409,7 +441,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 13 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 14 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

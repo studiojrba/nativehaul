@@ -23,6 +23,14 @@ final class MockMetadataFetcher: MetadataFetching {
         return summary
     }
 
+    /// Number of background passes.
+    private(set) var backgroundCount = 0
+
+    func fetchMissingInBackground() async throws -> MetadataFetchSummary {
+        backgroundCount += 1
+        return summary
+    }
+
     func refresh(_ game: Game) async throws -> MetadataFetchSummary {
         refreshedGameIDs.append(game.id)
         if let error {

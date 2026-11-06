@@ -5,6 +5,8 @@ import Foundation
 protocol MetadataFetching: AnyObject {
     /// Fetch Missing Metadata: fills empty fields for every game.
     func fetchMissing() async throws -> MetadataFetchSummary
+    /// Quiet background pass: like ``fetchMissing()`` but skips games already tried this session.
+    func fetchMissingInBackground() async throws -> MetadataFetchSummary
     /// Explicit refresh of one game (may replace fetched or imported values; never user-set ones or manual art).
     func refresh(_ game: Game) async throws -> MetadataFetchSummary
 }

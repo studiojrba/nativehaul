@@ -7,7 +7,8 @@ extension AppEnvironment {
             repository: repository,
             transfer: transfer,
             folderImporter: folderImporter,
-            metadataFetcher: metadataFetcher
+            metadataFetcher: metadataFetcher,
+            steamSync: steamSync
         )
         viewModel.reload()
         return viewModel
@@ -156,6 +157,11 @@ extension AppEnvironment {
     /// Builds the Manage sheet metadata view model for a game.
     func makeGameMetadataViewModel(for game: Game) -> GameMetadataViewModel {
         GameMetadataViewModel(game: game, fetcher: metadataFetcher, onChanged: LibraryChangeNotification.post)
+    }
+
+    /// Builds the one-click Download panel view model for a game.
+    func makeBottleInstallViewModel(for game: Game) -> BottleInstallViewModel {
+        BottleInstallViewModel(game: game, installer: bottleInstaller, onChanged: LibraryChangeNotification.post)
     }
 
     /// Builds the launch view model for a game.

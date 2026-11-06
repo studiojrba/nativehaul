@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "databaseVersion": "2026.11.06",
+  "defaultRecipe": {
+    "steamAppID": null,
+    "title": "Default",
+    "bottleTemplate": "win10",
+    "graphicsBackend": "d3dMetal",
+    "syncMode": "msync",
+    "environment": {},
+    "notes": "No recipe for this game yet, so Retriever uses its general starting point for DirectX 11/12 games.",
+    "verdict": { "rating": "untested", "reason": "Nobody has recorded a result for this game yet." },
+    "installSizeGB": 60
+  },
+  "recipes": [
+    {
+      "steamAppID": 1091500,
+      "title": "Cyberpunk 2077",
+      "bottleTemplate": "win10",
+      "graphicsBackend": "d3dMetal",
+      "syncMode": "msync",
+      "environment": {},
+      "notes": "DirectX 12 game; D3DMetal is the recommended backend.",
+      "verdict": { "rating": "works", "reason": "Runs with D3DMetal on Apple silicon." },
+      "installSizeGB": 70
+    },
+    {
+      "steamAppID": 292030,
+      "title": "The Witcher 3: Wild Hunt",
+      "bottleTemplate": "win10",
+      "graphicsBackend": "d3dMetal",
+      "syncMode": "msync",
+      "environment": {},
+      "notes": "If the DirectX 12 mode stutters, switch the game to DirectX 11 in its launcher.",
+      "verdict": { "rating": "mostlyWorks", "reason": "Runs; performance depends on the renderer chosen." },
+      "installSizeGB": 50
+    },
+    {
+      "steamAppID": 1245620,
+      "title": "ELDEN RING",
+      "bottleTemplate": "win10",
+      "graphicsBackend": "d3dMetal",
+      "syncMode": "msync",
+      "environment": {},
+      "notes": "Play offline. Online play needs Easy Anti-Cheat, which doesn't run under CrossOver.",
+      "verdict": { "rating": "mostlyWorks", "reason": "Single-player works offline; online features are unavailable." },
+      "installSizeGB": 60
+    },
+    {
+      "steamAppID": 1172470,
+      "title": "Apex Legends",
+      "bottleTemplate": "win10",
+      "graphicsBackend": "d3dMetal",
+      "syncMode": "msync",
+      "environment": {},
+      "notes": "",
+      "verdict": { "rating": "antiCheatBlocked", "reason": "Its anti-cheat refuses to run under Wine-based layers such as CrossOver." },
+      "installSizeGB": 75
+    },
+    {
+      "steamAppID": 578080,
+      "title": "PUBG: BATTLEGROUNDS",
+      "bottleTemplate": "win10",
+      "graphicsBackend": "d3dMetal",
+      "syncMode": "msync",
+      "environment": {},
+      "notes": "",
+      "verdict": { "rating": "antiCheatBlocked", "reason": "BattlEye anti-cheat doesn't allow CrossOver." },
+      "installSizeGB": 40
+    },
+    {
+      "steamAppID": 1085660,
+      "title": "Destiny 2",
+      "bottleTemplate": "win10",
+      "graphicsBackend": "d3dMetal",
+      "syncMode": "msync",
+      "environment": {},
+      "notes": "",
+      "verdict": { "rating": "antiCheatBlocked", "reason": "BattlEye anti-cheat doesn't allow CrossOver." },
+      "installSizeGB": 105
+    },
+    {
+      "steamAppID": 359550,
+      "title": "Tom Clancy's Rainbow Six Siege",
+      "bottleTemplate": "win10",
+      "graphicsBackend": "d3dMetal",
+      "syncMode": "msync",
+      "environment": {},
+      "notes": "",
+      "verdict": { "rating": "antiCheatBlocked", "reason": "BattlEye anti-cheat doesn't allow CrossOver." },
+      "installSizeGB": 85
+    }
+  ]
+}

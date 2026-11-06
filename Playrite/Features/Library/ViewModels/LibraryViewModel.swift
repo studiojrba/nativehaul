@@ -26,6 +26,8 @@ final class LibraryViewModel {
     private let transfer: any LibraryTransferring
     private let folderImporter: (any GameFolderImporting)?
     private let metadataFetcher: (any MetadataFetching)?
+    private let steamSync: (any SteamSyncing)?
+    private var isRunningUpkeep = false
 
     /// Creates the view model. `folderImporter` enables "Scan Game Folders"; `metadataFetcher` enables
     /// "Fetch Missing Metadata".
@@ -33,12 +35,42 @@ final class LibraryViewModel {
         repository: any LibraryRepository,
         transfer: any LibraryTransferring,
         folderImporter: (any GameFolderImporting)? = nil,
-        metadataFetcher: (any MetadataFetching)? = nil
+        metadataFetcher: (any MetadataFetching)? = nil,
+        steamSync: (any SteamSyncing)? = nil
     ) {
         self.repository = repository
         self.transfer = transfer
         self.folderImporter = folderImporter
         self.metadataFetcher = metadataFetcher
+        self.steamSync = steamSync
+    }
+
+    /// Zero-tinker upkeep (ADR 0016), run quietly at launch: detect installed games (folders, CrossOver, Steam
+    /// installs — merging duplicates as it goes), sync Steam when it's set up, then fill missing metadata. Nothing
+    /// here needs configuring first, and failures never interrupt the user; manual menu items still report results.
+    func runAutomaticUpkeep() async {
+        guard !isRunningUpkeep else { return }
+        isRunningUpkeep = true
+        defer { isRunningUpkeep = false }
+        if let folderImporter, !isScanningFolders {
+            _ = try? await folderImporter.scanConfiguredFolders()
+        }
+        if let steamSync, steamSync.isConfigured {
+            _ = try? await steamSync.syncOwnedGames()
+        }
+        reload()
+        await fetchMetadataQuietly()
+    }
+
+    /// Fills missing metadata in the background without showing a summary (games already tried this session are
+    /// skipped, so repeated library changes don't re-ask the stores).
+    func fetchMetadataQuietly() async {
+        guard let metadataFetcher, !isFetchingMetadata else { return }
+        isFetchingMetadata = true
+        defer { isFetchingMetadata = false }
+        if await (try? metadataFetcher.fetchMissingInBackground()) != nil {
+            reload()
+        }
     }
 
     /// Whether "Fetch Missing Metadata" is available.
