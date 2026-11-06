@@ -52,6 +52,10 @@ final class Game {
     var carouselImagePaths: [String] = []
     /// Persisted ``metadataProvenance`` (`"field=source"` entries).
     var metadataSourcesRaw: [String] = []
+    /// Absolute path to the ROM file, for emulated games.
+    var romPath: String?
+    /// Raw storage for ``emulatedSystem``.
+    var emulatedSystemRaw: String?
     /// HowLongToBeat game identifier, when known (used for a direct link-out; never fetched).
     var hltbID: Int?
     /// Recorded play sessions.

@@ -36,6 +36,8 @@ enum LibraryArchiveMapper {
             heroImagePath: game.heroImagePath,
             carouselImagePaths: game.carouselImagePaths,
             metadataSources: game.metadataSourcesRaw,
+            romPath: game.romPath,
+            emulatedSystem: game.emulatedSystemRaw,
             sessions: game.sessions.sorted { $0.startedAt < $1.startedAt }.map { session in
                 SessionRecord(
                     id: session.id, startedAt: session.startedAt, endedAt: session.endedAt,

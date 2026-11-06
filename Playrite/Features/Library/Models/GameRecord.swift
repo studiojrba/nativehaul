@@ -28,6 +28,8 @@ struct GameRecord: Codable, Equatable, Sendable {
     /// Optional; older archives omit these.
     var carouselImagePaths: [String]?
     var metadataSources: [String]?
+    var romPath: String?
+    var emulatedSystem: String?
     var sessions: [SessionRecord]
     var guides: [GuideRecord]?
 }

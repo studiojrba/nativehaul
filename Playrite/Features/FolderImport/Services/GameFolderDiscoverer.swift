@@ -10,6 +10,7 @@ struct GameFolderDiscoverer: Sendable {
     private let steamScanner: (any SteamInstallScanning)?
     private let steamRoots: SteamInstallRoots
     private let measuresBundles: Bool
+    private let romScanner: (any RomScanning)?
 
     /// Creates the discoverer. `folderExists` is injectable so tests can use mock scanners with fake paths.
     init(
@@ -20,7 +21,8 @@ struct GameFolderDiscoverer: Sendable {
         folderExists: @escaping @Sendable (String) -> Bool = { FileManager.default.fileExists(atPath: $0) },
         steamScanner: (any SteamInstallScanning)? = nil,
         steamRoots: SteamInstallRoots = .standard,
-        measuresBundles: Bool = false
+        measuresBundles: Bool = false,
+        romScanner: (any RomScanning)? = nil
     ) {
         self.scanner = scanner
         self.crossOver = crossOver
@@ -30,6 +32,7 @@ struct GameFolderDiscoverer: Sendable {
         self.steamScanner = steamScanner
         self.steamRoots = steamRoots
         self.measuresBundles = measuresBundles
+        self.romScanner = romScanner
     }
 
     /// Scans every folder plus CrossOver. Missing folders are reported, not thrown.
@@ -44,6 +47,7 @@ struct GameFolderDiscoverer: Sendable {
                 continue
             }
             discovery.folderApps += apps
+            discovery.roms += romScanner?.scan(folder: expanded) ?? []
         }
         let launchers = (locations.launchersFolder as NSString).expandingTildeInPath
         discovery.launcherApps = (try? scanner.scan(folder: launchers, options: options)) ?? []

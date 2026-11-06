@@ -19,14 +19,14 @@ enum GameInfoBuilder {
             GameInfoRow(label: "Source", value: source(game)),
             GameInfoRow(label: "Release Date", value: date(game.releaseDate)),
             GameInfoRow(label: "Date Added", value: date(game.addedAt)),
-            GameInfoRow(label: "Platform", value: game.platform.displayName),
+            GameInfoRow(label: "Platform", value: platformName(game)),
             GameInfoRow(label: "Tags", value: game.tags.isEmpty ? unknown : game.tags.joined(separator: ", ")),
         ]
     }
 
     /// Caption under a grid poster: platform plus per-source playtime when any.
     static func gridCaption(for game: Game) -> String {
-        [game.platform.displayName, timePlayed(game)].compactMap(\.self).joined(separator: separator)
+        [platformName(game), timePlayed(game)].compactMap(\.self).joined(separator: separator)
     }
 
     /// Where the game comes from: Steam locations, the tracked app, or the library.
@@ -56,5 +56,11 @@ enum GameInfoBuilder {
 
     private static func date(_ date: Date?) -> String {
         date?.formatted(date: .abbreviated, time: .omitted) ?? unknown
+    }
+
+    /// "Emulated · Game Boy Advance" for emulated games, otherwise the platform name.
+    static func platformName(_ game: Game) -> String {
+        guard game.platform == .emulated, let system = game.emulatedSystem else { return game.platform.displayName }
+        return "\(game.platform.displayName) · \(system.displayName)"
     }
 }

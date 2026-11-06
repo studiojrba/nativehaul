@@ -10,7 +10,7 @@ enum OnboardingModule: String, CaseIterable, Identifiable, Sendable {
     case crossOver
     /// The folder of native Switch ports (`.app` bundles built by nxnative).
     case switchPorts
-    /// Emulators (wired by the emulator branch).
+    /// Emulators: which apps run ROMs.
     case emulators
 
     /// Stable identity.
@@ -18,8 +18,8 @@ enum OnboardingModule: String, CaseIterable, Identifiable, Sendable {
         rawValue
     }
 
-    /// Modules that exist in this build. Emulators are listed as coming until their branch lands.
-    static let available: [OnboardingModule] = [.findGames, .steam, .crossOver, .switchPorts]
+    /// Modules offered in the checklist.
+    static let available: [OnboardingModule] = [.findGames, .steam, .crossOver, .switchPorts, .emulators]
 
     /// Checked when the hub first appears.
     var isCheckedByDefault: Bool {
@@ -44,7 +44,7 @@ enum OnboardingModule: String, CaseIterable, Identifiable, Sendable {
         case .steam: "Sign in and add your API key so your library, playtime and achievements sync."
         case .crossOver: "Windows games with one-click installs, each in its own bottle."
         case .switchPorts: "Pick the folder that holds your native Switch port apps."
-        case .emulators: "Coming soon."
+        case .emulators: "Play ROMs from your game folders in RetroArch and other emulators you have."
         }
     }
 

@@ -30,6 +30,16 @@ struct LaunchButton: View {
                 Text(reason)
                     .font(DesignTokens.Typography.caption)
                     .foregroundStyle(Theme.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            if let url = viewModel.helpURL {
+                Link("Get it from the official site", destination: url).font(DesignTokens.Typography.caption)
+            }
+            if let request = viewModel.fileRequest {
+                ProvideFilePrompt(request: request) { viewModel.provideFile(at: $0) }
+            }
+            if let message = viewModel.providedFileMessage {
+                Text(message).font(DesignTokens.Typography.caption).foregroundStyle(Theme.secondaryText)
             }
             if let error = viewModel.errorMessage {
                 Text(error).font(DesignTokens.Typography.caption).foregroundStyle(Theme.danger)

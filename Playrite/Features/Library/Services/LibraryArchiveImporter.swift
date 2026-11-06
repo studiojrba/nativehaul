@@ -70,6 +70,8 @@ struct LibraryArchiveImporter {
         game.heroImagePath = record.heroImagePath
         game.carouselImagePaths = record.carouselImagePaths ?? []
         game.metadataSourcesRaw = record.metadataSources ?? []
+        game.romPath = record.romPath
+        game.emulatedSystemRaw = record.emulatedSystem
         repository.insert(game)
         for sessionRecord in record.sessions {
             let session = PlaySession(

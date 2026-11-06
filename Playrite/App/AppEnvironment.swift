@@ -50,6 +50,8 @@ final class AppEnvironment {
     let bottleInstaller: any BottleInstalling
     /// Whether first-run setup was finished or skipped.
     let onboarding: any OnboardingStoring
+    /// Routes emulated games to their emulator app.
+    let emulators: EmulatorRouter
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -74,7 +76,8 @@ final class AppEnvironment {
         steamSignIn: any SteamSigningIn,
         imageHTTP: (any HTTPClient)?,
         bottleInstaller: any BottleInstalling,
-        onboarding: any OnboardingStoring
+        onboarding: any OnboardingStoring,
+        emulators: EmulatorRouter
     ) {
         self.container = container
         self.repository = repository
@@ -98,6 +101,7 @@ final class AppEnvironment {
         self.imageHTTP = imageHTTP
         self.bottleInstaller = bottleInstaller
         self.onboarding = onboarding
+        self.emulators = emulators
     }
 
     /// Seeded in-memory environment with mock services for SwiftUI previews.
@@ -130,7 +134,8 @@ final class AppEnvironment {
                 steamSignIn: MockSteamSignInService(account: steamAccount),
                 imageHTTP: nil,
                 bottleInstaller: MockBottleInstaller(goldenStatus: .notSetUp),
-                onboarding: InMemoryOnboardingStore(hasCompletedOnboarding: true)
+                onboarding: InMemoryOnboardingStore(hasCompletedOnboarding: true),
+                emulators: EmulatorRouter(preferences: InMemoryEmulatorPreferences(), files: InMemoryFileOperations())
             )
         } catch {
             fatalError("Preview environment could not be created: \(error)")

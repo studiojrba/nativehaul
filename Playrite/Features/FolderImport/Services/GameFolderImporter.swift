@@ -81,6 +81,7 @@ final class GameFolderImporter: GameFolderImporting {
             summary.found += 1
             importInstall(install, state: &state, summary: &summary)
         }
+        importRoms(discovery.roms, state: state, summary: &summary)
         if let installs = discovery.steamInstalls {
             summary.steam = SteamProvenanceApplier.apply(installs, to: state.games) { repository.insert($0) }
         }
@@ -131,6 +132,20 @@ final class GameFolderImporter: GameFolderImporting {
         repository.insert(game)
         state.games.append(game)
         summary.crossOverAdded += 1
+    }
+
+    /// Each ROM path becomes one emulated entry; re-scans add nothing.
+    private func importRoms(_ roms: [DiscoveredRom], state: ImportState, summary: inout FolderImportSummary) {
+        var known = Set(state.games.compactMap(\.romPath))
+        for rom in roms where !known.contains(rom.path) {
+            known.insert(rom.path)
+            summary.found += 1
+            let game = Game(title: rom.title, platform: .emulated, status: .backlog)
+            game.romPath = rom.path
+            game.emulatedSystem = rom.system
+            repository.insert(game)
+            summary.romsAdded += 1
+        }
     }
 
     private func applyBundleSizes(_ sizes: [String: Int64], to games: [Game]) {

@@ -68,7 +68,9 @@ final class MetadataFetcher: MetadataFetching {
         }
         let query = game.metadataQuery
         var update = MetadataUpdate()
-        let steam = await collect(from: steamStore, query, writable, &update)
+        let steam = steamStore.applies(to: query)
+            ? await collect(from: steamStore, query, writable, &update)
+            : (outcome: MetadataOutcome.skipped, matched: false)
         summary.record(steam.outcome, for: .steamStore)
         if steam.matched || !nintendo.applies(to: query) {
             summary.record(.skipped, for: .nintendoStore)

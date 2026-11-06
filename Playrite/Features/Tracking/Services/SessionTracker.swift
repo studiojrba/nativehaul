@@ -3,6 +3,7 @@ import Foundation
 /// Pure state machine turning launch/terminate events into completed sessions for tracked bundles.
 struct SessionTracker: Sendable {
     private var trackedGames: [String: UUID] = [:]
+    private var expectedLaunches: [String: UUID] = [:]
     private var active: [Int32: ActiveSession] = [:]
     private let minimumSessionSeconds: Int
 
@@ -21,11 +22,20 @@ struct SessionTracker: Sendable {
         trackedGames = Dictionary(apps.map { (BundlePath.normalize($0.key), $0.value) }) { first, _ in first }
     }
 
+    /// Credits the next launch of the app at `path` to `gameID`, once. Used for emulators, where one app runs many
+    /// games; it wins over a permanent mapping for that one launch.
+    mutating func expectLaunch(ofAppAt path: String, for gameID: UUID) {
+        expectedLaunches[BundlePath.normalize(path)] = gameID
+    }
+
     /// Feeds an event; returns a completed session when a tracked app terminates after the minimum length.
     mutating func handle(_ event: RunningAppEvent) -> CompletedSession? {
         switch event {
         case let .launched(path, processID, date):
-            guard active[processID] == nil, let gameID = trackedGames[BundlePath.normalize(path)] else { return nil }
+            let key = BundlePath.normalize(path)
+            guard active[processID] == nil,
+                  let gameID = expectedLaunches.removeValue(forKey: key) ?? trackedGames[key]
+            else { return nil }
             active[processID] = ActiveSession(gameID: gameID, processID: processID, startedAt: date)
             return nil
         case let .terminated(_, processID, date):

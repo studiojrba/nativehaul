@@ -50,7 +50,8 @@ extension AppEnvironment {
             ),
             imageHTTP: URLSessionHTTPClient(),
             bottleInstaller: makeLiveBottleInstaller(repository: repository, account: steamAccount),
-            onboarding: UserDefaultsOnboardingStore()
+            onboarding: UserDefaultsOnboardingStore(),
+            emulators: EmulatorRouter(preferences: UserDefaultsEmulatorPreferences(), files: LocalFileOperations())
         )
     }
 
@@ -125,7 +126,8 @@ extension AppEnvironment {
                 scanner: AppBundleScanner(),
                 crossOver: CrossOverBottleScanner(),
                 steamScanner: SteamInstallScanner(),
-                measuresBundles: true
+                measuresBundles: true,
+                romScanner: FileSystemRomScanner()
             ),
             repository: repository,
             trackingPreferences: trackingPreferences,

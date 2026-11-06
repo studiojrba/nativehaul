@@ -68,6 +68,10 @@ final class PlaytimeWatcher: PlaytimeWatching {
         tracker.setTrackedApps(Dictionary(tracked) { first, _ in first })
     }
 
+    func attributeNextLaunch(ofAppAt path: String, to gameID: UUID) {
+        tracker.expectLaunch(ofAppAt: path, for: gameID)
+    }
+
     private func handle(_ event: RunningAppEvent) {
         if let session = tracker.handle(event) {
             record([session])

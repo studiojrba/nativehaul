@@ -16,7 +16,7 @@ struct OnboardingViewModelTests {
         let viewModel = make()
         #expect(viewModel.step == .welcome)
         #expect(viewModel.selected == [.findGames])
-        #expect(!viewModel.modules.contains(.emulators))
+        #expect(viewModel.modules.last == .emulators)
     }
 
     @Test func setUpLaterSkipsInOneClickAndIsRemembered() {

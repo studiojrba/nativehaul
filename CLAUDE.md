@@ -53,6 +53,21 @@ customizing or tinkering needed (the option is there for those who want it).
 - When a design choice trades default convenience against configurability, **convenience wins** — say so in the
   branch's ADR.
 
+## Shelf and router, never the engine (owner directive, ADR 0019)
+Like the Cocoon launcher on J.R's AYN Thor: one front end, and each kind of game is run by the specialist app that
+owns it. Retriever routes; it never emulates, translates or runs games itself.
+- Native `.app` (including nxnative-built Switch ports) → direct launch. Mac Steam → `steam://`. Windows Steam →
+  a CrossOver bottle. Emulated ROMs → the system's emulator app. Every route lives in the launch planning model.
+- Nothing that runs games is bundled: no emulators, no cores, no engines. Retriever detects them, routes to them,
+  and says honestly when one is missing (with its official page).
+
+## User-provided files (owner directive, ADR 0019)
+Anything that must come from the user's own sources — `prod.keys` for Switch builds, a console BIOS, a game's
+`.nsp`/`.xci` — is asked for with **one** in-flow prompt: "Please provide your ___", a plain sentence on why, and a
+file picker (`ProvideFilePrompt` / `UserFileRequest`). When the app knows where the file belongs (a BIOS folder), it
+copies the user's file there, never overwriting.
+- The app never sources, downloads, links to or hints at sources for these files. It asks; the user provides.
+
 ## UI / UX — Figma-ready, token-driven (owner directive, ADR 0004)
 Figma designs will arrive later. Until then, **structure and function beat bespoke polish**.
 - Every visual value (spacing, sizes, radii, colours, fonts, opacity, durations, grid metrics) comes from

@@ -5,6 +5,7 @@ enum GamePlatform: String, Codable, CaseIterable, Identifiable, Sendable {
     case steam
     case macNative
     case switchPort
+    case emulated
     case other
 
     /// Stable identity for SwiftUI lists.
@@ -18,6 +19,7 @@ enum GamePlatform: String, Codable, CaseIterable, Identifiable, Sendable {
         case .steam: "Steam"
         case .macNative: "Mac"
         case .switchPort: "Switch (native port)"
+        case .emulated: "Emulated"
         case .other: "Other"
         }
     }

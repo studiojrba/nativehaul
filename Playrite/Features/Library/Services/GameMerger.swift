@@ -43,7 +43,16 @@ enum GameMerger {
         let bundlesClash = lhs.appBundlePath.map(BundlePath.normalize) != rhs.appBundlePath.map(BundlePath.normalize)
             && lhs.appBundlePath != nil && rhs.appBundlePath != nil
         let steamClash = lhs.steamAppID != rhs.steamAppID && lhs.steamAppID != nil && rhs.steamAppID != nil
-        return !bundlesClash && !steamClash
+        let romClash = lhs.romPath != rhs.romPath && lhs.romPath != nil && rhs.romPath != nil
+        return !bundlesClash && !steamClash && !romClash && !romMeetsOtherRoute(lhs, rhs) && !romMeetsOtherRoute(
+            rhs,
+            lhs
+        )
+    }
+
+    /// A ROM entry never merges with a Mac app or Steam game of the same title (a remake isn't the original).
+    private static func romMeetsOtherRoute(_ rom: Game, _ other: Game) -> Bool {
+        rom.romPath != nil && (other.appBundlePath != nil || other.steamAppID != nil)
     }
 
     /// Fields the duplicate filled carry the duplicate's provenance, so manual art stays protected after a merge.
@@ -79,6 +88,8 @@ enum GameMerger {
         survivor.coverImagePath = survivor.coverImagePath ?? duplicate.coverImagePath
         survivor.steamAppID = survivor.steamAppID ?? duplicate.steamAppID
         survivor.appBundlePath = survivor.appBundlePath ?? duplicate.appBundlePath
+        survivor.romPath = survivor.romPath ?? duplicate.romPath
+        survivor.emulatedSystemRaw = survivor.emulatedSystemRaw ?? duplicate.emulatedSystemRaw
         survivor.steamSyncedSeconds = survivor.steamSyncedSeconds ?? duplicate.steamSyncedSeconds
         survivor.selfReportedSeconds = survivor.selfReportedSeconds ?? duplicate.selfReportedSeconds
         survivor.steamAchievementsUnlocked = survivor.steamAchievementsUnlocked ?? duplicate.steamAchievementsUnlocked

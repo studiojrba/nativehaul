@@ -159,6 +159,11 @@ extension AppEnvironment {
         GameMetadataViewModel(game: game, fetcher: metadataFetcher, onChanged: LibraryChangeNotification.post)
     }
 
+    /// Builds Settings → Emulators.
+    func makeEmulatorSettingsViewModel() -> EmulatorSettingsViewModel {
+        EmulatorSettingsViewModel(router: emulators)
+    }
+
     /// Builds the first-run walkthrough. `onFinish` closes it.
     func makeOnboardingViewModel(onFinish: @escaping @MainActor () -> Void) -> OnboardingViewModel {
         OnboardingViewModel(
@@ -167,7 +172,8 @@ extension AppEnvironment {
                 gameFolders: gameFolders,
                 steamAccount: steamAccount,
                 bottles: bottleInstaller,
-                tracking: trackingPreferences
+                tracking: trackingPreferences,
+                emulators: emulators
             ),
             onFinish: onFinish
         )
@@ -180,6 +186,6 @@ extension AppEnvironment {
 
     /// Builds the launch view model for a game.
     func makeGameLaunchViewModel(for game: Game) -> GameLaunchViewModel {
-        GameLaunchViewModel(game: game, launcher: launcher, watcher: watcher)
+        GameLaunchViewModel(game: game, launcher: launcher, watcher: watcher, emulators: emulators)
     }
 }

@@ -376,6 +376,32 @@ Adds the first-run walkthrough (ADR 0018). 291 tests (+8).
   belongs to J.R. The folder line is qualified to be accurate (see ADR 0018). The walkthrough hasn't been viewed
   on screen.
 
+## 16 · feature/emulator-launch
+Adds emulator support as a launch route (ADR 0019), and records two project rules in `CLAUDE.md`: **shelf and
+router, never the engine**, and **user-provided files**. 304 tests (+13), all mocked.
+- ✅🧪 **Profiles:**
+  - RetroArch is the default, with a core per system. PCSX2 is the default for PS2.
+  - Dolphin, melonDS and PPSSPP are also seeded. Only emulators with documented launch syntax are seeded; the
+    model is open for more.
+  - Per-system overrides are in Settings → Emulators (optional).
+- ✅🧪 **ROM library:**
+  - The existing Game Folders scan also finds ROMs. The system comes from a unique extension, or, for shared
+    ones like `.iso` or `.chd`, from a folder name. If the system can't be told, the ROM is left out.
+  - Each ROM becomes one entry; re-scans add nothing.
+  - A ROM entry never merges with a Steam or Mac game of the same title.
+- ✅🧪 **Launch route:**
+  - "Play in RetroArch" opens the emulator with the core and the ROM.
+  - Honest states: the emulator isn't installed (with its official page), the core is missing (pointing to
+    RetroArch's Core Downloader), or the ROM is missing.
+- ✅🧪 **Playtime:** the next launch of the emulator is credited to the ROM, so emulated play counts like any other
+  route.
+- ✅🧪 **"Please provide your PlayStation 2 BIOS":** one reusable prompt (`ProvideFilePrompt`) that copies the user's
+  own file into PCSX2's BIOS folder without overwriting. It gives no sources, links or hints.
+- ✅ **Metadata** for ROMs comes from SteamGridDB; the Steam store isn't asked.
+- ✅ **Onboarding** gains a working Emulators step.
+- ⚠️ **Not verified live:** no emulator or core was run. The argument syntax follows each emulator's documented
+  command line. NXNative's `prod.keys` field still needs moving to the new prompt (follow-up).
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -395,6 +421,7 @@ Adds the first-run walkthrough (ADR 0018). 291 tests (+8).
 | 13 | `feature/steam-signin` | ✅ | ✅ | 256 | ✅ |
 | 14 | `feature/bottle-automation` | ✅ | ✅ | 283 | ✅ |
 | 15 | `feature/onboarding` | ✅ | ✅ | 291 | ✅ |
+| 16 | `feature/emulator-launch` | ✅ | ✅ | 304 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -434,7 +461,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0018)
+## Key decisions (see `docs/decisions/` ADR 0001–0019)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -457,7 +484,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 15 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 16 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

@@ -25,4 +25,11 @@ final class MockPlaytimeWatcher: PlaytimeWatching {
     func refreshTrackedApps() {
         refreshCount += 1
     }
+
+    /// Attributions requested, in order.
+    private(set) var attributions: [(path: String, gameID: UUID)] = []
+
+    func attributeNextLaunch(ofAppAt path: String, to gameID: UUID) {
+        attributions.append((path, gameID))
+    }
 }

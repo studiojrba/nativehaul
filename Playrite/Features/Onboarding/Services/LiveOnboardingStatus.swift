@@ -7,6 +7,7 @@ final class LiveOnboardingStatus: OnboardingStatusProviding {
     private let steamAccount: any SteamAccountStoring
     private let bottles: any BottleInstalling
     private let tracking: any TrackingPreferencesStoring
+    private let emulators: EmulatorRouter?
     private let folderExists: (String) -> Bool
 
     /// Creates the provider.
@@ -15,12 +16,14 @@ final class LiveOnboardingStatus: OnboardingStatusProviding {
         steamAccount: any SteamAccountStoring,
         bottles: any BottleInstalling,
         tracking: any TrackingPreferencesStoring,
+        emulators: EmulatorRouter? = nil,
         folderExists: @escaping (String) -> Bool = { FileManager.default.fileExists(atPath: $0) }
     ) {
         self.gameFolders = gameFolders
         self.steamAccount = steamAccount
         self.bottles = bottles
         self.tracking = tracking
+        self.emulators = emulators
         self.folderExists = folderExists
     }
 
@@ -30,7 +33,9 @@ final class LiveOnboardingStatus: OnboardingStatusProviding {
         case .steam: steamAccount.steamID != nil && steamAccount.hasAPIKey
         case .crossOver: bottles.goldenStatus().isReady
         case .switchPorts: folderExists(tracking.load().expandedGamesFolder)
-        case .emulators: false
+        case .emulators: emulators
+            .map { router in EmulatorCatalog.profiles.contains { router.appPath(for: $0) != nil } }
+            ?? false
         }
     }
 }

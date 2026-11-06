@@ -16,6 +16,8 @@ struct FolderImportSummary: Equatable, Sendable {
     var crossOverAdded = 0
     /// Steam install detection, when it ran.
     var steam: SteamProvenanceSummary?
+    /// New emulated games created from ROM files.
+    var romsAdded = 0
     /// Duplicate entries (same normalised title) merged away after the scan.
     var duplicatesMerged = 0
     /// Configured folders that were missing or unreadable.
@@ -25,6 +27,9 @@ struct FolderImportSummary: Equatable, Sendable {
     var description: String {
         var text = "Found \(found) · added \(added) · linked \(linked) · skipped \(skipped). "
             + "CrossOver: \(bottlesFound) bottles, \(crossOverAdded) games added."
+        if romsAdded > 0 {
+            text += " ROMs: \(romsAdded) added."
+        }
         if let steam {
             text += " " + steam.description
         }

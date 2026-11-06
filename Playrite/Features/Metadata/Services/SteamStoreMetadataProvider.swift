@@ -13,6 +13,12 @@ struct SteamStoreMetadataProvider: MetadataProviding {
         self.http = MetadataHTTP(client: http)
     }
 
+    /// Emulated games are left to SteamGridDB, which covers retro systems; a Steam title search could match a modern
+    /// re-release instead.
+    func applies(to query: MetadataQuery) -> Bool {
+        query.platform != .emulated
+    }
+
     func lookup(_ query: MetadataQuery) async throws -> MetadataLookup {
         let appID: Int
         if let steamAppID = query.steamAppID {

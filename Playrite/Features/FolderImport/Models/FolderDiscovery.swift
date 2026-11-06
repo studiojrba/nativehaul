@@ -12,6 +12,8 @@ struct FolderDiscovery: Equatable, Sendable {
     var bundleSizes: [String: Int64] = [:]
     /// Installed Steam games (Mac Steam and CrossOver bottles); `nil` when Steam detection is off.
     var steamInstalls: [SteamInstalledApp]?
+    /// ROM files found in the configured folders.
+    var roms: [DiscoveredRom] = []
     /// Configured folders that were missing or unreadable.
     var unreadableFolders: [String] = []
 }

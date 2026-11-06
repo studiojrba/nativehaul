@@ -14,4 +14,6 @@ protocol PlaytimeWatching: AnyObject {
     func stop()
     /// Re-reads which games have tracked bundles.
     func refreshTrackedApps()
+    /// Credits the next launch of the app at `path` to `gameID` (an emulator starting one ROM).
+    func attributeNextLaunch(ofAppAt path: String, to gameID: UUID)
 }

@@ -18,6 +18,15 @@ final class WorkspaceGameLauncher: GameLaunching {
                 at: URL(fileURLWithPath: path),
                 configuration: configuration
             )
+        case let .applicationWithArguments(path, arguments):
+            let configuration = NSWorkspace.OpenConfiguration()
+            configuration.activates = true
+            configuration.arguments = arguments
+            configuration.createsNewApplicationInstance = true
+            _ = try await NSWorkspace.shared.openApplication(
+                at: URL(fileURLWithPath: path),
+                configuration: configuration
+            )
         case let .url(url):
             guard NSWorkspace.shared.open(url) else { throw LaunchError.noHandler(url.absoluteString) }
         case let .process(executable, arguments):

@@ -9,6 +9,9 @@ struct LaunchOption: Equatable, Identifiable, Sendable {
     /// Whether launching through this option records ``PlaytimeSource/macTracked`` sessions.
     let isTracked: Bool
 
+    /// App whose next launch should be credited to this game (emulators run many games from one app).
+    var trackedAppPath: String?
+
     /// Identity for menus.
     var id: String {
         title

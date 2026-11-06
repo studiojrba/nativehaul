@@ -22,10 +22,6 @@ struct OnboardingChecklistView: View {
                 }
                 .toggleStyle(.checkbox)
             }
-            if !viewModel.modules.contains(.emulators) {
-                Label("Emulators — coming soon", systemImage: OnboardingModule.emulators.symbolName)
-                    .foregroundStyle(Theme.secondaryText)
-            }
         }
     }
 }
