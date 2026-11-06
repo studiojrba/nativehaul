@@ -246,6 +246,40 @@ paths, and the folder-scan integration. **183 tests in 45 suites, all passing.**
 (`CrossOverLaunchConfiguration`) is based on CrossOver's documented CLI and needs one real try. Steam libraries on
 drive letters other than `C:` rely on the bottle's `dosdevices` links.
 
+## 11 · feature/launch-ui
+Branched from `feature/steam-provenance`. J.R's Playnite layout is the reference; launching comes first.
+
+**Built**
+- **Icon rail** (`IconRailView`, `RailItem`, `RailItemRow`): icons only, expanding to labels and section counts on
+  hover. It floats over the content, so the grid doesn't reflow. It replaces the split-view sidebar.
+- **Poster grid** stays the default view. Under each poster: title, platform plus per-source playtime, and status.
+  Right-click lists every launch route ("Play", "Play via Steam (Mac)", "Play via Steam (CrossOver — <bottle>)"), or
+  a disabled "Play" when there is none.
+- **Details** (only after a click), in three columns:
+  - Left: `GameQuickList`.
+  - Centre: hero media slot, genre chips, description, then series / playtime / sessions / Steam provenance /
+    achievements / guides.
+  - Right: cover, the big **Launch** button (primary action plus a menu of alternatives; disabled with the reason
+    when there's no target), **Manage…** (status, self-reported hours, cover and hero image, tracked app, HLTB
+    entry), HLTB chips (Main Story / Main Story+ / Completionist, labelled "HLTB estimate"), and the info list
+    (Status / Install Size / Time Played / Developer / Source / Release Date / Date Added / Platform / Tags).
+- **Launching:**
+  - `.app` launches go through NSWorkspace and start the playtime watcher, so the session is recorded as MacTracked.
+  - Steam launches go to Mac Steam or the right bottle (ADR 0012).
+  - With no target, the button is disabled and gives the reason.
+- **Metadata:** new optional `developer`, `genres`, `tags`, `heroImagePath` (archive round-trip; merged on dedupe).
+  Folder scans now measure `.app` bundle sizes for the Install Size row.
+- Tokens: `DesignTokens.Rail`, `DesignTokens.Details`, `Typography.launch`. New `FlowLayout` component for chips.
+  ADR 0013.
+
+**Tests:** info list fields and order, per-source "Time Played" (never merged), source labels, grid caption, HLTB
+chip names, metadata merge and archive round-trip, bundle size. **189 tests in 46 suites, all passing.** Lint clean.
+
+**Unverified:** the build machine has no screen-recording permission, so the new layout was **not visually checked**.
+The app launched and ran without a crash. Hover expansion, the three-column proportions and the Launch menu need one
+look on a real screen. Genres, developer, tags and hero images have no automatic source yet; they come from the
+import or the Manage sheet.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -260,6 +294,7 @@ drive letters other than `C:` rely on the bottle's `dosdevices` links.
 | 8 | `feature/folder-import` | ✅ | ✅ | 164 | ✅ |
 | 9 | `feature/library-dedupe` | ✅ | ✅ | 171 | ✅ |
 | 10 | `feature/steam-provenance` | ✅ | ✅ | 183 | ✅ |
+| 11 | `feature/launch-ui` | ✅ | ✅ | 189 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -290,7 +325,7 @@ target are still named Playrite; renaming them is a separate task.
 ⚠️ Because the remote had no `main`, GitHub made the first pushed branch, **`feature/project-foundation`**, the
 default branch. Create `main` (for example from the merged stack) and set it as the default before opening PRs.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0012)
+## Key decisions (see `docs/decisions/` ADR 0001–0013)
 - Empty upstream repo, so the feature branches are **stacked**. `main` was never touched.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
