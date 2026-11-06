@@ -38,6 +38,8 @@ final class Game {
     var steamAchievementsTotal: Int?
     /// Recorded play sessions.
     @Relationship(deleteRule: .cascade, inverse: \PlaySession.game) var sessions: [PlaySession] = []
+    /// External guide links (link-out only).
+    @Relationship(deleteRule: .cascade, inverse: \GuideLink.game) var guides: [GuideLink] = []
 
     /// Creates a game.
     init(

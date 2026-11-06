@@ -11,16 +11,18 @@ final class GameDetailViewModel {
     var errorMessage: String?
 
     private let repository: any LibraryRepository
+    private let hltb: (any HLTBProviding)?
 
-    /// Creates the view model.
-    init(game: Game, repository: any LibraryRepository) {
+    /// Creates the view model. When `hltb` is supplied, the main-story estimate is shown as a labelled HLTB row.
+    init(game: Game, repository: any LibraryRepository, hltb: (any HLTBProviding)? = nil) {
         self.game = game
         self.repository = repository
+        self.hltb = hltb
     }
 
-    /// Per-source playtime; never merged.
+    /// Per-source playtime; never merged. HLTB appears only as its own labelled estimate row.
     var breakdown: PlaytimeBreakdown {
-        game.playtimeBreakdown()
+        game.playtimeBreakdown(hltbEstimateSeconds: hltb?.cachedEstimate(for: game.id)?.seconds(for: .mainStory))
     }
 
     /// Sessions, newest first.

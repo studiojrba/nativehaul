@@ -72,6 +72,16 @@ struct LibraryArchiveImporter {
             repository.insert(session)
             session.game = game
         }
+        for guideRecord in record.guides ?? [] {
+            let guide = GuideLink(
+                id: guideRecord.id, title: guideRecord.title, author: guideRecord.author,
+                url: guideRecord.url, addedAt: guideRecord.addedAt
+            )
+            guide.chapters = guideRecord.chapters
+            guide.currentChapterID = guideRecord.currentChapterID
+            repository.insert(guide)
+            guide.game = game
+        }
         return game
     }
 

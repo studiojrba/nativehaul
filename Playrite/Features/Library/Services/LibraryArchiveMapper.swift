@@ -34,6 +34,12 @@ enum LibraryArchiveMapper {
                     id: session.id, startedAt: session.startedAt, endedAt: session.endedAt,
                     source: session.source, note: session.note
                 )
+            },
+            guides: game.guides.sorted { $0.addedAt < $1.addedAt }.map { guide in
+                GuideRecord(
+                    id: guide.id, title: guide.title, author: guide.author, url: guide.url,
+                    chapters: guide.chapters, currentChapterID: guide.currentChapterID, addedAt: guide.addedAt
+                )
             }
         )
     }

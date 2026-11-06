@@ -19,4 +19,5 @@ struct GameRecord: Codable, Equatable, Sendable {
     var steamAchievementsUnlocked: Int?
     var steamAchievementsTotal: Int?
     var sessions: [SessionRecord]
+    var guides: [GuideRecord]?
 }

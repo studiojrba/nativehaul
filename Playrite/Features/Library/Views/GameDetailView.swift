@@ -18,6 +18,8 @@ struct GameDetailView: View {
                 PlaytimeBreakdownView(breakdown: viewModel.breakdown)
                 SessionListView(sessions: viewModel.sessions)
                 TrackedAppSection(viewModel: environment.makeTrackedAppViewModel(for: viewModel.game))
+                HLTBSection(viewModel: environment.makeHLTBViewModel(for: viewModel.game))
+                GuidesSection(viewModel: environment.makeGuidesViewModel(for: viewModel.game))
                 if viewModel.game.steamAppID != nil {
                     SteamAchievementsSection(viewModel: environment.makeSteamAchievementsViewModel(for: viewModel.game))
                 }

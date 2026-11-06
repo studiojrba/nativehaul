@@ -11,5 +11,6 @@ enum PlayriteSchema {
         SeriesEntry.self,
         GameCollection.self,
         SubGame.self,
+        GuideLink.self,
     ]
 }
