@@ -14,7 +14,7 @@ struct SteamSignInServiceTests {
             await http.stub(urlContaining: "openid/login", json: steamReply)
         }
         let service = SteamOpenIDSignInService(
-            authenticator: MockSteamWebAuthenticator(result: result),
+            browser: MockSteamBrowserSignIn(result: result),
             verifier: SteamOpenIDVerifier(http: http),
             account: account
         )

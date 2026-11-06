@@ -437,6 +437,25 @@ Adds managed components and update badges, Obtainium-style, per source (ADR 0020
     `buildid`), so stale bottles show their last-known state.
   - The update surfaces haven't been viewed on screen.
 
+## 18 · feature/steam-signin-loopback — QA Finding #1 fix
+**Ready for J.R to retest now:** onboarding → Steam → Sign in through Steam.
+- 🐞 **Found live by J.R** (screenshot verified by Ollie): Steam replied "Invalid return protocol." Steam's OpenID
+  accepts only http(s) return addresses, so the `retriever://` callback from branch 13 could never work against
+  real Steam. The mocked tests passed because they never reached the real endpoint.
+- ✅🧪 **Fix:** a loopback redirect (RFC 8252), amended in ADR 0015.
+  - A one-shot listener on **127.0.0.1**, on a port the system picks.
+  - `return_to=http://127.0.0.1:<port>/steam-openid/callback` and `realm=http://127.0.0.1:<port>/`.
+  - Sign-in opens in the user's browser. The listener catches Steam's redirect and shows "you can close this
+    tab", then the reply is validated and confirmed with `check_authentication` as before, and the listener
+    shuts down.
+- ✅🧪 **Honest states:** a timeout (also covers a closed tab), a Cancel button while waiting, the listener failing
+  to start (points to manual entry), and Steam's own cancel.
+- ✅ Everything stays on the device: no hosted redirect domain. The manual SteamID + key fallback is unchanged.
+- ✅🧪 **Tests:** loopback URL construction (always http and 127.0.0.1, never a custom scheme), and the real loopback
+  listener's lifecycle (one-shot, stray requests get 404, timeout, cancel, distinct ports, full round trip).
+  327 tests (+8).
+- ⚠️ Pending J.R's live retest. Steam's page should now show the 127.0.0.1 realm and return to the app.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -458,6 +477,7 @@ Adds managed components and update badges, Obtainium-style, per source (ADR 0020
 | 15 | `feature/onboarding` | ✅ | ✅ | 291 | ✅ |
 | 16 | `feature/emulator-launch` | ✅ | ✅ | 304 | ✅ |
 | 17 | `feature/component-updates` | ✅ | ✅ | 319 | ✅ |
+| 18 | `feature/steam-signin-loopback` (QA #1) | ✅ | ✅ | 327 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -520,7 +540,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 17 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 18 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

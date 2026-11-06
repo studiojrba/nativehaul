@@ -30,6 +30,7 @@ final class SteamConnectionViewModel {
     private let http: (any HTTPClient)?
     private let onChanged: @MainActor () -> Void
     private var revision = 0
+    private var signInTask: Task<Void, Never>?
 
     /// Creates the view model. `http` downloads the avatar; `onChanged` runs after the account or library changes.
     init(
@@ -68,6 +69,25 @@ final class SteamConnectionViewModel {
     /// Name to greet the user with.
     var accountName: String {
         profile?.personaName ?? steamID.map { "Steam account \($0)" } ?? "Steam account"
+    }
+
+    /// Whether the browser sign-in is in progress (Retriever is waiting for Steam's redirect).
+    var isSigningIn: Bool {
+        signInTask != nil
+    }
+
+    /// Starts "Sign in through Steam" in the user's browser.
+    func startSignIn() {
+        guard signInTask == nil else { return }
+        signInTask = Task {
+            await signIn()
+            signInTask = nil
+        }
+    }
+
+    /// Stops waiting for the browser; nothing is stored.
+    func cancelSignIn() {
+        signInTask?.cancel()
     }
 
     /// "Sign in through Steam".

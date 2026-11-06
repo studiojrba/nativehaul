@@ -68,7 +68,7 @@ extension AppEnvironment {
 
     private static func makeLiveSteamSignIn(account: any SteamAccountStoring) -> SteamOpenIDSignInService {
         SteamOpenIDSignInService(
-            authenticator: WebAuthenticationSessionRunner(),
+            browser: LoopbackSteamBrowserSignIn(opener: WorkspaceURLOpener()),
             verifier: SteamOpenIDVerifier(http: URLSessionHTTPClient()),
             account: account
         )

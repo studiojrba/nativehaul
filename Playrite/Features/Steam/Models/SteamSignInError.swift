@@ -14,6 +14,10 @@ enum SteamSignInError: Error, Equatable, LocalizedError {
     case rejectedBySteam
     /// Steam couldn't be reached to confirm the sign-in.
     case couldNotConfirm
+    /// The browser sign-in wasn't finished in time (for example, the tab was closed).
+    case timedOut
+    /// Retriever couldn't open its private sign-in listener on this Mac.
+    case couldNotListen
 
     /// User-facing description.
     var errorDescription: String? {
@@ -23,6 +27,12 @@ enum SteamSignInError: Error, Equatable, LocalizedError {
             "Steam's sign-in reply couldn't be trusted, so you weren't signed in. Please try again."
         case .rejectedBySteam: "Steam couldn't confirm this sign-in, so you weren't signed in. Please try again."
         case .couldNotConfirm: "Couldn't reach Steam to confirm the sign-in. Check your connection and try again."
+        case .timedOut:
+            "The sign-in wasn't finished in the browser, so you weren't signed in. Press Sign in through Steam to "
+                + "try again."
+        case .couldNotListen:
+            "Retriever couldn't open its private sign-in address on this Mac. Try again, or enter your details "
+                + "manually below."
         }
     }
 }

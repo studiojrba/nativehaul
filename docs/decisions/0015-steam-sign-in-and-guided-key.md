@@ -44,3 +44,37 @@ otherwise.
   possible in the meantime.
 - `SteamSyncing` gains `loadProfile()`, and `SteamClientProtocol` gains `playerSummary(credentials:)`.
 - Playtime and metadata rules are unchanged. Signing in or out never touches library data.
+
+## Amendment — QA Finding #1 (2026-11-06): loopback redirect replaces the custom scheme
+**What happened:** J.R tried Sign in through Steam during onboarding, and Steam answered **"Invalid return
+protocol."** Steam's OpenID endpoint accepts only http(s) `return_to` and `realm` values. It rejects custom URL
+schemes, so the `retriever://` + `ASWebAuthenticationSession` design above could never work against real Steam.
+The mocked tests passed because they never reached the real endpoint. That risk was listed under Consequences
+above, but it was not checked before landing.
+
+**Decision:** use the standard desktop pattern, a loopback redirect (RFC 8252):
+- A **one-shot HTTP listener on 127.0.0.1** binds to a port the system chooses (`LoopbackCallbackServer`, Network
+  framework), so it can't clash with another app.
+- The request uses `return_to = http://127.0.0.1:<port>/steam-openid/callback` and
+  `realm = http://127.0.0.1:<port>/`.
+- Sign-in opens in the **user's own browser**, where they're usually already signed in to Steam.
+- The listener answers exactly one request to the callback path with a short "you can close this tab" page, then
+  shuts down. Stray requests, such as `/favicon.ico`, get a 404 and don't end the wait.
+- The reply is then validated locally and confirmed with Steam's `check_authentication` **exactly as before**.
+  Only a confirmed reply stores the SteamID64.
+- **Honest states:**
+  - **timeout** (5 minutes; covers a closed tab, which can't be detected directly);
+  - **Cancel** (a button while waiting);
+  - **couldn't listen** (the port couldn't be opened; points to manual entry);
+  - Steam's own "cancel".
+  The listener is shut down in every case.
+- **Everything stays on the device.** A hosted redirect domain was considered and rejected for the trust
+  posture. The listener binds only to 127.0.0.1, never to other interfaces.
+- The manual SteamID64 + API key fallback is unchanged.
+
+**Removed:** `WebAuthenticationSessionRunner`, `SteamWebAuthenticating` and the `retriever://` configuration.
+**Added:** `SteamBrowserSigningIn` (live `LoopbackSteamBrowserSignIn`, mock `MockSteamBrowserSignIn`),
+`LoopbackCallbackServer` and `LoopbackHTTPRequest`. The listener tests use a real loopback socket: one-shot
+behaviour, stray requests, timeout, cancel, distinct ports, and a full browser round trip with a stubbed opener.
+
+**Still to verify live:** J.R retesting against real Steam.

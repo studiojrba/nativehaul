@@ -14,6 +14,18 @@ struct SteamOpenIDTests {
         #expect(query["openid.identity"] == SteamOpenID.identifierSelect)
         #expect(query["openid.return_to"] == configuration.returnTo)
         #expect(query["openid.realm"] == configuration.realm)
+        #expect(query["openid.return_to"] == "http://127.0.0.1:51234/steam-openid/callback")
+        #expect(query["openid.realm"] == "http://127.0.0.1:51234/")
+    }
+
+    @Test func returnAddressesAreAlwaysHTTPLoopbackNeverACustomScheme() throws {
+        let configuration = try #require(SteamOpenIDConfiguration.loopback(port: 61000))
+        let returnTo = try #require(URL(string: configuration.returnTo))
+        #expect(returnTo.scheme == "http")
+        #expect(returnTo.host() == "127.0.0.1")
+        #expect(returnTo.port == 61000)
+        #expect(returnTo.path() == SteamOpenIDConfiguration.callbackPath)
+        #expect(configuration.returnTo.hasPrefix(configuration.realm))
     }
 
     @Test func validReplyYieldsTheSteamID() throws {
@@ -36,7 +48,7 @@ struct SteamOpenIDTests {
 
     @Test(arguments: [
         ["openid.op_endpoint": "https://evil.example/openid/login"],
-        ["openid.return_to": "retriever://steam-openid/elsewhere"],
+        ["openid.return_to": "http://127.0.0.1:9/steam-openid/callback"],
         ["openid.signed": "signed,claimed_id,identity"],
         ["openid.sig": nil],
     ] as [[String: String?]])
