@@ -1,0 +1,50 @@
+[
+  {
+    "id": "profile-check-non-retail-title-id",
+    "title": "Profile check fails on a non-retail title ID",
+    "symptom": "The build stops during the engine's profile check with an error saying the title ID is unknown or not a retail ID, even though the title is 64-bit and the staged files are complete.",
+    "logSignatures": [
+      "profile check failed",
+      "non-retail title id",
+      "not a retail title id",
+      "unknown title id"
+    ],
+    "cause": "The engine script's profile check only accepts title IDs in the retail range (beginning with 01). Titles with other IDs — homebrew, development or region-variant builds — are rejected before conversion starts, although they are otherwise buildable.",
+    "steps": [
+      {
+        "id": 1,
+        "kind": "backupScript",
+        "title": "Back up the engine script",
+        "detail": "Copies the script to Playrite's backup folder and records its SHA-256, so it can be restored byte-for-byte. Nothing else changes."
+      },
+      {
+        "id": 2,
+        "kind": "patchScript",
+        "title": "Patch the profile check",
+        "detail": "Applies a reviewed text change that must match exactly once. Edit the search text to match your engine's actual check, preview the diff, then apply. Refused unless the backup is intact and the script is unchanged since it was taken."
+      },
+      {
+        "id": 3,
+        "kind": "rebuild",
+        "title": "Rebuild the title",
+        "detail": "Re-queues the failed job so it runs with the patched script."
+      },
+      {
+        "id": 4,
+        "kind": "restoreScript",
+        "title": "Restore the original script",
+        "detail": "Writes the backed-up bytes back over the patched script, in place, keeping its permissions."
+      },
+      {
+        "id": 5,
+        "kind": "verifyRestore",
+        "title": "Verify the restore",
+        "detail": "Confirms the script's bytes and SHA-256 match the backup exactly. The case is only closed when this passes."
+      }
+    ],
+    "suggestedPatch": {
+      "search": "check_retail_profile \"$TITLE_ID\" || exit 1",
+      "replacement": "check_retail_profile \"$TITLE_ID\" || echo \"[playrite] profile check skipped for $TITLE_ID\""
+    }
+  }
+]
