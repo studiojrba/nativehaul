@@ -122,3 +122,20 @@ Living status log. Each branch appends its section. Legend: ✅ built & compiles
   `ProcessBuildEngineRunner` is not exercised against a real engine (none available); the suggested patch text is a
   template the user must adapt to their engine script.
 - Build ✅ · Tests ✅ · Lint ✅. ⛔ Not pushed (BLOCKED.md).
+
+## 7 · feature/guides-hltb
+- ✅ Guides (`Features/Guides`): `GuideLink` SwiftData model (title, author, URL, chapter links, current chapter) on
+  each game; `GuideLinkValidator` allows only https GameFAQs hosts and chapter links inside the same guide;
+  mandatory title + author with a full attribution line on every link; `URLOpening` (live `WorkspaceURLOpener`,
+  mock `RecordingURLOpener`) opens the browser. **No network calls, no scraping, no embedding.**
+  Chapter-aware "Continue: <chapter>" button. Guides included in JSON export/import (optional field — older archives
+  still import).
+- ✅ HLTB (`Features/HLTB`): `HLTBProviding` → `CachedHLTBService` (cache-first, 30-day staleness, stale fallback),
+  `FileHLTBCache` (Application Support JSON) / `InMemoryHLTBCache`, pluggable `HLTBRemoteSearching` with the default
+  `UnavailableHLTBRemoteSource` (HLTB has no official API; Playrite doesn't scrape). Manual entry sheet and
+  "Look Up on HowLongToBeat" link-out. **Every figure is labelled "HLTB estimate".**
+- ✅ Integration: game detail shows HLTB as its own labelled breakdown row (never merged); stats page shows a separate
+  "Backlog Estimate (HLTB estimate)"; badges unaffected. ADR 0009.
+- 🧪 142 tests total (+19).
+- 🟡 Automatic HLTB lookup intentionally not implemented (no official API) — interface ready for a licensed source.
+- Build ✅ · Tests ✅ · Lint ✅ · App launches ✅. ⛔ Not pushed (BLOCKED.md).
