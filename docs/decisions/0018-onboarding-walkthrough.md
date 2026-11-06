@@ -40,7 +40,7 @@ offers a checklist of optional modules, each module's own flow, and a Done scree
 - "It only looks in folders you point it at" was qualified to "…plus the standard places games install to (Steam,
   CrossOver, ~/Switch/Games)", because zero-tinker detection reads those places by default. The unqualified
   sentence would not have been true.
-- "Completely open source": the GitHub repo is public, but it has **no LICENSE file yet**. A license needs to be
-  added for that line to be strictly true. That choice belongs to J.R.
+- "Completely open source": the GitHub repo is public. When this ADR was written it had no LICENSE file. J.R
+  chose MIT (Studio Jrba inc.), and it was added in `feature/mit-license`, so the line is now strictly true.
 - "Never asks for Accessibility or Screen Recording": true. Playtime tracking uses NSWorkspace launch
   notifications, which need no permission.

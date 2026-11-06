@@ -106,3 +106,6 @@ Playrite/
 - Branch per feature: `feature/<kebab-name>`; never commit to `main`.
 - Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`).
 - Run `./scripts/lint.sh` and `./scripts/build.sh` before pushing; update `docs/PROGRESS.md`.
+
+## License
+MIT — see [LICENSE](LICENSE).

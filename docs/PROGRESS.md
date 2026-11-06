@@ -372,8 +372,8 @@ Adds the first-run walkthrough (ADR 0018). 291 tests (+8).
 - ✅🧪 **Skipping:** one click ("Set up later"), remembered, never nags. It can be re-run from Settings → General.
 - ✅🧪 **Zero-tinker:** `~/Switch/Games` is scanned automatically when it exists, even with no folders
   configured, so someone who skips setup still has their games found.
-- ⚠️ **Trust copy:** the repo has **no LICENSE file**, so "completely open source" needs one added; that choice
-  belongs to J.R. The folder line is qualified to be accurate (see ADR 0018). The walkthrough hasn't been viewed
+- ⚠️ **Trust copy:** the repo had **no LICENSE file**, so "completely open source" needed one. Resolved in
+  branch 20 (MIT). The folder line is qualified to be accurate (see ADR 0018). The walkthrough hasn't been viewed
   on screen.
 
 ## 16 · feature/emulator-launch
@@ -470,6 +470,12 @@ approved by J.R when he set the rule). 333 tests (+6).
 - ⚠️ Whether J.R's engine reads `~/.switch/prod.keys` by default depends on the engine. `keysPath` and `{keys}`
   cover it either way. Not viewed on screen.
 
+## 20 · feature/mit-license
+- ✅ `LICENSE` added at the repo root: standard MIT text, "Copyright (c) 2026 Studio Jrba inc." (J.R's decision).
+  `README.md` gains a one-line License section pointing at it.
+- ✅ This closes the gap flagged in branch 15: onboarding's "Completely open source" line is now strictly true.
+- No other release prep. J.R's "no release prep yet" rule still stands.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -493,6 +499,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 17 | `feature/component-updates` | ✅ | ✅ | 319 | ✅ |
 | 18 | `feature/steam-signin-loopback` (QA #1) | ✅ | ✅ | 327 | ✅ |
 | 19 | `feature/nxnative-file-prompts` | ✅ | ✅ | 333 | ✅ |
+| 20 | `feature/mit-license` | ✅ | ✅ | 333 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -555,7 +562,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 19 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 20 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.
