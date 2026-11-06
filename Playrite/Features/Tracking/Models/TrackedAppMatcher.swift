@@ -4,16 +4,20 @@ import Foundation
 enum TrackedAppMatcher {
     /// Default platform for a bundle: Switch native port when inside the games folder, else Mac.
     static func platform(forBundleAt path: String, gamesFolder: String) -> GamePlatform {
-        let folder = BundlePath.normalize(gamesFolder)
-        return BundlePath.normalize(path).hasPrefix(folder + "/") ? .switchPort : .macNative
+        isInside(path, folder: gamesFolder) ? .switchPort : .macNative
     }
 
-    /// An untracked game whose title matches the app name (case/diacritic-insensitive), if any.
+    /// Whether `path` lies strictly inside `folder` (both normalised).
+    static func isInside(_ path: String, folder: String) -> Bool {
+        BundlePath.normalize(path).hasPrefix(BundlePath.normalize(folder) + "/")
+    }
+
+    /// An untracked game whose normalised title matches the app's title or bundle name, if any.
     @MainActor
     static func match(_ app: DiscoveredApp, in games: [Game]) -> Game? {
         games.first { game in
             game.appBundlePath == nil
-                && game.title.compare(app.name, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
+                && (TitleNormalizer.matches(game.title, app.title) || TitleNormalizer.matches(game.title, app.name))
         }
     }
 }
