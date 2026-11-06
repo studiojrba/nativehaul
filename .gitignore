@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# Xcode (project is generated from project.yml by XcodeGen)
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+build/
+.build/
+*.xcresult
+
+# Secrets — never commit keys, game files, or engine binaries
+*.keys
+prod.keys
+title.keys
+*.nsp
+*.xci
+*.nca
+.env
+Secrets/

@@ -1,0 +1,64 @@
+included:
+  - Playrite
+  - PlayriteTests
+excluded:
+  - build
+  - DerivedData
+  - .build
+
+opt_in_rules:
+  - force_unwrapping
+  - implicitly_unwrapped_optional
+  - one_declaration_per_file
+  - no_magic_numbers
+  - explicit_init
+  - empty_count
+  - first_where
+  - sorted_first_last
+  - contains_over_first_not_nil
+  - closure_spacing
+  - fatal_error_message
+  - missing_docs
+  - private_swiftui_state
+
+disabled_rules:
+  - todo
+  - trailing_comma
+
+force_cast: error
+force_try: error
+force_unwrapping: error
+
+line_length:
+  warning: 120
+  error: 160
+file_length:
+  warning: 250
+  error: 400
+type_body_length:
+  warning: 200
+  error: 300
+function_body_length:
+  warning: 50
+  error: 80
+identifier_name:
+  min_length: 2
+  excluded: [id, x, y]
+
+missing_docs:
+  warning: [open, public]
+
+no_magic_numbers:
+  test_parent_classes: [XCTestCase]
+
+custom_rules:
+  no_inline_padding_literal:
+    name: "Use DesignTokens"
+    regex: '\.(padding|frame|cornerRadius|spacing)\([^)]*\b[0-9]+(\.[0-9]+)?\b'
+    included: 'Playrite/.*\.swift'
+    excluded: 'Playrite/Shared/DesignSystem/.*\.swift'
+    message: "Inline styling literal — use DesignTokens instead."
+    severity: error
+
+analyzer_rules:
+  - unused_import
