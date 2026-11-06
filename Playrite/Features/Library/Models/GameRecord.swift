@@ -18,6 +18,8 @@ struct GameRecord: Codable, Equatable, Sendable {
     var selfReportedSeconds: Int?
     var steamAchievementsUnlocked: Int?
     var steamAchievementsTotal: Int?
+    /// Optional; older archives omit it.
+    var hltbID: Int?
     var sessions: [SessionRecord]
     var guides: [GuideRecord]?
 }

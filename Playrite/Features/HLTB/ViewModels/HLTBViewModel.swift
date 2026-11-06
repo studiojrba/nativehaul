@@ -57,9 +57,9 @@ final class HLTBViewModel {
         }
     }
 
-    /// Opens the HowLongToBeat search page for this title in the browser.
+    /// Opens the game's HowLongToBeat page (when its HLTB id is known) or a title search, in the browser.
     func openSearch() {
-        if let url = service.searchURL(for: game.title) {
+        if let url = game.hltbID.flatMap(HLTBLink.gameURL(id:)) ?? service.searchURL(for: game.title) {
             opener.open(url)
         }
     }

@@ -63,6 +63,7 @@ struct LibraryArchiveImporter {
         game.selfReportedSeconds = record.selfReportedSeconds
         game.steamAchievementsUnlocked = record.steamAchievementsUnlocked
         game.steamAchievementsTotal = record.steamAchievementsTotal
+        game.hltbID = record.hltbID
         repository.insert(game)
         for sessionRecord in record.sessions {
             let session = PlaySession(

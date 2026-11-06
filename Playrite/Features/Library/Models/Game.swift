@@ -36,6 +36,8 @@ final class Game {
     var steamAchievementsUnlocked: Int?
     /// Steam achievements available, from the last achievements load.
     var steamAchievementsTotal: Int?
+    /// HowLongToBeat game identifier, when known (used for a direct link-out; never fetched).
+    var hltbID: Int?
     /// Recorded play sessions.
     @Relationship(deleteRule: .cascade, inverse: \PlaySession.game) var sessions: [PlaySession] = []
     /// External guide links (link-out only).

@@ -65,6 +65,17 @@ final class CachedHLTBService: HLTBProviding {
         try cache.save(estimates)
     }
 
+    func reassign(from sourceID: UUID, to targetID: UUID) throws {
+        guard let moved = estimates.removeValue(forKey: sourceID) else { return }
+        if estimates[targetID] == nil {
+            estimates[targetID] = HLTBEstimate(
+                gameID: targetID, title: moved.title, seconds: moved.seconds,
+                recordedAt: moved.recordedAt, origin: moved.origin
+            )
+        }
+        try cache.save(estimates)
+    }
+
     func searchURL(for title: String) -> URL? {
         var components = URLComponents(string: Self.searchBase)
         components?.queryItems = [URLQueryItem(name: "q", value: title)]
