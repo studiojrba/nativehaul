@@ -36,6 +36,8 @@ enum DesignTokens {
         static let maxWidth: CGFloat = 200
         /// Height divided by width for box art (portrait).
         static let aspectRatio: CGFloat = 1.5
+        /// Width divided by height (inverse of ``aspectRatio``), for `.aspectRatio(_:)`.
+        static let widthToHeight: CGFloat = 1 / aspectRatio
         static let detailWidth: CGFloat = 220
         static let stripWidth: CGFloat = 110
         static let placeholderSymbolScale: CGFloat = 0.3
@@ -59,6 +61,7 @@ enum DesignTokens {
         static let muted: Double = 0.4
         static let disabled: Double = 0.35
         static let overlay: Double = 0.6
+        static let full: Double = 1
     }
 
     /// Typography roles.

@@ -33,7 +33,7 @@ struct BadgeTile: View {
         .padding(DesignTokens.Spacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(RoundedRectangle(cornerRadius: DesignTokens.Radius.lg).fill(Theme.surface))
-        .opacity(result.isEarned ? 1 : DesignTokens.Opacity.overlay)
+        .opacity(result.isEarned ? DesignTokens.Opacity.full : DesignTokens.Opacity.overlay)
     }
 }
 

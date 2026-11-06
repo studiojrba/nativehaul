@@ -139,3 +139,58 @@ Living status log. Each branch appends its section. Legend: ✅ built & compiles
 - 🧪 142 tests total (+19).
 - 🟡 Automatic HLTB lookup intentionally not implemented (no official API) — interface ready for a licensed source.
 - Build ✅ · Tests ✅ · Lint ✅ · App launches ✅. ⛔ Not pushed (BLOCKED.md).
+
+---
+
+# Final summary (end of overnight session, 2026-11-06)
+
+## Status by branch (stacked, merge in this order)
+| # | Branch | Built | Compiles | Tests | Pushed |
+|---|--------|-------|----------|-------|--------|
+| 0 | `feature/project-foundation` | ✅ | ✅ | 1 | ⛔ |
+| 1 | `feature/library-core` | ✅ | ✅ | 22 | ⛔ |
+| 2 | `feature/steam-provider` | ✅ | ✅ | 47 | ⛔ |
+| 3 | `feature/playtime-tracking` | ✅ | ✅ | 63 | ⛔ |
+| 4 | `feature/series-collections` | ✅ | ✅ | 79 | ⛔ |
+| 5 | `feature/stats-badges` | ✅ | ✅ | 92 | ⛔ |
+| 6 | `feature/nxnative-module` | ✅ | ✅ | 123 | ⛔ |
+| 7 | `feature/guides-hltb` | ✅ | ✅ | 142 | ⛔ |
+
+Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
+`swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
+1, 3 and 7.
+
+## ⛔ The one blocker: pushing
+`git push` returns **403**: the active `gh` account `jr-resilia` has no write access to `studiojrba/Playrite`.
+Claude was not allowed to use the inactive `studiojrba` account's credentials, so no workaround was tried.
+**Everything is committed locally.** To unblock, follow `BLOCKED.md`: switch the gh account, then push every
+`feature/*` branch.
+
+## Key decisions (see `docs/decisions/` ADR 0001–0009)
+- Empty upstream repo, so the feature branches are **stacked**. `main` was never touched.
+- XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
+- One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
+- Views are driven entirely by design tokens and built from small components, ready for a Figma re-skin
+  (enforced by a SwiftLint custom rule plus a manual audit).
+- Playtime is stored per source and never merged; badges use real data only; HLTB is always labelled
+  "HLTB estimate".
+- The Steam key lives only in the Keychain. NXNative is off by default, never bundles anything, and cannot
+  delete files (it has no delete API, and a policy test checks this).
+- No scraping anywhere: GameFAQs guides are link-out only, and HLTB uses manual entry plus a link-out because
+  there is no official API.
+
+## Stubbed / not verified automatically
+- Live Steam calls and the real Keychain wrapper. No key was available; both are covered with mocks.
+- The live NSWorkspace observer and `ProcessBuildEngineRunner` against a real engine. No engine was available;
+  both are covered with mocks and checked with a build and a launch.
+- The nxnative CLI contract is unknown. Arguments are a configurable template, title metadata is entered manually,
+  and the troubleshooting patch is an editable template.
+- Automatic HLTB lookup is intentionally not implemented. The `HLTBRemoteSearching` seam is ready.
+- Cover art fetching, extra providers, and the Figma visual pass are future work (`docs/PLAN.md`).
+
+## Next steps
+1. Unblock the push (`BLOCKED.md`), then open PRs in order 0 → 7.
+2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
+   on a macOS runner.
+3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.
+4. Re-skin from Figma by changing tokens and components only.

@@ -12,7 +12,7 @@ struct CoverArtView: View {
 
     var body: some View {
         content
-            .aspectRatio(1 / DesignTokens.Cover.aspectRatio, contentMode: .fit)
+            .aspectRatio(DesignTokens.Cover.widthToHeight, contentMode: .fit)
             .frame(width: width)
             .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
             .accessibilityLabel(Text(title))

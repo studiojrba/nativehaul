@@ -4,6 +4,17 @@ A native macOS game library hub — a Playnite-style library (Steam, Mac-native 
 series, stats, badges, guides) plus an **optional** NX2Apple-style Switch build pipeline UI that drives a
 **user-supplied external engine** (never bundled).
 
+## Features
+- **Library** — SwiftData cover grid; sidebar sections Playing / Backlog / Completed; game detail; JSON import/export.
+- **Steam** — owned games, recently played and achievements via the Steam Web API; key stored only in the Keychain.
+- **Playtime tracking** — NSWorkspace watcher logs sessions for tracked `.app` bundles (e.g. `~/Switch/Games`).
+  Every figure carries its source (SteamSynced, MacTracked, SelfReported, HLTB estimate); sources are never merged.
+- **Series & collections** — recommended play order (release or chronological) and an Up Next strip that never renumbers.
+- **Stats & badges** — backlog counts, hours by source, completion %, badges computed only from real data.
+- **NXNative (optional)** — build queue UI for a user-supplied external engine: preflight checks, streamed logs,
+  previewed cleanup (Trash only, never emptied), and a backup-first, audit-logged troubleshooting knowledge base.
+- **Guides & HLTB** — GameFAQs link-out guides with attribution and chapters; cached, labelled HowLongToBeat estimates.
+
 ## Quickstart
 
 ### Prerequisites
