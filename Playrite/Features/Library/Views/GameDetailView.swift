@@ -3,6 +3,7 @@ import SwiftUI
 /// Full detail screen for one game. Feature sections are composed vertically.
 struct GameDetailView: View {
     @State private var viewModel: GameDetailViewModel
+    @Environment(AppEnvironment.self) private var environment
 
     /// Creates the screen for a game.
     init(viewModel: GameDetailViewModel) {
@@ -15,6 +16,9 @@ struct GameDetailView: View {
                 GameDetailHeader(viewModel: viewModel)
                 PlaytimeBreakdownView(breakdown: viewModel.breakdown)
                 SessionListView(sessions: viewModel.sessions)
+                if viewModel.game.steamAppID != nil {
+                    SteamAchievementsSection(viewModel: environment.makeSteamAchievementsViewModel(for: viewModel.game))
+                }
                 if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage).foregroundStyle(Theme.danger)
                 }
@@ -39,6 +43,7 @@ struct GameDetailView: View {
 #Preview {
     let environment = AppEnvironment.preview
     if let game = try? environment.repository.fetchGames().first {
-        GameDetailView(viewModel: GameDetailViewModel(game: game, repository: environment.repository))
+        GameDetailView(viewModel: environment.makeGameDetailViewModel(for: game))
+            .environment(environment)
     }
 }

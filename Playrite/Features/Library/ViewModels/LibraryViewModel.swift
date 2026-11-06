@@ -34,7 +34,7 @@ final class LibraryViewModel {
     }
 
     /// Looks up a game by identifier.
-    func game(withID id: Game.ID) -> Game? {
+    func game(withID id: UUID) -> Game? {
         games.first { $0.id == id }
     }
 

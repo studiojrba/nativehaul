@@ -32,6 +32,10 @@ final class Game {
     var steamSyncedSeconds: Int?
     /// Playtime the player entered by hand (seconds). Source: ``PlaytimeSource/selfReported``.
     var selfReportedSeconds: Int?
+    /// Steam achievements unlocked, from the last achievements load.
+    var steamAchievementsUnlocked: Int?
+    /// Steam achievements available, from the last achievements load.
+    var steamAchievementsTotal: Int?
     /// Recorded play sessions.
     @Relationship(deleteRule: .cascade, inverse: \PlaySession.game) var sessions: [PlaySession] = []
 

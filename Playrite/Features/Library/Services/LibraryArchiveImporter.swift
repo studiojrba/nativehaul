@@ -61,6 +61,8 @@ struct LibraryArchiveImporter {
         game.appBundlePath = record.appBundlePath
         game.steamSyncedSeconds = record.steamSyncedSeconds
         game.selfReportedSeconds = record.selfReportedSeconds
+        game.steamAchievementsUnlocked = record.steamAchievementsUnlocked
+        game.steamAchievementsTotal = record.steamAchievementsTotal
         repository.insert(game)
         for sessionRecord in record.sessions {
             let session = PlaySession(

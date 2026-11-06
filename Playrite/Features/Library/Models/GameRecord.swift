@@ -16,5 +16,7 @@ struct GameRecord: Codable, Equatable, Sendable {
     var appBundlePath: String?
     var steamSyncedSeconds: Int?
     var selfReportedSeconds: Int?
+    var steamAchievementsUnlocked: Int?
+    var steamAchievementsTotal: Int?
     var sessions: [SessionRecord]
 }
