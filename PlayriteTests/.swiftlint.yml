@@ -3,3 +3,5 @@ disabled_rules:
   - missing_docs
   - one_declaration_per_file
   - force_unwrapping
+  - large_tuple
+  - line_length
