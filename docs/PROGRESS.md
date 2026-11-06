@@ -185,6 +185,35 @@ unreadable folders; view model add/remove/persist/scan; `TitleNormalizer`.
   would link only one.
 - Scans of the configured folders are not cancellable; the depth limit keeps them short.
 
+## 9 · feature/library-dedupe
+Branched from `feature/folder-import`. Owner request: the logbook import (141 games) left the 17 Switch ports
+duplicated, once from the folder scan and once from the import.
+
+**Built**
+- **Merge engine (`GameMerger`, `LibraryDeduplicator`):**
+  - Groups entries by normalised title. Entries pointing at two different bundles or Steam apps are never merged.
+  - The richest entry survives and keeps its ID. It gains the duplicate's tracked `.app` path, sessions, Steam
+    data and missing dates.
+  - Series entries and collections are repointed, and the HLTB estimate moves (`HLTBProviding.reassign`).
+  - The duplicate is then deleted. Playtime sources are never summed.
+- **"Merge Duplicate Games…" (Library menu):** a preview sheet that lists each group and what it keeps, then merges
+  on confirmation. This is the one-click fix for the existing 17 pairs. Nothing is merged without that click.
+- **Future-proofing:**
+  - The same pass runs after every library import (`ImportSummary.duplicatesMerged`) and every folder scan
+    (`FolderImportSummary.duplicatesMerged`).
+  - Steam sync links to an existing entry without a Steam app by title instead of adding a new one
+    (`SteamSyncSummary.linked`).
+- **HLTB id:** `Game.hltbID` / `GameRecord.hltbID` (optional, so older archives still decode). With an id,
+  "Look Up on HowLongToBeat" opens the game's own page.
+- ADR 0011.
+
+**Tests:** J.R's exact scenario (scanned + imported → one entry with both sets of data and series repointed),
+preview without changes, no merge across different bundles or Steam apps, HLTB move, import-time merge, Steam title
+link and the view model. **171 tests in 42 suites, all passing.** Lint clean.
+
+**Unverified:** not run against J.R's real store. Run Library → Merge Duplicate Games… once to fix the existing
+17 pairs, then check the preview count is 17.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -197,6 +226,7 @@ unreadable folders; view model add/remove/persist/scan; `TitleNormalizer`.
 | 6 | `feature/nxnative-module` | ✅ | ✅ | 123 | ✅ |
 | 7 | `feature/guides-hltb` | ✅ | ✅ | 142 | ✅ |
 | 8 | `feature/folder-import` | ✅ | ✅ | 164 | ✅ |
+| 9 | `feature/library-dedupe` | ✅ | ✅ | 171 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -227,7 +257,7 @@ target are still named Playrite; renaming them is a separate task.
 ⚠️ Because the remote had no `main`, GitHub made the first pushed branch, **`feature/project-foundation`**, the
 default branch. Create `main` (for example from the merged stack) and set it as the default before opening PRs.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0010)
+## Key decisions (see `docs/decisions/` ADR 0001–0011)
 - Empty upstream repo, so the feature branches are **stacked**. `main` was never touched.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
