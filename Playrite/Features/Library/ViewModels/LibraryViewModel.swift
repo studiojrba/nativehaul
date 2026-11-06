@@ -13,14 +13,29 @@ final class LibraryViewModel {
     var errorMessage: String?
     /// Last import result, if any.
     var importSummary: ImportSummary?
+    /// Last game-folder scan result, if any.
+    var folderImportSummary: FolderImportSummary?
+    /// Whether a game-folder scan is running.
+    private(set) var isScanningFolders = false
 
     private let repository: any LibraryRepository
     private let transfer: any LibraryTransferring
+    private let folderImporter: (any GameFolderImporting)?
 
-    /// Creates the view model.
-    init(repository: any LibraryRepository, transfer: any LibraryTransferring) {
+    /// Creates the view model. `folderImporter` enables "Scan Game Folders".
+    init(
+        repository: any LibraryRepository,
+        transfer: any LibraryTransferring,
+        folderImporter: (any GameFolderImporting)? = nil
+    ) {
         self.repository = repository
         self.transfer = transfer
+        self.folderImporter = folderImporter
+    }
+
+    /// Whether "Scan Game Folders" is available.
+    var canScanFolders: Bool {
+        folderImporter != nil && !isScanningFolders
     }
 
     /// Games after section and search filtering.
@@ -84,6 +99,20 @@ final class LibraryViewModel {
         perform {
             importSummary = try transfer.importData(data)
             games = try repository.fetchGames()
+        }
+    }
+
+    /// Scans configured game folders and CrossOver, then reloads.
+    func scanGameFolders() async {
+        guard let folderImporter, !isScanningFolders else { return }
+        isScanningFolders = true
+        defer { isScanningFolders = false }
+        do {
+            folderImportSummary = try await folderImporter.scanConfiguredFolders()
+            games = try repository.fetchGames()
+            errorMessage = nil
+        } catch {
+            errorMessage = error.localizedDescription
         }
     }
 

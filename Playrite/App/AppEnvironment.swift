@@ -30,6 +30,10 @@ final class AppEnvironment {
     let hltb: any HLTBProviding
     /// Opens links in the browser.
     let urlOpener: any URLOpening
+    /// Configured game folders.
+    let gameFolders: any GameFolderStoring
+    /// Game folder + CrossOver import.
+    let folderImporter: any GameFolderImporting
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -44,7 +48,9 @@ final class AppEnvironment {
         nxnativeServices: NXNativeServices,
         engineConfiguration: any EngineConfigurationStoring,
         hltb: any HLTBProviding,
-        urlOpener: any URLOpening
+        urlOpener: any URLOpening,
+        gameFolders: any GameFolderStoring,
+        folderImporter: any GameFolderImporting
     ) {
         self.container = container
         self.repository = repository
@@ -58,6 +64,8 @@ final class AppEnvironment {
         self.engineConfiguration = engineConfiguration
         self.hltb = hltb
         self.urlOpener = urlOpener
+        self.gameFolders = gameFolders
+        self.folderImporter = folderImporter
     }
 
     /// Live environment using the on-disk store, Keychain and network.
@@ -71,6 +79,14 @@ final class AppEnvironment {
             observer: WorkspaceRunningApplicationObserver(),
             repository: repository,
             preferences: trackingPreferences
+        )
+        let gameFolders = UserDefaultsGameFolderStore()
+        let folderImporter = GameFolderImporter(
+            folders: gameFolders,
+            discoverer: GameFolderDiscoverer(scanner: AppBundleScanner(), crossOver: CrossOverBottleScanner()),
+            repository: repository,
+            trackingPreferences: trackingPreferences,
+            watcher: watcher
         )
         return AppEnvironment(
             container: container,
@@ -92,7 +108,9 @@ final class AppEnvironment {
             ),
             engineConfiguration: UserDefaultsEngineConfigurationStore(),
             hltb: CachedHLTBService(cache: FileHLTBCache()),
-            urlOpener: WorkspaceURLOpener()
+            urlOpener: WorkspaceURLOpener(),
+            gameFolders: gameFolders,
+            folderImporter: folderImporter
         )
     }
 
@@ -116,7 +134,9 @@ final class AppEnvironment {
                     enginePath: "/tools/nxnative"
                 )),
                 hltb: CachedHLTBService(cache: InMemoryHLTBCache()),
-                urlOpener: RecordingURLOpener()
+                urlOpener: RecordingURLOpener(),
+                gameFolders: InMemoryGameFolderStore(["/Users/demo/Switch/Games"]),
+                folderImporter: MockGameFolderImporter()
             )
         } catch {
             fatalError("Preview environment could not be created: \(error)")

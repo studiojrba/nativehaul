@@ -44,6 +44,9 @@ struct RootView: View {
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.willTerminateNotification)) { _ in
             environment.watcher.stop()
         }
+        .onReceive(NotificationCenter.default.publisher(for: LibraryChangeNotification.name)) { _ in
+            libraryViewModel.reload()
+        }
         .toolbar { libraryToolbar }
         .sheet(isPresented: $isAddingGame) {
             AddGameSheet { libraryViewModel.addGame(title: $0, platform: $1, status: $2) }
@@ -91,6 +94,10 @@ struct RootView: View {
                 Button("Export Library…") {
                     exportDocument = libraryViewModel.exportData().map(LibraryJSONDocument.init(data:))
                 }
+                Divider()
+                Button("Scan Game Folders") { Task { await libraryViewModel.scanGameFolders() } }
+                    .disabled(!libraryViewModel.canScanFolders)
+                SettingsLink { Text("Configure Game Folders…") }
             }
         }
     }
@@ -104,7 +111,9 @@ struct RootView: View {
     }
 
     private var alertMessage: String? {
-        libraryViewModel.errorMessage ?? libraryViewModel.importSummary?.description
+        libraryViewModel.errorMessage
+            ?? libraryViewModel.importSummary?.description
+            ?? libraryViewModel.folderImportSummary?.description
     }
 
     private var alertBinding: Binding<Bool> {
@@ -118,6 +127,7 @@ struct RootView: View {
     private func clearAlert() {
         libraryViewModel.errorMessage = nil
         libraryViewModel.importSummary = nil
+        libraryViewModel.folderImportSummary = nil
     }
 
     private func handleImport(_ result: Result<URL, Error>) {

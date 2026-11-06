@@ -3,7 +3,7 @@ import Foundation
 extension AppEnvironment {
     /// Builds the library view model.
     func makeLibraryViewModel() -> LibraryViewModel {
-        let viewModel = LibraryViewModel(repository: repository, transfer: transfer)
+        let viewModel = LibraryViewModel(repository: repository, transfer: transfer, folderImporter: folderImporter)
         viewModel.reload()
         return viewModel
     }
@@ -122,5 +122,12 @@ extension AppEnvironment {
     /// Builds the HLTB view model for a game.
     func makeHLTBViewModel(for game: Game) -> HLTBViewModel {
         HLTBViewModel(game: game, service: hltb, opener: urlOpener)
+    }
+
+    /// Builds the Game Folders settings view model.
+    func makeGameFoldersViewModel(
+        onLibraryChanged: @escaping @MainActor () -> Void = LibraryChangeNotification.post
+    ) -> GameFoldersViewModel {
+        GameFoldersViewModel(store: gameFolders, importer: folderImporter, onLibraryChanged: onLibraryChanged)
     }
 }
