@@ -49,7 +49,8 @@ extension AppEnvironment {
                 account: steamAccount
             ),
             imageHTTP: URLSessionHTTPClient(),
-            bottleInstaller: makeLiveBottleInstaller(repository: repository, account: steamAccount)
+            bottleInstaller: makeLiveBottleInstaller(repository: repository, account: steamAccount),
+            onboarding: UserDefaultsOnboardingStore()
         )
     }
 

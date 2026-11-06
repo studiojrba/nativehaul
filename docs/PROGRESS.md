@@ -361,6 +361,21 @@ system and HTTP. 283 tests (+27).
   -v` and the silent Steam install are unverified and each kept in one place. The panel hasn't been viewed on
   screen.
 
+## 15 · feature/onboarding
+Adds the first-run walkthrough (ADR 0018). 291 tests (+8).
+- ✅🧪 **Screens:** "Hey! I'm Retriever." → what it does → the trust block (shown before any setup) → the
+  checklist hub with J.R's reassurance → a step for each checked module, in order → a Done screen with what's
+  set up, what was skipped and where to find it later.
+- ✅ **Modules** reuse their existing flows: Find your games (pre-checked), Steam sign-in plus the key steps,
+  CrossOver detection plus the golden-bottle offer, and the Switch ports folder. Emulators show as "coming soon";
+  the next branch wires them in.
+- ✅🧪 **Skipping:** one click ("Set up later"), remembered, never nags. It can be re-run from Settings → General.
+- ✅🧪 **Zero-tinker:** `~/Switch/Games` is scanned automatically when it exists, even with no folders
+  configured, so someone who skips setup still has their games found.
+- ⚠️ **Trust copy:** the repo has **no LICENSE file**, so "completely open source" needs one added; that choice
+  belongs to J.R. The folder line is qualified to be accurate (see ADR 0018). The walkthrough hasn't been viewed
+  on screen.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -379,6 +394,7 @@ system and HTTP. 283 tests (+27).
 | 12 | `feature/metadata-artwork` | ✅ | ✅ | 232 | ✅ |
 | 13 | `feature/steam-signin` | ✅ | ✅ | 256 | ✅ |
 | 14 | `feature/bottle-automation` | ✅ | ✅ | 283 | ✅ |
+| 15 | `feature/onboarding` | ✅ | ✅ | 291 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -418,7 +434,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0017)
+## Key decisions (see `docs/decisions/` ADR 0001–0018)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -441,7 +457,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 14 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 15 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

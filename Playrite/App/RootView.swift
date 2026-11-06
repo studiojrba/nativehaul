@@ -13,6 +13,7 @@ struct RootView: View {
     @State private var isAddingGame = false
     @State private var isImporting = false
     @State private var isMergingDuplicates = false
+    @State private var isOnboarding = false
     @State private var exportDocument: LibraryJSONDocument?
 
     /// Creates the root view.
@@ -44,8 +45,17 @@ struct RootView: View {
         .environment(environment)
         .onChange(of: selection) { path.removeAll() }
         .task {
+            isOnboarding = !environment.onboarding.hasCompletedOnboarding
             environment.watcher.start()
             await libraryViewModel.runAutomaticUpkeep()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: OnboardingRequest.name)) { _ in isOnboarding = true }
+        .sheet(isPresented: $isOnboarding) {
+            OnboardingView(viewModel: environment.makeOnboardingViewModel {
+                isOnboarding = false
+                Task { await libraryViewModel.runAutomaticUpkeep() }
+            })
+            .environment(environment)
         }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.willTerminateNotification)) { _ in
             environment.watcher.stop()

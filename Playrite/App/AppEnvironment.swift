@@ -48,6 +48,8 @@ final class AppEnvironment {
     let imageHTTP: (any HTTPClient)?
     /// One-click Windows installs through CrossOver.
     let bottleInstaller: any BottleInstalling
+    /// Whether first-run setup was finished or skipped.
+    let onboarding: any OnboardingStoring
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -71,7 +73,8 @@ final class AppEnvironment {
         steamGridDBKey: any SteamGridDBKeyStoring,
         steamSignIn: any SteamSigningIn,
         imageHTTP: (any HTTPClient)?,
-        bottleInstaller: any BottleInstalling
+        bottleInstaller: any BottleInstalling,
+        onboarding: any OnboardingStoring
     ) {
         self.container = container
         self.repository = repository
@@ -94,6 +97,7 @@ final class AppEnvironment {
         self.steamSignIn = steamSignIn
         self.imageHTTP = imageHTTP
         self.bottleInstaller = bottleInstaller
+        self.onboarding = onboarding
     }
 
     /// Seeded in-memory environment with mock services for SwiftUI previews.
@@ -125,7 +129,8 @@ final class AppEnvironment {
                 steamGridDBKey: MockSteamGridDBKeyStore(),
                 steamSignIn: MockSteamSignInService(account: steamAccount),
                 imageHTTP: nil,
-                bottleInstaller: MockBottleInstaller(goldenStatus: .notSetUp)
+                bottleInstaller: MockBottleInstaller(goldenStatus: .notSetUp),
+                onboarding: InMemoryOnboardingStore(hasCompletedOnboarding: true)
             )
         } catch {
             fatalError("Preview environment could not be created: \(error)")

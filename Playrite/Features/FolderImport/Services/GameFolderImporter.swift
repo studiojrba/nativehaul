@@ -17,6 +17,7 @@ final class GameFolderImporter: GameFolderImporting {
     private let watcher: (any PlaytimeWatching)?
     private let locations: CrossOverLocations
     private let deduplicator: (any LibraryDeduplicating)?
+    private let folderExists: (String) -> Bool
 
     /// Creates the importer.
     init(
@@ -26,7 +27,8 @@ final class GameFolderImporter: GameFolderImporting {
         trackingPreferences: any TrackingPreferencesStoring,
         watcher: (any PlaytimeWatching)? = nil,
         locations: CrossOverLocations = .standard,
-        deduplicator: (any LibraryDeduplicating)? = nil
+        deduplicator: (any LibraryDeduplicating)? = nil,
+        folderExists: @escaping (String) -> Bool = { FileManager.default.fileExists(atPath: $0) }
     ) {
         self.folders = folders
         self.discoverer = discoverer
@@ -35,10 +37,21 @@ final class GameFolderImporter: GameFolderImporting {
         self.watcher = watcher
         self.locations = locations
         self.deduplicator = deduplicator
+        self.folderExists = folderExists
+    }
+
+    /// Configured folders plus the standard Switch-ports folder when it exists, so a user who never configured
+    /// anything still gets their ports found (zero-tinker, ADR 0016).
+    func foldersToScan() -> [String] {
+        let configured = folders.load()
+        let standard = trackingPreferences.load().expandedGamesFolder
+        let known = Set(configured.map { BundlePath.normalize(($0 as NSString).expandingTildeInPath) })
+        guard folderExists(standard), !known.contains(BundlePath.normalize(standard)) else { return configured }
+        return configured + [standard]
     }
 
     func scanConfiguredFolders() async throws -> FolderImportSummary {
-        let configured = folders.load()
+        let configured = foldersToScan()
         let discoverer = discoverer
         let discovery = await Task.detached { discoverer.discover(folders: configured) }.value
         return try apply(discovery)

@@ -159,6 +159,20 @@ extension AppEnvironment {
         GameMetadataViewModel(game: game, fetcher: metadataFetcher, onChanged: LibraryChangeNotification.post)
     }
 
+    /// Builds the first-run walkthrough. `onFinish` closes it.
+    func makeOnboardingViewModel(onFinish: @escaping @MainActor () -> Void) -> OnboardingViewModel {
+        OnboardingViewModel(
+            store: onboarding,
+            status: LiveOnboardingStatus(
+                gameFolders: gameFolders,
+                steamAccount: steamAccount,
+                bottles: bottleInstaller,
+                tracking: trackingPreferences
+            ),
+            onFinish: onFinish
+        )
+    }
+
     /// Builds the one-click Download panel view model for a game.
     func makeBottleInstallViewModel(for game: Game) -> BottleInstallViewModel {
         BottleInstallViewModel(game: game, installer: bottleInstaller, onChanged: LibraryChangeNotification.post)
