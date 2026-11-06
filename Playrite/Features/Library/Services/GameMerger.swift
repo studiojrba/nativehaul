@@ -9,7 +9,9 @@ import Foundation
 enum GameMerger {
     /// Copies the duplicate's data into `survivor` and moves its sessions and guides.
     static func merge(_ duplicate: Game, into survivor: Game) {
+        let gaps = MetadataField.allCases.filter { survivor.isMissing($0) && !duplicate.isMissing($0) }
         mergeScalars(from: duplicate, into: survivor)
+        mergeProvenance(from: duplicate, into: survivor, filling: gaps)
         for session in duplicate.sessions {
             session.game = survivor
         }
@@ -44,6 +46,16 @@ enum GameMerger {
         return !bundlesClash && !steamClash
     }
 
+    /// Fields the duplicate filled carry the duplicate's provenance, so manual art stays protected after a merge.
+    private static func mergeProvenance(from duplicate: Game, into survivor: Game, filling gaps: [MetadataField]) {
+        var provenance = survivor.metadataProvenance
+        let duplicateProvenance = duplicate.metadataProvenance
+        for field in gaps {
+            provenance[field] = duplicateProvenance[field]
+        }
+        survivor.metadataProvenance = provenance
+    }
+
     /// Order-preserving union, case-insensitive.
     private static func union(_ lhs: [String], _ rhs: [String]) -> [String] {
         var seen = Set<String>()
@@ -74,6 +86,9 @@ enum GameMerger {
         survivor.hltbID = survivor.hltbID ?? duplicate.hltbID
         survivor.developer = survivor.developer ?? duplicate.developer
         survivor.heroImagePath = survivor.heroImagePath ?? duplicate.heroImagePath
+        if survivor.carouselImagePaths.isEmpty {
+            survivor.carouselImagePaths = duplicate.carouselImagePaths
+        }
         survivor.installSizeBytes = survivor.installSizeBytes ?? duplicate.installSizeBytes
         survivor.genres = union(survivor.genres, duplicate.genres)
         survivor.tags = union(survivor.tags, duplicate.tags)

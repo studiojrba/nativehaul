@@ -29,6 +29,7 @@ struct GameManageSheet: View {
                     Button("Choose Cover…", systemImage: "photo") { pickingArtwork = .cover }
                     Button("Choose Hero Image…", systemImage: "photo.on.rectangle") { pickingArtwork = .hero }
                 }
+                GameMetadataSection(viewModel: environment.makeGameMetadataViewModel(for: viewModel.game))
                 TrackedAppSection(viewModel: environment.makeTrackedAppViewModel(for: viewModel.game))
                 HLTBSection(viewModel: environment.makeHLTBViewModel(for: viewModel.game))
             }

@@ -3,7 +3,12 @@ import Foundation
 extension AppEnvironment {
     /// Builds the library view model.
     func makeLibraryViewModel() -> LibraryViewModel {
-        let viewModel = LibraryViewModel(repository: repository, transfer: transfer, folderImporter: folderImporter)
+        let viewModel = LibraryViewModel(
+            repository: repository,
+            transfer: transfer,
+            folderImporter: folderImporter,
+            metadataFetcher: metadataFetcher
+        )
         viewModel.reload()
         return viewModel
     }
@@ -134,6 +139,16 @@ extension AppEnvironment {
     /// Builds the Merge Duplicate Games view model.
     func makeMergeDuplicatesViewModel(onLibraryChanged: @escaping @MainActor () -> Void) -> MergeDuplicatesViewModel {
         MergeDuplicatesViewModel(deduplicator: deduplicator, onLibraryChanged: onLibraryChanged)
+    }
+
+    /// Builds the Settings → Artwork view model.
+    func makeArtworkSettingsViewModel() -> ArtworkSettingsViewModel {
+        ArtworkSettingsViewModel(store: steamGridDBKey)
+    }
+
+    /// Builds the Manage sheet metadata view model for a game.
+    func makeGameMetadataViewModel(for game: Game) -> GameMetadataViewModel {
+        GameMetadataViewModel(game: game, fetcher: metadataFetcher, onChanged: LibraryChangeNotification.post)
     }
 
     /// Builds the launch view model for a game.

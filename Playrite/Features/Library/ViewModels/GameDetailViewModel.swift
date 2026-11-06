@@ -59,16 +59,25 @@ final class GameDetailViewModel {
         HLTBChip.chips(for: hltb?.cachedEstimate(for: game.id))
     }
 
-    /// Sets or clears the hero image path.
+    /// Sets or clears the hero image path. A chosen image is marked as set by the user, so metadata passes never
+    /// replace it.
     func setHeroImagePath(_ path: String?) {
         game.heroImagePath = path
+        markManual(.hero, isSet: path != nil)
         persist()
     }
 
-    /// Sets or clears the cover image path.
+    /// Sets or clears the cover image path. A chosen image is marked as set by the user.
     func setCoverImagePath(_ path: String?) {
         game.coverImagePath = path
+        markManual(.cover, isSet: path != nil)
         persist()
+    }
+
+    private func markManual(_ field: MetadataField, isSet: Bool) {
+        var provenance = game.metadataProvenance
+        provenance[field] = isSet ? .user : nil
+        game.metadataProvenance = provenance
     }
 
     private func persist() {

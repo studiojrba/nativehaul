@@ -25,6 +25,9 @@ struct GameRecord: Codable, Equatable, Sendable {
     var genres: [String]?
     var tags: [String]?
     var heroImagePath: String?
+    /// Optional; older archives omit these.
+    var carouselImagePaths: [String]?
+    var metadataSources: [String]?
     var sessions: [SessionRecord]
     var guides: [GuideRecord]?
 }

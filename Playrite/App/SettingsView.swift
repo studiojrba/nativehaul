@@ -9,6 +9,8 @@ struct SettingsView: View {
         TabView {
             SteamSettingsView(viewModel: environment.makeSteamSettingsViewModel())
                 .tabItem { Label("Steam", systemImage: "cloud") }
+            ArtworkSettingsView(viewModel: environment.makeArtworkSettingsViewModel())
+                .tabItem { Label("Artwork", systemImage: "photo.on.rectangle") }
             GameFoldersSettingsView(viewModel: environment.makeGameFoldersViewModel())
                 .tabItem { Label("Game Folders", systemImage: "folder") }
             TrackingSettingsView(viewModel: environment.makeTrackingSettingsViewModel())

@@ -17,20 +17,47 @@ final class LibraryViewModel {
     var folderImportSummary: FolderImportSummary?
     /// Whether a game-folder scan is running.
     private(set) var isScanningFolders = false
+    /// Last Fetch Missing Metadata result, if any.
+    var metadataSummary: MetadataFetchSummary?
+    /// Whether a metadata pass is running.
+    private(set) var isFetchingMetadata = false
 
     private let repository: any LibraryRepository
     private let transfer: any LibraryTransferring
     private let folderImporter: (any GameFolderImporting)?
+    private let metadataFetcher: (any MetadataFetching)?
 
-    /// Creates the view model. `folderImporter` enables "Scan Game Folders".
+    /// Creates the view model. `folderImporter` enables "Scan Game Folders"; `metadataFetcher` enables
+    /// "Fetch Missing Metadata".
     init(
         repository: any LibraryRepository,
         transfer: any LibraryTransferring,
-        folderImporter: (any GameFolderImporting)? = nil
+        folderImporter: (any GameFolderImporting)? = nil,
+        metadataFetcher: (any MetadataFetching)? = nil
     ) {
         self.repository = repository
         self.transfer = transfer
         self.folderImporter = folderImporter
+        self.metadataFetcher = metadataFetcher
+    }
+
+    /// Whether "Fetch Missing Metadata" is available.
+    var canFetchMetadata: Bool {
+        metadataFetcher != nil && !isFetchingMetadata
+    }
+
+    /// Fills empty metadata and artwork for every game, then reloads.
+    func fetchMissingMetadata() async {
+        guard let metadataFetcher, !isFetchingMetadata else { return }
+        isFetchingMetadata = true
+        defer { isFetchingMetadata = false }
+        do {
+            metadataSummary = try await metadataFetcher.fetchMissing()
+            games = try repository.fetchGames()
+            errorMessage = nil
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 
     /// Whether "Scan Game Folders" is available.

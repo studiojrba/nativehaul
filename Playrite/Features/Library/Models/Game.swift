@@ -48,6 +48,10 @@ final class Game {
     var tags: [String] = []
     /// Absolute path to a local wide hero/background image for the details screen.
     var heroImagePath: String?
+    /// Cached carousel slides (screenshots, trailer thumbnails) shown after the hero image.
+    var carouselImagePaths: [String] = []
+    /// Persisted ``metadataProvenance`` (`"field=source"` entries).
+    var metadataSourcesRaw: [String] = []
     /// HowLongToBeat game identifier, when known (used for a direct link-out; never fetched).
     var hltbID: Int?
     /// Recorded play sessions.

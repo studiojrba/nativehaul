@@ -68,6 +68,8 @@ struct LibraryArchiveImporter {
         game.genres = record.genres ?? []
         game.tags = record.tags ?? []
         game.heroImagePath = record.heroImagePath
+        game.carouselImagePaths = record.carouselImagePaths ?? []
+        game.metadataSourcesRaw = record.metadataSources ?? []
         repository.insert(game)
         for sessionRecord in record.sessions {
             let session = PlaySession(

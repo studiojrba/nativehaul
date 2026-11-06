@@ -106,6 +106,8 @@ struct RootView: View {
                 SettingsLink { Text("Configure Game Folders…") }
                 Divider()
                 Button("Merge Duplicate Games…") { isMergingDuplicates = true }
+                Button("Fetch Missing Metadata") { Task { await libraryViewModel.fetchMissingMetadata() } }
+                    .disabled(!libraryViewModel.canFetchMetadata)
             }
         }
     }
@@ -122,6 +124,7 @@ struct RootView: View {
         libraryViewModel.errorMessage
             ?? libraryViewModel.importSummary?.description
             ?? libraryViewModel.folderImportSummary?.description
+            ?? libraryViewModel.metadataSummary?.description
     }
 
     private var alertBinding: Binding<Bool> {
@@ -136,6 +139,7 @@ struct RootView: View {
         libraryViewModel.errorMessage = nil
         libraryViewModel.importSummary = nil
         libraryViewModel.folderImportSummary = nil
+        libraryViewModel.metadataSummary = nil
     }
 
     private func handleImport(_ result: Result<URL, Error>) {

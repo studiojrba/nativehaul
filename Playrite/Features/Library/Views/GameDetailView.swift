@@ -43,7 +43,8 @@ struct GameDetailView: View {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.xl) {
                 HeroMediaView(
                     heroImagePath: viewModel.game.heroImagePath,
-                    coverImagePath: viewModel.game.coverImagePath
+                    coverImagePath: viewModel.game.coverImagePath,
+                    carouselImagePaths: viewModel.game.carouselImagePaths
                 )
                 Text(viewModel.game.title).font(DesignTokens.Typography.largeTitle)
                 if !viewModel.game.genres.isEmpty {

@@ -38,6 +38,10 @@ final class AppEnvironment {
     let deduplicator: any LibraryDeduplicating
     /// Starts games (apps, Steam, CrossOver).
     let launcher: any GameLaunching
+    /// Fills metadata and artwork.
+    let metadataFetcher: any MetadataFetching
+    /// Optional SteamGridDB key (Keychain).
+    let steamGridDBKey: any SteamGridDBKeyStoring
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -56,7 +60,9 @@ final class AppEnvironment {
         gameFolders: any GameFolderStoring,
         folderImporter: any GameFolderImporting,
         deduplicator: any LibraryDeduplicating,
-        launcher: any GameLaunching
+        launcher: any GameLaunching,
+        metadataFetcher: any MetadataFetching,
+        steamGridDBKey: any SteamGridDBKeyStoring
     ) {
         self.container = container
         self.repository = repository
@@ -74,13 +80,16 @@ final class AppEnvironment {
         self.folderImporter = folderImporter
         self.deduplicator = deduplicator
         self.launcher = launcher
+        self.metadataFetcher = metadataFetcher
+        self.steamGridDBKey = steamGridDBKey
     }
 
     /// Live environment using the on-disk store, Keychain and network.
     static func live() throws -> AppEnvironment {
         let container = try ModelContainerFactory.make(inMemory: false)
         let repository = SwiftDataLibraryRepository(context: container.mainContext)
-        let steamAccount = SteamAccountStore(secrets: KeychainSecretStore())
+        let secrets = KeychainSecretStore()
+        let steamAccount = SteamAccountStore(secrets: secrets)
         let steamClient = SteamWebAPIClient(http: URLSessionHTTPClient())
         let trackingPreferences = UserDefaultsTrackingPreferencesStore()
         let watcher = PlaytimeWatcher(
@@ -122,7 +131,23 @@ final class AppEnvironment {
             gameFolders: gameFolders,
             folderImporter: folderImporter,
             deduplicator: deduplicator,
-            launcher: WorkspaceGameLauncher()
+            launcher: WorkspaceGameLauncher(),
+            metadataFetcher: makeLiveMetadataFetcher(repository: repository, secrets: secrets),
+            steamGridDBKey: SteamGridDBKeyStore(secrets: secrets)
+        )
+    }
+
+    private static func makeLiveMetadataFetcher(
+        repository: any LibraryRepository,
+        secrets: any SecretStore
+    ) -> MetadataFetcher {
+        let http = ThrottledHTTPClient(base: URLSessionHTTPClient(), policy: .metadata)
+        return MetadataFetcher(
+            repository: repository,
+            steamStore: SteamStoreMetadataProvider(http: http),
+            nintendo: NintendoStoreMetadataProvider(store: UnavailableNintendoStoreSearch()),
+            steamGridDB: SteamGridDBMetadataProvider(http: http, secrets: secrets),
+            downloader: ArtworkDownloader(http: http, cache: FileArtworkCache())
         )
     }
 
@@ -172,7 +197,9 @@ final class AppEnvironment {
                 gameFolders: InMemoryGameFolderStore(["/Users/demo/Switch/Games"]),
                 folderImporter: MockGameFolderImporter(),
                 deduplicator: MockLibraryDeduplicator(),
-                launcher: RecordingGameLauncher()
+                launcher: RecordingGameLauncher(),
+                metadataFetcher: MockMetadataFetcher(),
+                steamGridDBKey: MockSteamGridDBKeyStore()
             )
         } catch {
             fatalError("Preview environment could not be created: \(error)")

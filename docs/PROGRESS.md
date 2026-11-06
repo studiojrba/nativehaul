@@ -280,6 +280,35 @@ The app launched and ran without a crash. Hover expansion, the three-column prop
 look on a real screen. Genres, developer, tags and hero images have no automatic source yet; they come from the
 import or the Manage sheet.
 
+## 12 · feature/metadata-artwork
+Fills metadata and official artwork per game (ADR 0014). 232 tests (+43), all on mocked HTTP or recorded
+fixtures.
+- ✅🧪 **Fetch Missing Metadata** (Library File menu). It fills empty fields from the Steam store `appdetails`
+  endpoint (no key needed): description, developer, genres, categories as tags, release date, the 600×900
+  portrait capsule, the library hero, and a carousel of screenshots and trailer thumbnails.
+- ✅🧪 **SteamGridDB fallback.** It is used only for a cover or hero that is still missing, and only with J.R's
+  key, which he pastes once in **Settings → Artwork** and is stored in the Keychain. NSFW, humour,
+  epilepsy-risk, animated and blurred art is filtered out.
+- 🟡 **Nintendo eShop:** the provider, mapper and matching rules are built and tested, but **no live source is
+  connected**. Nintendo has no public API, and the store's internal search key was not used (no scraping). For
+  now, Switch ports without a Steam twin get their art from SteamGridDB.
+- ✅🧪 **Matching:** app ID first, then an exact `TitleNormalizer` match. If nothing matches, or two different
+  items match, the field stays blank.
+- ✅🧪 **Field rules** (`MetadataFillPolicy`):
+  - Fields set by the user, and manual art, are never overwritten. Choose Cover… and Choose Hero Image… mark the
+    field as user-set, and older art with no recorded source is treated as manual.
+  - Imported descriptions are replaced only when empty, or by **Refresh Metadata** in Manage.
+  - Playtime is untouched.
+- ✅🧪 **Provenance** is recorded per field, shown in Manage → Metadata, exported and imported with the library,
+  and kept through duplicate merges.
+- ✅🧪 **Cache:** images are downloaded once into `~/Library/Application Support/Playrite/Artwork/<game-id>/` and
+  rendered from disk. A download that isn't a real image (an HTML error page, say) is never cached.
+- ✅ **Hero carousel:** the details hero now steps through the hero image and the carousel slides.
+- ✅🧪 **Rate limiting:** games are processed one at a time, with per-host request spacing.
+- ✅🧪 **Summary:** each pass reports filled, skipped and failed counts per source.
+- ⚠️ **Not verified live:** no request has been made to the real Steam store or SteamGridDB, and the hero carousel
+  hasn't been checked on screen.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -295,6 +324,7 @@ import or the Manage sheet.
 | 9 | `feature/library-dedupe` | ✅ | ✅ | 171 | ✅ |
 | 10 | `feature/steam-provenance` | ✅ | ✅ | 183 | ✅ |
 | 11 | `feature/launch-ui` | ✅ | ✅ | 189 | ✅ |
+| 12 | `feature/metadata-artwork` | ✅ | ✅ | 232 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -334,7 +364,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0013)
+## Key decisions (see `docs/decisions/` ADR 0001–0014)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -354,10 +384,10 @@ and none should be.
 - The nxnative CLI contract is unknown. Arguments are a configurable template, title metadata is entered manually,
   and the troubleshooting patch is an editable template.
 - Automatic HLTB lookup is intentionally not implemented. The `HLTBRemoteSearching` seam is ready.
-- Cover art fetching, extra providers, and the Figma visual pass are future work (`docs/PLAN.md`).
+- A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 11 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 12 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.
