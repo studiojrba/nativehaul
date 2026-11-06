@@ -27,4 +27,25 @@ extension AppEnvironment {
     func makeSteamAchievementsViewModel(for game: Game) -> SteamAchievementsViewModel {
         SteamAchievementsViewModel(game: game, sync: steamSync)
     }
+
+    /// Builds the tracking dashboard view model.
+    func makeTrackingViewModel(onLibraryChanged: @escaping @MainActor () -> Void) -> TrackingViewModel {
+        TrackingViewModel(
+            watcher: watcher,
+            scanner: scanner,
+            preferences: trackingPreferences,
+            repository: repository,
+            onLibraryChanged: onLibraryChanged
+        )
+    }
+
+    /// Builds the detail-screen tracking view model.
+    func makeTrackedAppViewModel(for game: Game) -> TrackedAppViewModel {
+        TrackedAppViewModel(game: game, repository: repository, watcher: watcher)
+    }
+
+    /// Builds the tracking settings view model.
+    func makeTrackingSettingsViewModel() -> TrackingSettingsViewModel {
+        TrackingSettingsViewModel(store: trackingPreferences, watcher: watcher)
+    }
 }

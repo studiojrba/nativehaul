@@ -9,6 +9,8 @@ struct SettingsView: View {
         TabView {
             SteamSettingsView(viewModel: environment.makeSteamSettingsViewModel())
                 .tabItem { Label("Steam", systemImage: "cloud") }
+            TrackingSettingsView(viewModel: environment.makeTrackingSettingsViewModel())
+                .tabItem { Label("Tracking", systemImage: "timer") }
         }
         .frame(minWidth: DesignTokens.Layout.detailMinWidth, minHeight: DesignTokens.Layout.logMinHeight)
         .padding(DesignTokens.Spacing.lg)

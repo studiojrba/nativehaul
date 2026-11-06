@@ -18,6 +18,7 @@ struct SidebarView: View {
             }
             Section("Providers") {
                 Label("Steam", systemImage: "cloud").tag(SidebarDestination.steam)
+                Label("Playtime Tracking", systemImage: "timer").tag(SidebarDestination.tracking)
             }
         }
         .navigationSplitViewColumnWidth(

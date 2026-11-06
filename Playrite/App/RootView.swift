@@ -37,6 +37,10 @@ struct RootView: View {
         }
         .environment(environment)
         .onChange(of: selection) { path.removeAll() }
+        .task { environment.watcher.start() }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.willTerminateNotification)) { _ in
+            environment.watcher.stop()
+        }
         .toolbar { libraryToolbar }
         .sheet(isPresented: $isAddingGame) {
             AddGameSheet { libraryViewModel.addGame(title: $0, platform: $1, status: $2) }
@@ -61,6 +65,8 @@ struct RootView: View {
                 .onChange(of: section) { libraryViewModel.filter.section = section }
         case .steam:
             SteamDashboardView(viewModel: environment.makeSteamDashboardViewModel { libraryViewModel.reload() })
+        case .tracking:
+            TrackingDashboardView(viewModel: environment.makeTrackingViewModel { libraryViewModel.reload() })
         case nil:
             ContentUnavailableView("Select a Section", systemImage: "sidebar.left")
         }

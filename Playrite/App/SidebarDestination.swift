@@ -6,4 +6,6 @@ enum SidebarDestination: Hashable, Sendable {
     case library(LibrarySection)
     /// Steam provider dashboard.
     case steam
+    /// Playtime tracking.
+    case tracking
 }

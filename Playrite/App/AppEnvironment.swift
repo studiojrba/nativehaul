@@ -16,6 +16,12 @@ final class AppEnvironment {
     let steamAccount: any SteamAccountStoring
     /// Steam synchronisation.
     let steamSync: any SteamSyncing
+    /// Playtime watcher for tracked `.app` bundles.
+    let watcher: any PlaytimeWatching
+    /// Games-folder scanner.
+    let scanner: any AppBundleScanning
+    /// Tracking preferences.
+    let trackingPreferences: any TrackingPreferencesStoring
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -23,13 +29,19 @@ final class AppEnvironment {
         repository: any LibraryRepository,
         transfer: any LibraryTransferring,
         steamAccount: any SteamAccountStoring,
-        steamSync: any SteamSyncing
+        steamSync: any SteamSyncing,
+        watcher: any PlaytimeWatching,
+        scanner: any AppBundleScanning,
+        trackingPreferences: any TrackingPreferencesStoring
     ) {
         self.container = container
         self.repository = repository
         self.transfer = transfer
         self.steamAccount = steamAccount
         self.steamSync = steamSync
+        self.watcher = watcher
+        self.scanner = scanner
+        self.trackingPreferences = trackingPreferences
     }
 
     /// Live environment using the on-disk store, Keychain and network.
@@ -38,12 +50,21 @@ final class AppEnvironment {
         let repository = SwiftDataLibraryRepository(context: container.mainContext)
         let steamAccount = SteamAccountStore(secrets: KeychainSecretStore())
         let steamClient = SteamWebAPIClient(http: URLSessionHTTPClient())
+        let trackingPreferences = UserDefaultsTrackingPreferencesStore()
+        let watcher = PlaytimeWatcher(
+            observer: WorkspaceRunningApplicationObserver(),
+            repository: repository,
+            preferences: trackingPreferences
+        )
         return AppEnvironment(
             container: container,
             repository: repository,
             transfer: LibraryTransferService(repository: repository),
             steamAccount: steamAccount,
-            steamSync: SteamSyncService(client: steamClient, account: steamAccount, repository: repository)
+            steamSync: SteamSyncService(client: steamClient, account: steamAccount, repository: repository),
+            watcher: watcher,
+            scanner: AppBundleScanner(),
+            trackingPreferences: trackingPreferences
         )
     }
 
@@ -57,7 +78,10 @@ final class AppEnvironment {
                 repository: repository,
                 transfer: LibraryTransferService(repository: repository),
                 steamAccount: steamAccount,
-                steamSync: SteamSyncService(client: MockSteamClient(), account: steamAccount, repository: repository)
+                steamSync: SteamSyncService(client: MockSteamClient(), account: steamAccount, repository: repository),
+                watcher: MockPlaytimeWatcher(),
+                scanner: MockAppBundleScanner(),
+                trackingPreferences: InMemoryTrackingPreferencesStore()
             )
         } catch {
             fatalError("Preview environment could not be created: \(error)")
