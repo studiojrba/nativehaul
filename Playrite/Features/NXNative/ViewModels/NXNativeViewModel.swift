@@ -1,7 +1,8 @@
 import Foundation
 import Observation
 
-/// Build queue for the optional nxnative module: preflight → build (streamed log) → cleanup preview → apply.
+/// Build queue for the nxnative module (on by default, ADR 0021): preflight → build (streamed log) → cleanup preview →
+/// apply.
 @MainActor
 @Observable
 final class NXNativeViewModel {
@@ -13,6 +14,8 @@ final class NXNativeViewModel {
     private(set) var isProcessing = false
     /// Last error not tied to a job.
     private(set) var errorMessage: String?
+    /// What the page opens to: ready, engine not found, or switched off by the user.
+    private(set) var readiness = NXNativeReadiness.engineNotFound
 
     @ObservationIgnored let services: NXNativeServices
     @ObservationIgnored private let store: any EngineConfigurationStoring
@@ -28,11 +31,27 @@ final class NXNativeViewModel {
         self.services = services
         self.store = store
         self.onAppBuilt = onAppBuilt
+        refreshReadiness()
     }
 
-    /// Current configuration.
+    /// Current configuration, with the detected engine and `prod.keys` filled in where Settings has no override.
     var configuration: EngineConfiguration {
-        store.load()
+        services.locator.resolve(store.load())
+    }
+
+    /// Re-detects the engine and keys (e.g. when the page appears, after the user set things up elsewhere).
+    func refreshReadiness() {
+        readiness = NXNativeReadiness(resolved: configuration, files: services.files)
+    }
+
+    /// Turns the module back on after the user switched it off.
+    func turnOn() {
+        updateStoredConfiguration { $0.isEnabled = true }
+    }
+
+    /// Uses the engine the user chose (an override), then re-checks queued jobs.
+    func chooseEngine(at path: String) {
+        updateStoredConfiguration { $0.enginePath = path }
     }
 
     /// The selected job.
@@ -81,7 +100,7 @@ final class NXNativeViewModel {
 
     /// Starts processing queued jobs one at a time.
     func startQueue() {
-        guard !isProcessing, configuration.isConfigured else { return }
+        guard !isProcessing, configuration.isEnabled else { return }
         isProcessing = true
         processingTask = Task { [weak self] in
             await self?.processQueue()
@@ -144,6 +163,16 @@ final class NXNativeViewModel {
             runPreflight(jobID)
         } catch {
             providedFileMessage = error.localizedDescription
+        }
+    }
+
+    private func updateStoredConfiguration(_ change: (inout EngineConfiguration) -> Void) {
+        var stored = store.load()
+        change(&stored)
+        store.save(stored)
+        refreshReadiness()
+        for job in jobs where job.status != .building {
+            runPreflight(job.id)
         }
     }
 

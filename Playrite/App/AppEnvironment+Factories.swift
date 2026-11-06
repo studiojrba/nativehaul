@@ -120,7 +120,7 @@ extension AppEnvironment {
         )
         let session = TroubleshootingSession(
             troubleshootingCase: troubleshootingCase,
-            scriptPath: EngineConfiguration.expand(engineConfiguration.load().enginePath),
+            scriptPath: EngineConfiguration.expand(services.locator.resolve(engineConfiguration.load()).enginePath),
             backups: backups,
             patcher: ScriptPatcher(files: services.files, audit: services.audit, backups: backups),
             onRebuild: onRebuild
@@ -130,7 +130,7 @@ extension AppEnvironment {
 
     /// Builds the NXNative settings view model.
     func makeNXNativeSettingsViewModel() -> NXNativeSettingsViewModel {
-        NXNativeSettingsViewModel(store: engineConfiguration)
+        NXNativeSettingsViewModel(store: engineConfiguration, locator: nxnativeServices.locator)
     }
 
     /// Builds the guides view model for a game.

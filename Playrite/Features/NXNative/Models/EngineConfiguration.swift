@@ -1,6 +1,9 @@
 import Foundation
 
-/// Settings for the optional, user-supplied nxnative engine. Playrite never bundles the engine, keys, or games.
+/// Settings for the user-supplied nxnative engine. Playrite never bundles the engine, keys, or games.
+///
+/// The module is **on by default** and paths are **detected** (``NXNativeLocator``); `enginePath` and `keysPath`
+/// are overrides only (ADR 0021).
 struct EngineConfiguration: Codable, Equatable, Sendable {
     /// Default space required, as a multiple of the source file size.
     static let defaultSpaceMultiplier = 3
@@ -11,9 +14,10 @@ struct EngineConfiguration: Codable, Equatable, Sendable {
     /// Default argument template. Placeholders: `{input}`, `{output}`, `{titleID}`, `{title}`, `{keys}`.
     static let defaultArgumentTemplate = "{input} {output}"
 
-    /// The module is off until the user opts in.
-    var isEnabled = false
-    /// Absolute path to the user's engine executable or script. Empty when not configured.
+    /// `true` only when the user explicitly switched the module off in Settings. `nil` (never touched, and every
+    /// install saved before ADR 0021, whose stored `isEnabled: false` was just the old default) means on.
+    var isSwitchedOffByUser: Bool?
+    /// Engine override. Empty means "detect it" (``NXNativeLocator``).
     var enginePath = ""
     /// Whitespace-separated argument template.
     var argumentTemplate = defaultArgumentTemplate
@@ -27,8 +31,15 @@ struct EngineConfiguration: Codable, Equatable, Sendable {
     var hiddenLibraryFolderName = defaultHiddenLibraryFolderName
     /// Free space required = source size × this multiplier.
     var spaceMultiplier = defaultSpaceMultiplier
-    /// Path of the user's `prod.keys` (optional in stored settings; ``defaultKeysPath`` when absent).
+    /// `prod.keys` override. `nil` means "detect it"; when nothing is found the user is asked, and their file is
+    /// copied to ``defaultKeysPath``.
     var keysPath: String?
+
+    /// Whether the module is on. Always on unless the user switched it off; switching it on clears that choice.
+    var isEnabled: Bool {
+        get { isSwitchedOffByUser != true }
+        set { isSwitchedOffByUser = newValue ? nil : true }
+    }
 
     /// The keys path in use, with `~` expanded.
     var effectiveKeysPath: String {
@@ -55,9 +66,9 @@ struct EngineConfiguration: Codable, Equatable, Sendable {
         allowedExtensions: StagedFileKind.titleExtensions.sorted()
     )
 
-    /// `true` when the module is enabled and an engine path is set.
-    var isConfigured: Bool {
-        isEnabled && !enginePath.trimmingCharacters(in: .whitespaces).isEmpty
+    /// Whether an engine override is set.
+    var hasEngineOverride: Bool {
+        !enginePath.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     /// Expands `~` in a configured path.

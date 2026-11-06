@@ -36,7 +36,7 @@ struct PreflightRunner: Sendable {
             return PreflightCheck(
                 kind: .engine,
                 outcome: .failed,
-                message: "Choose your nxnative engine in Settings → NXNative."
+                message: NXNativeReadiness.engineNotFoundTitle + ". Use Choose Engine… above."
             )
         }
         let isScript = EngineInvocationBuilder.interpreter(for: path) != nil

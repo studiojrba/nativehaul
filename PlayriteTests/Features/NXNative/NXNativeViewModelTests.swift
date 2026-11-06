@@ -79,13 +79,18 @@ struct NXNativeViewModelTests {
         #expect(viewModel.jobs.first?.status == .queued)
     }
 
-    @Test func unconfiguredModuleDoesNotStart() {
+    @Test func switchedOffModuleDoesNotStart() {
         let services = NXNativeServices(
             files: Fix.files(), disk: FixedDiskSpaceProvider(bytes: .max), runner: MockBuildEngineRunner(),
             audit: InMemoryAuditLog(),
             knowledgeBase: BundledKnowledgeBase(), backupDirectory: "/b", appBundlePath: "/A.app"
         )
-        let viewModel = NXNativeViewModel(services: services, store: InMemoryEngineConfigurationStore()) { _, _ in }
+        var configuration = Fix.configuration
+        configuration.isEnabled = false
+        let viewModel = NXNativeViewModel(
+            services: services,
+            store: InMemoryEngineConfigurationStore(configuration)
+        ) { _, _ in }
         viewModel.startQueue()
         #expect(!viewModel.isProcessing)
     }
@@ -105,7 +110,10 @@ struct NXNativeViewModelTests {
 
     @Test func settingsRequireDottedLibraryName() {
         let store = InMemoryEngineConfigurationStore()
-        let viewModel = NXNativeSettingsViewModel(store: store)
+        let viewModel = NXNativeSettingsViewModel(
+            store: store,
+            locator: NXNativeLocator(files: InMemoryFileOperations(), homeDirectory: "/Users/me")
+        )
         viewModel.configuration.hiddenLibraryFolderName = "lib"
         viewModel.save()
         #expect(store.load().hiddenLibraryFolderName == EngineConfiguration.defaultHiddenLibraryFolderName)

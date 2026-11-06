@@ -1,6 +1,6 @@
 # Playrite — Project Rules
 
-Playrite is a native macOS game library hub: a Playnite-style library combined with an optional
+Playrite is a native macOS game library hub: a Playnite-style library combined with an on-by-default
 NX2Apple-style Switch build pipeline (driven by a **user-supplied, never-bundled** external engine).
 Start with `README.md` (quickstart + where things live), then `docs/PLAN.md` and `docs/decisions/`.
 
@@ -52,6 +52,16 @@ customizing or tinkering needed (the option is there for those who want it).
 - Work that can run by itself does: dedupe, metadata, Steam sync, installed-game detection, recipes.
 - When a design choice trades default convenience against configurability, **convenience wins** — say so in the
   branch's ADR.
+
+## Features ship on (owner directive, ADR 0021)
+J.R: features are on by default. Only the files a user has to provide gate a feature, and files the user already
+has are **detected, not re-demanded**.
+- No feature is off by default, and no page opens with "enable this in Settings". A Settings switch exists so a
+  user can turn a feature **off**, and an explicit off is respected.
+- Paths to user-supplied tools and files (the nxnative engine, `prod.keys`) are found by searching the usual places
+  (documented in the feature's ADR). A Settings path is an override only.
+- Ask for a file ("Please provide your ___") only when it exists nowhere. A missing engine is a plain missing-file
+  state with a "Choose…" button, never a setup step.
 
 ## Shelf and router, never the engine (owner directive, ADR 0019)
 Like the Cocoon launcher on J.R's AYN Thor: one front end, and each kind of game is run by the specialist app that

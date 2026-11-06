@@ -7,16 +7,28 @@ struct NXNativeDashboardView: View {
     @Environment(AppEnvironment.self) private var environment
     @State private var isAddingJob = false
     @State private var openCase: TroubleshootingCase?
+    @State private var isChoosingEngine = false
 
     var body: some View {
         Group {
-            if viewModel.configuration.isConfigured {
-                content
+            if viewModel.readiness == .switchedOff {
+                NXNativeSwitchedOffView { viewModel.turnOn() }
             } else {
-                NXNativeDisabledView()
+                VStack(spacing: DesignTokens.Spacing.none) {
+                    if viewModel.readiness == .engineNotFound {
+                        EngineNotFoundBanner { isChoosingEngine = true }
+                    }
+                    content
+                }
             }
         }
         .navigationTitle("NXNative Builds")
+        .onAppear { viewModel.refreshReadiness() }
+        .fileImporter(isPresented: $isChoosingEngine, allowedContentTypes: [.item]) { result in
+            if case let .success(url) = result {
+                viewModel.chooseEngine(at: url.path)
+            }
+        }
         .sheet(isPresented: $isAddingJob) {
             AddBuildJobSheet { viewModel.enqueue(sourcePath: $0, title: $1) }
         }

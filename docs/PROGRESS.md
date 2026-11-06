@@ -536,6 +536,34 @@ approved by J.R when he set the rule). 333 tests (+6).
 - ⚠️ Pending Ollie's live recheck: Stats should report 109 of 109 backlog games with an estimate, and the chips
   should show values.
 
+## 23 · feature/nxnative-on-by-default — J.R product correction
+- 📣 **J.R product correction (spec change):** the live Builds page said "NXNative Module Off — Enable the module
+  and choose your own engine in Settings…". J.R: NXNative is **100% on by default**; only user-provided files
+  (prod.keys, a game file) aren't, and the module must be ready for users who already have them.
+- ✅🧪 **On by default:** fresh installs are on. Untouched existing installs (their saved `isEnabled: false` was
+  only the old default) migrate to on, J.R's included. An explicit off in Settings is stored as
+  `isSwitchedOffByUser` and respected, and the page then offers **Turn On**.
+- ✅🧪 **Engine auto-detection** (`NXNativeLocator`, search list in ADR 0021): `~/Switch` tools, then nxnative
+  checkouts including `~/Library/Application Support/NX Play/nxnative` (J.R's actual engine), then `~/bin`,
+  Homebrew and similar folders. The Settings path is an override only. With no engine anywhere, the page still opens,
+  with a "No nxnative engine found on this Mac" banner and **Choose Engine…**.
+- ✅🧪 **prod.keys auto-detection:** `~/Switch/ProdKeys/prod.keys`, then other `~/Switch/ProdKeys…` folders
+  (J.R's real keys are in `~/Switch/ProdKeys.NET-v22.5.0/`), then `~/.switch/prod.keys` and the other usual spots.
+  "Please provide your prod.keys" appears only when none exist. The game file stays per build in Add Build.
+- ✅ The old "enable the module / choose your engine in Settings" copy is gone (view deleted). CLAUDE.md records
+  the rule beside zero-tinker: **features ship on; only user-provided files gate them; files the user already has
+  are detected, not re-demanded.**
+- ✅🧪 Tests cover: fresh-state on; untouched-install migration to on; explicit off respected (and Turn On);
+  key-detection order, including `~/Switch/ProdKeys` and versioned `ProdKeys…` folders; silent use of detected
+  keys versus the prompt when none exist; engine detection order and overrides; and the engine-not-found copy.
+  357 tests (+15).
+- ⚠️ **Found, not fixed (follow-up):** detection finds J.R's nxnative, but a build won't run with zero edits yet:
+  - nxnative's command line (`build_ipa_from_nsp.py <game folder> -k <keys> --platform mac-app -o <app>`) doesn't
+    match the default argument template, and the script needs NX Play's Python environment;
+  - J.R's games use `.nx2apple-library`, while the default hidden library name is `.nxnative-lib`.
+- ⚠️ Pending a live recheck: J.R's Builds page should open enabled, and Settings should show both paths as
+  "found automatically".
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -562,6 +590,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 20 | `feature/mit-license` | ✅ | ✅ | 333 | ✅ |
 | 21 | `feature/detail-layout-fit` (QA #2) | ✅ | ✅ | 336 | ✅ |
 | 22 | `feature/hltb-cache-read` (QA #3) | ✅ | ✅ | 342 | ✅ |
+| 23 | `feature/nxnative-on-by-default` (J.R correction) | ✅ | ✅ | 357 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -601,7 +630,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0020)
+## Key decisions (see `docs/decisions/` ADR 0001–0021)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -609,8 +638,8 @@ and none should be.
   (enforced by a SwiftLint custom rule plus a manual audit).
 - Playtime is stored per source and never merged; badges use real data only; HLTB is always labelled
   "HLTB estimate".
-- The Steam key lives only in the Keychain. NXNative is off by default, never bundles anything, and cannot
-  delete files (it has no delete API, and a policy test checks this).
+- The Steam key lives only in the Keychain. NXNative is on by default and detects the user's engine and keys
+  (ADR 0021); it never bundles anything and cannot delete files (it has no delete API, and a policy test checks this).
 - No scraping anywhere: GameFAQs guides are link-out only, and HLTB uses manual entry plus a link-out because
   there is no official API.
 
@@ -624,7 +653,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 22 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 23 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

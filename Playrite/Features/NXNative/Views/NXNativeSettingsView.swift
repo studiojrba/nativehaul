@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Settings tab for the optional nxnative module.
+/// Settings tab for the nxnative module. Everything here is optional: the module is on and detects its files.
 struct NXNativeSettingsView: View {
     @State private var viewModel: NXNativeSettingsViewModel
     @State private var isChoosingEngine = false
@@ -13,20 +13,20 @@ struct NXNativeSettingsView: View {
     var body: some View {
         Form {
             Section {
-                Toggle("Enable NXNative module", isOn: $viewModel.configuration.isEnabled)
+                Toggle("Build native apps with nxnative", isOn: $viewModel.configuration.isEnabled)
                 NXNativeDisclaimer()
             }
-            Section("Engine (user-supplied)") {
+            Section("Your files (found automatically)") {
                 LabeledContent("Engine") {
                     HStack(spacing: DesignTokens.Spacing.sm) {
-                        Text(viewModel.configuration.enginePath.isEmpty ? "Not set" : viewModel.configuration
-                            .enginePath)
-                            .font(DesignTokens.Typography.monospacedSmall)
-                            .lineLimit(DesignTokens.Lines.single)
-                            .truncationMode(.middle)
+                        pathText(viewModel.engineDescription)
                         Button("Choose…") { isChoosingEngine = true }
+                        if viewModel.configuration.hasEngineOverride {
+                            Button("Use Detected") { viewModel.useDetectedEngine() }
+                        }
                     }
                 }
+                LabeledContent("prod.keys") { pathText(viewModel.keysDescription) }
                 TextField(
                     "Arguments ({input} {output} {titleID} {title})",
                     text: $viewModel.configuration.argumentTemplate
@@ -58,10 +58,20 @@ struct NXNativeSettingsView: View {
         }
     }
 
+    private func pathText(_ text: String) -> some View {
+        Text(text)
+            .font(DesignTokens.Typography.monospacedSmall)
+            .lineLimit(DesignTokens.Lines.single)
+            .truncationMode(.middle)
+    }
+
     private static let maximumMultiplier = 10
     private static let multiplierRange = 1 ... maximumMultiplier
 }
 
 #Preview {
-    NXNativeSettingsView(viewModel: NXNativeSettingsViewModel(store: InMemoryEngineConfigurationStore()))
+    NXNativeSettingsView(viewModel: NXNativeSettingsViewModel(
+        store: InMemoryEngineConfigurationStore(),
+        locator: NXNativeLocator(files: InMemoryFileOperations(), homeDirectory: "/Users/demo")
+    ))
 }

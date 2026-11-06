@@ -10,7 +10,7 @@ enum NXNativeFixtures {
 
     static var configuration: EngineConfiguration {
         EngineConfiguration(
-            isEnabled: true, enginePath: engine, argumentTemplate: "--in {input} --out {output} --name {title}",
+            enginePath: engine, argumentTemplate: "--in {input} --out {output} --name {title}",
             stagingDirectory: "/stage", workRoot: "/work", outputDirectory: "/games",
             hiddenLibraryFolderName: ".nxnative-lib", spaceMultiplier: 3, keysPath: keys
         )

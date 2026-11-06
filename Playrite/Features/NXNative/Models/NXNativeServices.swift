@@ -16,4 +16,11 @@ struct NXNativeServices: Sendable {
     let backupDirectory: String
     /// Playrite's own bundle path (to prove the engine is external).
     let appBundlePath: String
+    /// Home folder used to resolve the `~` search paths of ``NXNativeLocator``.
+    var homeDirectory = NSHomeDirectory()
+
+    /// Detects the engine and `prod.keys` the user already has.
+    var locator: NXNativeLocator {
+        NXNativeLocator(files: files, homeDirectory: homeDirectory)
+    }
 }

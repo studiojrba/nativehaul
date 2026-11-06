@@ -127,10 +127,7 @@ final class AppEnvironment {
                 scanner: MockAppBundleScanner(),
                 trackingPreferences: InMemoryTrackingPreferencesStore(),
                 nxnativeServices: previewNXNativeServices,
-                engineConfiguration: InMemoryEngineConfigurationStore(EngineConfiguration(
-                    isEnabled: true,
-                    enginePath: "/tools/nxnative"
-                )),
+                engineConfiguration: InMemoryEngineConfigurationStore(),
                 hltb: CachedHLTBService(cache: InMemoryHLTBCache()),
                 urlOpener: RecordingURLOpener(),
                 gameFolders: InMemoryGameFolderStore(["/Users/demo/Switch/Games"]),
@@ -156,7 +153,8 @@ final class AppEnvironment {
 
     private static var previewNXNativeServices: NXNativeServices {
         let files = InMemoryFileOperations()
-        files.addFile("/tools/nxnative", executable: true)
+        files.addFile("/Users/demo/Switch/nxnative", executable: true)
+        files.addFile("/Users/demo/Switch/ProdKeys/prod.keys")
         files.addFile("/Users/demo/Switch/Staging/Tideborn.nsp", contents: Data(repeating: 0, count: previewTitleBytes))
         return NXNativeServices(
             files: files,
@@ -165,7 +163,8 @@ final class AppEnvironment {
             audit: InMemoryAuditLog(),
             knowledgeBase: BundledKnowledgeBase(),
             backupDirectory: "/backups",
-            appBundlePath: Bundle.main.bundlePath
+            appBundlePath: Bundle.main.bundlePath,
+            homeDirectory: "/Users/demo"
         )
     }
 }
