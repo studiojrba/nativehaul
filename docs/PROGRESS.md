@@ -144,6 +144,47 @@ Living status log. Each branch appends its section. Legend: ✅ built & compiles
 
 # Final summary (end of overnight session, 2026-11-06)
 
+## 8 · feature/folder-import
+Branched from the tip of `feature/guides-hltb`. **Committed locally only** — pushes are still blocked (`BLOCKED.md`).
+
+**Built**
+- **Game Folders** settings tab (`Features/FolderImport`): add folders with the system folder picker
+  (SwiftUI `fileImporter`, which presents `NSOpenPanel`), remove them, list persisted in `UserDefaults`
+  (`UserDefaultsGameFolderStore`). "Scan Game Folders" runs from that tab and from the toolbar's Library menu
+  (which also has "Configure Game Folders…"). Scans from Settings refresh the main window via `LibraryChangeNotification`.
+- **Scanner reuse:** `AppBundleScanner` now takes `AppBundleScanOptions` (tracking keeps its 2-level scan; folder
+  import uses 4 levels). Never descends into a bundle; skips hidden items, `.Trash`/`.Trashes`, symlinked folders,
+  `Playrite.app` and Playrite's own bundle path. Reads `CFBundleDisplayName` → `CFBundleName` → filename.
+  `TrackedAppMatcher` now matches on `TitleNormalizer` keys (case/diacritics/punctuation-insensitive).
+- **Import rules** (`GameFolderImporter`): bundle path already on a game → skipped; normalised title matches a game
+  with no bundle path → linked (status and platform untouched); else a new backlog game. Platform: Switch games
+  folder or a sibling `.nx2apple-library` / `.nxnative-lib` folder → `switchPort`; CrossOver launcher → `other`;
+  else `macNative`. The watcher is refreshed afterwards so linked games are tracked immediately.
+- **CrossOver:** bottles under `~/Library/Application Support/CrossOver/Bottles`; launcher apps in
+  `~/Applications/CrossOver` (platform `other`, bundle path set); `drive_c/Program Files` and `Program Files (x86)`
+  top-level folders with a plausible `.exe` (searched 3 levels deep) → platform `other`, no bundle path, summary
+  "CrossOver bottle: <name>". Explicit `CrossOverSkipList` (Windows/Wine components, runtimes, store launchers,
+  redistributables, setup/uninstall/crash helpers). Launcher wins over a same-named install.
+- **Summary:** found / added / linked / skipped, plus CrossOver bottles found / CrossOver games added, plus any
+  unreadable folders. Shown in Settings and as an alert in the main window.
+- ADR 0010. Also fixed `scripts/lint.sh --check` (the installed SwiftFormat 0.64 needs paths before `--lint`).
+
+**Tests** — scanner max depth, no descent into bundles, Trash/hidden/Playrite skips, Info.plist titles and the
+port-library marker; CrossOver skip-list (parameterised) and bottle scanning on a temp tree; importer platforms,
+idempotent re-scan, title linking of bundle-less games, launcher-wins dedupe, install-vs-existing-title skip,
+unreadable folders; view model add/remove/persist/scan; `TitleNormalizer`.
+**Final count: 164 tests in 40 suites, all passing.** Lint (SwiftFormat + SwiftLint strict) clean.
+
+**Stubbed / unverified**
+- Not run against the owner's real `~/Switch/Games`, CrossOver bottles or launcher folder — verified with temp
+  directory trees and mocks only. CrossOver launcher internals were not inspected; they are treated as ordinary `.app`s.
+- The skip-list is heuristic: an unusual game exe (e.g. one named `…Service.exe`) could be missed, and an unlisted
+  tool folder could import as a game (remove it from the library; re-scans will then re-add it — a future
+  "ignored items" list would fix that).
+- Title linking takes the first bundle-less game with a matching normalised title; duplicates titles in the logbook
+  would link only one.
+- Scans of the configured folders are not cancellable; the depth limit keeps them short.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -155,10 +196,11 @@ Living status log. Each branch appends its section. Legend: ✅ built & compiles
 | 5 | `feature/stats-badges` | ✅ | ✅ | 92 | ⛔ |
 | 6 | `feature/nxnative-module` | ✅ | ✅ | 123 | ⛔ |
 | 7 | `feature/guides-hltb` | ✅ | ✅ | 142 | ⛔ |
+| 8 | `feature/folder-import` | ✅ | ✅ | 164 | ⛔ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
-1, 3 and 7.
+1, 3, 7 and 8.
 
 ## ⛔ The one blocker: pushing
 `git push` returns **403**: the active `gh` account `jr-resilia` has no write access to `studiojrba/Playrite`.
@@ -166,7 +208,7 @@ Claude was not allowed to use the inactive `studiojrba` account's credentials, s
 **Everything is committed locally.** To unblock, follow `BLOCKED.md`: switch the gh account, then push every
 `feature/*` branch.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0009)
+## Key decisions (see `docs/decisions/` ADR 0001–0010)
 - Empty upstream repo, so the feature branches are **stacked**. `main` was never touched.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.

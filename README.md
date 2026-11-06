@@ -13,6 +13,8 @@ series, stats, badges, guides) plus an **optional** NX2Apple-style Switch build 
 - **Stats & badges** — backlog counts, hours by source, completion %, badges computed only from real data.
 - **NXNative (optional)** — build queue UI for a user-supplied external engine: preflight checks, streamed logs,
   previewed cleanup (Trash only, never emptied), and a backup-first, audit-logged troubleshooting knowledge base.
+- **Game folder import** — scan configured folders for `.app` bundles plus CrossOver bottles and launchers;
+  strict dedupe, idempotent re-scans, and logbook entries linked to their real builds by title.
 - **Guides & HLTB** — GameFAQs link-out guides with attribution and chapters; cached, labelled HowLongToBeat estimates.
 
 ## Quickstart
@@ -56,6 +58,8 @@ Use `./scripts/lint.sh --check` to verify without rewriting files.
 ### Optional configuration
 - **Steam**: Settings → Steam. Paste your Steam Web API key and SteamID64. The key is stored only in the
   macOS Keychain. Without a key the app works fully offline.
+- **Game folders**: Settings → Game Folders. Add folders, then "Scan Game Folders" (also in the toolbar's
+  Library menu). CrossOver bottles and launchers are detected automatically.
 - **nxnative engine** (optional): Settings → NXNative. Point Playrite at your own copy of the engine.
   Playrite never ships the engine, keys, firmware, or game files.
 
