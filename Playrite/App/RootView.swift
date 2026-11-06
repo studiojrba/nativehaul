@@ -2,7 +2,7 @@ import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// Top-level split view: sidebar + navigable content.
+/// Top-level layout: hover-expanding icon rail + navigable content (poster grid → three-column details).
 struct RootView: View {
     /// App dependencies.
     let environment: AppEnvironment
@@ -24,20 +24,22 @@ struct RootView: View {
     }
 
     var body: some View {
-        NavigationSplitView {
-            SidebarView(selection: $selection, libraryViewModel: libraryViewModel)
-        } detail: {
-            NavigationStack(path: $path) {
-                content
-                    .navigationDestination(for: UUID.self) { id in
-                        if let game = libraryViewModel.game(withID: id) {
-                            GameDetailView(viewModel: GameDetailViewModel(
-                                game: game,
-                                repository: environment.repository
-                            ))
-                        }
+        NavigationStack(path: $path) {
+            content
+                .navigationDestination(for: UUID.self) { id in
+                    if let game = libraryViewModel.game(withID: id) {
+                        GameDetailView(
+                            viewModel: environment.makeGameDetailViewModel(for: game),
+                            launchViewModel: environment.makeGameLaunchViewModel(for: game),
+                            quickListGames: libraryViewModel.visibleGames
+                        ) { path = [$0] }
+                            .id(id)
                     }
-            }
+                }
+        }
+        .padding(.leading, DesignTokens.Rail.collapsedWidth)
+        .overlay(alignment: .leading) {
+            IconRailView(selection: $selection, libraryViewModel: libraryViewModel)
         }
         .environment(environment)
         .onChange(of: selection) { path.removeAll() }

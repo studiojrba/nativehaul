@@ -55,6 +55,24 @@ enum DesignTokens {
         static let formLabelWidth: CGFloat = 140
     }
 
+    /// Icon rail (collapsed: icons only; expanded on hover: icons + labels).
+    enum Rail {
+        static let collapsedWidth: CGFloat = 56
+        static let expandedWidth: CGFloat = 232
+        static let itemHeight: CGFloat = 36
+        static let iconWidth: CGFloat = 24
+        static let shadowRadius: CGFloat = 12
+    }
+
+    /// Three-column game details layout.
+    enum Details {
+        static let quickListWidth: CGFloat = 220
+        static let rightRailWidth: CGFloat = 280
+        static let heroHeight: CGFloat = 280
+        static let launchButtonHeight: CGFloat = 48
+        static let infoLabelWidth: CGFloat = 104
+    }
+
     /// Opacity levels.
     enum Opacity {
         static let subtle: Double = 0.08
@@ -75,6 +93,7 @@ enum DesignTokens {
         static let monospaced: Font = .system(.body, design: .monospaced)
         static let monospacedSmall: Font = .system(.caption, design: .monospaced)
         static let statValue: Font = .system(.title, design: .rounded).weight(.bold)
+        static let launch: Font = .title3.weight(.bold)
     }
 
     /// Animation durations (seconds).
