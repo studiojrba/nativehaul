@@ -130,4 +130,9 @@ extension AppEnvironment {
     ) -> GameFoldersViewModel {
         GameFoldersViewModel(store: gameFolders, importer: folderImporter, onLibraryChanged: onLibraryChanged)
     }
+
+    /// Builds the Merge Duplicate Games view model.
+    func makeMergeDuplicatesViewModel(onLibraryChanged: @escaping @MainActor () -> Void) -> MergeDuplicatesViewModel {
+        MergeDuplicatesViewModel(deduplicator: deduplicator, onLibraryChanged: onLibraryChanged)
+    }
 }

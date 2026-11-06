@@ -16,6 +16,7 @@ final class GameFolderImporter: GameFolderImporting {
     private let trackingPreferences: any TrackingPreferencesStoring
     private let watcher: (any PlaytimeWatching)?
     private let locations: CrossOverLocations
+    private let deduplicator: (any LibraryDeduplicating)?
 
     /// Creates the importer.
     init(
@@ -24,7 +25,8 @@ final class GameFolderImporter: GameFolderImporting {
         repository: any LibraryRepository,
         trackingPreferences: any TrackingPreferencesStoring,
         watcher: (any PlaytimeWatching)? = nil,
-        locations: CrossOverLocations = .standard
+        locations: CrossOverLocations = .standard,
+        deduplicator: (any LibraryDeduplicating)? = nil
     ) {
         self.folders = folders
         self.discoverer = discoverer
@@ -32,6 +34,7 @@ final class GameFolderImporter: GameFolderImporting {
         self.trackingPreferences = trackingPreferences
         self.watcher = watcher
         self.locations = locations
+        self.deduplicator = deduplicator
     }
 
     func scanConfiguredFolders() async throws -> FolderImportSummary {
@@ -65,6 +68,7 @@ final class GameFolderImporter: GameFolderImporting {
             importInstall(install, state: &state, summary: &summary)
         }
         try repository.save()
+        summary.duplicatesMerged = try deduplicator?.mergeAll() ?? 0
         watcher?.refreshTrackedApps()
         return summary
     }

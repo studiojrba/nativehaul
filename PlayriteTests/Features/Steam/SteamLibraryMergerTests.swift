@@ -46,3 +46,22 @@ struct SteamLibraryMergerTests {
         #expect(summary.updated == 0)
     }
 }
+
+@MainActor
+struct SteamLibraryMergerTitleLinkTests {
+    @Test func linksExistingEntryByNormalizedTitleInsteadOfDuplicating() {
+        let imported = Game(title: "Glimmer: Remastered", platform: .macNative, status: .playing)
+        var inserted: [Game] = []
+        let summary = SteamLibraryMerger.merge(
+            owned: [SteamOwnedGame(appid: 99, name: "GLIMMER REMASTERED", playtimeForever: 60, rtimeLastPlayed: nil)],
+            into: [imported],
+            insert: { inserted.append($0) },
+            now: .now
+        )
+        #expect(inserted.isEmpty)
+        #expect(summary.linked == 1)
+        #expect(imported.steamAppID == 99)
+        #expect(imported.steamSyncedSeconds == 3600)
+        #expect(imported.status == .playing)
+    }
+}

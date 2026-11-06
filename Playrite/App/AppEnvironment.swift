@@ -34,6 +34,8 @@ final class AppEnvironment {
     let gameFolders: any GameFolderStoring
     /// Game folder + CrossOver import.
     let folderImporter: any GameFolderImporting
+    /// Same-title duplicate merging.
+    let deduplicator: any LibraryDeduplicating
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -50,7 +52,8 @@ final class AppEnvironment {
         hltb: any HLTBProviding,
         urlOpener: any URLOpening,
         gameFolders: any GameFolderStoring,
-        folderImporter: any GameFolderImporting
+        folderImporter: any GameFolderImporting,
+        deduplicator: any LibraryDeduplicating
     ) {
         self.container = container
         self.repository = repository
@@ -66,6 +69,7 @@ final class AppEnvironment {
         self.urlOpener = urlOpener
         self.gameFolders = gameFolders
         self.folderImporter = folderImporter
+        self.deduplicator = deduplicator
     }
 
     /// Live environment using the on-disk store, Keychain and network.
@@ -80,18 +84,21 @@ final class AppEnvironment {
             repository: repository,
             preferences: trackingPreferences
         )
+        let hltb = CachedHLTBService(cache: FileHLTBCache())
+        let deduplicator = LibraryDeduplicator(repository: repository, hltb: hltb)
         let gameFolders = UserDefaultsGameFolderStore()
         let folderImporter = GameFolderImporter(
             folders: gameFolders,
             discoverer: GameFolderDiscoverer(scanner: AppBundleScanner(), crossOver: CrossOverBottleScanner()),
             repository: repository,
             trackingPreferences: trackingPreferences,
-            watcher: watcher
+            watcher: watcher,
+            deduplicator: deduplicator
         )
         return AppEnvironment(
             container: container,
             repository: repository,
-            transfer: LibraryTransferService(repository: repository),
+            transfer: LibraryTransferService(repository: repository, deduplicator: deduplicator),
             steamAccount: steamAccount,
             steamSync: SteamSyncService(client: steamClient, account: steamAccount, repository: repository),
             watcher: watcher,
@@ -107,10 +114,11 @@ final class AppEnvironment {
                 appBundlePath: Bundle.main.bundlePath
             ),
             engineConfiguration: UserDefaultsEngineConfigurationStore(),
-            hltb: CachedHLTBService(cache: FileHLTBCache()),
+            hltb: hltb,
             urlOpener: WorkspaceURLOpener(),
             gameFolders: gameFolders,
-            folderImporter: folderImporter
+            folderImporter: folderImporter,
+            deduplicator: deduplicator
         )
     }
 
@@ -136,7 +144,8 @@ final class AppEnvironment {
                 hltb: CachedHLTBService(cache: InMemoryHLTBCache()),
                 urlOpener: RecordingURLOpener(),
                 gameFolders: InMemoryGameFolderStore(["/Users/demo/Switch/Games"]),
-                folderImporter: MockGameFolderImporter()
+                folderImporter: MockGameFolderImporter(),
+                deduplicator: MockLibraryDeduplicator()
             )
         } catch {
             fatalError("Preview environment could not be created: \(error)")

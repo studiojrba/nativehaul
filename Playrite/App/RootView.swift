@@ -12,6 +12,7 @@ struct RootView: View {
     @State private var path: [UUID] = []
     @State private var isAddingGame = false
     @State private var isImporting = false
+    @State private var isMergingDuplicates = false
     @State private var exportDocument: LibraryJSONDocument?
 
     /// Creates the root view.
@@ -50,6 +51,9 @@ struct RootView: View {
         .toolbar { libraryToolbar }
         .sheet(isPresented: $isAddingGame) {
             AddGameSheet { libraryViewModel.addGame(title: $0, platform: $1, status: $2) }
+        }
+        .sheet(isPresented: $isMergingDuplicates) {
+            MergeDuplicatesSheet(viewModel: environment.makeMergeDuplicatesViewModel { libraryViewModel.reload() })
         }
         .fileImporter(isPresented: $isImporting, allowedContentTypes: [.json], onCompletion: handleImport)
         .fileExporter(
@@ -98,6 +102,8 @@ struct RootView: View {
                 Button("Scan Game Folders") { Task { await libraryViewModel.scanGameFolders() } }
                     .disabled(!libraryViewModel.canScanFolders)
                 SettingsLink { Text("Configure Game Folders…") }
+                Divider()
+                Button("Merge Duplicate Games…") { isMergingDuplicates = true }
             }
         }
     }

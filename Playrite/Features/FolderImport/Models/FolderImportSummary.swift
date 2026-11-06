@@ -14,6 +14,8 @@ struct FolderImportSummary: Equatable, Sendable {
     var bottlesFound = 0
     /// New games created from CrossOver launchers and bottle installs.
     var crossOverAdded = 0
+    /// Duplicate entries (same normalised title) merged away after the scan.
+    var duplicatesMerged = 0
     /// Configured folders that were missing or unreadable.
     var unreadableFolders: [String] = []
 
@@ -21,6 +23,9 @@ struct FolderImportSummary: Equatable, Sendable {
     var description: String {
         var text = "Found \(found) · added \(added) · linked \(linked) · skipped \(skipped). "
             + "CrossOver: \(bottlesFound) bottles, \(crossOverAdded) games added."
+        if duplicatesMerged > 0 {
+            text += " Merged \(duplicatesMerged) duplicates."
+        }
         if !unreadableFolders.isEmpty {
             text += " Could not read: \(unreadableFolders.joined(separator: ", "))."
         }

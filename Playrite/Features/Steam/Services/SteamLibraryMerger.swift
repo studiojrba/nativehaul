@@ -2,7 +2,9 @@ import Foundation
 
 /// Pure rules for folding Steam's owned-games list into the library.
 ///
-/// Matches by `steamAppID`. Only the ``PlaytimeSource/steamSynced`` figure is written; other sources are untouched.
+/// Matches by `steamAppID`, then links an entry with no Steam app whose normalised title matches (so a Steam
+/// game never duplicates an imported or folder-scanned entry). Only the ``PlaytimeSource/steamSynced`` figure is
+/// written; other sources are untouched.
 @MainActor
 enum SteamLibraryMerger {
     private static let secondsPerMinute = 60
@@ -18,6 +20,7 @@ enum SteamLibraryMerger {
         let byAppID = Dictionary(existing.compactMap { game in game.steamAppID.map { ($0, game) } }) { first, _ in
             first
         }
+        var unlinked = existing.filter { $0.steamAppID == nil }
         for ownedGame in owned {
             let seconds = ownedGame.playtimeForever * secondsPerMinute
             let lastPlayed = ownedGame.rtimeLastPlayed
@@ -30,6 +33,14 @@ enum SteamLibraryMerger {
                 if let lastPlayed, lastPlayed > (game.lastPlayedAt ?? .distantPast) {
                     game.lastPlayedAt = lastPlayed
                 }
+            } else if let index = titleMatch(for: ownedGame, in: unlinked) {
+                let game = unlinked.remove(at: index)
+                game.steamAppID = ownedGame.appid
+                game.steamSyncedSeconds = seconds > 0 ? seconds : nil
+                if let lastPlayed, lastPlayed > (game.lastPlayedAt ?? .distantPast) {
+                    game.lastPlayedAt = lastPlayed
+                }
+                summary.linked += 1
             } else {
                 let game = Game(
                     title: ownedGame.name ?? "Steam App \(ownedGame.appid)",
@@ -44,5 +55,10 @@ enum SteamLibraryMerger {
             }
         }
         return summary
+    }
+
+    private static func titleMatch(for ownedGame: SteamOwnedGame, in candidates: [Game]) -> Int? {
+        guard let name = ownedGame.name else { return nil }
+        return candidates.firstIndex { TitleNormalizer.matches($0.title, name) }
     }
 }
