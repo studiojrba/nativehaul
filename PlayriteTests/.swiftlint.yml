@@ -1,0 +1,5 @@
+disabled_rules:
+  - no_magic_numbers
+  - missing_docs
+  - one_declaration_per_file
+  - force_unwrapping
