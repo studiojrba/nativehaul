@@ -21,6 +21,7 @@ struct GameDetailView: View {
                 HLTBSection(viewModel: environment.makeHLTBViewModel(for: viewModel.game))
                 GuidesSection(viewModel: environment.makeGuidesViewModel(for: viewModel.game))
                 if viewModel.game.steamAppID != nil {
+                    SteamProvenanceSection(viewModel: environment.makeGameLaunchViewModel(for: viewModel.game))
                     SteamAchievementsSection(viewModel: environment.makeSteamAchievementsViewModel(for: viewModel.game))
                 }
                 if let errorMessage = viewModel.errorMessage {

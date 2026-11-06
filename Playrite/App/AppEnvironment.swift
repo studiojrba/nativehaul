@@ -36,6 +36,8 @@ final class AppEnvironment {
     let folderImporter: any GameFolderImporting
     /// Same-title duplicate merging.
     let deduplicator: any LibraryDeduplicating
+    /// Starts games (apps, Steam, CrossOver).
+    let launcher: any GameLaunching
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -53,7 +55,8 @@ final class AppEnvironment {
         urlOpener: any URLOpening,
         gameFolders: any GameFolderStoring,
         folderImporter: any GameFolderImporting,
-        deduplicator: any LibraryDeduplicating
+        deduplicator: any LibraryDeduplicating,
+        launcher: any GameLaunching
     ) {
         self.container = container
         self.repository = repository
@@ -70,6 +73,7 @@ final class AppEnvironment {
         self.gameFolders = gameFolders
         self.folderImporter = folderImporter
         self.deduplicator = deduplicator
+        self.launcher = launcher
     }
 
     /// Live environment using the on-disk store, Keychain and network.
@@ -87,9 +91,8 @@ final class AppEnvironment {
         let hltb = CachedHLTBService(cache: FileHLTBCache())
         let deduplicator = LibraryDeduplicator(repository: repository, hltb: hltb)
         let gameFolders = UserDefaultsGameFolderStore()
-        let folderImporter = GameFolderImporter(
+        let folderImporter = makeLiveFolderImporter(
             folders: gameFolders,
-            discoverer: GameFolderDiscoverer(scanner: AppBundleScanner(), crossOver: CrossOverBottleScanner()),
             repository: repository,
             trackingPreferences: trackingPreferences,
             watcher: watcher,
@@ -118,6 +121,28 @@ final class AppEnvironment {
             urlOpener: WorkspaceURLOpener(),
             gameFolders: gameFolders,
             folderImporter: folderImporter,
+            deduplicator: deduplicator,
+            launcher: WorkspaceGameLauncher()
+        )
+    }
+
+    private static func makeLiveFolderImporter(
+        folders: any GameFolderStoring,
+        repository: any LibraryRepository,
+        trackingPreferences: any TrackingPreferencesStoring,
+        watcher: any PlaytimeWatching,
+        deduplicator: any LibraryDeduplicating
+    ) -> GameFolderImporter {
+        GameFolderImporter(
+            folders: folders,
+            discoverer: GameFolderDiscoverer(
+                scanner: AppBundleScanner(),
+                crossOver: CrossOverBottleScanner(),
+                steamScanner: SteamInstallScanner()
+            ),
+            repository: repository,
+            trackingPreferences: trackingPreferences,
+            watcher: watcher,
             deduplicator: deduplicator
         )
     }
@@ -145,7 +170,8 @@ final class AppEnvironment {
                 urlOpener: RecordingURLOpener(),
                 gameFolders: InMemoryGameFolderStore(["/Users/demo/Switch/Games"]),
                 folderImporter: MockGameFolderImporter(),
-                deduplicator: MockLibraryDeduplicator()
+                deduplicator: MockLibraryDeduplicator(),
+                launcher: RecordingGameLauncher()
             )
         } catch {
             fatalError("Preview environment could not be created: \(error)")

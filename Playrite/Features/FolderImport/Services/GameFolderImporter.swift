@@ -67,6 +67,9 @@ final class GameFolderImporter: GameFolderImporting {
             summary.found += 1
             importInstall(install, state: &state, summary: &summary)
         }
+        if let installs = discovery.steamInstalls {
+            summary.steam = SteamProvenanceApplier.apply(installs, to: state.games) { repository.insert($0) }
+        }
         try repository.save()
         summary.duplicatesMerged = try deduplicator?.mergeAll() ?? 0
         watcher?.refreshTrackedApps()

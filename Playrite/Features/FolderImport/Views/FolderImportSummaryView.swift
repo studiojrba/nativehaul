@@ -14,6 +14,14 @@ struct FolderImportSummaryView: View {
             LabeledValueRow(label: "Skipped") { Text("\(summary.skipped)") }
             LabeledValueRow(label: "CrossOver bottles found") { Text("\(summary.bottlesFound)") }
             LabeledValueRow(label: "CrossOver games added") { Text("\(summary.crossOverAdded)") }
+            if let steam = summary.steam {
+                LabeledValueRow(label: "Steam installs (Mac)") { Text("\(steam.macInstalls)") }
+                LabeledValueRow(label: "Steam installs (CrossOver)") { Text("\(steam.crossOverInstalls)") }
+                LabeledValueRow(label: "Steam games linked / added") { Text("\(steam.linked) / \(steam.added)") }
+            }
+            if summary.duplicatesMerged > 0 {
+                LabeledValueRow(label: "Duplicates merged") { Text("\(summary.duplicatesMerged)") }
+            }
             ForEach(summary.unreadableFolders, id: \.self) { folder in
                 Label("Could not read \(folder)", systemImage: "exclamationmark.triangle")
                     .foregroundStyle(Theme.warning)

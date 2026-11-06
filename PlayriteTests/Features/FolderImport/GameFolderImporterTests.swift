@@ -141,4 +141,15 @@ struct GameFolderImporterTests {
         #expect(summary.unreadableFolders == ["/missing"])
         #expect(summary.description.contains("Could not read: /missing"))
     }
+
+    @Test func scanRecordsSteamProvenance() throws {
+        let repository = try MockLibraryRepository()
+        var discovery = FolderDiscovery()
+        discovery.steamInstalls = MockSteamInstallScanner().installs
+        let summary = try makeImporter(repository: repository, folders: []).apply(discovery)
+        let portal = try #require(try repository.fetchGames().first { $0.steamAppID == 620 })
+        #expect(portal.steamInstalls.map(\.kind) == [.mac, .crossOver])
+        #expect(summary.steam?.added == 1)
+        #expect(summary.description.contains("Steam installs: 1 Mac, 1 CrossOver"))
+    }
 }

@@ -135,4 +135,9 @@ extension AppEnvironment {
     func makeMergeDuplicatesViewModel(onLibraryChanged: @escaping @MainActor () -> Void) -> MergeDuplicatesViewModel {
         MergeDuplicatesViewModel(deduplicator: deduplicator, onLibraryChanged: onLibraryChanged)
     }
+
+    /// Builds the launch view model for a game.
+    func makeGameLaunchViewModel(for game: Game) -> GameLaunchViewModel {
+        GameLaunchViewModel(game: game, launcher: launcher, watcher: watcher)
+    }
 }
