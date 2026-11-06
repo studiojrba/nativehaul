@@ -22,6 +22,10 @@ final class AppEnvironment {
     let scanner: any AppBundleScanning
     /// Tracking preferences.
     let trackingPreferences: any TrackingPreferencesStoring
+    /// NXNative module services (engine is external and user-supplied).
+    let nxnativeServices: NXNativeServices
+    /// NXNative configuration.
+    let engineConfiguration: any EngineConfigurationStoring
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -32,7 +36,9 @@ final class AppEnvironment {
         steamSync: any SteamSyncing,
         watcher: any PlaytimeWatching,
         scanner: any AppBundleScanning,
-        trackingPreferences: any TrackingPreferencesStoring
+        trackingPreferences: any TrackingPreferencesStoring,
+        nxnativeServices: NXNativeServices,
+        engineConfiguration: any EngineConfigurationStoring
     ) {
         self.container = container
         self.repository = repository
@@ -42,6 +48,8 @@ final class AppEnvironment {
         self.watcher = watcher
         self.scanner = scanner
         self.trackingPreferences = trackingPreferences
+        self.nxnativeServices = nxnativeServices
+        self.engineConfiguration = engineConfiguration
     }
 
     /// Live environment using the on-disk store, Keychain and network.
@@ -64,7 +72,17 @@ final class AppEnvironment {
             steamSync: SteamSyncService(client: steamClient, account: steamAccount, repository: repository),
             watcher: watcher,
             scanner: AppBundleScanner(),
-            trackingPreferences: trackingPreferences
+            trackingPreferences: trackingPreferences,
+            nxnativeServices: NXNativeServices(
+                files: LocalFileOperations(),
+                disk: VolumeDiskSpaceProvider(),
+                runner: ProcessBuildEngineRunner(),
+                audit: FileAuditLog(path: FileAuditLog.defaultPath(), files: LocalFileOperations()),
+                knowledgeBase: BundledKnowledgeBase(),
+                backupDirectory: ScriptBackupService.defaultDirectory(),
+                appBundlePath: Bundle.main.bundlePath
+            ),
+            engineConfiguration: UserDefaultsEngineConfigurationStore()
         )
     }
 
@@ -81,10 +99,32 @@ final class AppEnvironment {
                 steamSync: SteamSyncService(client: MockSteamClient(), account: steamAccount, repository: repository),
                 watcher: MockPlaytimeWatcher(),
                 scanner: MockAppBundleScanner(),
-                trackingPreferences: InMemoryTrackingPreferencesStore()
+                trackingPreferences: InMemoryTrackingPreferencesStore(),
+                nxnativeServices: previewNXNativeServices,
+                engineConfiguration: InMemoryEngineConfigurationStore(EngineConfiguration(
+                    isEnabled: true,
+                    enginePath: "/tools/nxnative"
+                ))
             )
         } catch {
             fatalError("Preview environment could not be created: \(error)")
         }
+    }
+
+    private static let previewTitleBytes = 1024
+
+    private static var previewNXNativeServices: NXNativeServices {
+        let files = InMemoryFileOperations()
+        files.addFile("/tools/nxnative", executable: true)
+        files.addFile("/Users/demo/Switch/Staging/Tideborn.nsp", contents: Data(repeating: 0, count: previewTitleBytes))
+        return NXNativeServices(
+            files: files,
+            disk: FixedDiskSpaceProvider(bytes: Int64.max),
+            runner: MockBuildEngineRunner(),
+            audit: InMemoryAuditLog(),
+            knowledgeBase: BundledKnowledgeBase(),
+            backupDirectory: "/backups",
+            appBundlePath: Bundle.main.bundlePath
+        )
     }
 }

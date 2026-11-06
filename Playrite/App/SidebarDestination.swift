@@ -14,4 +14,6 @@ enum SidebarDestination: Hashable, Sendable {
     case steam
     /// Playtime tracking.
     case tracking
+    /// Optional nxnative build module.
+    case nxnative
 }

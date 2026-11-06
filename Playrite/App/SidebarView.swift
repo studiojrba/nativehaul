@@ -25,6 +25,9 @@ struct SidebarView: View {
                 Label("Steam", systemImage: "cloud").tag(SidebarDestination.steam)
                 Label("Playtime Tracking", systemImage: "timer").tag(SidebarDestination.tracking)
             }
+            Section("Tools") {
+                Label("NXNative Builds", systemImage: "hammer").tag(SidebarDestination.nxnative)
+            }
         }
         .navigationSplitViewColumnWidth(
             min: DesignTokens.Layout.sidebarMinWidth,

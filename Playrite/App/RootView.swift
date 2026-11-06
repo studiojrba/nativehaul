@@ -7,6 +7,7 @@ struct RootView: View {
     /// App dependencies.
     let environment: AppEnvironment
     @State private var libraryViewModel: LibraryViewModel
+    @State private var nxnativeViewModel: NXNativeViewModel
     @State private var selection: SidebarDestination? = .library(.all)
     @State private var path: [UUID] = []
     @State private var isAddingGame = false
@@ -16,7 +17,9 @@ struct RootView: View {
     /// Creates the root view.
     init(environment: AppEnvironment) {
         self.environment = environment
-        _libraryViewModel = State(initialValue: environment.makeLibraryViewModel())
+        let libraryViewModel = environment.makeLibraryViewModel()
+        _libraryViewModel = State(initialValue: libraryViewModel)
+        _nxnativeViewModel = State(initialValue: environment.makeNXNativeViewModel { libraryViewModel.reload() })
     }
 
     var body: some View {
@@ -73,6 +76,8 @@ struct RootView: View {
             SteamDashboardView(viewModel: environment.makeSteamDashboardViewModel { libraryViewModel.reload() })
         case .tracking:
             TrackingDashboardView(viewModel: environment.makeTrackingViewModel { libraryViewModel.reload() })
+        case .nxnative:
+            NXNativeDashboardView(viewModel: nxnativeViewModel)
         case nil:
             ContentUnavailableView("Select a Section", systemImage: "sidebar.left")
         }

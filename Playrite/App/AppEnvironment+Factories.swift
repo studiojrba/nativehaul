@@ -78,4 +78,39 @@ extension AppEnvironment {
     func makeStatsViewModel() -> StatsViewModel {
         StatsViewModel(provider: RepositorySnapshotProvider(repository: repository))
     }
+
+    /// Builds the NXNative queue view model. Finished apps are added to the library and tracked.
+    func makeNXNativeViewModel(onLibraryChanged: @escaping @MainActor () -> Void) -> NXNativeViewModel {
+        let registrar = BuiltAppRegistrar(repository: repository, watcher: watcher)
+        return NXNativeViewModel(services: nxnativeServices, store: engineConfiguration) { title, appPath in
+            _ = try? registrar.register(title: title, appPath: appPath)
+            onLibraryChanged()
+        }
+    }
+
+    /// Builds a troubleshooting view model for a case, targeting the configured engine script.
+    func makeTroubleshootingViewModel(
+        for troubleshootingCase: TroubleshootingCase,
+        onRebuild: @escaping @MainActor () -> Void
+    ) -> TroubleshootingViewModel {
+        let services = nxnativeServices
+        let backups = ScriptBackupService(
+            files: services.files,
+            audit: services.audit,
+            backupDirectory: services.backupDirectory
+        )
+        let session = TroubleshootingSession(
+            troubleshootingCase: troubleshootingCase,
+            scriptPath: EngineConfiguration.expand(engineConfiguration.load().enginePath),
+            backups: backups,
+            patcher: ScriptPatcher(files: services.files, audit: services.audit, backups: backups),
+            onRebuild: onRebuild
+        )
+        return TroubleshootingViewModel(session: session, audit: services.audit)
+    }
+
+    /// Builds the NXNative settings view model.
+    func makeNXNativeSettingsViewModel() -> NXNativeSettingsViewModel {
+        NXNativeSettingsViewModel(store: engineConfiguration)
+    }
 }

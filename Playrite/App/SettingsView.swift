@@ -11,6 +11,8 @@ struct SettingsView: View {
                 .tabItem { Label("Steam", systemImage: "cloud") }
             TrackingSettingsView(viewModel: environment.makeTrackingSettingsViewModel())
                 .tabItem { Label("Tracking", systemImage: "timer") }
+            NXNativeSettingsView(viewModel: environment.makeNXNativeSettingsViewModel())
+                .tabItem { Label("NXNative", systemImage: "hammer") }
         }
         .frame(minWidth: DesignTokens.Layout.detailMinWidth, minHeight: DesignTokens.Layout.logMinHeight)
         .padding(DesignTokens.Spacing.lg)
