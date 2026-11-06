@@ -40,3 +40,18 @@ Living status log. Each branch appends its section. Legend: ✅ built & compiles
 - 🧪 22 tests (filter, breakdown, status transitions, archive round-trip/skip/version, view models).
 - Build ✅ · Tests ✅ · Lint ✅ · App launches ✅. ⛔ Not pushed (BLOCKED.md).
 - Note: SwiftData objects should be saved before deletion; the mock saves after seeding.
+
+## 2 · feature/steam-provider
+- ✅ `Shared/Networking`: `HTTPClient` protocol, `URLSessionHTTPClient` (never logs URLs), `MockHTTPClient` (actor).
+- ✅ `Shared/Utilities`: `SecretStore` protocol, `KeychainSecretStore` (live), `InMemorySecretStore` (mock), `SecretKey`.
+- ✅ `Features/Steam`: `SteamClientProtocol` with `SteamWebAPIClient` implementing **GetOwnedGames**,
+  **GetPlayerAchievements**, **GetRecentlyPlayedGames**; `MockSteamClient`; validated `SteamID`; typed `SteamError`
+  (invalid key, private profile, no stats, HTTP, decoding).
+- ✅ `SteamAccountStore`: key **only** in Keychain; SteamID64 in UserDefaults. `SteamSyncService` merges owned games by
+  app ID, writing only the `steamSynced` figure (other sources untouched); achievements stored as unlocked/total.
+- ✅ Graceful no-key mode: no network calls, empty state with Settings link, achievements section explains what to do.
+- ✅ UI: Settings window (Steam tab), sidebar "Providers → Steam" dashboard (sync + recently played), achievements
+  section on Steam game detail. ADR 0007.
+- 🧪 47 tests total (+25: SteamID, endpoints, client decoding/errors, merger, account store, sync, settings VM).
+- 🟡 Real-Keychain wrapper and live Steam calls are not exercised by automated tests (no key available overnight).
+- Build ✅ · Tests ✅ · Lint ✅. ⛔ Not pushed (BLOCKED.md).
