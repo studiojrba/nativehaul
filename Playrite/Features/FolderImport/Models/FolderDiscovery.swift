@@ -8,6 +8,8 @@ struct FolderDiscovery: Equatable, Sendable {
     var launcherApps: [DiscoveredApp] = []
     /// CrossOver bottles and install folders.
     var crossOver = CrossOverScanResult()
+    /// Bundle sizes in bytes, keyed by the bundle path as discovered.
+    var bundleSizes: [String: Int64] = [:]
     /// Installed Steam games (Mac Steam and CrossOver bottles); `nil` when Steam detection is off.
     var steamInstalls: [SteamInstalledApp]?
     /// Configured folders that were missing or unreadable.

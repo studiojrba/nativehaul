@@ -9,6 +9,7 @@ struct GameFolderDiscoverer: Sendable {
     private let folderExists: @Sendable (String) -> Bool
     private let steamScanner: (any SteamInstallScanning)?
     private let steamRoots: SteamInstallRoots
+    private let measuresBundles: Bool
 
     /// Creates the discoverer. `folderExists` is injectable so tests can use mock scanners with fake paths.
     init(
@@ -18,7 +19,8 @@ struct GameFolderDiscoverer: Sendable {
         options: AppBundleScanOptions = .folderImport,
         folderExists: @escaping @Sendable (String) -> Bool = { FileManager.default.fileExists(atPath: $0) },
         steamScanner: (any SteamInstallScanning)? = nil,
-        steamRoots: SteamInstallRoots = .standard
+        steamRoots: SteamInstallRoots = .standard,
+        measuresBundles: Bool = false
     ) {
         self.scanner = scanner
         self.crossOver = crossOver
@@ -27,6 +29,7 @@ struct GameFolderDiscoverer: Sendable {
         self.folderExists = folderExists
         self.steamScanner = steamScanner
         self.steamRoots = steamRoots
+        self.measuresBundles = measuresBundles
     }
 
     /// Scans every folder plus CrossOver. Missing folders are reported, not thrown.
@@ -44,6 +47,11 @@ struct GameFolderDiscoverer: Sendable {
         }
         let launchers = (locations.launchersFolder as NSString).expandingTildeInPath
         discovery.launcherApps = (try? scanner.scan(folder: launchers, options: options)) ?? []
+        if measuresBundles {
+            for app in discovery.folderApps + discovery.launcherApps {
+                discovery.bundleSizes[app.path] = BundleSizeCalculator.size(ofBundleAt: app.path)
+            }
+        }
         discovery.crossOver = crossOver.scanBottles(at: locations.bottlesRoot)
         discovery.steamInstalls = steamScanner?.scanInstalls(roots: steamRoots)
         return discovery

@@ -64,6 +64,10 @@ struct LibraryArchiveImporter {
         game.steamAchievementsUnlocked = record.steamAchievementsUnlocked
         game.steamAchievementsTotal = record.steamAchievementsTotal
         game.hltbID = record.hltbID
+        game.developer = record.developer
+        game.genres = record.genres ?? []
+        game.tags = record.tags ?? []
+        game.heroImagePath = record.heroImagePath
         repository.insert(game)
         for sessionRecord in record.sessions {
             let session = PlaySession(

@@ -40,6 +40,14 @@ final class Game {
     var steamInstalls: [SteamInstallLocation] = []
     /// Size on disk in bytes, when known (from Steam's manifest or the `.app` bundle).
     var installSizeBytes: Int64?
+    /// Developer studio, when known.
+    var developer: String?
+    /// Genres (display order).
+    var genres: [String] = []
+    /// Free-form tags (display order).
+    var tags: [String] = []
+    /// Absolute path to a local wide hero/background image for the details screen.
+    var heroImagePath: String?
     /// HowLongToBeat game identifier, when known (used for a direct link-out; never fetched).
     var hltbID: Int?
     /// Recorded play sessions.

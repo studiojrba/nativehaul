@@ -20,6 +20,11 @@ struct GameRecord: Codable, Equatable, Sendable {
     var steamAchievementsTotal: Int?
     /// Optional; older archives omit it.
     var hltbID: Int?
+    /// Optional metadata; older archives omit these.
+    var developer: String?
+    var genres: [String]?
+    var tags: [String]?
+    var heroImagePath: String?
     var sessions: [SessionRecord]
     var guides: [GuideRecord]?
 }

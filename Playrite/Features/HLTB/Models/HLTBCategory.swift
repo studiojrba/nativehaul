@@ -11,6 +11,15 @@ enum HLTBCategory: String, Codable, CaseIterable, Sendable, Identifiable {
         rawValue
     }
 
+    /// Short chip label on the details rail.
+    var chipName: String {
+        switch self {
+        case .mainStory: "Main Story"
+        case .mainExtras: "Main Story+"
+        case .completionist: "Completionist"
+        }
+    }
+
     /// User-facing name.
     var displayName: String {
         switch self {

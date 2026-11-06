@@ -138,7 +138,8 @@ final class AppEnvironment {
             discoverer: GameFolderDiscoverer(
                 scanner: AppBundleScanner(),
                 crossOver: CrossOverBottleScanner(),
-                steamScanner: SteamInstallScanner()
+                steamScanner: SteamInstallScanner(),
+                measuresBundles: true
             ),
             repository: repository,
             trackingPreferences: trackingPreferences,

@@ -61,6 +61,7 @@ final class GameFolderImporter: GameFolderImporting {
             )
             importApp(app, platform: platform, state: &state, summary: &summary)
         }
+        applyBundleSizes(discovery.bundleSizes, to: state.games)
         let launcherKeys = Set(discovery.launcherApps.flatMap { [$0.title, $0.name] }.map(TitleNormalizer.key(for:)))
         let installs = discovery.crossOver.installs.filter { !launcherKeys.contains(TitleNormalizer.key(for: $0.name)) }
         for install in installs {
@@ -117,5 +118,15 @@ final class GameFolderImporter: GameFolderImporting {
         repository.insert(game)
         state.games.append(game)
         summary.crossOverAdded += 1
+    }
+
+    private func applyBundleSizes(_ sizes: [String: Int64], to games: [Game]) {
+        guard !sizes.isEmpty else { return }
+        let normalized = Dictionary(sizes.map { (BundlePath.normalize($0.key), $0.value) }) { first, _ in first }
+        for game in games {
+            if let path = game.appBundlePath, let size = normalized[BundlePath.normalize(path)] {
+                game.installSizeBytes = size
+            }
+        }
     }
 }

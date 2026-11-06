@@ -30,6 +30,8 @@ enum GameMerger {
             game.releaseDate != nil,
             game.completedAt != nil,
             game.coverImagePath != nil,
+            game.developer != nil,
+            !game.genres.isEmpty,
         ]
         return signals.count { $0 }
     }
@@ -40,6 +42,12 @@ enum GameMerger {
             && lhs.appBundlePath != nil && rhs.appBundlePath != nil
         let steamClash = lhs.steamAppID != rhs.steamAppID && lhs.steamAppID != nil && rhs.steamAppID != nil
         return !bundlesClash && !steamClash
+    }
+
+    /// Order-preserving union, case-insensitive.
+    private static func union(_ lhs: [String], _ rhs: [String]) -> [String] {
+        var seen = Set<String>()
+        return (lhs + rhs).filter { seen.insert($0.lowercased()).inserted }
     }
 
     private static func mergeScalars(from duplicate: Game, into survivor: Game) {
@@ -64,5 +72,13 @@ enum GameMerger {
         survivor.steamAchievementsUnlocked = survivor.steamAchievementsUnlocked ?? duplicate.steamAchievementsUnlocked
         survivor.steamAchievementsTotal = survivor.steamAchievementsTotal ?? duplicate.steamAchievementsTotal
         survivor.hltbID = survivor.hltbID ?? duplicate.hltbID
+        survivor.developer = survivor.developer ?? duplicate.developer
+        survivor.heroImagePath = survivor.heroImagePath ?? duplicate.heroImagePath
+        survivor.installSizeBytes = survivor.installSizeBytes ?? duplicate.installSizeBytes
+        survivor.genres = union(survivor.genres, duplicate.genres)
+        survivor.tags = union(survivor.tags, duplicate.tags)
+        var seenInstalls = Set<SteamInstallLocation>()
+        survivor.steamInstalls = (survivor.steamInstalls + duplicate.steamInstalls)
+            .filter { seenInstalls.insert($0).inserted }
     }
 }
