@@ -82,3 +82,16 @@ Living status log. Each branch appends its section. Legend: ✅ built & compiles
 - ✅ `NameEntrySheet` moved to `Shared/DesignSystem/Components` (used by two features).
 - 🧪 79 tests total (+16).
 - Build ✅ · Tests ✅ · Lint ✅. ⛔ Not pushed (BLOCKED.md).
+
+## 5 · feature/stats-badges
+- ✅ `LibrarySnapshot` / `GameSnapshot` / `SessionSnapshot`: plain-value copies of real data (pure, testable).
+  `LibrarySnapshotProviding` with `RepositorySnapshotProvider` (live) and `MockSnapshotProvider`.
+- ✅ `StatsCalculator`: games per status/platform, real hours **per source** (no cross-source total, HLTB never
+  included), completion % = completed ÷ all games (abandoned stay in the denominator — documented choice).
+- ✅ `BadgeEngine` + `BadgeCatalog` (9 badges): First Credits, Credits Collector (10), Marathon (≥4h real session),
+  Centurion (≥100h in a *single* real source — split sources do not combine), Saga Complete, Box Set,
+  Native Explorer (MacTracked on a Switch port), Seven-Day Streak, Perfectionist (all Steam achievements).
+  Each earned badge carries evidence; estimates are excluded everywhere.
+- ✅ UI: sidebar "Stats & Badges" — stat tiles, hours by source, badge grid with progress. `StatTile` in shared components.
+- 🧪 92 tests total (+13).
+- Build ✅ · Tests ✅ · Lint ✅. ⛔ Not pushed (BLOCKED.md).
