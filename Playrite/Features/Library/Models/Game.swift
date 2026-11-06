@@ -36,6 +36,10 @@ final class Game {
     var steamAchievementsUnlocked: Int?
     /// Steam achievements available, from the last achievements load.
     var steamAchievementsTotal: Int?
+    /// Where this game is installed in Steam (Mac Steam and/or CrossOver bottles). Recomputed on every scan.
+    var steamInstalls: [SteamInstallLocation] = []
+    /// Size on disk in bytes, when known (from Steam's manifest or the `.app` bundle).
+    var installSizeBytes: Int64?
     /// HowLongToBeat game identifier, when known (used for a direct link-out; never fetched).
     var hltbID: Int?
     /// Recorded play sessions.
