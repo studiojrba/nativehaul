@@ -322,11 +322,20 @@ target are still named Playrite; renaming them is a separate task.
 | `feature/guides-hltb` | `c731aa5` | ✅ pushed, matches |
 | `feature/folder-import` | `b2a2bc7` | ✅ pushed, matches |
 
-⚠️ Because the remote had no `main`, GitHub made the first pushed branch, **`feature/project-foundation`**, the
-default branch. Create `main` (for example from the merged stack) and set it as the default before opening PRs.
+Because the remote had no `main`, GitHub first made **`feature/project-foundation`** the default branch. This was
+replaced by `production`; see the next section.
+
+## Default branch: `production` (2026-11-06)
+At the owner's request, the default branch is named **`production`**, not `main`. **No `main` branch was created**,
+and none should be.
+- `production` was created at the tip of `feature/launch-ui`, which contains the whole stack (branches 0–11), including
+  the commit that adds this note.
+- It was pushed to `origin` and set as the repo default with `gh repo edit --default-branch production`.
+- Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
+  merged feature branches.
 
 ## Key decisions (see `docs/decisions/` ADR 0001–0013)
-- Empty upstream repo, so the feature branches are **stacked**. `main` was never touched.
+- Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
 - Views are driven entirely by design tokens and built from small components, ready for a Figma re-skin
@@ -348,7 +357,7 @@ default branch. Create `main` (for example from the merged stack) and set it as 
 - Cover art fetching, extra providers, and the Figma visual pass are future work (`docs/PLAN.md`).
 
 ## Next steps
-1. Create `main` and make it the default branch, then open PRs in order 0 → 8.
+1. Open PRs into `production` in order 0 → 11 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.
