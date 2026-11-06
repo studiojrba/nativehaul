@@ -49,6 +49,22 @@ final class GameDetailViewModel {
         }
     }
 
+    /// Details info list (Status, Install Size, Time Played, …).
+    var infoRows: [GameInfoRow] {
+        GameInfoBuilder.rows(for: game)
+    }
+
+    /// HLTB chips (Main Story / Main Story+ / Completionist), each labelled as an estimate in the view.
+    var hltbChips: [HLTBChip] {
+        HLTBChip.chips(for: hltb?.cachedEstimate(for: game.id))
+    }
+
+    /// Sets or clears the hero image path.
+    func setHeroImagePath(_ path: String?) {
+        game.heroImagePath = path
+        persist()
+    }
+
     /// Sets or clears the cover image path.
     func setCoverImagePath(_ path: String?) {
         game.coverImagePath = path

@@ -5,6 +5,7 @@ import SwiftUI
 struct LibraryGridView: View {
     /// Shared library state.
     @Bindable var viewModel: LibraryViewModel
+    @Environment(AppEnvironment.self) private var environment
 
     private let columns = [
         GridItem(
@@ -46,6 +47,16 @@ struct LibraryGridView: View {
 
     @ViewBuilder
     private func contextMenu(for game: Game) -> some View {
+        let launch = environment.makeGameLaunchViewModel(for: game)
+        if launch.availability.options.isEmpty {
+            Button("Play", systemImage: "play.slash") {}.disabled(true)
+        }
+        ForEach(launch.availability.options) { option in
+            Button(option.title == "Play" ? "Play" : "Play via \(option.title)", systemImage: "play.fill") {
+                Task { await launch.launch(option) }
+            }
+        }
+        Divider()
         Menu("Set Status") {
             ForEach(GameStatus.allCases) { status in
                 Button(status.displayName) { viewModel.setStatus(status, for: game) }
@@ -62,4 +73,5 @@ struct LibraryGridView: View {
         LibraryGridView(viewModel: environment.makeLibraryViewModel())
     }
     .modelContainer(environment.container)
+    .environment(environment)
 }
