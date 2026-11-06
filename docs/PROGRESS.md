@@ -214,6 +214,38 @@ link and the view model. **171 tests in 42 suites, all passing.** Lint clean.
 **Unverified:** not run against J.R's real store. Run Library → Merge Duplicate Games… once to fix the existing
 17 pairs, then check the preview count is 17.
 
+## 10 · feature/steam-provenance
+Branched from `feature/library-dedupe`.
+
+**Built**
+- **Detection (`SteamInstallScanner`):**
+  - Reads `appmanifest_*.acf` from Mac Steam and every library in its `libraryfolders.vdf`.
+  - Does the same for each CrossOver bottle's Windows Steam. Windows library paths are resolved through `drive_c`
+    or `dosdevices`.
+  - Steam runtimes and redistributables are ignored.
+- **Recording (`SteamProvenanceApplier`):**
+  - Runs as part of "Scan Game Folders" and reports Mac / CrossOver install counts.
+  - Each game gets `steamInstalls` (Mac and/or bottles, both allowed) and `installSizeBytes`. These are recomputed
+    on every scan.
+  - Games are matched by app ID, then linked by title. Installed games that aren't in the library are added.
+- **Details:** a Steam section lists "Steam (Mac)" and "Steam (CrossOver — <bottle>)", each with its own Launch button.
+- **Launch routing (new `Features/Launch`):**
+  - `LaunchPlanner` puts the tracked `.app` first (NSWorkspace; the playtime watcher is started), then
+    `steam://rungameid/<id>` for Mac, then CrossOver `wine --bottle … --cx-app C:\…\steam.exe -applaunch <id>`
+    for bottles.
+  - With no target, launching is honestly unavailable and the reason is shown.
+  - `WorkspaceGameLauncher` is live; `RecordingGameLauncher` is the mock.
+- ADR 0012.
+
+**Tests:** scanner on a temp tree (Mac + extra library + bottle + `C:` library, redistributables ignored),
+KeyValues and Windows path conversion, applier (both locations on one entry, title link, add, stale clear),
+planner ordering and exact CrossOver arguments, Mac fallback, unavailable reasons, view model launch and error
+paths, and the folder-scan integration. **183 tests in 45 suites, all passing.** Lint clean.
+
+**Unverified:** no real Steam or CrossOver on the build machine was exercised. The CrossOver wine command line
+(`CrossOverLaunchConfiguration`) is based on CrossOver's documented CLI and needs one real try. Steam libraries on
+drive letters other than `C:` rely on the bottle's `dosdevices` links.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -227,6 +259,7 @@ link and the view model. **171 tests in 42 suites, all passing.** Lint clean.
 | 7 | `feature/guides-hltb` | ✅ | ✅ | 142 | ✅ |
 | 8 | `feature/folder-import` | ✅ | ✅ | 164 | ✅ |
 | 9 | `feature/library-dedupe` | ✅ | ✅ | 171 | ✅ |
+| 10 | `feature/steam-provenance` | ✅ | ✅ | 183 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -257,7 +290,7 @@ target are still named Playrite; renaming them is a separate task.
 ⚠️ Because the remote had no `main`, GitHub made the first pushed branch, **`feature/project-foundation`**, the
 default branch. Create `main` (for example from the merged stack) and set it as the default before opening PRs.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0011)
+## Key decisions (see `docs/decisions/` ADR 0001–0012)
 - Empty upstream repo, so the feature branches are **stacked**. `main` was never touched.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
