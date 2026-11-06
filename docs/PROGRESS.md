@@ -95,3 +95,30 @@ Living status log. Each branch appends its section. Legend: ✅ built & compiles
 - ✅ UI: sidebar "Stats & Badges" — stat tiles, hours by source, badge grid with progress. `StatTile` in shared components.
 - 🧪 92 tests total (+13).
 - Build ✅ · Tests ✅ · Lint ✅. ⛔ Not pushed (BLOCKED.md).
+
+## 6 · feature/nxnative-module
+- ✅ **Optional & unbundled**: off by default; user chooses their own engine. Preflight refuses an engine inside
+  Playrite.app; a test asserts the app bundle has no engine/key/title files. Disclaimer shown in Settings and UI.
+- ✅ `FileOperating` (live `LocalFileOperations`, mock `InMemoryFileOperations`) has **no delete / empty-Trash API**;
+  a policy test scans all sources for `removeItem(`, `emptyTrash`, `rm -rf`, `unlink(`.
+- ✅ Preflight (`PreflightRunner`): engine present/executable, engine external, title ID (non-retail → warning),
+  **refuse 32-bit** (and unknown), staged-file inventory (names/sizes only), free disk space (source × multiplier),
+  output folder.
+- ✅ Build queue (`NXNativeViewModel`): sequential processing, per-job work folder, `ProcessBuildEngineRunner` streams
+  stdout/stderr line by line (`LineSplitter`), cancel terminates the engine, re-queue.
+- ✅ Post-build cleanup (`CleanupPlanner` → preview → `CleanupExecutor`): keep the `.app` renamed to the real title
+  (never overwrites: "Title (2).app"), keep the hidden library folder, move leftovers + emptied work folder to the
+  **Trash (never emptied)**, leave ambiguous items for review; every action audited. Finished apps are added to the
+  library and tracked (`BuiltAppRegistrar`).
+- ✅ Troubleshooting KB (bundled JSON) seeded with **"Profile check fails on a non-retail title ID"**: back up script
+  (SHA-256 verified) → patch (single literal match, refused if backup missing/corrupt or script changed) → rebuild →
+  restore byte-for-byte (in place, permissions kept) → verify. Steps previewable, ordered, reversible ("Revert Patch"),
+  audit-logged to `~/Library/Application Support/Playrite/Audit/audit.jsonl`. Log signatures auto-suggest the case.
+  Human doc: `docs/troubleshooting/profile-check-non-retail-title-id.md`. ADR 0008.
+- ✅ UI: sidebar "Tools → NXNative Builds" (queue, job detail with preflight, cleanup preview, log console, known-issue
+  suggestions, knowledge base), troubleshooting sheet with patch editor, step previews and audit log; Settings → NXNative.
+- 🧪 123 tests total (+31).
+- 🟡 The real engine CLI is unknown: arguments are a template and title metadata is entered manually (no inspection).
+  `ProcessBuildEngineRunner` is not exercised against a real engine (none available); the suggested patch text is a
+  template the user must adapt to their engine script.
+- Build ✅ · Tests ✅ · Lint ✅. ⛔ Not pushed (BLOCKED.md).
