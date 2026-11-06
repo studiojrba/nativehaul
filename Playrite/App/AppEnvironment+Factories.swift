@@ -48,4 +48,29 @@ extension AppEnvironment {
     func makeTrackingSettingsViewModel() -> TrackingSettingsViewModel {
         TrackingSettingsViewModel(store: trackingPreferences, watcher: watcher)
     }
+
+    /// Builds the series list view model.
+    func makeSeriesListViewModel() -> SeriesListViewModel {
+        SeriesListViewModel(repository: repository)
+    }
+
+    /// Builds a series detail view model.
+    func makeSeriesDetailViewModel(for series: Series) -> SeriesDetailViewModel {
+        SeriesDetailViewModel(series: series, repository: repository)
+    }
+
+    /// Builds the detail-screen series membership view model.
+    func makeSeriesMembershipViewModel(for game: Game) -> SeriesMembershipViewModel {
+        SeriesMembershipViewModel(game: game, repository: repository)
+    }
+
+    /// Builds the collections list view model.
+    func makeCollectionsViewModel() -> CollectionsViewModel {
+        CollectionsViewModel(repository: repository)
+    }
+
+    /// Builds a collection detail view model.
+    func makeCollectionDetailViewModel(for collection: GameCollection) -> CollectionDetailViewModel {
+        CollectionDetailViewModel(collection: collection, repository: repository)
+    }
 }

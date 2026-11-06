@@ -16,6 +16,10 @@ struct SidebarView: View {
                         .tag(SidebarDestination.library(section))
                 }
             }
+            Section("Organize") {
+                Label("Series", systemImage: "books.vertical").tag(SidebarDestination.series)
+                Label("Collections", systemImage: "square.stack.3d.up").tag(SidebarDestination.collections)
+            }
             Section("Providers") {
                 Label("Steam", systemImage: "cloud").tag(SidebarDestination.steam)
                 Label("Playtime Tracking", systemImage: "timer").tag(SidebarDestination.tracking)

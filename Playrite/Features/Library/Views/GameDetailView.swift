@@ -14,6 +14,7 @@ struct GameDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxl) {
                 GameDetailHeader(viewModel: viewModel)
+                SeriesMembershipSection(viewModel: environment.makeSeriesMembershipViewModel(for: viewModel.game))
                 PlaytimeBreakdownView(breakdown: viewModel.breakdown)
                 SessionListView(sessions: viewModel.sessions)
                 TrackedAppSection(viewModel: environment.makeTrackedAppViewModel(for: viewModel.game))

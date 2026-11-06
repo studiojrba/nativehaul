@@ -63,6 +63,10 @@ struct RootView: View {
             LibraryGridView(viewModel: libraryViewModel)
                 .onAppear { libraryViewModel.filter.section = section }
                 .onChange(of: section) { libraryViewModel.filter.section = section }
+        case .series:
+            SeriesListView(viewModel: environment.makeSeriesListViewModel())
+        case .collections:
+            CollectionsListView(viewModel: environment.makeCollectionsViewModel())
         case .steam:
             SteamDashboardView(viewModel: environment.makeSteamDashboardViewModel { libraryViewModel.reload() })
         case .tracking:
