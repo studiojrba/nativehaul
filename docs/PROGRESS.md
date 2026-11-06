@@ -55,3 +55,18 @@ Living status log. Each branch appends its section. Legend: ✅ built & compiles
 - 🧪 47 tests total (+25: SteamID, endpoints, client decoding/errors, merger, account store, sync, settings VM).
 - 🟡 Real-Keychain wrapper and live Steam calls are not exercised by automated tests (no key available overnight).
 - Build ✅ · Tests ✅ · Lint ✅. ⛔ Not pushed (BLOCKED.md).
+
+## 3 · feature/playtime-tracking
+- ✅ `RunningApplicationObserving` with live `WorkspaceRunningApplicationObserver` (NSWorkspace didLaunch/didTerminate
+  notifications → Sendable `RunningAppEvent` AsyncStream) and `MockRunningApplicationObserver`.
+- ✅ `SessionTracker` pure state machine (per-PID, normalised bundle paths, minimum session length, finish-all on stop).
+- ✅ `PlaytimeWatcher` (live) / `MockPlaytimeWatcher`: picks up already-running tracked apps (uses launch date),
+  writes `PlaySession(source: .macTracked)`, updates `lastPlayedAt`, finalises sessions on stop / app quit.
+- ✅ `AppBundleScanner` scans `~/Switch/Games` (top level + one subfolder level, read-only). `TrackedAppMatcher` links
+  apps to same-titled untracked games or creates new games (Switch port inside the folder, Mac otherwise).
+- ✅ Self-reported sessions ("Log Session…") stored with `.selfReported`. Sources stay separate in every view.
+- ✅ UI: sidebar "Playtime Tracking" (toggle, playing now with live timer, tracked apps, discovered apps), detail
+  "Tracking" section, Settings → Tracking (enable, folder, minimum session).
+- 🧪 63 tests total (+16).
+- 🟡 Live NSWorkspace observer verified only by build + app launch; not driven by automated tests.
+- Build ✅ · Tests ✅ · Lint ✅ · App launches ✅. ⛔ Not pushed (BLOCKED.md).
