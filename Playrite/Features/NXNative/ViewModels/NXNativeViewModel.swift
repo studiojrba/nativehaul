@@ -16,14 +16,14 @@ final class NXNativeViewModel {
 
     @ObservationIgnored let services: NXNativeServices
     @ObservationIgnored private let store: any EngineConfigurationStoring
-    @ObservationIgnored private let onAppBuilt: @MainActor (String, String) -> Void
+    @ObservationIgnored private let onAppBuilt: @MainActor (TitleInfo, String) -> Void
     @ObservationIgnored private var processingTask: Task<Void, Never>?
 
-    /// Creates the view model. `onAppBuilt(title, appPath)` registers finished apps in the library.
+    /// Creates the view model. `onAppBuilt(titleInfo, appPath)` registers finished apps in the library.
     init(
         services: NXNativeServices,
         store: any EngineConfigurationStoring,
-        onAppBuilt: @escaping @MainActor (String, String) -> Void
+        onAppBuilt: @escaping @MainActor (TitleInfo, String) -> Void
     ) {
         self.services = services
         self.store = store
@@ -106,7 +106,7 @@ final class NXNativeViewModel {
             try CleanupExecutor(files: services.files, audit: services.audit).execute(plan)
             update(id) { $0.status = .succeeded; $0.cleanupPlan = nil }
             if let appPath = plan.finalAppPath {
-                onAppBuilt(job.title.name, appPath)
+                onAppBuilt(job.title, appPath)
             }
         } catch {
             update(id) { $0.failureReason = "Cleanup stopped: \(error.localizedDescription)" }

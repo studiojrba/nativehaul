@@ -16,6 +16,7 @@ struct GameDetailRail: View {
                 CoverArtView(imagePath: viewModel.game.coverImagePath, title: viewModel.game.title)
                 BottleInstallPanel(viewModel: environment.makeBottleInstallViewModel(for: viewModel.game))
                 LaunchButton(viewModel: launchViewModel)
+                GameUpdateBadgeView(badge: environment.gameBadges.badge(for: viewModel.game))
                 Button("Manage…", systemImage: "slider.horizontal.3", action: onManage)
                     .frame(maxWidth: .infinity)
                 HLTBChipsView(chips: viewModel.hltbChips)

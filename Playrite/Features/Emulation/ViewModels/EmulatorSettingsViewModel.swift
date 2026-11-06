@@ -23,12 +23,17 @@ final class EmulatorSettingsViewModel {
         }
     }
 
+    /// Install / Update controls for emulators in the component catalog.
+    let installControls: [ComponentInstallViewModel]
     private let router: EmulatorRouter
     private var revision = 0
 
-    /// Creates the view model.
-    init(router: EmulatorRouter) {
+    /// Creates the view model. With `components`, emulators that aren't installed show "Install".
+    init(router: EmulatorRouter, components: (any ComponentUpdating)? = nil) {
         self.router = router
+        installControls = components.map { updater in
+            updater.catalog.components.map { ComponentInstallViewModel(entry: $0, updater: updater) }
+        } ?? []
     }
 
     /// Every system with its emulator.

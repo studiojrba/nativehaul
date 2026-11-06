@@ -22,6 +22,15 @@ struct EmulatorSettingsView: View {
                 }
                 Button("Check Again") { viewModel.refresh() }
             }
+            if !viewModel.installControls.isEmpty {
+                Section("Get emulators") {
+                    ForEach(viewModel.installControls, id: \.entry.id) { control in
+                        LabeledContent(control.entry.name) {
+                            ComponentInstallControl(viewModel: control)
+                        }
+                    }
+                }
+            }
             Section("Systems") {
                 ForEach(viewModel.rows) { row in
                     Picker(selection: Binding(

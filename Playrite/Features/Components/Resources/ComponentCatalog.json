@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2026.11.06",
+  "components": [
+    {
+      "id": "melonds",
+      "name": "melonDS",
+      "appName": "melonDS.app",
+      "source": { "kind": "github", "owner": "melonDS-emu", "repo": "melonDS", "assetPattern": "(?i)mac.*\\.zip$" },
+      "installMethod": "zip",
+      "destination": "~/Applications",
+      "homepage": "https://melonds.kuribo64.net"
+    },
+    {
+      "id": "pcsx2",
+      "name": "PCSX2",
+      "appName": "PCSX2.app",
+      "source": { "kind": "github", "owner": "PCSX2", "repo": "pcsx2", "assetPattern": "(?i)macos.*\\.tar\\.xz$" },
+      "installMethod": "tar",
+      "destination": "~/Applications",
+      "homepage": "https://pcsx2.net"
+    },
+    {
+      "id": "retroarch",
+      "name": "RetroArch",
+      "appName": "RetroArch.app",
+      "source": {
+        "kind": "pinned",
+        "url": "https://buildbot.libretro.com/stable/1.19.1/apple/osx/universal/RetroArch_Metal.dmg",
+        "version": "1.19.1"
+      },
+      "installMethod": "dmg",
+      "destination": "~/Applications",
+      "homepage": "https://www.retroarch.com"
+    },
+    {
+      "id": "dolphin",
+      "name": "Dolphin",
+      "appName": "Dolphin.app",
+      "source": {
+        "kind": "pinned",
+        "url": "https://dl.dolphin-emu.org/releases/2412/dolphin-2412-universal.dmg",
+        "version": "2412"
+      },
+      "installMethod": "dmg",
+      "destination": "~/Applications",
+      "homepage": "https://dolphin-emu.org"
+    }
+  ]
+}

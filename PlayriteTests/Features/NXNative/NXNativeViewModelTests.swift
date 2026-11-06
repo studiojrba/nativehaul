@@ -9,7 +9,7 @@ struct NXNativeViewModelTests {
     private func makeViewModel(
         runner: MockBuildEngineRunner,
         files: InMemoryFileOperations,
-        built: @escaping @MainActor (String, String) -> Void = { _, _ in }
+        built: @escaping @MainActor (TitleInfo, String) -> Void = { _, _ in }
     ) -> NXNativeViewModel {
         let services = NXNativeServices(
             files: files, disk: FixedDiskSpaceProvider(bytes: .max), runner: runner, audit: InMemoryAuditLog(),
@@ -31,7 +31,7 @@ struct NXNativeViewModelTests {
             files.addFile("\(invocation.workingDirectory)/scratch.tmp")
         }
         var registered: [(String, String)] = []
-        let viewModel = makeViewModel(runner: runner, files: files) { registered.append(($0, $1)) }
+        let viewModel = makeViewModel(runner: runner, files: files) { registered.append(($0.name, $1)) }
         viewModel.enqueue(sourcePath: Fix.source, title: Fix.title)
         viewModel.startQueue()
         await viewModel.waitForQueue()

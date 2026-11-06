@@ -76,6 +76,14 @@ final class EmulatorRouter {
         return UserFilePlacer.isProvided(bios.request, files: files) ? nil : bios.request
     }
 
+    /// After an emulator is installed, routes to it every system whose current emulator isn't installed
+    /// (zero-tinker: installing is enough, no settings to change).
+    func adoptInstalled(_ profile: EmulatorProfile) {
+        for system in profile.systems where appPath(for: self.profile(for: system)) == nil {
+            setProfile(profile, for: system)
+        }
+    }
+
     /// Places a file the user provided (a BIOS) where the emulator expects it.
     func provide(_ path: String, for request: UserFileRequest) throws -> UserFilePlacer.Outcome {
         try UserFilePlacer.place(path, for: request, files: files)

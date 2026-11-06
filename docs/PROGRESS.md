@@ -402,6 +402,41 @@ router, never the engine**, and **user-provided files**. 304 tests (+13), all mo
 - ⚠️ **Not verified live:** no emulator or core was run. The argument syntax follows each emulator's documented
   command line. NXNative's `prod.keys` field still needs moving to the new prompt (follow-up).
 
+## 17 · feature/component-updates
+Adds managed components and update badges, Obtainium-style, per source (ADR 0020). 319 tests (+15), all mocked.
+- ✅🧪 **Component catalog** (`ComponentCatalog.json`, versioned and community-extendable): melonDS and PCSX2 come
+  from GitHub releases with a macOS asset pattern; RetroArch and Dolphin from pinned official URLs. Everything
+  installs into `~/Applications`, so there are no admin prompts.
+- ✅🧪 **Install** (from Settings → Emulators and onboarding):
+  1. Download from the official source only, and check the published SHA-256 when there is one.
+  2. Unpack, then ask macOS about the signature and **show it to the user** ("Signed by <team>, notarized" or
+     "Unsigned — macOS will ask you to confirm").
+  3. Install on a second click.
+  4. The installed app keeps the quarantine flag, so Gatekeeper still checks it.
+  5. The emulator profile is wired automatically.
+- ✅🧪 **Update checks:**
+  - GitHub's latest release, or the pinned version, compared with the app's bundle version.
+  - At most once a day (cached), from launch upkeep or **Check Now**. No daemon.
+  - Copies the user installed themselves get "Update available", then "Manage and Update" (asked first).
+- ✅🧪 **Auto-update is off by default.** It can be turned on globally or per component. Even then, it installs
+  only when the update is notarized by the same team as the installed copy; otherwise it waits for a click.
+- ✅🧪 **Game badges, per source:**
+  - **Steam** (Mac and bottles): a pending update or download percentage, read from the appmanifest. Steam does
+    the updating; Retriever never updates a game.
+  - **Switch ports:** the built version is compared with a community dataset (ships empty), using J.R's copy:
+    "An update is available! Please refer to your original source for update files." nxnative builds now
+    record the title ID and version.
+  - **ROMs:** no badge.
+- ✅ **Retriever self-update:** notify-only release check (seam). Sparkle waits for signed release builds.
+- ✅ **Hard lines:** Retriever never downloads ROMs, BIOS files or firmware. A BIOS uses the "Please provide your ___"
+  prompt.
+- ⚠️ **Not verified live:**
+  - No real download or install was run, and the pinned RetroArch and Dolphin URLs need checking by whoever
+    maintains the catalog.
+  - `ISteamApps/UpToDateCheck` was judged not feasible (it needs `steam.inf`'s version, not the appmanifest's
+    `buildid`), so stale bottles show their last-known state.
+  - The update surfaces haven't been viewed on screen.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -422,6 +457,7 @@ router, never the engine**, and **user-provided files**. 304 tests (+13), all mo
 | 14 | `feature/bottle-automation` | ✅ | ✅ | 283 | ✅ |
 | 15 | `feature/onboarding` | ✅ | ✅ | 291 | ✅ |
 | 16 | `feature/emulator-launch` | ✅ | ✅ | 304 | ✅ |
+| 17 | `feature/component-updates` | ✅ | ✅ | 319 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -461,7 +497,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0019)
+## Key decisions (see `docs/decisions/` ADR 0001–0020)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -484,7 +520,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 16 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 17 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

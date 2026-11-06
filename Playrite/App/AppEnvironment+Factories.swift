@@ -8,7 +8,8 @@ extension AppEnvironment {
             transfer: transfer,
             folderImporter: folderImporter,
             metadataFetcher: metadataFetcher,
-            steamSync: steamSync
+            steamSync: steamSync,
+            components: components
         )
         viewModel.reload()
         return viewModel
@@ -96,7 +97,12 @@ extension AppEnvironment {
     func makeNXNativeViewModel(onLibraryChanged: @escaping @MainActor () -> Void) -> NXNativeViewModel {
         let registrar = BuiltAppRegistrar(repository: repository, watcher: watcher)
         return NXNativeViewModel(services: nxnativeServices, store: engineConfiguration) { title, appPath in
-            _ = try? registrar.register(title: title, appPath: appPath)
+            _ = try? registrar.register(
+                title: title.name,
+                appPath: appPath,
+                titleID: title.titleID,
+                version: title.version
+            )
             onLibraryChanged()
         }
     }
@@ -161,7 +167,12 @@ extension AppEnvironment {
 
     /// Builds Settings → Emulators.
     func makeEmulatorSettingsViewModel() -> EmulatorSettingsViewModel {
-        EmulatorSettingsViewModel(router: emulators)
+        EmulatorSettingsViewModel(router: emulators, components: components)
+    }
+
+    /// Builds Settings → Updates.
+    func makeUpdatesSettingsViewModel() -> UpdatesSettingsViewModel {
+        UpdatesSettingsViewModel(updater: components)
     }
 
     /// Builds the first-run walkthrough. `onFinish` closes it.

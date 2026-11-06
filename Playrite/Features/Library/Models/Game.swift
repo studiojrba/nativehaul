@@ -56,6 +56,10 @@ final class Game {
     var romPath: String?
     /// Raw storage for ``emulatedSystem``.
     var emulatedSystemRaw: String?
+    /// Switch title ID of a native port (from its nxnative build).
+    var switchTitleID: String?
+    /// Numeric version the port was built from, when known.
+    var switchVersion: Int?
     /// HowLongToBeat game identifier, when known (used for a direct link-out; never fetched).
     var hltbID: Int?
     /// Recorded play sessions.

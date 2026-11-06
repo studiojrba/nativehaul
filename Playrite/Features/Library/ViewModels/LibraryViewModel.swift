@@ -27,6 +27,7 @@ final class LibraryViewModel {
     private let folderImporter: (any GameFolderImporting)?
     private let metadataFetcher: (any MetadataFetching)?
     private let steamSync: (any SteamSyncing)?
+    private let components: (any ComponentUpdating)?
     private var isRunningUpkeep = false
 
     /// Creates the view model. `folderImporter` enables "Scan Game Folders"; `metadataFetcher` enables
@@ -36,13 +37,15 @@ final class LibraryViewModel {
         transfer: any LibraryTransferring,
         folderImporter: (any GameFolderImporting)? = nil,
         metadataFetcher: (any MetadataFetching)? = nil,
-        steamSync: (any SteamSyncing)? = nil
+        steamSync: (any SteamSyncing)? = nil,
+        components: (any ComponentUpdating)? = nil
     ) {
         self.repository = repository
         self.transfer = transfer
         self.folderImporter = folderImporter
         self.metadataFetcher = metadataFetcher
         self.steamSync = steamSync
+        self.components = components
     }
 
     /// Zero-tinker upkeep (ADR 0016), run quietly at launch: detect installed games (folders, CrossOver, Steam
@@ -60,6 +63,10 @@ final class LibraryViewModel {
         }
         reload()
         await fetchMetadataQuietly()
+        if let components {
+            await components.checkForUpdates(force: false)
+            await components.runAutomaticUpdates()
+        }
     }
 
     /// Fills missing metadata in the background without showing a summary (games already tried this session are

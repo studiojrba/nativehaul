@@ -6,6 +6,7 @@ extension AppEnvironment {
         let container = try ModelContainerFactory.make(inMemory: false)
         let repository = SwiftDataLibraryRepository(context: container.mainContext)
         let secrets = KeychainSecretStore()
+        let emulators = EmulatorRouter(preferences: UserDefaultsEmulatorPreferences(), files: LocalFileOperations())
         let steamAccount = SteamAccountStore(secrets: secrets)
         let steamClient = SteamWebAPIClient(http: URLSessionHTTPClient())
         let trackingPreferences = UserDefaultsTrackingPreferencesStore()
@@ -43,15 +44,13 @@ extension AppEnvironment {
             launcher: WorkspaceGameLauncher(),
             metadataFetcher: makeLiveMetadataFetcher(repository: repository, secrets: secrets),
             steamGridDBKey: SteamGridDBKeyStore(secrets: secrets),
-            steamSignIn: SteamOpenIDSignInService(
-                authenticator: WebAuthenticationSessionRunner(),
-                verifier: SteamOpenIDVerifier(http: URLSessionHTTPClient()),
-                account: steamAccount
-            ),
+            steamSignIn: makeLiveSteamSignIn(account: steamAccount),
             imageHTTP: URLSessionHTTPClient(),
             bottleInstaller: makeLiveBottleInstaller(repository: repository, account: steamAccount),
             onboarding: UserDefaultsOnboardingStore(),
-            emulators: EmulatorRouter(preferences: UserDefaultsEmulatorPreferences(), files: LocalFileOperations())
+            emulators: emulators,
+            components: makeLiveComponents(emulators: emulators),
+            gameBadges: GameUpdateBadgeProvider(files: LocalFileOperations(), switchVersions: .bundled())
         )
     }
 
@@ -65,6 +64,35 @@ extension AppEnvironment {
             backupDirectory: ScriptBackupService.defaultDirectory(),
             appBundlePath: Bundle.main.bundlePath
         )
+    }
+
+    private static func makeLiveSteamSignIn(account: any SteamAccountStoring) -> SteamOpenIDSignInService {
+        SteamOpenIDSignInService(
+            authenticator: WebAuthenticationSessionRunner(),
+            verifier: SteamOpenIDVerifier(http: URLSessionHTTPClient()),
+            account: account
+        )
+    }
+
+    private static func makeLiveComponents(emulators: EmulatorRouter) -> ComponentUpdateService {
+        let files = LocalFileOperations()
+        let runner = ProcessCommandRunner()
+        let assessor = CodesignSignatureAssessor(runner: runner)
+        return ComponentUpdateService(
+            catalog: .bundled(),
+            store: UserDefaultsComponentPreferences(),
+            fetcher: ComponentReleaseFetcher(http: URLSessionHTTPClient()),
+            installer: ComponentInstaller(
+                downloader: URLSessionFileDownloader(),
+                files: files,
+                runner: runner,
+                assessor: assessor
+            ),
+            files: files,
+            assessor: assessor
+        ) { entry in
+            EmulatorCatalog.profile(id: entry.id).map(emulators.adoptInstalled)
+        }
     }
 
     private static func makeLiveBottleInstaller(

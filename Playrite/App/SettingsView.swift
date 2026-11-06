@@ -17,6 +17,8 @@ struct SettingsView: View {
                 .tabItem { Label("Game Folders", systemImage: "folder") }
             EmulatorSettingsView(viewModel: environment.makeEmulatorSettingsViewModel())
                 .tabItem { Label("Emulators", systemImage: "arcade.stick") }
+            UpdatesSettingsView(viewModel: environment.makeUpdatesSettingsViewModel())
+                .tabItem { Label("Updates", systemImage: "arrow.down.circle") }
             TrackingSettingsView(viewModel: environment.makeTrackingSettingsViewModel())
                 .tabItem { Label("Tracking", systemImage: "timer") }
             NXNativeSettingsView(viewModel: environment.makeNXNativeSettingsViewModel())

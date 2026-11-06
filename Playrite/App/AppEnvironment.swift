@@ -52,6 +52,10 @@ final class AppEnvironment {
     let onboarding: any OnboardingStoring
     /// Routes emulated games to their emulator app.
     let emulators: EmulatorRouter
+    /// Managed components (emulator installs and updates).
+    let components: any ComponentUpdating
+    /// Per-source game update badges.
+    let gameBadges: GameUpdateBadgeProvider
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -77,7 +81,9 @@ final class AppEnvironment {
         imageHTTP: (any HTTPClient)?,
         bottleInstaller: any BottleInstalling,
         onboarding: any OnboardingStoring,
-        emulators: EmulatorRouter
+        emulators: EmulatorRouter,
+        components: any ComponentUpdating,
+        gameBadges: GameUpdateBadgeProvider
     ) {
         self.container = container
         self.repository = repository
@@ -102,6 +108,8 @@ final class AppEnvironment {
         self.bottleInstaller = bottleInstaller
         self.onboarding = onboarding
         self.emulators = emulators
+        self.components = components
+        self.gameBadges = gameBadges
     }
 
     /// Seeded in-memory environment with mock services for SwiftUI previews.
@@ -135,7 +143,9 @@ final class AppEnvironment {
                 imageHTTP: nil,
                 bottleInstaller: MockBottleInstaller(goldenStatus: .notSetUp),
                 onboarding: InMemoryOnboardingStore(hasCompletedOnboarding: true),
-                emulators: EmulatorRouter(preferences: InMemoryEmulatorPreferences(), files: InMemoryFileOperations())
+                emulators: EmulatorRouter(preferences: InMemoryEmulatorPreferences(), files: InMemoryFileOperations()),
+                components: MockComponentUpdater(),
+                gameBadges: GameUpdateBadgeProvider(files: InMemoryFileOperations(), switchVersions: .bundled())
             )
         } catch {
             fatalError("Preview environment could not be created: \(error)")

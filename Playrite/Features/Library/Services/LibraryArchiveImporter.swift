@@ -71,6 +71,8 @@ struct LibraryArchiveImporter {
         game.carouselImagePaths = record.carouselImagePaths ?? []
         game.metadataSourcesRaw = record.metadataSources ?? []
         game.romPath = record.romPath
+        game.switchTitleID = record.switchTitleID
+        game.switchVersion = record.switchVersion
         game.emulatedSystemRaw = record.emulatedSystem
         repository.insert(game)
         for sessionRecord in record.sessions {

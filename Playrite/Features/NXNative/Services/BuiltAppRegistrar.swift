@@ -14,7 +14,7 @@ struct BuiltAppRegistrar {
 
     /// Registers the app and returns the linked game.
     @discardableResult
-    func register(title: String, appPath: String) throws -> Game {
+    func register(title: String, appPath: String, titleID: String? = nil, version: Int? = nil) throws -> Game {
         let games = try repository.fetchGames()
         let game = games
             .first { $0.title.compare(title, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame }
@@ -24,6 +24,8 @@ struct BuiltAppRegistrar {
                 return newGame
             }()
         game.appBundlePath = BundlePath.normalize(appPath)
+        game.switchTitleID = titleID ?? game.switchTitleID
+        game.switchVersion = version ?? game.switchVersion
         try repository.save()
         watcher.refreshTrackedApps()
         return game

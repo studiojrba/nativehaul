@@ -29,6 +29,8 @@ struct GameRecord: Codable, Equatable, Sendable {
     var carouselImagePaths: [String]?
     var metadataSources: [String]?
     var romPath: String?
+    var switchTitleID: String?
+    var switchVersion: Int?
     var emulatedSystem: String?
     var sessions: [SessionRecord]
     var guides: [GuideRecord]?

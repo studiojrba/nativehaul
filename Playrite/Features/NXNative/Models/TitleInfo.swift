@@ -11,6 +11,8 @@ struct TitleInfo: Codable, Equatable, Sendable {
     var name: String
     /// Architecture.
     var architecture: TitleArchitecture
+    /// Numeric version of the game files being built, when known (drives the Switch update badge).
+    var version: Int?
 
     /// `true` when the title ID is 16 hexadecimal digits.
     var hasValidTitleID: Bool {
