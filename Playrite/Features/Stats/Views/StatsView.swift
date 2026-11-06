@@ -30,6 +30,7 @@ struct StatsView: View {
                     StatTile(title: "Completion", value: viewModel.completionText, symbolName: "percent")
                 }
                 HoursBySourceView(entries: viewModel.hoursBySource)
+                BacklogEstimateView(estimate: viewModel.backlogEstimate)
                 SectionHeader(
                     title: "Badges",
                     caption: "\(viewModel.earnedCount) of \(viewModel.badges.count) earned · real data only"

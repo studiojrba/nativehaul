@@ -10,7 +10,7 @@ extension AppEnvironment {
 
     /// Builds a game detail view model.
     func makeGameDetailViewModel(for game: Game) -> GameDetailViewModel {
-        GameDetailViewModel(game: game, repository: repository)
+        GameDetailViewModel(game: game, repository: repository, hltb: hltb)
     }
 
     /// Builds the Steam settings view model.
@@ -76,7 +76,7 @@ extension AppEnvironment {
 
     /// Builds the stats view model.
     func makeStatsViewModel() -> StatsViewModel {
-        StatsViewModel(provider: RepositorySnapshotProvider(repository: repository))
+        StatsViewModel(provider: RepositorySnapshotProvider(repository: repository), hltb: hltb)
     }
 
     /// Builds the NXNative queue view model. Finished apps are added to the library and tracked.
@@ -112,5 +112,15 @@ extension AppEnvironment {
     /// Builds the NXNative settings view model.
     func makeNXNativeSettingsViewModel() -> NXNativeSettingsViewModel {
         NXNativeSettingsViewModel(store: engineConfiguration)
+    }
+
+    /// Builds the guides view model for a game.
+    func makeGuidesViewModel(for game: Game) -> GuidesViewModel {
+        GuidesViewModel(game: game, repository: repository, opener: urlOpener)
+    }
+
+    /// Builds the HLTB view model for a game.
+    func makeHLTBViewModel(for game: Game) -> HLTBViewModel {
+        HLTBViewModel(game: game, service: hltb, opener: urlOpener)
     }
 }

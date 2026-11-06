@@ -26,6 +26,10 @@ final class AppEnvironment {
     let nxnativeServices: NXNativeServices
     /// NXNative configuration.
     let engineConfiguration: any EngineConfigurationStoring
+    /// HowLongToBeat estimate cache.
+    let hltb: any HLTBProviding
+    /// Opens links in the browser.
+    let urlOpener: any URLOpening
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -38,7 +42,9 @@ final class AppEnvironment {
         scanner: any AppBundleScanning,
         trackingPreferences: any TrackingPreferencesStoring,
         nxnativeServices: NXNativeServices,
-        engineConfiguration: any EngineConfigurationStoring
+        engineConfiguration: any EngineConfigurationStoring,
+        hltb: any HLTBProviding,
+        urlOpener: any URLOpening
     ) {
         self.container = container
         self.repository = repository
@@ -50,6 +56,8 @@ final class AppEnvironment {
         self.trackingPreferences = trackingPreferences
         self.nxnativeServices = nxnativeServices
         self.engineConfiguration = engineConfiguration
+        self.hltb = hltb
+        self.urlOpener = urlOpener
     }
 
     /// Live environment using the on-disk store, Keychain and network.
@@ -82,7 +90,9 @@ final class AppEnvironment {
                 backupDirectory: ScriptBackupService.defaultDirectory(),
                 appBundlePath: Bundle.main.bundlePath
             ),
-            engineConfiguration: UserDefaultsEngineConfigurationStore()
+            engineConfiguration: UserDefaultsEngineConfigurationStore(),
+            hltb: CachedHLTBService(cache: FileHLTBCache()),
+            urlOpener: WorkspaceURLOpener()
         )
     }
 
@@ -104,7 +114,9 @@ final class AppEnvironment {
                 engineConfiguration: InMemoryEngineConfigurationStore(EngineConfiguration(
                     isEnabled: true,
                     enginePath: "/tools/nxnative"
-                ))
+                )),
+                hltb: CachedHLTBService(cache: InMemoryHLTBCache()),
+                urlOpener: RecordingURLOpener()
             )
         } catch {
             fatalError("Preview environment could not be created: \(error)")
