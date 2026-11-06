@@ -5,3 +5,4 @@ disabled_rules:
   - force_unwrapping
   - large_tuple
   - line_length
+  - optional_data_string_conversion
