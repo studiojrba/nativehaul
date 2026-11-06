@@ -188,25 +188,44 @@ unreadable folders; view model add/remove/persist/scan; `TitleNormalizer`.
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
-| 0 | `feature/project-foundation` | ✅ | ✅ | 1 | ⛔ |
-| 1 | `feature/library-core` | ✅ | ✅ | 22 | ⛔ |
-| 2 | `feature/steam-provider` | ✅ | ✅ | 47 | ⛔ |
-| 3 | `feature/playtime-tracking` | ✅ | ✅ | 63 | ⛔ |
-| 4 | `feature/series-collections` | ✅ | ✅ | 79 | ⛔ |
-| 5 | `feature/stats-badges` | ✅ | ✅ | 92 | ⛔ |
-| 6 | `feature/nxnative-module` | ✅ | ✅ | 123 | ⛔ |
-| 7 | `feature/guides-hltb` | ✅ | ✅ | 142 | ⛔ |
-| 8 | `feature/folder-import` | ✅ | ✅ | 164 | ⛔ |
+| 0 | `feature/project-foundation` | ✅ | ✅ | 1 | ✅ |
+| 1 | `feature/library-core` | ✅ | ✅ | 22 | ✅ |
+| 2 | `feature/steam-provider` | ✅ | ✅ | 47 | ✅ |
+| 3 | `feature/playtime-tracking` | ✅ | ✅ | 63 | ✅ |
+| 4 | `feature/series-collections` | ✅ | ✅ | 79 | ✅ |
+| 5 | `feature/stats-badges` | ✅ | ✅ | 92 | ✅ |
+| 6 | `feature/nxnative-module` | ✅ | ✅ | 123 | ✅ |
+| 7 | `feature/guides-hltb` | ✅ | ✅ | 142 | ✅ |
+| 8 | `feature/folder-import` | ✅ | ✅ | 164 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
 1, 3, 7 and 8.
 
-## ⛔ The one blocker: pushing
-`git push` returns **403**: the active `gh` account `jr-resilia` has no write access to `studiojrba/Playrite`.
-Claude was not allowed to use the inactive `studiojrba` account's credentials, so no workaround was tried.
-**Everything is committed locally.** To unblock, follow `BLOCKED.md`: switch the gh account, then push every
-`feature/*` branch.
+## Push & repo rename (2026-11-06) — blocker cleared
+The owner switched `gh` to `studiojrba`. All nine `feature/*` branches were pushed with explicit
+`refs/heads/feature/<name>` refspecs; **nothing was pushed to `main`/`master`** (neither exists on the remote).
+The repo was then renamed with `gh repo rename`: **`studiojrba/Playrite` → `studiojrba/retriever`**. GitHub redirects
+the old name. `gh` did not update the local remote (the rename used `--repo`), so `origin` was set by hand to
+`https://github.com/studiojrba/retriever.git`. The local folder is now `~/Projects/Retriever`. The app and Xcode
+target are still named Playrite; renaming them is a separate task.
+
+`git ls-remote --heads origin` after the push (each tip matches the local branch):
+
+| Branch | Tip | Result |
+|--------|-----|--------|
+| `feature/project-foundation` | `1963563` | ✅ pushed, matches |
+| `feature/library-core` | `7f3e215` | ✅ pushed, matches |
+| `feature/steam-provider` | `879abbd` | ✅ pushed, matches |
+| `feature/playtime-tracking` | `344cc00` | ✅ pushed, matches |
+| `feature/series-collections` | `cbbf190` | ✅ pushed, matches |
+| `feature/stats-badges` | `aedcdf9` | ✅ pushed, matches |
+| `feature/nxnative-module` | `d4bb007` | ✅ pushed, matches |
+| `feature/guides-hltb` | `c731aa5` | ✅ pushed, matches |
+| `feature/folder-import` | `b2a2bc7` | ✅ pushed, matches |
+
+⚠️ Because the remote had no `main`, GitHub made the first pushed branch, **`feature/project-foundation`**, the
+default branch. Create `main` (for example from the merged stack) and set it as the default before opening PRs.
 
 ## Key decisions (see `docs/decisions/` ADR 0001–0010)
 - Empty upstream repo, so the feature branches are **stacked**. `main` was never touched.
@@ -231,7 +250,7 @@ Claude was not allowed to use the inactive `studiojrba` account's credentials, s
 - Cover art fetching, extra providers, and the Figma visual pass are future work (`docs/PLAN.md`).
 
 ## Next steps
-1. Unblock the push (`BLOCKED.md`), then open PRs in order 0 → 7.
+1. Create `main` and make it the default branch, then open PRs in order 0 → 8.
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.
