@@ -23,3 +23,20 @@ Living status log. Each branch appends its section. Legend: ✅ built & compiles
 - ✅ `Shared/DesignSystem/{DesignTokens,Theme}`, `App/` entry + placeholder root view with preview. 🧪 1 smoke test.
 - ⛔ Not pushed (see BLOCKED.md).
 - Build: `** BUILD SUCCEEDED **`, `** TEST SUCCEEDED **`. Lint: clean.
+
+## 1 · feature/library-core
+- ✅ SwiftData models (`Features/Library/Models`): `Game`, `PlaySession`, `Series`, `SeriesEntry`, `GameCollection`
+  (named to avoid clashing with Swift's `Collection`), `SubGame`; enums `GameStatus`, `GamePlatform`,
+  `PlaytimeSource`, `SeriesOrderBasis`; `PlaytimeBreakdown` (per source, no merged total).
+- ✅ `Shared/Persistence`: `PlayriteSchema`, `ModelContainerFactory` (on-disk / in-memory).
+- ✅ Services: `LibraryRepository` (+ `SwiftDataLibraryRepository`, `MockLibraryRepository` seeded with fictional
+  `SampleLibrary`), `LibraryTransferring` (+ `LibraryTransferService`, `MockLibraryTransferService`).
+- ✅ JSON import/export: versioned `LibraryArchive` (format v1) with records for every model; import skips
+  existing IDs (never overwrites) and rejects newer formats.
+- ✅ UI: `NavigationSplitView` sidebar (All / Playing / Backlog / Completed with counts), adaptive cover grid,
+  search, context menu (status, remove), Add Game sheet, game detail (cover picker, status, self-reported hours,
+  playtime per source, sessions), Import/Export via toolbar menu. All views token-driven with previews.
+- ✅ Shared components: `CoverArtView`, `CoverCard`, `TagLabel`, `SectionHeader`, `LabeledValueRow`.
+- 🧪 22 tests (filter, breakdown, status transitions, archive round-trip/skip/version, view models).
+- Build ✅ · Tests ✅ · Lint ✅ · App launches ✅. ⛔ Not pushed (BLOCKED.md).
+- Note: SwiftData objects should be saved before deletion; the mock saves after seeding.
