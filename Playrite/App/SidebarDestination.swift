@@ -4,4 +4,6 @@ import Foundation
 enum SidebarDestination: Hashable, Sendable {
     /// A status-based library section.
     case library(LibrarySection)
+    /// Steam provider dashboard.
+    case steam
 }

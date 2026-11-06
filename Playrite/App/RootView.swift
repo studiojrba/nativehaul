@@ -8,7 +8,7 @@ struct RootView: View {
     let environment: AppEnvironment
     @State private var libraryViewModel: LibraryViewModel
     @State private var selection: SidebarDestination? = .library(.all)
-    @State private var path: [Game.ID] = []
+    @State private var path: [UUID] = []
     @State private var isAddingGame = false
     @State private var isImporting = false
     @State private var exportDocument: LibraryJSONDocument?
@@ -25,7 +25,7 @@ struct RootView: View {
         } detail: {
             NavigationStack(path: $path) {
                 content
-                    .navigationDestination(for: Game.ID.self) { id in
+                    .navigationDestination(for: UUID.self) { id in
                         if let game = libraryViewModel.game(withID: id) {
                             GameDetailView(viewModel: GameDetailViewModel(
                                 game: game,
@@ -35,6 +35,7 @@ struct RootView: View {
                     }
             }
         }
+        .environment(environment)
         .onChange(of: selection) { path.removeAll() }
         .toolbar { libraryToolbar }
         .sheet(isPresented: $isAddingGame) {
@@ -58,6 +59,8 @@ struct RootView: View {
             LibraryGridView(viewModel: libraryViewModel)
                 .onAppear { libraryViewModel.filter.section = section }
                 .onChange(of: section) { libraryViewModel.filter.section = section }
+        case .steam:
+            SteamDashboardView(viewModel: environment.makeSteamDashboardViewModel { libraryViewModel.reload() })
         case nil:
             ContentUnavailableView("Select a Section", systemImage: "sidebar.left")
         }

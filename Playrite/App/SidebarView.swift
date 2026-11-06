@@ -16,6 +16,9 @@ struct SidebarView: View {
                         .tag(SidebarDestination.library(section))
                 }
             }
+            Section("Providers") {
+                Label("Steam", systemImage: "cloud").tag(SidebarDestination.steam)
+            }
         }
         .navigationSplitViewColumnWidth(
             min: DesignTokens.Layout.sidebarMinWidth,

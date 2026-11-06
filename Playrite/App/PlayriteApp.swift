@@ -23,5 +23,10 @@ struct PlayriteApp: App {
             }
             .frame(minWidth: DesignTokens.Layout.windowMinWidth, minHeight: DesignTokens.Layout.windowMinHeight)
         }
+        Settings {
+            if case let .success(environment) = launch {
+                SettingsView(environment: environment)
+            }
+        }
     }
 }
