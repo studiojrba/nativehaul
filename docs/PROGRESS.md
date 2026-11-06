@@ -70,3 +70,15 @@ Living status log. Each branch appends its section. Legend: ✅ built & compiles
 - 🧪 63 tests total (+16).
 - 🟡 Live NSWorkspace observer verified only by build + app launch; not driven by automated tests.
 - Build ✅ · Tests ✅ · Lint ✅ · App launches ✅. ⛔ Not pushed (BLOCKED.md).
+
+## 4 · feature/series-collections
+- ✅ `UpNextEngine`: full remaining series in true recommended order (by `position`), completed entries dropped,
+  part labels passed through verbatim (never renumbered); unlinked entries shown as "Not in library".
+- ✅ Series: name, `SeriesOrderBasis` (release / chronological) + notes on why; reorder rewrites positions only.
+- ✅ Collections (`GameCollection`): ordered `SubGame`s each with its own status, optional parent library game.
+- ✅ UI: sidebar "Organize → Series / Collections"; series list with per-series Up Next strip; series detail (basis,
+  notes, Up Next, drag-to-reorder, add/remove entries with part labels); collection detail (status per sub-game,
+  reorder, add/remove); game detail shows "Up Next in <Series>" for series it belongs to (directly or via collection).
+- ✅ `NameEntrySheet` moved to `Shared/DesignSystem/Components` (used by two features).
+- 🧪 79 tests total (+16).
+- Build ✅ · Tests ✅ · Lint ✅. ⛔ Not pushed (BLOCKED.md).
