@@ -400,7 +400,7 @@ router, never the engine**, and **user-provided files**. 304 tests (+13), all mo
 - ✅ **Metadata** for ROMs comes from SteamGridDB; the Steam store isn't asked.
 - ✅ **Onboarding** gains a working Emulators step.
 - ⚠️ **Not verified live:** no emulator or core was run. The argument syntax follows each emulator's documented
-  command line. NXNative's `prod.keys` field still needs moving to the new prompt (follow-up).
+  command line. NXNative's `prod.keys` moved to the prompt in branch 19.
 
 ## 17 · feature/component-updates
 Adds managed components and update badges, Obtainium-style, per source (ADR 0020). 319 tests (+15), all mocked.
@@ -456,6 +456,20 @@ Adds managed components and update badges, Obtainium-style, per source (ADR 0020
   327 tests (+8).
 - ⚠️ Pending J.R's live retest. Steam's page should now show the 127.0.0.1 realm and return to the app.
 
+## 19 · feature/nxnative-file-prompts
+Moves NXNative's user-provided files onto the shared **"Please provide your ___"** prompt (ADR 0019 amendment;
+approved by J.R when he set the rule). 333 tests (+6).
+- ✅🧪 **prod.keys:**
+  - A new preflight check fails with "Please provide your prod.keys." The build job's screen then shows the prompt
+    and copies the user's own file (never overwriting) to `~/.switch/prod.keys` by default; this is configurable
+    via `keysPath`, and older stored settings still load.
+  - The engine can receive the path through the `{keys}` placeholder. Preflight re-runs automatically.
+- ✅🧪 **Game file:** the Add Build sheet now asks "Please provide your game file (.nsp/.xci)", and the picker is
+  limited to Switch title files. The file is used where it is.
+- ✅ No sources, links or hints anywhere. The prompt gained `destinationFileName` and `allowedExtensions`.
+- ⚠️ Whether J.R's engine reads `~/.switch/prod.keys` by default depends on the engine. `keysPath` and `{keys}`
+  cover it either way. Not viewed on screen.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -478,6 +492,7 @@ Adds managed components and update badges, Obtainium-style, per source (ADR 0020
 | 16 | `feature/emulator-launch` | ✅ | ✅ | 304 | ✅ |
 | 17 | `feature/component-updates` | ✅ | ✅ | 319 | ✅ |
 | 18 | `feature/steam-signin-loopback` (QA #1) | ✅ | ✅ | 327 | ✅ |
+| 19 | `feature/nxnative-file-prompts` | ✅ | ✅ | 333 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -540,7 +555,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 18 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 19 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

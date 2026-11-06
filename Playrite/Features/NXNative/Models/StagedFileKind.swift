@@ -7,7 +7,8 @@ enum StagedFileKind: String, Sendable {
     /// Anything else.
     case other
 
-    private static let titleExtensions: Set<String> = ["nsp", "xci", "nsz", "xcz"]
+    /// Extensions of Switch title files.
+    static let titleExtensions: Set<String> = ["nsp", "xci", "nsz", "xcz"]
 
     /// Classifies by file extension.
     init(pathExtension: String) {

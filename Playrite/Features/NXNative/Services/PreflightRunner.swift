@@ -21,6 +21,7 @@ struct PreflightRunner: Sendable {
         let checks = [
             engineCheck(enginePath),
             notBundledCheck(enginePath),
+            keysCheck(configuration),
             titleIDCheck(job.title),
             architectureCheck(job.title.architecture),
             stagedFilesCheck(job.sourcePath, inventory: inventory),
@@ -59,6 +60,14 @@ struct PreflightRunner: Sendable {
                 outcome: .passed,
                 message: "User-supplied engine outside the app bundle."
             )
+    }
+
+    private func keysCheck(_ configuration: EngineConfiguration) -> PreflightCheck {
+        let path = configuration.effectiveKeysPath
+        guard files.fileExists(atPath: path) else {
+            return PreflightCheck(kind: .keys, outcome: .failed, message: configuration.keysRequest.prompt + ".")
+        }
+        return PreflightCheck(kind: .keys, outcome: .passed, message: path)
     }
 
     private func titleIDCheck(_ title: TitleInfo) -> PreflightCheck {

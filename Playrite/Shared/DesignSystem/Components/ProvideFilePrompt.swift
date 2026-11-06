@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// "Please provide your ___": the one prompt for files only the user can supply. Plain copy, a file picker, nothing
 /// else — no links, no hints about where to get the file.
@@ -9,6 +10,11 @@ struct ProvideFilePrompt: View {
     let onProvide: (String) -> Void
     @State private var isPicking = false
 
+    private var contentTypes: [UTType] {
+        let types = request.allowedExtensions.compactMap { UTType(filenameExtension: $0) }
+        return types.isEmpty ? [.data] : types
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
             Label(request.prompt, systemImage: "doc.badge.plus").font(DesignTokens.Typography.headline)
@@ -17,7 +23,7 @@ struct ProvideFilePrompt: View {
                 .fixedSize(horizontal: false, vertical: true)
             Button("Choose File…", systemImage: "folder") { isPicking = true }
         }
-        .fileImporter(isPresented: $isPicking, allowedContentTypes: [.data]) { result in
+        .fileImporter(isPresented: $isPicking, allowedContentTypes: contentTypes) { result in
             if case let .success(url) = result {
                 onProvide(url.path(percentEncoded: false))
             }

@@ -12,10 +12,21 @@ struct UserFileRequest: Equatable, Sendable {
     let reason: String
     /// Folder the file is copied into, when the app places it (tilde allowed).
     let destinationFolder: String?
+    /// Name the placed copy must have (for example `prod.keys`); `nil` keeps the picked file's name.
+    var destinationFileName: String?
+    /// File extensions the picker accepts; empty accepts any file.
+    var allowedExtensions: [String] = []
 
     /// "Please provide your PlayStation 2 BIOS".
     var prompt: String {
         "Please provide your \(fileDescription)"
+    }
+
+    /// Where a placed copy of `source` goes, if the app places it.
+    func destinationPath(forSource source: String) -> String? {
+        expandedDestination.map {
+            ($0 as NSString).appendingPathComponent(destinationFileName ?? (source as NSString).lastPathComponent)
+        }
     }
 
     /// `destinationFolder` with `~` expanded.

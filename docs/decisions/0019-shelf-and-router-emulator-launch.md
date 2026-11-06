@@ -63,3 +63,21 @@ Both rules are now in `CLAUDE.md`.
   run here. RetroArch core file names follow the macOS buildbot naming.
 - **NXNative:** its `prod.keys` and game-file inputs should move to `ProvideFilePrompt` in a follow-up. Its
   current fields already ask for the user's own files and never source them.
+
+## Amendment — NXNative adopts the prompt (2026-11-06)
+J.R named `prod.keys` when he set the user-provided-files rule. The follow-up flagged above is now done:
+- **prod.keys:** a new preflight check (`PreflightKind.keys`) fails with **"Please provide your prod.keys."** The
+  job's detail screen then shows the shared `ProvideFilePrompt`. The user's file is copied, **never overwriting**,
+  to where the engine reads it, under the name `prod.keys` whatever the picked file was called. Preflight then
+  re-runs.
+  - The location is `EngineConfiguration.keysPath`. It is optional, so older stored settings still load, and it
+    defaults to `~/.switch/prod.keys`, the usual location for Switch tools.
+  - The engine can receive the path through the new `{keys}` argument placeholder.
+- **Game file:** the Add Build sheet's "Staged file / Choose…" row is now **"Please provide your game file
+  (.nsp/.xci)"**, accepting the title extensions the engine handles (`.nsp`, `.xci`, `.nsz`, `.xcz`). The file is
+  used where it is; nothing is copied.
+- **Prompt options:** `UserFileRequest` gains `destinationFileName` and `allowedExtensions`, so the picker shows
+  only matching files.
+- The app still never sources, downloads, links to or hints at sources for any of these files.
+- **Unverified:** whether the user's nxnative engine reads `~/.switch/prod.keys` by default depends on the engine.
+  `keysPath` and `{keys}` let J.R point it at the right place without code changes.

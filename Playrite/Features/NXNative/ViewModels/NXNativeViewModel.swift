@@ -126,6 +126,27 @@ final class NXNativeViewModel {
         }
     }
 
+    /// Result of the last provided file, if any.
+    private(set) var providedFileMessage: String?
+
+    /// Whether `job`'s preflight is missing the user's prod.keys.
+    func needsKeys(_ job: BuildJob) -> Bool {
+        job.preflight?.checks.contains { $0.kind == .keys && $0.outcome == .failed } == true
+    }
+
+    /// Copies the user's own prod.keys to where the engine reads it, then re-runs the job's preflight.
+    func provideKeys(at path: String, for jobID: UUID) {
+        do {
+            switch try UserFilePlacer.place(path, for: configuration.keysRequest, files: services.files) {
+            case .placed: providedFileMessage = "Thanks — your prod.keys is in place."
+            case .alreadyPresent: providedFileMessage = "A prod.keys was already there, so it was kept."
+            }
+            runPreflight(jobID)
+        } catch {
+            providedFileMessage = error.localizedDescription
+        }
+    }
+
     private var preflightRunner: PreflightRunner {
         PreflightRunner(files: services.files, disk: services.disk, appBundlePath: services.appBundlePath)
     }

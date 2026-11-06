@@ -27,6 +27,14 @@ struct BuildJobDetailView: View {
                 if let report = job.preflight {
                     PreflightReportView(report: report)
                 }
+                if viewModel.needsKeys(job) {
+                    ProvideFilePrompt(request: viewModel.configuration.keysRequest) {
+                        viewModel.provideKeys(at: $0, for: job.id)
+                    }
+                }
+                if let message = viewModel.providedFileMessage {
+                    Text(message).foregroundStyle(Theme.secondaryText)
+                }
                 if let plan = job.cleanupPlan {
                     CleanupPlanView(
                         plan: plan,

@@ -24,6 +24,7 @@ enum EngineInvocationBuilder {
             "{output}": workDirectory,
             "{titleID}": job.title.titleID,
             "{title}": job.title.name,
+            "{keys}": configuration.effectiveKeysPath,
         ]
         let arguments = configuration.argumentTemplate
             .split(whereSeparator: \.isWhitespace)
