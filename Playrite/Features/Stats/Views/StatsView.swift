@@ -31,6 +31,9 @@ struct StatsView: View {
                 }
                 HoursBySourceView(entries: viewModel.hoursBySource)
                 BacklogEstimateView(estimate: viewModel.backlogEstimate)
+                if let problem = viewModel.hltbProblem {
+                    Text(problem).foregroundStyle(Theme.danger).fixedSize(horizontal: false, vertical: true)
+                }
                 SectionHeader(
                     title: "Badges",
                     caption: "\(viewModel.earnedCount) of \(viewModel.badges.count) earned · real data only"

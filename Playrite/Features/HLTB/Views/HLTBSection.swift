@@ -13,6 +13,9 @@ struct HLTBSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
             SectionHeader(title: "How Long to Beat", caption: "community estimates — not playtime")
+            if let problem = viewModel.loadProblem {
+                Text(problem).foregroundStyle(Theme.danger).fixedSize(horizontal: false, vertical: true)
+            }
             if viewModel.rows.isEmpty {
                 Text("No estimate cached.").foregroundStyle(Theme.secondaryText)
             }

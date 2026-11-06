@@ -18,6 +18,11 @@ final class HLTBViewModel {
     private let opener: any URLOpening
 
     /// Creates the view model.
+    /// Why the HLTB cache couldn't be read, if it couldn't.
+    var loadProblem: String? {
+        service.loadProblem
+    }
+
     init(game: Game, service: any HLTBProviding, opener: any URLOpening) {
         self.game = game
         self.service = service

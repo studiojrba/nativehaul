@@ -10,8 +10,8 @@ final class InMemoryHLTBCache: HLTBCaching {
         storage = Mutex(initial)
     }
 
-    func load() throws -> [UUID: HLTBEstimate] {
-        storage.withLock { $0 }
+    func load() throws -> HLTBCacheContents {
+        HLTBCacheContents(estimates: storage.withLock { $0 })
     }
 
     func save(_ estimates: [UUID: HLTBEstimate]) throws {

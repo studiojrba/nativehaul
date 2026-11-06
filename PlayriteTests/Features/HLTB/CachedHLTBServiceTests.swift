@@ -28,7 +28,7 @@ struct CachedHLTBServiceTests {
         #expect(estimate.origin == .manual)
         #expect(estimate.labelledText(for: .mainStory) == "10h 00m · HLTB estimate")
         #expect(estimate.labelledText(for: .completionist) == nil)
-        #expect(try cache.load()[gameID] == estimate)
+        #expect(try cache.load().estimates[gameID] == estimate)
         #expect(CachedHLTBService(cache: cache).cachedEstimate(for: gameID) == estimate)
     }
 
@@ -86,6 +86,6 @@ struct CachedHLTBServiceTests {
             origin: .manual
         )
         try cache.save([gameID: estimate])
-        #expect(try cache.load() == [gameID: estimate])
+        #expect(try cache.load().estimates == [gameID: estimate])
     }
 }

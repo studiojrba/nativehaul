@@ -4,6 +4,8 @@ import Foundation
 /// Live: ``CachedHLTBService`` (with any cache/remote, including in-memory mocks).
 @MainActor
 protocol HLTBProviding: AnyObject {
+    /// Why cached estimates couldn't be read, if they couldn't (never hidden behind zeros).
+    var loadProblem: String? { get }
     /// Cached estimate without any refresh.
     func cachedEstimate(for gameID: UUID) -> HLTBEstimate?
     /// Cached estimate, refreshing from the remote source when stale or missing.

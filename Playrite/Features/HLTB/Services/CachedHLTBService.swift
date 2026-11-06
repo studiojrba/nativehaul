@@ -17,6 +17,8 @@ final class CachedHLTBService: HLTBProviding {
     @ObservationIgnored private let lifetime: TimeInterval
     @ObservationIgnored private let now: () -> Date
     private var estimates: [UUID: HLTBEstimate]
+    /// Why some or all cached estimates couldn't be read, shown in Stats and the HLTB section instead of zeros.
+    private(set) var loadProblem: String?
 
     /// Creates the service.
     init(
@@ -29,7 +31,17 @@ final class CachedHLTBService: HLTBProviding {
         self.remote = remote
         self.lifetime = lifetime
         self.now = now
-        estimates = (try? cache.load()) ?? [:]
+        do {
+            let contents = try cache.load()
+            estimates = contents.estimates
+            if contents.skippedEntries > 0 {
+                loadProblem = "\(contents.skippedEntries) HLTB estimate entries couldn't be read and were skipped. "
+                    + "The file was left as it is."
+            }
+        } catch {
+            estimates = [:]
+            loadProblem = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+        }
     }
 
     func cachedEstimate(for gameID: UUID) -> HLTBEstimate? {

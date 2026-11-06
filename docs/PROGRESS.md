@@ -214,6 +214,14 @@ link and the view model. **171 tests in 42 suites, all passing.** Lint clean.
 **Unverified:** not run against J.R's real store. Run Library → Merge Duplicate Games… once to fix the existing
 17 pairs, then check the preview count is 17.
 
+- ✅ **Verified live by Ollie (2026-11-06):**
+  - The library holds 124 games (109 Backlog, 11 Abandoned, 4 Playing). The automatic merge had already folded
+    the 17 duplicate pairs, most likely during J.R's onboarding folder scan, and Merge Duplicate Games reports
+    none left.
+  - The Breath of the Wild survivor carries both halves: the import's status, description and series, plus the
+    local app source, its 18.76 GB install size and the native-port platform.
+  - Self-reported hours are intact at 66h 42m.
+
 ## 10 · feature/steam-provenance
 Branched from `feature/library-dedupe`.
 
@@ -503,6 +511,31 @@ approved by J.R when he set the rule). 333 tests (+6).
   checked at narrow widths. Offscreen renders at each width were inspected by eye. 336 tests (+3).
 - ⚠️ Pending J.R's look on his real window.
 
+## 22 · feature/hltb-cache-read — QA Finding #3 fix
+- 🐞 **Found live by Ollie:** `~/Library/Application Support/Playrite/HLTB/estimates.json` was intact (109
+  entries), but Stats showed "0 of 109" and the detail chips had no values.
+- 🔎 **Root cause:**
+  - **Not** the path, the envelope, the field names or the keys; all of those matched.
+  - `HLTBEstimate.seconds` is `[HLTBCategory: Int]`, and Swift's synthesized Codable stores a dictionary keyed by
+    an enum as a **flat array** (`["mainStory", 182220, …]`), not a JSON object. The documented file uses an
+    object (`{"mainStory": 182220, …}`), so every entry failed with a type mismatch.
+  - The service loaded the file with `(try? cache.load()) ?? [:]`, so the failure was **swallowed into zero**.
+- ✅🧪 **Fix:**
+  - `seconds` is now read and written as a JSON object keyed by category name (the documented format). The old
+    flat-array form is still read, so files saved by earlier builds keep working.
+  - One unreadable entry is skipped and counted instead of failing the whole file.
+  - **Failures are shown, not hidden:** Stats and the HLTB section show the problem in plain words, for example
+    "The HLTB estimates file couldn't be read (it isn't a list of estimates). It was left as it is."
+  - Before the app ever saves over a file it couldn't fully read, it copies the original to
+    `estimates.json.unreadable-backup`, so a manual entry can't wipe good data.
+- ✅ **The existing file needs no changes.** The current format is exactly the one on disk: a bare JSON array of
+  `{gameID, title, seconds: {mainStory, mainExtras, completionist}, recordedAt (ISO-8601), origin}`. All 109 real
+  entries were checked read-only against the new decoder's rules, and none would be skipped.
+- ✅🧪 Tests cover the exact on-disk shape, the legacy format, the object form on save, a bad entry being skipped
+  and reported, an unreadable file being reported and backed up, and Stats showing the problem. 342 tests (+6).
+- ⚠️ Pending Ollie's live recheck: Stats should report 109 of 109 backlog games with an estimate, and the chips
+  should show values.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -528,6 +561,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 19 | `feature/nxnative-file-prompts` | ✅ | ✅ | 333 | ✅ |
 | 20 | `feature/mit-license` | ✅ | ✅ | 333 | ✅ |
 | 21 | `feature/detail-layout-fit` (QA #2) | ✅ | ✅ | 336 | ✅ |
+| 22 | `feature/hltb-cache-read` (QA #3) | ✅ | ✅ | 342 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -590,7 +624,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 21 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 22 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

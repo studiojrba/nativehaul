@@ -19,6 +19,11 @@ final class StatsViewModel {
     private let engine: BadgeEngine
     private let hltb: (any HLTBProviding)?
 
+    /// Why HLTB estimates couldn't be read, shown instead of a silent zero.
+    var hltbProblem: String? {
+        hltb?.loadProblem
+    }
+
     /// Creates the view model.
     init(
         provider: any LibrarySnapshotProviding,
