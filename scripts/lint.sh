@@ -3,7 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 if [[ "${1:-}" == "--check" ]]; then
-  swiftformat --lint Playrite PlayriteTests
+  swiftformat Playrite PlayriteTests --lint
 else
   swiftformat Playrite PlayriteTests
 fi
