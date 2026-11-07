@@ -62,6 +62,7 @@ struct GameFolderScanner: Sendable {
             .filter {
                 !$0.hasPrefix("._") && StagedFileKind(pathExtension: ($0 as NSString).pathExtension) == .titleFile
             }
+            .filter { !PartialDownload.isInProgress($0, in: folder, files: files) }
             .sorted { $0.localizedStandardCompare($1) == .orderedAscending }
             .map { Package(fileName: $0, identity: reader.identity(ofPackageAt: (folder as NSString)
                     .appendingPathComponent($0))) }

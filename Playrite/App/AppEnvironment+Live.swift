@@ -8,7 +8,6 @@ extension AppEnvironment {
         let secrets = KeychainSecretStore()
         let emulators = EmulatorRouter(preferences: UserDefaultsEmulatorPreferences(), files: LocalFileOperations())
         let steamAccount = SteamAccountStore(secrets: secrets)
-        let steamClient = SteamWebAPIClient(http: URLSessionHTTPClient())
         let trackingPreferences = UserDefaultsTrackingPreferencesStore()
         let watcher = PlaytimeWatcher(
             observer: WorkspaceRunningApplicationObserver(),
@@ -30,12 +29,14 @@ extension AppEnvironment {
             repository: repository,
             transfer: LibraryTransferService(repository: repository, deduplicator: deduplicator),
             steamAccount: steamAccount,
-            steamSync: SteamSyncService(client: steamClient, account: steamAccount, repository: repository),
+            steamSync: makeLiveSteamSync(account: steamAccount, repository: repository),
             watcher: watcher,
             scanner: AppBundleScanner(),
             trackingPreferences: trackingPreferences,
             nxnativeServices: liveNXNativeServices,
             engineConfiguration: UserDefaultsEngineConfigurationStore(),
+            inboxDismissals: UserDefaultsBuildsInboxDismissals(),
+            inboxWatcher: DispatchFolderWatcher(),
             hltb: hltb,
             urlOpener: WorkspaceURLOpener(),
             gameFolders: gameFolders,
@@ -51,6 +52,17 @@ extension AppEnvironment {
             emulators: emulators,
             components: makeLiveComponents(emulators: emulators),
             gameBadges: GameUpdateBadgeProvider(files: LocalFileOperations(), switchVersions: .bundled())
+        )
+    }
+
+    private static func makeLiveSteamSync(
+        account: SteamAccountStore,
+        repository: any LibraryRepository
+    ) -> SteamSyncService {
+        SteamSyncService(
+            client: SteamWebAPIClient(http: URLSessionHTTPClient()),
+            account: account,
+            repository: repository
         )
     }
 

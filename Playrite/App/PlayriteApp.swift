@@ -4,10 +4,16 @@ import SwiftUI
 /// Application entry point.
 @main
 struct PlayriteApp: App {
-    private let launch: Result<AppEnvironment, Error>
+    private let launch: Result<AppEnvironment, Error>?
+
+    /// `true` when the app is only hosting unit tests: it then starts nothing live, so tests never touch the user's
+    /// library, folders or Downloads (tests use mocks only).
+    private static var isHostingTests: Bool {
+        ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+    }
 
     init() {
-        launch = Result { try AppEnvironment.live() }
+        launch = Self.isHostingTests ? nil : Result { try AppEnvironment.live() }
     }
 
     var body: some Scene {
@@ -19,6 +25,8 @@ struct PlayriteApp: App {
                         .modelContainer(environment.container)
                 case let .failure(error):
                     LaunchFailureView(message: error.localizedDescription)
+                case nil:
+                    EmptyView()
                 }
             }
             .frame(minWidth: DesignTokens.Layout.windowMinWidth, minHeight: DesignTokens.Layout.windowMinHeight)

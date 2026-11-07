@@ -107,6 +107,22 @@ extension AppEnvironment {
         }
     }
 
+    /// Builds the Builds page inbox (ADR 0024) feeding `queue`. Built Switch apps in the library are not offered again.
+    func makeBuildsInboxViewModel(queue: NXNativeViewModel) -> BuildsInboxViewModel {
+        let repository = repository
+        return BuildsInboxViewModel(
+            files: nxnativeServices.files,
+            store: engineConfiguration,
+            dismissals: inboxDismissals,
+            watcher: inboxWatcher,
+            queue: queue
+        ) {
+            ((try? repository.fetchGames()) ?? [])
+                .filter { $0.appBundlePath != nil && ($0.platform == .switchPort || $0.switchTitleID != nil) }
+                .map { BuiltTitle(titleID: $0.switchTitleID, name: $0.title) }
+        }
+    }
+
     /// Builds a troubleshooting view model for a case, targeting the configured engine script.
     func makeTroubleshootingViewModel(
         for troubleshootingCase: TroubleshootingCase,

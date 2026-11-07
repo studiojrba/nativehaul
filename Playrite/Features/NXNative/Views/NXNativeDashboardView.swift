@@ -4,6 +4,8 @@ import SwiftUI
 struct NXNativeDashboardView: View {
     /// Queue state (owned by the root view so the queue survives navigation).
     @Bindable var viewModel: NXNativeViewModel
+    /// Game files waiting in the watched folder (ADR 0024).
+    let inbox: BuildsInboxViewModel
     @Environment(AppEnvironment.self) private var environment
     @State private var isAddingJob = false
     @State private var openCase: TroubleshootingCase?
@@ -23,7 +25,10 @@ struct NXNativeDashboardView: View {
             }
         }
         .navigationTitle("NXNative Builds")
-        .onAppear { viewModel.refreshReadiness() }
+        .onAppear {
+            viewModel.refreshReadiness()
+            inbox.start()
+        }
         .fileImporter(isPresented: $isChoosingEngine, allowedContentTypes: [.item]) { result in
             if case let .success(url) = result {
                 viewModel.chooseEngine(at: url.path)
@@ -47,6 +52,9 @@ struct NXNativeDashboardView: View {
     private var content: some View {
         HSplitView {
             List(selection: $viewModel.selectedJobID) {
+                if inbox.watchedFolder != nil {
+                    BuildsInboxSection(inbox: inbox)
+                }
                 Section("Queue") {
                     ForEach(viewModel.jobs) { BuildJobRow(job: $0).tag($0.id) }
                 }
@@ -82,6 +90,7 @@ struct NXNativeDashboardView: View {
 
 #Preview {
     let environment = AppEnvironment.preview
-    NXNativeDashboardView(viewModel: environment.makeNXNativeViewModel {})
+    let queue = environment.makeNXNativeViewModel {}
+    NXNativeDashboardView(viewModel: queue, inbox: environment.makeBuildsInboxViewModel(queue: queue))
         .environment(environment)
 }

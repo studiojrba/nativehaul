@@ -636,6 +636,38 @@ approved by J.R when he set the rule). 333 tests (+6).
   391 tests (+18).
 - ⚠️ Pending J.R's live try with a real mixed folder.
 
+## 26 · feature/builds-inbox — J.R feature
+- 📣 **J.R feature:** a watched folder (a builds inbox) so new game files can be queued with no file picker
+  anywhere: builds startable without touching the Mac, and plain zero-tinker for everyone.
+- ✅🧪 **Watches `~/Downloads` by default** from first run, with no picker and no setup. Settings → NXNative → Builds
+  inbox can change the folder (**Use Downloads** goes back) or turn watching off. Older saved settings decode as
+  watching Downloads.
+- ✅🧪 **Detection** runs at launch, on folder changes (debounced kernel events), when the page appears, and on
+  Refresh.
+  - **Offered:** loose `.nsp`/`.xci` (grouped by title ID), loose `.nup` files, and subfolders holding a game. Each
+    item gets the folder-first summary.
+  - **Ignored:** archives (never extracted), unfinished downloads, `.app` bundles, and folders that can't be built
+    (J.R's update-only Pikmin folder).
+- ✅🧪 **Builds page:** a "New in Downloads" section at the top of the queue, with the plain watching line and Queue
+  and Dismiss on each item. Queue goes through the derived invocation; there's no picker and nothing auto-builds.
+- ✅🧪 **Dedupe:** queued jobs, built apps in the library (by title ID, or by name) and dismissed items don't
+  reappear. Dismissals persist.
+- ✅ **Wording:** the onboarding trust line now lists every place Retriever looks, including engine and keys
+  detection (which it was missing) and Downloads. macOS's one-time Downloads prompt gets a plain purpose string.
+- 🐞✅ **Test isolation:** the unit-test host was launching the live app (J.R's library and folders). Watching
+  Downloads made the runner hang on the permission prompt. The app now starts nothing live while hosting tests.
+- ✅🧪 Tests cover:
+  - detection of a single `.nup`, a single `.nsp` and a mixed folder, with archives, partial downloads, apps and an
+    update-only folder ignored;
+  - the summary matching a folder pick;
+  - folder-change refresh;
+  - dedupe against the queue and the library;
+  - dismissals persisting across launches;
+  - the default Downloads, a Settings folder override, and watching off;
+  - Queue → a job → the derived invocation, with no picker;
+  - the section copy.
+  402 tests (+11).
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -665,6 +697,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 23 | `feature/nxnative-on-by-default` (J.R correction) | ✅ | ✅ | 357 | ✅ |
 | 24 | `feature/nxnative-derived-invocation` (Phase 1 blocker) | ✅ | ✅ | 373 | ✅ |
 | 25 | `feature/folder-first-add-build` (J.R requirement) | ✅ | ✅ | 391 | ✅ |
+| 26 | `feature/builds-inbox` (J.R feature) | ✅ | ✅ | 402 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -704,7 +737,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0023)
+## Key decisions (see `docs/decisions/` ADR 0001–0024)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -728,7 +761,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 25 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 26 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

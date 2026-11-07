@@ -37,6 +37,22 @@ final class NXNativeSettingsViewModel {
             ?? "Not found — you'll be asked for it when you build"
     }
 
+    /// The builds inbox folder shown in Settings (ADR 0024).
+    var inboxDescription: String {
+        let folder = configuration.inboxFolder ?? EngineConfiguration.defaultInboxFolder
+        return configuration.inboxFolder == nil ? "\(folder) (default)" : folder
+    }
+
+    /// Watches a user-chosen folder instead of Downloads.
+    func setInboxFolder(_ url: URL) {
+        configuration.inboxFolder = url.path(percentEncoded: false)
+    }
+
+    /// Goes back to watching Downloads.
+    func useDownloadsForInbox() {
+        configuration.inboxFolder = nil
+    }
+
     /// Drops the engine override so the detected engine is used.
     func useDetectedEngine() {
         configuration.enginePath = ""
