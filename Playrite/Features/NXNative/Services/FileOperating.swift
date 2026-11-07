@@ -17,6 +17,8 @@ protocol FileOperating: Sendable {
     func fileSize(atPath path: String) throws -> Int64
     /// Reads a whole file.
     func readData(atPath path: String) throws -> Data
+    /// Reads at most `length` bytes starting at `offset` (fewer at the end of the file). For headers of large files.
+    func readData(atPath path: String, offset: Int, length: Int) throws -> Data
     /// Overwrites a file **in place** (keeping its permissions) or creates it.
     func writeData(_ data: Data, toPath path: String) throws
     /// Copies an item (preserving permissions).

@@ -32,6 +32,13 @@ struct LocalFileOperations: FileOperating {
         try Data(contentsOf: URL(fileURLWithPath: path))
     }
 
+    func readData(atPath path: String, offset: Int, length: Int) throws -> Data {
+        let handle = try FileHandle(forReadingFrom: URL(fileURLWithPath: path))
+        defer { try? handle.close() }
+        try handle.seek(toOffset: UInt64(max(0, offset)))
+        return try handle.read(upToCount: max(0, length)) ?? Data()
+    }
+
     func writeData(_ data: Data, toPath path: String) throws {
         guard manager.fileExists(atPath: path) else {
             try data.write(to: URL(fileURLWithPath: path))

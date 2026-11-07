@@ -68,17 +68,22 @@ struct NXNativeCheckout: Sendable {
     }
 
     /// `build_ipa_from_nsp.py <game> [-k <keys>] --platform mac-app -o <work>/<Title>.app`, run from the checkout.
-    /// Keys are passed only for Switch packages; a Switch 2 `.nup` or dump needs none.
+    /// Keys are passed only for Switch packages; a Switch 2 `.nup` or dump needs none. `gameInSharedFolder` adds
+    /// `--title-id` when the folder holds files of more than one game (ADR 0023), so the engine never mixes them.
     func invocation(
         for job: BuildJob,
         shape: GameSourceShape,
         keysPath: String,
-        workDirectory: String
+        workDirectory: String,
+        gameInSharedFolder: String? = nil
     ) -> EngineInvocation {
         let appName = CleanupPlanner.sanitizedName(job.title.name, fallback: job.title.titleID) + ".app"
         var arguments = [script, shape.engineInput(for: job.sourcePath)]
         if shape.needsKeys {
             arguments += ["-k", keysPath]
+        }
+        if let gameInSharedFolder {
+            arguments += ["--title-id", gameInSharedFolder]
         }
         arguments += ["--platform", "mac-app", "-o", (workDirectory as NSString).appendingPathComponent(appName)]
         return EngineInvocation(

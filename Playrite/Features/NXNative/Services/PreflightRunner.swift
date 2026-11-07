@@ -33,7 +33,7 @@ struct PreflightRunner: Sendable {
             notBundledCheck(enginePath),
             isSwitch2 ? PreflightCheck(kind: .keys, outcome: .passed, message: Self.keysNotNeeded)
                 : keysCheck(configuration),
-            isSwitch2 && job.title.titleID.isEmpty
+            checkout != nil && job.title.titleID.isEmpty
                 ? PreflightCheck(kind: .titleID, outcome: .passed, message: Self.titleIDFromGameFiles)
                 : titleIDCheck(job.title),
             architectureCheck(job.title.architecture),
@@ -89,7 +89,7 @@ struct PreflightRunner: Sendable {
 
     /// Keys line for a Switch 2 game.
     static let keysNotNeeded = "Not needed for a Switch 2 game."
-    /// Title ID line for a Switch 2 game entered without one.
+    /// Title ID line for a game queued without one (nxnative identifies it).
     static let titleIDFromGameFiles = "nxnative reads it from the game files."
 
     private func sourceShapeCheck(_ shape: GameSourceShape, path: String) -> PreflightCheck {

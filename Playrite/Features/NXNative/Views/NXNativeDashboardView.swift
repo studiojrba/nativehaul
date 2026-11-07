@@ -30,7 +30,9 @@ struct NXNativeDashboardView: View {
             }
         }
         .sheet(isPresented: $isAddingJob) {
-            AddBuildJobSheet { viewModel.enqueue(sourcePath: $0, title: $1) }
+            AddBuildJobSheet(viewModel: AddBuildViewModel(files: viewModel.services.files)) {
+                viewModel.enqueue(sourcePath: $0, title: $1)
+            }
         }
         .sheet(item: $openCase) { entry in
             TroubleshootingView(viewModel: environment.makeTroubleshootingViewModel(for: entry) {

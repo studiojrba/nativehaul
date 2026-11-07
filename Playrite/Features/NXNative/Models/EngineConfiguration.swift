@@ -63,22 +63,24 @@ struct EngineConfiguration: Codable, Equatable, Sendable {
         )
     }
 
-    /// "Please provide your game file (.nsp/.xci)" — picked in place; never copied or sourced by the app.
-    static let gameFileRequest = UserFileRequest(
-        fileDescription: "game file (.nsp/.xci)",
-        reason: "Retriever builds the Mac app from your own copy of the game.",
+    /// "Please provide your game folder" — the primary Add Build input (ADR 0023): one folder with a mix of base game,
+    /// update and DLC files, or a Switch 2 game. Scanned in place; never copied or sourced by the app.
+    static let gameFolderRequest = UserFileRequest(
+        fileDescription: "game folder",
+        reason: "Choose one folder with your game's files — base game, update and DLC in any mix, or a Switch 2 "
+            + "game. Retriever sorts them out.",
         destinationFolder: nil,
-        allowedExtensions: StagedFileKind.titleExtensions.sorted()
+        allowsFolders: true,
+        startingFolder: UserFileRequest.downloadsFolder
     )
 
-    /// "Please provide your Switch 2 game (its folder or .nup)" — a dump folder or `.nup` container, picked in place;
-    /// needs no prod.keys (ADR 0022).
-    static let switch2GameRequest = UserFileRequest(
-        fileDescription: "Switch 2 game (its folder or .nup)",
-        reason: "Switch 2 games build from their folder of game files or their .nup file, and need no prod.keys.",
+    /// "Please provide your game file (.nsp/.xci/.nup)" — a lone file instead of a folder; picked in place.
+    static let gameFileRequest = UserFileRequest(
+        fileDescription: "game file (.nsp/.xci/.nup)",
+        reason: "Or choose a single base game file, or a Switch 2 .nup.",
         destinationFolder: nil,
-        allowedExtensions: [GameSourceShape.nupExtension],
-        allowsFolders: true
+        allowedExtensions: StagedFileKind.titleExtensions.sorted() + [GameSourceShape.nupExtension],
+        startingFolder: UserFileRequest.downloadsFolder
     )
 
     /// Whether an engine override is set.

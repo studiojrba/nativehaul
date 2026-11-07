@@ -60,8 +60,8 @@ struct UserProvidedFileTests {
 
     @Test func gameFileRequestUsesJRsWordingAndTitleExtensions() {
         let request = EngineConfiguration.gameFileRequest
-        #expect(request.prompt == "Please provide your game file (.nsp/.xci)")
-        #expect(Set(request.allowedExtensions) == ["nsp", "xci", "nsz", "xcz"])
+        #expect(request.prompt == "Please provide your game file (.nsp/.xci/.nup)")
+        #expect(Set(request.allowedExtensions) == ["nsp", "xci", "nsz", "xcz", "nup"])
         #expect(request.destinationFolder == nil)
     }
 

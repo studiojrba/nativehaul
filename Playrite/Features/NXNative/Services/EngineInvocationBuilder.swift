@@ -23,11 +23,16 @@ enum EngineInvocationBuilder {
     ) -> EngineInvocation {
         guard let checkout = NXNativeCheckout(configuration: configuration, files: files, homeDirectory: homeDirectory)
         else { return invocation(for: job, configuration: configuration, workDirectory: workDirectory) }
+        let shape = GameSourceShape.detect(job.sourcePath, files: files)
+        let folder = shape.engineInput(for: job.sourcePath)
+        let isShared = shape.needsKeys && job.title.hasValidTitleID
+            && GameFolderScanner(files: files).baseTitleIDs(inFolder: folder).count > 1
         return checkout.invocation(
             for: job,
-            shape: GameSourceShape.detect(job.sourcePath, files: files),
+            shape: shape,
             keysPath: configuration.effectiveKeysPath,
-            workDirectory: workDirectory
+            workDirectory: workDirectory,
+            gameInSharedFolder: isShared ? job.title.titleID : nil
         )
     }
 

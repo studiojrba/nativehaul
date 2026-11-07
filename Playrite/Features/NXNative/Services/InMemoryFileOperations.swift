@@ -67,6 +67,12 @@ final class InMemoryFileOperations: FileOperating {
         try Int64(readData(atPath: path).count)
     }
 
+    func readData(atPath path: String, offset: Int, length: Int) throws -> Data {
+        let data = try readData(atPath: path)
+        let start = min(max(0, offset), data.count)
+        return Data(data[start ..< min(data.count, start + max(0, length))])
+    }
+
     func readData(atPath path: String) throws -> Data {
         try state.withLock { state in
             guard let data = state.files[path] else { throw FileOperationError.notFound(path) }

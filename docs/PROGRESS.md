@@ -597,6 +597,42 @@ approved by J.R when he set the rule). 333 tests (+6).
   Add Build; unpacking or joining it is J.R's step. The full build on his Mac (toolchain, time) is unverified until that
   first run.
 
+## 25 · feature/folder-first-add-build — J.R requirement
+- 📣 **J.R requirement ("super important", his favourite NX2Apple behaviour):** point Add Build at one folder with
+  a random mix of base, update and DLC files, and it sorts them by title ID, one click and go. Same for Switch 2.
+  Folded in: **the Add Build pickers open in `~/Downloads`**, because that's where game files land.
+- ✅🧪 **Folder-first sheet:**
+  - The primary pick is a folder. A single file (`.nsp`/`.xci`/`.nup`) stays as the second option.
+  - Before anything is queued, the folder is scanned and the result is shown: game name, title ID, and "Base game ·
+    update vN · N DLC". Switch 2 games get the same at-a-glance summary (base, updates, DLC, or `.nup` version).
+- ✅🧪 **Title IDs:** read from the `[0100…][vN]` file-name tags (J.R's real naming), otherwise from the ticket name
+  or the plain `.cnmt.xml` in the package header. Only the start of the file is read, with no keys. Both header forms
+  were checked on his real files.
+- ✅🧪 **Grouping:** base `…000`, update `…800`, DLC = base + `0x1000` + n.
+- ✅🧪 **One job per game:**
+  - A folder holding more than one game lists each one with a checkbox, plus Select All.
+  - Each chosen game is queued separately, and the engine gets `--title-id`, so games are never mixed.
+  - Several `.nup` files are listed separately too.
+- ✅🧪 **Plain failures in the sheet, nothing queued:**
+  - "No game files found in this folder…";
+  - "This folder has an update for Pikmin 3 Deluxe (0100F4C009322000) but not its base game." (J.R's real
+    update-only folder);
+  - a lone update or DLC file is refused.
+  Updates or DLC without a base, beside a real game, are listed as "Skipped: …".
+- ✅ **One click:** a single game is preselected and named from its file, architecture defaults to 64-bit, and the
+  title ID may be blank for detected-checkout builds. The single Ocarina `.nup` still queues in one click.
+- ✅🧪 Tests cover:
+  - title-ID relationships;
+  - mixed-folder grouping (One Piece Pirate Warriors 4: base, two updates, three DLC);
+  - DLC counting;
+  - a two-game folder (pick one or all, and `--title-id` in the invocation);
+  - the update-only error copy, a lone update file, orphans skipped beside a game, and a folder with no game files;
+  - the Switch 2 dump summary, a folder of several `.nup` files, and the lone Ocarina `.nup`;
+  - identity from the ticket and cnmt.xml headers, and a malformed header;
+  - both pickers starting in Downloads.
+  390 tests (+17).
+- ⚠️ Pending J.R's live try with a real mixed folder.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -625,6 +661,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 22 | `feature/hltb-cache-read` (QA #3) | ✅ | ✅ | 342 | ✅ |
 | 23 | `feature/nxnative-on-by-default` (J.R correction) | ✅ | ✅ | 357 | ✅ |
 | 24 | `feature/nxnative-derived-invocation` (Phase 1 blocker) | ✅ | ✅ | 373 | ✅ |
+| 25 | `feature/folder-first-add-build` (J.R requirement) | ✅ | ✅ | 390 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -664,7 +701,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0022)
+## Key decisions (see `docs/decisions/` ADR 0001–0023)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -688,7 +725,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 24 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 25 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

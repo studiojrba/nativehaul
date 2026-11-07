@@ -18,6 +18,12 @@ struct UserFileRequest: Equatable, Sendable {
     var allowedExtensions: [String] = []
     /// Whether a folder may be picked too (a Switch 2 game dump).
     var allowsFolders = false
+    /// Where the picker opens (tilde allowed); `nil` leaves it to macOS. Only a starting point — the user can go
+    /// anywhere.
+    var startingFolder: String?
+
+    /// The user's Downloads folder, where freshly downloaded game files land (J.R, ADR 0023).
+    static let downloadsFolder = "~/Downloads"
 
     /// "Please provide your PlayStation 2 BIOS".
     var prompt: String {
