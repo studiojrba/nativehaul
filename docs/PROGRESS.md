@@ -601,6 +601,9 @@ approved by J.R when he set the rule). 333 tests (+6).
 - 📣 **J.R requirement ("super important", his favourite NX2Apple behaviour):** point Add Build at one folder with
   a random mix of base, update and DLC files, and it sorts them by title ID, one click and go. Same for Switch 2.
   Folded in: **the Add Build pickers open in `~/Downloads`**, because that's where game files land.
+  **Scope (J.R):** this applies to the build side only, meaning the picker for build inputs. Where games live and where
+  built apps and work folders go remain the user's settings, unchanged (`~/Switch/…` defaults); a test checks that
+  none of them defaults to Downloads.
 - ✅🧪 **Folder-first sheet:**
   - The primary pick is a folder. A single file (`.nsp`/`.xci`/`.nup`) stays as the second option.
   - Before anything is queued, the folder is scanned and the result is shown: game name, title ID, and "Base game ·
@@ -629,8 +632,8 @@ approved by J.R when he set the rule). 333 tests (+6).
   - the update-only error copy, a lone update file, orphans skipped beside a game, and a folder with no game files;
   - the Switch 2 dump summary, a folder of several `.nup` files, and the lone Ocarina `.nup`;
   - identity from the ticket and cnmt.xml headers, and a malformed header;
-  - both pickers starting in Downloads.
-  390 tests (+17).
+  - both pickers starting in Downloads, while the game and output folders don't.
+  391 tests (+18).
 - ⚠️ Pending J.R's live try with a real mixed folder.
 
 ## Status by branch (stacked, merge in this order)
@@ -661,7 +664,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 22 | `feature/hltb-cache-read` (QA #3) | ✅ | ✅ | 342 | ✅ |
 | 23 | `feature/nxnative-on-by-default` (J.R correction) | ✅ | ✅ | 357 | ✅ |
 | 24 | `feature/nxnative-derived-invocation` (Phase 1 blocker) | ✅ | ✅ | 373 | ✅ |
-| 25 | `feature/folder-first-add-build` (J.R requirement) | ✅ | ✅ | 390 | ✅ |
+| 25 | `feature/folder-first-add-build` (J.R requirement) | ✅ | ✅ | 391 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches

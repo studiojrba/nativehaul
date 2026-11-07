@@ -13,6 +13,10 @@ Downloads, where game files land right after downloading.
   option ("Please provide your game file (.nsp/.xci/.nup)") for a lone base package or a `.nup`. **Both pickers open
   in `~/Downloads`** (`UserFileRequest.startingFolder`, SwiftUI's default file-dialog directory). This only sets the
   starting folder; the user can go anywhere.
+  - **Scope (J.R): build side only.** Downloads is just where the build-input pickers open. The game side stays the
+    user's own setting and is not touched: where games live (Game Folders), and where built apps and work folders go
+    (Settings → NXNative output, work and staging folders, defaulting to `~/Switch/…` as before). No game-side
+    default points at Downloads; a test checks this.
 - **Scanned before queueing** (`GameFolderScanner`, read-only), using the folder's own files, not subfolders, as
   nxnative does:
   - **Title IDs** come, in order, from:
