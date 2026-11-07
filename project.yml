@@ -35,7 +35,6 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: Playrite
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.games
         INFOPLIST_KEY_NSHumanReadableCopyright: "© studiojrba"
-        INFOPLIST_KEY_NSDownloadsFolderUsageDescription: "Retriever watches your Downloads folder for new Switch game files so they're ready to build. You can change the folder or turn this off in Settings."
         ENABLE_APP_SANDBOX: NO
         ENABLE_TESTABILITY: YES
   PlayriteTests:

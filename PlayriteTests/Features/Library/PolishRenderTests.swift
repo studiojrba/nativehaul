@@ -76,11 +76,8 @@ struct PolishRenderTests {
             width: 900,
             name: "welcome"
         )
-        let queue = environment.makeNXNativeViewModel {}
-        let inbox = environment.makeBuildsInboxViewModel(queue: queue)
-        inbox.start()
         renderBoth(shell(
-            NXNativeDashboardView(viewModel: queue, inbox: inbox),
+            NXNativeDashboardView(viewModel: environment.makeNXNativeViewModel {}),
             environment: environment,
             selection: .nxnative
         ), width: 1280, name: "builds")

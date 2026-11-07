@@ -40,27 +40,6 @@ struct EngineConfiguration: Codable, Equatable, Sendable {
     /// apps go straight into the output folder.
     var keepsAppInTitleFolder: Bool?
 
-    /// Builds inbox folder override (ADR 0024). `nil` watches ``defaultInboxFolder``.
-    var inboxFolder: String?
-    /// `true` only when the user turned the builds inbox off in Settings. `nil` means it watches (on by default).
-    var isInboxSwitchedOffByUser: Bool?
-
-    /// The builds inbox watches the user's Downloads unless changed, because that's where game files land.
-    static let defaultInboxFolder = UserFileRequest.downloadsFolder
-
-    /// Whether the builds inbox watches its folder. Switching it on clears the user's off choice.
-    var isWatchingInbox: Bool {
-        get { isInboxSwitchedOffByUser != true }
-        set { isInboxSwitchedOffByUser = newValue ? nil : true }
-    }
-
-    /// The folder the builds inbox watches (`~` allowed), or `nil` when the user turned watching off.
-    var watchedInboxFolder: String? {
-        guard isWatchingInbox else { return nil }
-        let folder = inboxFolder?.trimmingCharacters(in: .whitespaces) ?? ""
-        return folder.isEmpty ? Self.defaultInboxFolder : folder
-    }
-
     /// Whether the module is on. Always on unless the user switched it off; switching it on clears that choice.
     var isEnabled: Bool {
         get { isSwitchedOffByUser != true }

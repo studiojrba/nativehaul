@@ -22,6 +22,26 @@ design phase forward ahead of Figma. He gave three inputs, summarised from the r
    - Bold, oversized, tight type.
    - Exactly one loud, saturated colour per surface.
 
+4. **Meebits deep-dive** (a full interactive walk of every page, with hovers tested), distilled by Ollie:
+   - **Chrome stays monochrome**, with exactly **one electric accent** (theirs is indigo-violet), spent only on the
+     logo mark, the active nav state and links. This confirms our single Fetch-orange pop.
+   - **Colour comes from the content, full stop.** Every collection card is the same saturated tile holding one
+     object, with only its ID in monospace beneath. This validates our grid restraint; our one quiet line is already
+     more than Meebits shows.
+   - **Type pairing:** huge bold grotesque headlines (4–5× body size) plus a **monospace face for all data**
+     (counts, stats, labels). Candidate for Retriever: playtime, install size, HLTB numbers and stats in mono.
+   - **Hover discipline:** almost none. A pointer cursor plus one tiny signal (an accent bar beside the active nav
+     item; black buttons lighten one shade). No lift, scale or shadow on cards; our hover ring should be equally
+     quiet.
+   - **Motion budget:** one signature gesture (theirs is a full-screen branded transition; the characters idle-bob,
+     and the detail hero rotates on drag) instead of animating every control.
+   - **Detail page shape** confirms ours: a quiet narrow info column (mono stats, two pill actions, primary black and
+     secondary white) beside one huge full-height hero card. Buttons are pills everywhere; cards are about 16 px
+     radius, the hero about 20 px.
+   - Item 7 ("what not to copy") arrived cut off in the handoff and is not recorded yet.
+   These rules were recorded after the pass shipped. Applying them (mono for data, a quieter hover, pill buttons,
+   16/20 px radii, one motion gesture) is follow-up work, not done in this branch.
+
 This pass is **visual only**: no behaviour, data or navigation changes. Hard constraints: the 900/1100/1280 layout
 guards stay green, every test passes, lint stays clean, and the renders are inspected before pushing.
 

@@ -8,7 +8,6 @@ struct RootView: View {
     let environment: AppEnvironment
     @State private var libraryViewModel: LibraryViewModel
     @State private var nxnativeViewModel: NXNativeViewModel
-    @State private var buildsInbox: BuildsInboxViewModel
     @State private var selection: SidebarDestination? = .library(.all)
     @State private var path: [UUID] = []
     @State private var isAddingGame = false
@@ -22,9 +21,7 @@ struct RootView: View {
         self.environment = environment
         let libraryViewModel = environment.makeLibraryViewModel()
         _libraryViewModel = State(initialValue: libraryViewModel)
-        let nxnativeViewModel = environment.makeNXNativeViewModel { libraryViewModel.reload() }
-        _nxnativeViewModel = State(initialValue: nxnativeViewModel)
-        _buildsInbox = State(initialValue: environment.makeBuildsInboxViewModel(queue: nxnativeViewModel))
+        _nxnativeViewModel = State(initialValue: environment.makeNXNativeViewModel { libraryViewModel.reload() })
     }
 
     var body: some View {
@@ -50,7 +47,6 @@ struct RootView: View {
         .task {
             isOnboarding = !environment.onboarding.hasCompletedOnboarding
             environment.watcher.start()
-            buildsInbox.start()
             await libraryViewModel.runAutomaticUpkeep()
         }
         .onReceive(NotificationCenter.default.publisher(for: OnboardingRequest.name)) { _ in isOnboarding = true }
@@ -107,7 +103,7 @@ struct RootView: View {
         case .tracking:
             TrackingDashboardView(viewModel: environment.makeTrackingViewModel { libraryViewModel.reload() })
         case .nxnative:
-            NXNativeDashboardView(viewModel: nxnativeViewModel, inbox: buildsInbox)
+            NXNativeDashboardView(viewModel: nxnativeViewModel)
         case nil:
             EmptyStateView(title: "Pick a section", symbolName: "sidebar.left")
         }

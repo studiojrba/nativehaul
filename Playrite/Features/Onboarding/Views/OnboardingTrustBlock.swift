@@ -13,10 +13,8 @@ struct OnboardingTrustBlock: View {
                 systemImage: "lock.shield"
             )
             Label(
-                "It only looks in folders you point it at, the standard places games install to (Steam, CrossOver, "
-                    + "~/Switch/Games), the usual places for your own nxnative engine and prod.keys, and your "
-                    + "Downloads folder for new Switch game files to build. You can change or turn that off in "
-                    + "Settings.",
+                "It only looks in folders you point it at, plus the standard places games install to "
+                    + "(Steam, CrossOver, ~/Switch/Games).",
                 systemImage: "folder"
             )
         }

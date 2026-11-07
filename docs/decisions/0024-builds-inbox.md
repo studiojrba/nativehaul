@@ -1,6 +1,10 @@
 # ADR 0024 — Builds inbox: a watched folder, no picker in the path
 
-**Status:** Accepted · 2026-11-07 · J.R feature
+**Status:** ~~Accepted~~ **Superseded by ADR 0026** (2026-11-07, J.R: no programmatic watching of a protected
+folder) · 2026-11-07 · J.R feature
+
+> The watcher, the "New in Downloads" section, its settings and its dismissals were removed. Folder-first Add Build
+> (ADR 0023) and its scanner stay. This record is kept for history.
 
 ## Context
 File pickers are the one flow that can't run unattended. J.R wants builds startable without anyone at the Mac (for

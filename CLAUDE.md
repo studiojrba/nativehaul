@@ -77,6 +77,9 @@ Anything that must come from the user's own sources — `prod.keys` for Switch b
 file picker (`ProvideFilePrompt` / `UserFileRequest`). When the app knows where the file belongs (a BIOS folder), it
 copies the user's file there, never overwriting.
 - The app never sources, downloads, links to or hints at sources for these files. It asks; the user provides.
+- **Protected folders (J.R, ADR 0026):** Retriever never reads or watches a macOS-protected folder (Downloads,
+  Desktop, Documents, …) by itself, and never asks for Full Disk Access. Access follows the user's pick (a picker
+  may *open* in Downloads; the pick is the consent). Nothing on the launch path touches a protected folder.
 
 ## UI / UX — Figma-ready, token-driven (owner directive, ADR 0004)
 Figma designs will arrive later. Until then, **structure and function beat bespoke polish**.

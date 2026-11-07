@@ -4,7 +4,6 @@ import SwiftUI
 struct NXNativeSettingsView: View {
     @State private var viewModel: NXNativeSettingsViewModel
     @State private var isChoosingEngine = false
-    @State private var isChoosingInbox = false
 
     /// Creates the view.
     init(viewModel: NXNativeSettingsViewModel) {
@@ -32,29 +31,6 @@ struct NXNativeSettingsView: View {
                     "Arguments ({input} {output} {titleID} {title})",
                     text: $viewModel.configuration.argumentTemplate
                 )
-            }
-            Section {
-                Toggle("Watch a folder for new game files", isOn: $viewModel.configuration.isWatchingInbox)
-                LabeledContent("Folder") {
-                    HStack(spacing: DesignTokens.Spacing.sm) {
-                        pathText(viewModel.inboxDescription)
-                        Button("Choose…") { isChoosingInbox = true }
-                        if viewModel.configuration.inboxFolder != nil {
-                            Button("Use Downloads") { viewModel.useDownloadsForInbox() }
-                        }
-                    }
-                }
-                .disabled(!viewModel.configuration.isWatchingInbox)
-            } header: {
-                Text("Builds inbox")
-            } footer: {
-                Text("New game files in this folder appear on the Builds page, ready to queue. Nothing builds "
-                    + "until you click Queue.")
-            }
-            .fileImporter(isPresented: $isChoosingInbox, allowedContentTypes: [.folder]) { result in
-                if case let .success(url) = result {
-                    viewModel.setInboxFolder(url)
-                }
             }
             Section("Folders") {
                 TextField("Staging folder", text: $viewModel.configuration.stagingDirectory)

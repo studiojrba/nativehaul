@@ -26,10 +26,6 @@ final class AppEnvironment {
     let nxnativeServices: NXNativeServices
     /// NXNative configuration.
     let engineConfiguration: any EngineConfigurationStoring
-    /// Builds inbox: items the user dismissed.
-    let inboxDismissals: any BuildsInboxDismissing
-    /// Builds inbox: watches the inbox folder.
-    let inboxWatcher: any FolderWatching
     /// HowLongToBeat estimate cache.
     let hltb: any HLTBProviding
     /// Opens links in the browser.
@@ -73,8 +69,6 @@ final class AppEnvironment {
         trackingPreferences: any TrackingPreferencesStoring,
         nxnativeServices: NXNativeServices,
         engineConfiguration: any EngineConfigurationStoring,
-        inboxDismissals: any BuildsInboxDismissing,
-        inboxWatcher: any FolderWatching,
         hltb: any HLTBProviding,
         urlOpener: any URLOpening,
         gameFolders: any GameFolderStoring,
@@ -101,8 +95,6 @@ final class AppEnvironment {
         self.trackingPreferences = trackingPreferences
         self.nxnativeServices = nxnativeServices
         self.engineConfiguration = engineConfiguration
-        self.inboxDismissals = inboxDismissals
-        self.inboxWatcher = inboxWatcher
         self.hltb = hltb
         self.urlOpener = urlOpener
         self.gameFolders = gameFolders
@@ -135,9 +127,7 @@ final class AppEnvironment {
                 scanner: MockAppBundleScanner(),
                 trackingPreferences: InMemoryTrackingPreferencesStore(),
                 nxnativeServices: previewNXNativeServices,
-                engineConfiguration: InMemoryEngineConfigurationStore(previewEngineConfiguration),
-                inboxDismissals: InMemoryBuildsInboxDismissals(),
-                inboxWatcher: ManualFolderWatcher(),
+                engineConfiguration: InMemoryEngineConfigurationStore(),
                 hltb: CachedHLTBService(cache: InMemoryHLTBCache()),
                 urlOpener: RecordingURLOpener(),
                 gameFolders: InMemoryGameFolderStore(["/Users/demo/Switch/Games"]),
@@ -161,18 +151,10 @@ final class AppEnvironment {
 
     private static let previewTitleBytes = 1024
 
-    private static var previewEngineConfiguration: EngineConfiguration {
-        var configuration = EngineConfiguration()
-        configuration.inboxFolder = "/Users/demo/Downloads"
-        return configuration
-    }
-
     private static var previewNXNativeServices: NXNativeServices {
         let files = InMemoryFileOperations()
         files.addFile("/Users/demo/Switch/nxnative", executable: true)
         files.addFile("/Users/demo/Switch/ProdKeys/prod.keys")
-        files.addFile("/Users/demo/Downloads/Tideborn [0100ABCD00010000][v0].nsp")
-        files.addFile("/Users/demo/Downloads/Ridgeback [0400A3A01EE4C000][v131072].nup")
         files.addFile("/Users/demo/Switch/Staging/Tideborn.nsp", contents: Data(repeating: 0, count: previewTitleBytes))
         return NXNativeServices(
             files: files,

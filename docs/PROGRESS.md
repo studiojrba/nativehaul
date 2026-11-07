@@ -699,6 +699,30 @@ approved by J.R when he set the rule). 333 tests (+6).
   colour, and art-tint sampling and caching. 409 tests (+7).
 - ⚠️ Not yet seen with J.R's real covers in a live window. The app rename stays queued after this.
 
+## 28 · fix/remove-downloads-watcher — launch hang fixed by J.R's reversal of the builds inbox
+- 🐞 **Found tonight (Ollie):** the 00:11 Debug build "wouldn't stay launched", with no crash report, which blocked
+  the Phase 1 Ocarina test.
+  - **Diagnosis**, from the stuck process and a stack sample: it was **a hang, not a crash, and not a store or
+    migration issue.**
+    - The main thread sat in the inbox watcher's `open(~/Downloads)` at launch, waiting on macOS's privacy check
+      (each Debug rebuild has a new signature, so macOS asks again).
+    - The window had been built ("All Games") but was 0×0 and never shown.
+    - Relaunches re-activated the stuck instance.
+  - J.R's real library was not touched.
+- 📣 **J.R decision (00:28 EST):** scratch the Downloads watcher entirely. It's a protected folder; access follows
+  the user's pick; never Full Disk Access. An off-main-thread watcher fix was in progress; it was dropped unpushed.
+- ✅ **Removed:** the watcher (live and mock), default Downloads watching, the "New in Downloads" section, its view
+  model, scanner and dismissals, the inbox config fields (old settings still decode), the Settings controls and the
+  Downloads purpose string. The onboarding trust line is restored to its original wording.
+- ✅ **Kept:** folder-first Add Build and its scanner (now with a test for skipping unfinished downloads), the Add
+  Build pickers opening in Downloads (a user pick is consent), and the test host starting nothing live.
+- ✅ **Rule recorded** in CLAUDE.md and ADR 0026 (superseding ADR 0024): nothing reads or watches a protected folder
+  by itself, and nothing on the launch path touches one.
+- ✅ ADR 0025 gains Ollie's Meebits deep-dive rules (monochrome chrome with one electric accent, colour from content,
+  mono for data, near-zero hover, one motion gesture, pills and 16/20 px radii). Applying them is follow-up work.
+  Item 7 arrived cut off.
+- ✅🧪 The inbox tests are removed, and the scanner and grouping tests stay green. 399 tests; lint clean.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -728,8 +752,9 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 23 | `feature/nxnative-on-by-default` (J.R correction) | ✅ | ✅ | 357 | ✅ |
 | 24 | `feature/nxnative-derived-invocation` (Phase 1 blocker) | ✅ | ✅ | 373 | ✅ |
 | 25 | `feature/folder-first-add-build` (J.R requirement) | ✅ | ✅ | 391 | ✅ |
-| 26 | `feature/builds-inbox` (J.R feature) | ✅ | ✅ | 402 | ✅ |
+| 26 | `feature/builds-inbox` (superseded by 28) | ✅ | ✅ | 402 | ✅ |
 | 27 | `feature/ui-polish` (design phase) | ✅ | ✅ | 409 | ✅ |
+| 28 | `fix/remove-downloads-watcher` (launch hang; J.R reversal) | ✅ | ✅ | 399 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -769,7 +794,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0025)
+## Key decisions (see `docs/decisions/` ADR 0001–0026)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -793,7 +818,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 27 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 28 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

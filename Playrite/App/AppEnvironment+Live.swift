@@ -35,8 +35,6 @@ extension AppEnvironment {
             trackingPreferences: trackingPreferences,
             nxnativeServices: liveNXNativeServices,
             engineConfiguration: UserDefaultsEngineConfigurationStore(),
-            inboxDismissals: UserDefaultsBuildsInboxDismissals(),
-            inboxWatcher: DispatchFolderWatcher(),
             hltb: hltb,
             urlOpener: WorkspaceURLOpener(),
             gameFolders: gameFolders,

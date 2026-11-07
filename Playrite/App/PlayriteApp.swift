@@ -7,7 +7,7 @@ struct PlayriteApp: App {
     private let launch: Result<AppEnvironment, Error>?
 
     /// `true` when the app is only hosting unit tests: it then starts nothing live, so tests never touch the user's
-    /// library, folders or Downloads (tests use mocks only).
+    /// library or folders (tests use mocks only).
     private static var isHostingTests: Bool {
         ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
     }
