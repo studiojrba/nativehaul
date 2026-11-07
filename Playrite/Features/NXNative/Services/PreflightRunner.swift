@@ -107,8 +107,8 @@ struct PreflightRunner: Sendable {
         guard let environment = checkout.virtualEnvironment else {
             return PreflightCheck(
                 kind: .pythonEnvironment, outcome: .warning,
-                message: "No Python environment for nxnative was found, so the system python3 is used and may lack "
-                    + "nxnative's packages. Opening NX Play once sets its environment up."
+                message: "No Python environment (.venv) was found beside nxnative, so the system python3 is used and "
+                    + "may lack nxnative's packages. Set up nxnative's environment as its README describes."
             )
         }
         return PreflightCheck(kind: .pythonEnvironment, outcome: .passed, message: environment)

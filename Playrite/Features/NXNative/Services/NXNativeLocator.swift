@@ -1,6 +1,7 @@
 import Foundation
 
-/// Finds an nxnative engine and `prod.keys` the user already has, so the Builds page opens ready (ADR 0021).
+/// Finds a standalone nxnative engine and the `prod.keys` the user already has, so the Builds page opens ready
+/// (ADR 0021, narrowed by ADR 0027: upstream nxnative only, never another app's bundled copy).
 ///
 /// Read-only: it only checks whether files exist. Settings overrides always win; detection fills in what is unset.
 /// Search lists are in order and documented in ADR 0021. Paths start with `~`, resolved against `homeDirectory`.
@@ -14,26 +15,21 @@ struct NXNativeLocator: Sendable {
     /// nxnative's build entry point inside a checkout of its repository.
     static let checkoutEntryPoint = "scripts/build_ipa_from_nsp.py"
 
-    /// Checkouts of the nxnative repository, in search order.
-    static let engineCheckouts = [
-        "~/Switch/nxnative",
-        "~/Library/Application Support/NX Play/nxnative",
-        "~/nxnative",
-        "~/Developer/nxnative",
-        "~/Projects/nxnative",
-    ]
+    /// A standalone checkout of upstream nxnative under the Switch folder.
+    static let engineCheckouts = ["~/Switch/nxnative"]
 
-    /// Folders in the user's Switch world searched first for a stand-alone engine tool, in order.
-    static let switchToolFolders = ["~/Switch", "~/Switch/Engine", "~/Switch/Tools", "~/Switch/NX2Apple"]
+    /// Folders in the user's Switch world searched first for a standalone engine tool, in order.
+    static let switchToolFolders = ["~/Switch", "~/Switch/Engine", "~/Switch/Tools"]
 
-    /// Other folders searched for a stand-alone engine tool after the checkouts, in order.
-    static let otherToolFolders = ["~/NX2Apple", "~/bin", "~/.local/bin", "/opt/homebrew/bin", "/usr/local/bin"]
+    /// Homebrew's tool folders (Apple silicon, then Intel), searched after the Switch folder.
+    static let homebrewToolFolders = ["/opt/homebrew/bin", "/usr/local/bin"]
 
-    /// Stand-alone engine tool names, in order.
-    static let engineToolNames = [
-        "nxnative", "nxnative.sh", "nxnative.py",
-        "nx2apple", "NX2Apple", "nx2apple.sh", "nx2apple.py",
-    ]
+    /// Standalone engine tool names, in order.
+    static let engineToolNames = ["nxnative", "nxnative.sh", "nxnative.py"]
+
+    /// Path fragments that mark another app's own copy. The engine is upstream nxnative, never one bundled inside or
+    /// kept by another app (ADR 0027), so these are never detected, even through a symlink.
+    static let anotherAppsCopyMarkers = [".app/", "/Library/Application Support/"]
 
     /// Fixed `prod.keys` locations searched after ``switchFolder``'s keys folders, in order.
     static let keysLocations = [
@@ -54,11 +50,11 @@ struct NXNativeLocator: Sendable {
         self.homeDirectory = homeDirectory
     }
 
-    /// Every engine path tried, in order: tools in ``switchToolFolders``, then ``engineCheckouts``, then tools in
-    /// ``otherToolFolders``.
+    /// Every engine path tried, in order: tools in ``switchToolFolders``, then the ``engineCheckouts``, then tools in
+    /// ``homebrewToolFolders``. A Settings engine path (the user's own choice) overrides all of them.
     var engineSearchPaths: [String] {
         let checkouts = Self.engineCheckouts.map { ($0 as NSString).appendingPathComponent(Self.checkoutEntryPoint) }
-        return (Self.tools(in: Self.switchToolFolders) + checkouts + Self.tools(in: Self.otherToolFolders))
+        return (Self.tools(in: Self.switchToolFolders) + checkouts + Self.tools(in: Self.homebrewToolFolders))
             .map(expand)
     }
 
@@ -86,8 +82,8 @@ struct NXNativeLocator: Sendable {
         keysSearchPaths.first { files.fileExists(atPath: $0) && !files.isDirectory(atPath: $0) }
     }
 
-    /// `configuration` with detected paths filled in wherever the user set no override, plus NX Play's library layout
-    /// for a detected nxnative checkout (ADR 0022). Never saved.
+    /// `configuration` with detected paths filled in wherever the user set no override, plus the one-folder-per-game
+    /// layout for an nxnative checkout (ADR 0022). Never saved.
     func resolve(_ configuration: EngineConfiguration) -> EngineConfiguration {
         var resolved = configuration
         if !configuration.hasEngineOverride, let engine = detectedEngine() {
@@ -97,10 +93,7 @@ struct NXNativeLocator: Sendable {
             resolved.keysPath = keys
         }
         let isCheckout = NXNativeCheckout.repository(forScript: EngineConfiguration.expand(resolved.enginePath)) != nil
-        let isDefaultTemplate = resolved.argumentTemplate == EngineConfiguration.defaultArgumentTemplate
-        let isDefaultLibrary = resolved.hiddenLibraryFolderName == EngineConfiguration.defaultHiddenLibraryFolderName
-        if isCheckout, isDefaultTemplate, isDefaultLibrary {
-            resolved.hiddenLibraryFolderName = NXNativeCheckout.libraryMarker
+        if isCheckout, resolved.argumentTemplate == EngineConfiguration.defaultArgumentTemplate {
             resolved.keepsAppInTitleFolder = true
         }
         return resolved
@@ -112,6 +105,8 @@ struct NXNativeLocator: Sendable {
 
     private func isUsableEngine(_ path: String) -> Bool {
         guard files.fileExists(atPath: path), !files.isDirectory(atPath: path) else { return false }
+        let resolved = (path as NSString).resolvingSymlinksInPath
+        guard !Self.anotherAppsCopyMarkers.contains(where: { resolved.contains($0) }) else { return false }
         return files.isExecutableFile(atPath: path) || EngineInvocationBuilder.interpreter(for: path) != nil
     }
 

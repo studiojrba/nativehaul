@@ -6,7 +6,7 @@ enum CleanupAction: Equatable, Sendable {
     case moveApp(from: String, to: String)
     /// Move the hidden library folder beside the app.
     case moveLibrary(from: String, to: String)
-    /// Create the empty library marker beside the app (NX Play / NX2Apple layout); never over an existing item.
+    /// Create the empty library marker beside the app (one folder per game); never over an existing item.
     case markLibrary(String)
     /// Move a leftover to the Trash (recoverable; the Trash is never emptied).
     case moveToTrash(String)

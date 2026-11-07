@@ -2,11 +2,11 @@ import Foundation
 @testable import Playrite
 import Testing
 
-/// ADR 0022: Switch 2 shapes, preflight and NX Play's library layout for a detected nxnative checkout.
+/// ADR 0022: Switch 2 shapes, preflight and the one-folder-per-game layout for a detected nxnative checkout.
 @MainActor
 struct NXNativeSwitch2LayoutTests {
     private typealias Fix = NXNativeFixtures
-    private typealias Play = NXPlayFixtures
+    private typealias Play = CheckoutFixtures
 
     // MARK: Shapes
 
@@ -65,10 +65,10 @@ struct NXNativeSwitch2LayoutTests {
 
     // MARK: Library layout and cleanup
 
-    @Test func detectedCheckoutUsesNXPlaysLibraryLayout() {
+    @Test func detectedCheckoutKeepsOneFolderPerGame() {
         let configuration = Play.resolved(Play.jrFiles())
         #expect(configuration.enginePath == Play.script)
-        #expect(configuration.hiddenLibraryFolderName == ".nx2apple-library")
+        #expect(configuration.hiddenLibraryFolderName == ".nxnative-lib")
         #expect(configuration.keepsAppInTitleFolder == true)
     }
 
@@ -83,21 +83,21 @@ struct NXNativeSwitch2LayoutTests {
         #expect(plan.actions == [
             .moveApp(from: "\(Play.work)/Tideborn.app", to: "/games/Tideborn/Tideborn.app"),
             .moveToTrash("\(Play.work)/Tideborn.app.key"),
-            .markLibrary("/games/Tideborn/.nx2apple-library"),
+            .markLibrary("/games/Tideborn/.nxnative-lib"),
             .moveToTrash(Play.work),
         ])
         try CleanupExecutor(files: files, audit: InMemoryAuditLog()).execute(plan)
         #expect(files.fileExists(atPath: "/games/Tideborn/Tideborn.app/Contents/MacOS/game"))
-        #expect(files.fileExists(atPath: "/games/Tideborn/.nx2apple-library"))
+        #expect(files.fileExists(atPath: "/games/Tideborn/.nxnative-lib"))
         #expect(files.trashedPaths.contains(Play.work))
     }
 
     @Test func anExistingMarkerIsNeverRewritten() throws {
         let files = Play.jrFiles()
-        files.addFile("/games/Tideborn/.nx2apple-library", contents: Data("kept".utf8))
+        files.addFile("/games/Tideborn/.nxnative-lib", contents: Data("kept".utf8))
         try CleanupExecutor(files: files, audit: InMemoryAuditLog())
-            .execute(CleanupPlan(actions: [.markLibrary("/games/Tideborn/.nx2apple-library")]))
-        #expect(try files.readData(atPath: "/games/Tideborn/.nx2apple-library") == Data("kept".utf8))
+            .execute(CleanupPlan(actions: [.markLibrary("/games/Tideborn/.nxnative-lib")]))
+        #expect(try files.readData(atPath: "/games/Tideborn/.nxnative-lib") == Data("kept".utf8))
     }
 
     @Test func aSwitch2BuildRunsEndToEndWithZeroSettings() async throws {
@@ -131,6 +131,6 @@ struct NXNativeSwitch2LayoutTests {
         #expect(job.status == .awaitingCleanup)
         model.approveCleanup(job.id)
         #expect(built == ["/games/Ridgeback/Ridgeback.app"])
-        #expect(files.fileExists(atPath: "/games/Ridgeback/.nx2apple-library"))
+        #expect(files.fileExists(atPath: "/games/Ridgeback/.nxnative-lib"))
     }
 }

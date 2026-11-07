@@ -1,12 +1,13 @@
 import Foundation
 @testable import Playrite
 
-/// J.R's machine as ADR 0022 sees it: NX Play's nxnative checkout and Python environment, his keys, an empty output.
-enum NXPlayFixtures {
+/// A machine with a standalone nxnative checkout under ~/Switch (with its own .venv), keys and an empty output (ADR
+/// 0027).
+enum CheckoutFixtures {
     static let home = "/Users/jr"
-    static let repository = "\(home)/Library/Application Support/NX Play/nxnative"
+    static let repository = "\(home)/Switch/nxnative"
     static let script = "\(repository)/scripts/build_ipa_from_nsp.py"
-    static let venv = "\(home)/Library/Application Support/NX Play/venv"
+    static let venv = "\(repository)/.venv"
     static let keys = "\(home)/Switch/ProdKeys.NET-v22.5.0/prod.keys"
     static let work = "/work/job"
 

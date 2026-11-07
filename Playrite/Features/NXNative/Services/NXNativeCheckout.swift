@@ -1,26 +1,23 @@
 import Foundation
 
-/// A detected nxnative checkout (for example NX Play's), driven the way NX Play's `nxplay` drives it, so a found
-/// engine builds with zero Settings edits (ADR 0022).
+/// A standalone checkout of upstream nxnative, driven the way its build script expects (ADR 0022, ADR 0027), so a
+/// found engine builds with zero Settings edits.
 ///
 /// Applies when the engine is a checkout's `scripts/build_ipa_from_nsp.py` and the argument template is still the
 /// default. A customised template means the user drives the engine themselves, and the template is used as is.
 struct NXNativeCheckout: Sendable {
     /// The build entry point's path inside a checkout.
     static let entryPoint = NXNativeLocator.checkoutEntryPoint
-    /// NX Play keeps its Python environment here (its setup's `NXPLAY_HOME`).
-    static let nxPlayVirtualEnvironment = "~/Library/Application Support/NX Play/venv"
     /// Used only when no environment exists; nxnative's packages are then probably missing (preflight warns).
     static let systemPython = "/usr/bin/python3"
-    /// The library marker NX Play / NX2Apple keep beside each game's app (an empty file in the game's folder).
-    static let libraryMarker = ".nx2apple-library"
-    /// Tool folders added to `PATH` after the environment's own, as NX Play does (mise, Homebrew), then the system's.
+    /// Tool folders added to `PATH` after the environment's own (mise, Homebrew), then the system's: nxnative's build
+    /// needs Homebrew tools that a Mac app's default `PATH` lacks.
     static let toolPath = [
         "~/.local/share/mise/shims", "/opt/homebrew/bin", "/opt/homebrew/sbin", "/usr/local/bin",
         "/usr/bin", "/bin", "/usr/sbin", "/sbin",
     ]
 
-    /// The checkout's root folder (nxnative is run from here, as `nxplay` does).
+    /// The checkout's root folder (nxnative is run from here).
     let repository: String
     /// The build script.
     let script: String
@@ -37,9 +34,7 @@ struct NXNativeCheckout: Sendable {
         self.script = script
         self.repository = repository
         self.homeDirectory = homeDirectory
-        let expand: (String) -> String = { $0.hasPrefix("~") ? homeDirectory + $0.dropFirst() : $0 }
         let candidates = [
-            expand(Self.nxPlayVirtualEnvironment),
             (repository as NSString).appendingPathComponent(".venv"),
             ((repository as NSString).deletingLastPathComponent as NSString).appendingPathComponent(".venv"),
         ]

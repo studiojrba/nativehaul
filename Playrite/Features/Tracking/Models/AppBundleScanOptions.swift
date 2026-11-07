@@ -10,7 +10,8 @@ struct AppBundleScanOptions: Equatable, Sendable {
         excludedBundlePaths: [Bundle.main.bundlePath]
     )
 
-    /// Hidden sibling folders that mark a bundle as a Switch native port.
+    /// Hidden sibling markers that identify a bundle as a Switch native port: Retriever's own, plus a marker older
+    /// ports in users' game folders already carry (read-only recognition, so existing ports stay recognised).
     static let portLibraryFolderNames: Set = [".nx2apple-library", EngineConfiguration.defaultHiddenLibraryFolderName]
     /// Bundle filenames never imported (Playrite itself).
     static let excludedBundleNames: Set = ["Playrite.app"]

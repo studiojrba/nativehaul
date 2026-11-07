@@ -1,7 +1,7 @@
 # Playrite — Project Rules
 
 Playrite is a native macOS game library hub: a Playnite-style library combined with an on-by-default
-NX2Apple-style Switch build pipeline (driven by a **user-supplied, never-bundled** external engine).
+Switch build pipeline (driven by a **user-supplied, never-bundled** external engine).
 Start with `README.md` (quickstart + where things live), then `docs/PLAN.md` and `docs/decisions/`.
 
 ## Platform & language
@@ -70,6 +70,10 @@ owns it. Retriever routes; it never emulates, translates or runs games itself.
   a CrossOver bottle. Emulated ROMs → the system's emulator app. Every route lives in the launch planning model.
 - Nothing that runs games is bundled: no emulators, no cores, no engines. Retriever detects them, routes to them,
   and says honestly when one is missing (with its official page).
+- **The build engine is upstream nxnative (J.R, ADR 0027).** Auto-detection finds standalone nxnative only
+  (`~/Switch`, then Homebrew); a Settings path is the user's own choice. Never source the engine, or its Python
+  environment, from another app's bundle or Application Support folder, and never name other front ends in UI copy,
+  preflight lines or docs.
 
 ## User-provided files (owner directive, ADR 0019)
 Anything that must come from the user's own sources — `prod.keys` for Switch builds, a console BIOS, a game's

@@ -3,7 +3,7 @@
 ## Vision
 A native macOS hub for your whole game library: Steam, Mac-native titles, and Switch titles you have
 legally dumped and converted with an external engine. Think Playnite's library and metadata, plus an
-optional, unbundled build pipeline UI in the spirit of NX2Apple.
+optional, unbundled build pipeline UI for the upstream nxnative engine.
 
 ## High-level architecture
 

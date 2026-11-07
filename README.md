@@ -1,7 +1,7 @@
 # Playrite
 
 A native macOS game library hub — a Playnite-style library (Steam, Mac-native and Switch titles,
-series, stats, badges, guides) plus an **optional** NX2Apple-style Switch build pipeline UI that drives a
+series, stats, badges, guides) plus an **optional** Switch build pipeline UI that drives a
 **user-supplied external engine** (never bundled).
 
 ## Features
@@ -60,7 +60,7 @@ Use `./scripts/lint.sh --check` to verify without rewriting files.
   macOS Keychain. Without a key the app works fully offline.
 - **Game folders**: Settings → Game Folders. Add folders, then "Scan Game Folders" (also in the toolbar's
   Library menu). CrossOver bottles and launchers are detected automatically.
-- **nxnative engine**: found automatically in `~/Switch`, NX Play's nxnative folder and the other usual places
+- **nxnative engine**: a standalone copy of upstream nxnative, found automatically in `~/Switch` or Homebrew
   (ADR 0021); `prod.keys` likewise. Settings → NXNative only overrides or switches the module off.
   Playrite never ships the engine, keys, firmware, or game files.
 

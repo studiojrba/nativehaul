@@ -14,7 +14,7 @@ builds without ever creating duplicates, and must be safe to run repeatedly.
 - **Strict dedupe** (`GameFolderImporter`): a bundle path already on any game is skipped (re-scans are idempotent);
   a bundle whose normalised title (`TitleNormalizer`: case/diacritic/punctuation-insensitive) matches a game with no
   bundle path is **linked** to it; only otherwise is a new backlog game created.
-- **Platform:** inside the Switch games folder or beside a hidden port library folder (`.nx2apple-library`,
+- **Platform:** inside the Switch games folder or beside a hidden port library marker (a legacy marker older ports carry,
   `.nxnative-lib`) → `switchPort`; CrossOver launchers → `other`; everything else → `macNative`.
 - **CrossOver:** bottles are the subfolders of `~/Library/Application Support/CrossOver/Bottles`. Launcher apps in
   `~/Applications/CrossOver` import like bundles (platform `other`). Top-level `Program Files` folders with a plausible

@@ -123,18 +123,43 @@ struct NXNativeDefaultOnTests {
 
     // MARK: Engine detection
 
-    @Test func nxPlaysNxnativeCheckoutIsDetected() {
+    @Test func aStandaloneCheckoutUnderSwitchIsDetected() {
         let files = InMemoryFileOperations()
-        let script = "\(Self.home)/Library/Application Support/NX Play/nxnative/scripts/build_ipa_from_nsp.py"
+        let script = "\(Self.home)/Switch/nxnative/scripts/build_ipa_from_nsp.py"
         files.addFile(script)
         #expect(viewModel(files).readiness == .ready(enginePath: script))
     }
 
-    @Test func anEngineInTheSwitchFolderComesFirst() {
+    /// ADR 0027: the engine is upstream nxnative. A machine whose only copy is bundled inside another app's folder
+    /// (J.R's NX Play copy) has no engine as far as Retriever is concerned.
+    @Test func anotherAppsBundledCopyIsNeverDetected() {
         let files = InMemoryFileOperations()
         files.addFile("\(Self.home)/Library/Application Support/NX Play/nxnative/scripts/build_ipa_from_nsp.py")
-        files.addFile("\(Self.home)/Switch/Engine/nx2apple", executable: true)
-        #expect(locator(files).detectedEngine() == "\(Self.home)/Switch/Engine/nx2apple")
+        files.addFile("/Applications/Some Builder.app/Contents/Resources/nxnative", executable: true)
+        #expect(locator(files).detectedEngine() == nil)
+        #expect(viewModel(files).readiness == .engineNotFound)
+    }
+
+    @Test func engineSearchIsSwitchFolderThenCheckoutThenHomebrew() {
+        let paths = locator(InMemoryFileOperations()).engineSearchPaths
+        let switchTools = ["Switch", "Switch/Engine", "Switch/Tools"].flatMap { folder in
+            ["nxnative", "nxnative.sh", "nxnative.py"].map { "\(Self.home)/\(folder)/\($0)" }
+        }
+        let homebrew = ["/opt/homebrew/bin", "/usr/local/bin"].flatMap { folder in
+            ["nxnative", "nxnative.sh", "nxnative.py"].map { "\(folder)/\($0)" }
+        }
+        #expect(paths == switchTools + ["\(Self.home)/Switch/nxnative/scripts/build_ipa_from_nsp.py"] + homebrew)
+        #expect(!paths.contains { $0.contains("Application Support") || $0.contains(".app/") })
+    }
+
+    @Test func anEngineInTheSwitchFolderComesBeforeHomebrew() {
+        let files = InMemoryFileOperations()
+        files.addFile("/opt/homebrew/bin/nxnative", executable: true)
+        files.addFile("\(Self.home)/Switch/Engine/nxnative", executable: true)
+        #expect(locator(files).detectedEngine() == "\(Self.home)/Switch/Engine/nxnative")
+        let homebrewOnly = InMemoryFileOperations()
+        homebrewOnly.addFile("/opt/homebrew/bin/nxnative", executable: true)
+        #expect(locator(homebrewOnly).detectedEngine() == "/opt/homebrew/bin/nxnative")
     }
 
     @Test func foldersAndNonExecutableFilesAreNotEngines() {
@@ -161,8 +186,8 @@ struct NXNativeDefaultOnTests {
         let model = viewModel(InMemoryFileOperations())
         #expect(model.readiness == .engineNotFound)
         #expect(NXNativeReadiness.engineNotFoundTitle == "No nxnative engine found on this Mac")
-        #expect(NXNativeReadiness.engineNotFoundMessage == "Retriever looked in ~/Switch, NX Play's nxnative folder "
-            + "and the other usual places. If your engine is somewhere else, choose it.")
+        #expect(NXNativeReadiness.engineNotFoundMessage
+            == "Retriever looked in ~/Switch and Homebrew. If your engine is somewhere else, choose it.")
         #expect(NXNativeReadiness.chooseEngineTitle == "Choose Engine…")
         let copy = [NXNativeReadiness.engineNotFoundTitle, NXNativeReadiness.engineNotFoundMessage]
         #expect(!copy.contains { $0.contains("Settings") || $0.localizedCaseInsensitiveContains("enable") })

@@ -35,9 +35,8 @@ struct EngineConfiguration: Codable, Equatable, Sendable {
     /// copied to ``defaultKeysPath``.
     var keysPath: String?
 
-    /// `true` puts each built app in its own folder (`<output>/<Title>/<Title>.app`) with the library marker beside it,
-    /// the layout NX Play / NX2Apple use. Set at use time for a detected nxnative checkout (ADR 0022); `nil` means
-    /// apps go straight into the output folder.
+    /// `true` puts each built app in its own folder (`<output>/<Title>/<Title>.app`) with the library marker beside it.
+    /// Set at use time for an nxnative checkout (ADR 0022); `nil` means apps go straight into the output folder.
     var keepsAppInTitleFolder: Bool?
 
     /// Whether the module is on. Always on unless the user switched it off; switching it on clears that choice.

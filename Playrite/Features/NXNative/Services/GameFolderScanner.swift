@@ -1,6 +1,6 @@
 import Foundation
 
-/// Folder-first Add Build (ADR 0023, J.R's favourite NX2Apple behaviour): reads one folder holding a mix of base
+/// Folder-first Add Build (ADR 0023, J.R's requirement): reads one folder holding a mix of base
 /// games, updates and DLC, and sorts it by title ID into games. Read-only; only file names and package headers.
 ///
 /// Like nxnative, it looks at the folder's own files (not subfolders), and packages beside a Switch 2 dump win.

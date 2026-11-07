@@ -2,12 +2,12 @@ import Foundation
 @testable import Playrite
 import Testing
 
-/// ADR 0022: a detected nxnative checkout (J.R's is NX Play's) builds with zero Settings edits, for Switch packages
+/// ADR 0022: a detected standalone nxnative checkout builds with zero Settings edits, for Switch packages
 /// and for Switch 2 dumps / `.nup` files. Invocation shapes and overrides.
 @MainActor
 struct NXNativeDerivedInvocationTests {
     private typealias Fix = NXNativeFixtures
-    private typealias Play = NXPlayFixtures
+    private typealias Play = CheckoutFixtures
 
     private func invocation(
         _ source: String,
@@ -59,7 +59,7 @@ struct NXNativeDerivedInvocationTests {
         #expect(!result.arguments.contains("-k"))
     }
 
-    @Test func runsInNXPlaysPythonEnvironmentWithItsToolPath() {
+    @Test func runsInTheCheckoutsPythonEnvironmentWithItsToolPath() {
         let files = Play.jrFiles()
         files.addFile("/stage/Tideborn.nsp")
         let environment = invocation("/stage/Tideborn.nsp", files: files).environment

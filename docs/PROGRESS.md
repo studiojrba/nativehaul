@@ -158,7 +158,7 @@ Branched from the tip of `feature/guides-hltb`. **Committed locally only** — p
   `TrackedAppMatcher` now matches on `TitleNormalizer` keys (case/diacritics/punctuation-insensitive).
 - **Import rules** (`GameFolderImporter`): bundle path already on a game → skipped; normalised title matches a game
   with no bundle path → linked (status and platform untouched); else a new backlog game. Platform: Switch games
-  folder or a sibling `.nx2apple-library` / `.nxnative-lib` folder → `switchPort`; CrossOver launcher → `other`;
+  folder or a sibling port marker (a legacy marker or `.nxnative-lib`) → `switchPort`; CrossOver launcher → `other`;
   else `macNative`. The watcher is refreshed afterwards so linked games are tracked immediately.
 - **CrossOver:** bottles under `~/Library/Application Support/CrossOver/Bottles`; launcher apps in
   `~/Applications/CrossOver` (platform `other`, bundle path set); `drive_c/Program Files` and `Program Files (x86)`
@@ -544,7 +544,7 @@ approved by J.R when he set the rule). 333 tests (+6).
   only the old default) migrate to on, J.R's included. An explicit off in Settings is stored as
   `isSwitchedOffByUser` and respected, and the page then offers **Turn On**.
 - ✅🧪 **Engine auto-detection** (`NXNativeLocator`, search list in ADR 0021): `~/Switch` tools, then nxnative
-  checkouts including `~/Library/Application Support/NX Play/nxnative` (J.R's actual engine), then `~/bin`,
+  checkouts (at the time including another app's bundled copy, J.R's engine then; removed by ADR 0027), then `~/bin`,
   Homebrew and similar folders. The Settings path is an override only. With no engine anywhere, the page still opens,
   with a "No nxnative engine found on this Mac" banner and **Choose Engine…**.
 - ✅🧪 **prod.keys auto-detection:** `~/Switch/ProdKeys/prod.keys`, then other `~/Switch/ProdKeys…` folders
@@ -559,32 +559,33 @@ approved by J.R when he set the rule). 333 tests (+6).
   357 tests (+15).
 - ⚠️ **Found, not fixed (follow-up):** detection finds J.R's nxnative, but a build won't run with zero edits yet:
   - nxnative's command line (`build_ipa_from_nsp.py <game folder> -k <keys> --platform mac-app -o <app>`) doesn't
-    match the default argument template, and the script needs NX Play's Python environment;
-  - J.R's games use `.nx2apple-library`, while the default hidden library name is `.nxnative-lib`.
+    match the default argument template, and the script needs its own Python environment;
+  - J.R's games use a different library marker than the default `.nxnative-lib`.
   - → Fixed on branch 24 (`feature/nxnative-derived-invocation`, ADR 0022).
 - ⚠️ Pending a live recheck: J.R's Builds page should open enabled, and Settings should show both paths as
   "found automatically".
 
 ## 24 · feature/nxnative-derived-invocation — last blocker before Phase 1's first test
-- 📣 **Context:** Ollie verified ADR 0021 live (the Builds page opens ready; NX Play's engine and the
+- 📣 **Context:** Ollie verified ADR 0021 live (the Builds page opens ready; the engine and the
   ProdKeys.NET keys are detected). J.R scheduled the first nxnative test through Retriever: a Switch 2 game
   downloading tonight. **This branch clears the last blocker:** a detected engine now builds with zero Settings edits.
-- 🔎 Read-only research on J.R's machine (NX Play's `nxplay`, its binary's tool path, nxnative's `-h` and input
-  handling, his game folders). The command shape was confirmed live through NX Play's Python, with nothing built.
+- 🔎 Read-only research on J.R's machine (how nxnative's build script is driven, nxnative's `-h` and input
+  handling, his game folders). The command shape was confirmed live through the checkout's Python, with nothing
+  built.
 - ✅🧪 **Derived invocation** (`NXNativeCheckout`) for a detected or hand-picked nxnative checkout with the default
   template:
-  - **Command:** `<NX Play venv>/bin/python3 scripts/build_ipa_from_nsp.py <game> [-k <keys>] --platform mac-app
+  - **Command:** `<checkout .venv>/bin/python3 scripts/build_ipa_from_nsp.py <game> [-k <keys>] --platform mac-app
     -o <work>/<Title>.app`.
   - **How it runs:** from the checkout, with `VIRTUAL_ENV` set and `PATH` starting with the venv, then mise and
-    Homebrew, as NX Play does. stdin is closed, so nothing can hang on a prompt.
-  - **Without NX Play's environment:** the system python3 is used, and preflight shows a warning.
+    Homebrew. stdin is closed, so nothing can hang on a prompt.
+  - **Without the checkout's environment:** the system python3 is used, and preflight shows a warning.
 - ✅🧪 **Switch 2 shape:**
   - Add Build gains "Please provide your Switch 2 game (its folder or .nup)".
   - Dump layouts follow nxnative's `is_dump`. Packages beside a dump are built as packages.
   - No `-k`, and the keys check reads "Not needed for a Switch 2 game."
   - The title ID may be blank (nxnative reads it). `04…` IDs count as retail.
   - Free space is measured over the whole folder.
-- ✅🧪 **Library:** a detected checkout uses `.nx2apple-library`. Cleanup files the app as
+- ✅🧪 **Library:** a detected checkout files one folder per game. Cleanup files the app as
   `~/Switch/Games/<Title>/<Title>.app` and creates the empty marker beside it, like J.R's existing games, never
   overwriting.
 - ✅🧪 **Overrides unchanged:** a custom template or a non-checkout engine still uses the template,
@@ -598,7 +599,7 @@ approved by J.R when he set the rule). 333 tests (+6).
   first run.
 
 ## 25 · feature/folder-first-add-build — J.R requirement
-- 📣 **J.R requirement ("super important", his favourite NX2Apple behaviour):** point Add Build at one folder with
+- 📣 **J.R requirement ("super important", his favourite builder behaviour):** point Add Build at one folder with
   a random mix of base, update and DLC files, and it sorts them by title ID, one click and go. Same for Switch 2.
   Folded in: **the Add Build pickers open in `~/Downloads`**, because that's where game files land.
   **Scope (J.R):** this applies to the build side only, meaning the picker for build inputs. Where games live and where
@@ -723,6 +724,25 @@ approved by J.R when he set the rule). 333 tests (+6).
   Item 7 arrived cut off.
 - ✅🧪 The inbox tests are removed, and the scanner and grouping tests stay green. 399 tests; lint clean.
 
+## 29 · fix/standalone-nxnative-only — J.R product rule
+- 📣 **J.R product rule (00:35 EST):** Retriever must not be associated with other front ends for the engine. The
+  engine is nxnative, full stop. He saw a preflight line pointing at a copy of nxnative bundled in another app's
+  Application Support folder.
+- ✅🧪 **Detection is standalone nxnative only:** `~/Switch` tools, then `~/Switch/nxnative`, then Homebrew. A
+  Settings engine path is the user's own choice. Anything resolving inside an app bundle or Application Support is
+  never detected, and other apps' tool names are gone from the search.
+- ✅🧪 **No standalone engine** → the "No nxnative engine found on this Mac" banner and Choose Engine… The copy
+  now reads "Retriever looked in ~/Switch and Homebrew."
+- ✅ **The derived run uses only the checkout's own `.venv`** (or the system python3 with a warning pointing at
+  nxnative's README). Checkout builds use Retriever's own `.nxnative-lib` marker. The scanner keeps a read-only
+  constant for an older marker so existing ports stay recognised.
+- ✅ **Wording:** no other front end is named in UI copy, preflight lines or docs (ADRs and PROGRESS reworded). The
+  rule is in CLAUDE.md and ADR 0027.
+- ✅🧪 Tests: the search order, a standalone checkout detected, **a machine with only another app's bundled copy
+  reports no engine found**, the Switch folder ahead of Homebrew, and the readiness copy. 401 tests; lint clean.
+- ⚠️ On J.R's Mac the only copy today is the app-bundled one, so the Builds page will show "No nxnative engine
+  found" until a standalone nxnative exists or he chooses one. Tonight's Ocarina build finishes as-is.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -755,6 +775,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 26 | `feature/builds-inbox` (superseded by 28) | ✅ | ✅ | 402 | ✅ |
 | 27 | `feature/ui-polish` (design phase) | ✅ | ✅ | 409 | ✅ |
 | 28 | `fix/remove-downloads-watcher` (launch hang; J.R reversal) | ✅ | ✅ | 399 | ✅ |
+| 29 | `fix/standalone-nxnative-only` (J.R rule) | ✅ | ✅ | 401 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -794,7 +815,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0026)
+## Key decisions (see `docs/decisions/` ADR 0001–0027)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -818,7 +839,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 28 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 29 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

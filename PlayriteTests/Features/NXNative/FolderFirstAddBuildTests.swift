@@ -75,26 +75,26 @@ struct FolderFirstAddBuildTests {
     }
 
     @Test func aSharedFolderTellsTheEngineWhichGame() {
-        let files = NXPlayFixtures.jrFiles()
+        let files = CheckoutFixtures.jrFiles()
         files.addFile("/dl/Mix/Tideborn [0100ABCD00010000][v0].nsp")
         files.addFile("/dl/Mix/Ridgeback [0100F00D00020000][v0].nsp")
         let title = TitleInfo(titleID: "0100F00D00020000", name: "Ridgeback", architecture: .bit64)
         let invocation = EngineInvocationBuilder.invocation(
             for: BuildJob(sourcePath: "/dl/Mix", title: title),
-            configuration: NXPlayFixtures.resolved(files),
-            workDirectory: NXPlayFixtures.work,
+            configuration: CheckoutFixtures.resolved(files),
+            workDirectory: CheckoutFixtures.work,
             files: files,
-            homeDirectory: NXPlayFixtures.home
+            homeDirectory: CheckoutFixtures.home
         )
         #expect(invocation.arguments.suffix(6) == [
-            "--title-id", "0100F00D00020000", "--platform", "mac-app", "-o", "\(NXPlayFixtures.work)/Ridgeback.app",
+            "--title-id", "0100F00D00020000", "--platform", "mac-app", "-o", "\(CheckoutFixtures.work)/Ridgeback.app",
         ])
         let single = EngineInvocationBuilder.invocation(
             for: BuildJob(sourcePath: Folder.oppw, title: title),
-            configuration: NXPlayFixtures.resolved(Folder.mixedFolder()),
-            workDirectory: NXPlayFixtures.work,
+            configuration: CheckoutFixtures.resolved(Folder.mixedFolder()),
+            workDirectory: CheckoutFixtures.work,
             files: Folder.mixedFolder(),
-            homeDirectory: NXPlayFixtures.home
+            homeDirectory: CheckoutFixtures.home
         )
         #expect(!single.arguments.contains("--title-id"))
     }
@@ -142,7 +142,7 @@ struct FolderFirstAddBuildTests {
     @Test func switch2DumpFolderGetsAnAtAGlanceSummary() {
         let files = InMemoryFileOperations()
         let folder = "/dl/Ridgeback [0400A3A01EE4C000]"
-        NXPlayFixtures.addSwitch2Dump(files, at: folder)
+        CheckoutFixtures.addSwitch2Dump(files, at: folder)
         files.addDirectory("\(folder)/updates/65536/romfs")
         files.addDirectory("\(folder)/updates/131072/romfs")
         files.addDirectory("\(folder)/dlc/0400A3A01EE4D001")

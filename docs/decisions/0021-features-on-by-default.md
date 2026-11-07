@@ -22,15 +22,16 @@ and the module must be **ready** for users who already have the engine and keys.
 - **Engine auto-detection** (`NXNativeLocator`, read-only existence checks). The Settings engine path is an
   **override only**. When it is empty, the first usable file (an executable, or a `.sh`/`.zsh`/`.py` script) in
   this order is used:
-  1. A stand-alone tool named `nxnative`, `nxnative.sh`, `nxnative.py`, `nx2apple`, `NX2Apple`, `nx2apple.sh` or
-     `nx2apple.py` in `~/Switch`, `~/Switch/Engine`, `~/Switch/Tools`, `~/Switch/NX2Apple`.
+  1. A stand-alone tool named `nxnative`, `nxnative.sh` or `nxnative.py` in `~/Switch`, `~/Switch/Engine`,
+     `~/Switch/Tools`.
   2. An nxnative checkout's `scripts/build_ipa_from_nsp.py` in `~/Switch/nxnative`,
-     `~/Library/Application Support/NX Play/nxnative` (where NX Play's setup clones it — this is J.R's engine),
+     (originally also another app's bundled copy, which is how J.R's engine was found; removed by ADR 0027),
      `~/nxnative`, `~/Developer/nxnative`, `~/Projects/nxnative`.
-  3. The same tool names in `~/NX2Apple`, `~/bin`, `~/.local/bin`, `/opt/homebrew/bin`, `/usr/local/bin`.
+  3. The same tool names in a few user and Homebrew folders.
+  **Narrowed by ADR 0027:** `~/Switch` tools, then `~/Switch/nxnative`, then Homebrew; never another app's copy.
   The preflight's "engine must live outside the app bundle" check still applies to whatever is found.
 - **No engine anywhere** is a missing-file state, never a setup step. The Builds page opens normally, with a
-  banner: "No nxnative engine found on this Mac — Retriever looked in ~/Switch, NX Play's nxnative folder and the
+  banner: "No nxnative engine found on this Mac — Retriever looked in ~/Switch and Homebrew (the wording since ADR 0027) and the
   other usual places. If your engine is somewhere else, choose it." It has a **Choose Engine…** button, which saves
   the choice as the override and re-checks queued jobs.
 - **prod.keys auto-detection.** `keysPath` is an override only. When it is unset, the first existing file in this
@@ -38,7 +39,7 @@ and the module must be **ready** for users who already have the engine and keys.
   1. `~/Switch/ProdKeys/prod.keys`
   2. `prod.keys` in any other `~/Switch/ProdKeys…` folder, newest name first. J.R's real keys are in
      `~/Switch/ProdKeys.NET-v22.5.0/`, so an exact `ProdKeys` path alone would have missed them.
-  3. `~/.switch/prod.keys` (also nxnative/NX Play's own default)
+  3. `~/.switch/prod.keys` (also nxnative's own default)
   4. `~/Switch/prod.keys`, `~/Switch/Keys/prod.keys`
   5. `~/Library/Application Support/Ryujinx/system/prod.keys`,
      `~/Library/Application Support/yuzu/keys/prod.keys`, `~/.local/share/yuzu/keys/prod.keys`
@@ -53,11 +54,11 @@ and the module must be **ready** for users who already have the engine and keys.
   them, and files the user already has are detected, not re-demanded.
 
 ## Consequences
-- J.R's Builds page opens enabled with his NX Play nxnative checkout and his `ProdKeys.NET-v22.5.0` keys already
+- J.R's Builds page opens enabled with his detected engine and his `ProdKeys.NET-v22.5.0` keys already
   in use. Nothing to toggle.
 - **Not solved here:** being *found* is not the same as *building* successfully. nxnative's real command line
   (`build_ipa_from_nsp.py <game folder> -k <keys> --platform mac-app -o <app>`) differs from the default argument
-  template (`{input} {output}`), and its script needs NX Play's Python environment, not `/usr/bin/python3`. Making a
+  template (`{input} {output}`), and its script needs its own Python environment, not `/usr/bin/python3`. Making a
   detected nxnative checkout build with zero edits is a separate follow-up.
-- J.R's built games keep their libraries in `.nx2apple-library`, but the default hidden library folder is
+- J.R's built games carry a different library marker, but the default hidden library folder is
   `.nxnative-lib`. The cleanup step uses that name, so it is worth aligning in the same follow-up.

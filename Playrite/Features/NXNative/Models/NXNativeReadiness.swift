@@ -13,8 +13,8 @@ enum NXNativeReadiness: Equatable, Sendable {
     /// Headline for the engine-not-found state.
     static let engineNotFoundTitle = "No nxnative engine found on this Mac"
     /// Explanation for the engine-not-found state.
-    static let engineNotFoundMessage = "Retriever looked in ~/Switch, NX Play's nxnative folder and the other "
-        + "usual places. If your engine is somewhere else, choose it."
+    static let engineNotFoundMessage = "Retriever looked in ~/Switch and Homebrew. If your engine is somewhere "
+        + "else, choose it."
     /// The engine-not-found action.
     static let chooseEngineTitle = "Choose Engine…"
     /// Headline when the user switched the module off.

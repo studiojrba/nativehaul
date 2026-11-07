@@ -1,11 +1,11 @@
-# ADR 0023 — Folder-first Add Build (J.R's favourite NX2Apple behaviour)
+# ADR 0023 — Folder-first Add Build (J.R requirement)
 
 **Status:** Accepted · 2026-11-06 · J.R requirement ("super important")
 
 ## Context
-In NX2Apple you point the builder at **one folder** holding a random mix of base game, updates and DLC, and it
+J.R's favourite builder behaviour: you point the builder at **one folder** holding a random mix of base game, updates and DLC, and it
 sorts everything by title ID: one click and go. Retriever's Add Build asked for one file, a hand-typed title and a
-title ID. J.R wants NX2Apple's behaviour, for Switch and Switch 2 alike. He also wants the pickers to open in
+title ID. J.R wants that behaviour, for Switch and Switch 2 alike. He also wants the pickers to open in
 Downloads, where game files land right after downloading.
 
 ## Decision
@@ -55,7 +55,7 @@ Downloads, where game files land right after downloading.
   module.
 
 ## Consequences
-- J.R's NX2Apple habit works as is: choose a Downloads folder, check what was found, click **Add to Queue**.
+- J.R's habit works as is: choose a Downloads folder, check what was found, click **Add to Queue**.
 - Unchanged: a single `.nup` (the Ocarina test in flight) and a single base `.nsp`.
 - File-name tags are trusted first. A wrongly named file is grouped by its name, and the engine catches the mistake
   when it builds.
