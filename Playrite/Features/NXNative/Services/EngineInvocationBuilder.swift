@@ -12,7 +12,27 @@ enum EngineInvocationBuilder {
         }
     }
 
-    /// Builds the invocation. Placeholders are substituted after splitting, so paths with spaces are safe.
+    /// Builds the invocation for a run: derived from a detected nxnative checkout (``NXNativeCheckout``), otherwise
+    /// from the argument template.
+    static func invocation(
+        for job: BuildJob,
+        configuration: EngineConfiguration,
+        workDirectory: String,
+        files: any FileOperating,
+        homeDirectory: String
+    ) -> EngineInvocation {
+        guard let checkout = NXNativeCheckout(configuration: configuration, files: files, homeDirectory: homeDirectory)
+        else { return invocation(for: job, configuration: configuration, workDirectory: workDirectory) }
+        return checkout.invocation(
+            for: job,
+            shape: GameSourceShape.detect(job.sourcePath, files: files),
+            keysPath: configuration.effectiveKeysPath,
+            workDirectory: workDirectory
+        )
+    }
+
+    /// Builds the invocation from the argument template. Placeholders are substituted after splitting, so paths with
+    /// spaces are safe.
     static func invocation(
         for job: BuildJob,
         configuration: EngineConfiguration,

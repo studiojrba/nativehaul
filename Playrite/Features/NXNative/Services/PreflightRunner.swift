@@ -5,12 +5,19 @@ struct PreflightRunner: Sendable {
     private let files: any FileOperating
     private let disk: any DiskSpaceProviding
     private let appBundlePath: String
+    private let homeDirectory: String
 
     /// Creates the runner. `appBundlePath` is Playrite's own bundle, used to prove the engine is external.
-    init(files: any FileOperating, disk: any DiskSpaceProviding, appBundlePath: String = Bundle.main.bundlePath) {
+    init(
+        files: any FileOperating,
+        disk: any DiskSpaceProviding,
+        appBundlePath: String = Bundle.main.bundlePath,
+        homeDirectory: String = NSHomeDirectory()
+    ) {
         self.files = files
         self.disk = disk
         self.appBundlePath = appBundlePath
+        self.homeDirectory = homeDirectory
     }
 
     /// Evaluates all checks.
@@ -18,16 +25,26 @@ struct PreflightRunner: Sendable {
         let enginePath = EngineConfiguration.expand(configuration.enginePath)
         let staging = EngineConfiguration.expand(configuration.stagingDirectory)
         let inventory = StagedFileInventory(files: files).inventory(of: staging)
-        let checks = [
+        let checkout = NXNativeCheckout(configuration: configuration, files: files, homeDirectory: homeDirectory)
+        let shape = GameSourceShape.detect(job.sourcePath, files: files)
+        let isSwitch2 = checkout != nil && shape.isSwitch2
+        var checks = [
             engineCheck(enginePath),
             notBundledCheck(enginePath),
-            keysCheck(configuration),
-            titleIDCheck(job.title),
+            isSwitch2 ? PreflightCheck(kind: .keys, outcome: .passed, message: Self.keysNotNeeded)
+                : keysCheck(configuration),
+            isSwitch2 && job.title.titleID.isEmpty
+                ? PreflightCheck(kind: .titleID, outcome: .passed, message: Self.titleIDFromGameFiles)
+                : titleIDCheck(job.title),
             architectureCheck(job.title.architecture),
-            stagedFilesCheck(job.sourcePath, inventory: inventory),
+            checkout == nil ? stagedFilesCheck(job.sourcePath, inventory: inventory)
+                : sourceShapeCheck(shape, path: job.sourcePath),
             diskSpaceCheck(job.sourcePath, configuration: configuration),
             outputCheck(EngineConfiguration.expand(configuration.outputDirectory)),
         ]
+        if let checkout {
+            checks.append(pythonCheck(checkout))
+        }
         return PreflightReport(checks: checks, inventory: inventory)
     }
 
@@ -68,6 +85,33 @@ struct PreflightRunner: Sendable {
             return PreflightCheck(kind: .keys, outcome: .failed, message: configuration.keysRequest.prompt + ".")
         }
         return PreflightCheck(kind: .keys, outcome: .passed, message: path)
+    }
+
+    /// Keys line for a Switch 2 game.
+    static let keysNotNeeded = "Not needed for a Switch 2 game."
+    /// Title ID line for a Switch 2 game entered without one.
+    static let titleIDFromGameFiles = "nxnative reads it from the game files."
+
+    private func sourceShapeCheck(_ shape: GameSourceShape, path: String) -> PreflightCheck {
+        let message = switch shape {
+        case .packageFile: "Switch game: nxnative builds \(shape.engineInput(for: path)) (base game, update and DLC)."
+        case .packageFolder: "Switch game folder."
+        case .nup: "Switch 2 game (.nup)."
+        case .dumpFolder: "Switch 2 game folder."
+        case .unsupported: "Choose an .nsp, .xci, .nsz or .xcz file, or a Switch 2 game folder or .nup file."
+        }
+        return PreflightCheck(kind: .stagedFiles, outcome: shape == .unsupported ? .failed : .passed, message: message)
+    }
+
+    private func pythonCheck(_ checkout: NXNativeCheckout) -> PreflightCheck {
+        guard let environment = checkout.virtualEnvironment else {
+            return PreflightCheck(
+                kind: .pythonEnvironment, outcome: .warning,
+                message: "No Python environment for nxnative was found, so the system python3 is used and may lack "
+                    + "nxnative's packages. Opening NX Play once sets its environment up."
+            )
+        }
+        return PreflightCheck(kind: .pythonEnvironment, outcome: .passed, message: environment)
     }
 
     private func titleIDCheck(_ title: TitleInfo) -> PreflightCheck {
@@ -120,7 +164,7 @@ struct PreflightRunner: Sendable {
     }
 
     private func diskSpaceCheck(_ sourcePath: String, configuration: EngineConfiguration) -> PreflightCheck {
-        let size = (try? files.fileSize(atPath: sourcePath)) ?? 0
+        let size = totalSize(atPath: sourcePath)
         let required = size * Int64(max(1, configuration.spaceMultiplier))
         guard let available = try? disk.availableBytes(atPath: EngineConfiguration.expand(configuration.workRoot))
         else {
@@ -129,6 +173,13 @@ struct PreflightRunner: Sendable {
         let format: (Int64) -> String = { ByteCountFormatter.string(fromByteCount: $0, countStyle: .file) }
         let message = "\(format(available)) free, \(format(required)) needed."
         return PreflightCheck(kind: .diskSpace, outcome: available >= required ? .passed : .failed, message: message)
+    }
+
+    /// Size of a file, or of everything inside a folder (a Switch 2 dump).
+    private func totalSize(atPath path: String) -> Int64 {
+        guard files.isDirectory(atPath: path) else { return (try? files.fileSize(atPath: path)) ?? 0 }
+        let children = (try? files.contentsOfDirectory(atPath: path)) ?? []
+        return children.reduce(Int64(0)) { $0 + totalSize(atPath: (path as NSString).appendingPathComponent($1)) }
     }
 
     private func outputCheck(_ path: String) -> PreflightCheck {

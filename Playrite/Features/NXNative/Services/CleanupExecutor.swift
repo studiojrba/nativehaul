@@ -33,6 +33,10 @@ struct CleanupExecutor: Sendable {
         case let .moveApp(from, to), let .moveLibrary(from, to):
             try files.createDirectory(atPath: (to as NSString).deletingLastPathComponent)
             try files.moveItem(atPath: from, toPath: to)
+        case let .markLibrary(path):
+            guard !files.fileExists(atPath: path) else { return }
+            try files.createDirectory(atPath: (path as NSString).deletingLastPathComponent)
+            try files.writeData(Data(), toPath: path)
         case let .moveToTrash(path):
             try files.trashItem(atPath: path)
         case .leave:

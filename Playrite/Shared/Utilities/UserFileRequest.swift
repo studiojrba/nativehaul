@@ -16,6 +16,8 @@ struct UserFileRequest: Equatable, Sendable {
     var destinationFileName: String?
     /// File extensions the picker accepts; empty accepts any file.
     var allowedExtensions: [String] = []
+    /// Whether a folder may be picked too (a Switch 2 game dump).
+    var allowsFolders = false
 
     /// "Please provide your PlayStation 2 BIOS".
     var prompt: String {

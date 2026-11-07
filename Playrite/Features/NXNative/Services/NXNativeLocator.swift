@@ -86,7 +86,8 @@ struct NXNativeLocator: Sendable {
         keysSearchPaths.first { files.fileExists(atPath: $0) && !files.isDirectory(atPath: $0) }
     }
 
-    /// `configuration` with detected paths filled in wherever the user set no override. Never saved.
+    /// `configuration` with detected paths filled in wherever the user set no override, plus NX Play's library layout
+    /// for a detected nxnative checkout (ADR 0022). Never saved.
     func resolve(_ configuration: EngineConfiguration) -> EngineConfiguration {
         var resolved = configuration
         if !configuration.hasEngineOverride, let engine = detectedEngine() {
@@ -94,6 +95,13 @@ struct NXNativeLocator: Sendable {
         }
         if configuration.keysPath == nil, let keys = detectedKeys() {
             resolved.keysPath = keys
+        }
+        let isCheckout = NXNativeCheckout.repository(forScript: EngineConfiguration.expand(resolved.enginePath)) != nil
+        let isDefaultTemplate = resolved.argumentTemplate == EngineConfiguration.defaultArgumentTemplate
+        let isDefaultLibrary = resolved.hiddenLibraryFolderName == EngineConfiguration.defaultHiddenLibraryFolderName
+        if isCheckout, isDefaultTemplate, isDefaultLibrary {
+            resolved.hiddenLibraryFolderName = NXNativeCheckout.libraryMarker
+            resolved.keepsAppInTitleFolder = true
         }
         return resolved
     }

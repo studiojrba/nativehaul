@@ -9,6 +9,8 @@ struct ProcessBuildEngineRunner: BuildEngineRunning {
             process.executableURL = URL(fileURLWithPath: invocation.executable)
             process.arguments = invocation.arguments
             process.currentDirectoryURL = URL(fileURLWithPath: invocation.workingDirectory, isDirectory: true)
+            process.environment = ProcessInfo.processInfo.environment.merging(invocation.environment) { $1 }
+            process.standardInput = FileHandle.nullDevice
             let outputs: [(Pipe, BuildLogLine.Stream)] = [(Pipe(), .stdout), (Pipe(), .stderr)]
             process.standardOutput = outputs[0].0
             process.standardError = outputs[1].0

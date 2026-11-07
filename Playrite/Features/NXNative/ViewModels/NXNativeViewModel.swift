@@ -177,7 +177,12 @@ final class NXNativeViewModel {
     }
 
     private var preflightRunner: PreflightRunner {
-        PreflightRunner(files: services.files, disk: services.disk, appBundlePath: services.appBundlePath)
+        PreflightRunner(
+            files: services.files,
+            disk: services.disk,
+            appBundlePath: services.appBundlePath,
+            homeDirectory: services.homeDirectory
+        )
     }
 
     private func processQueue() async {
@@ -201,7 +206,9 @@ final class NXNativeViewModel {
             let invocation = EngineInvocationBuilder.invocation(
                 for: job,
                 configuration: configuration,
-                workDirectory: workDirectory
+                workDirectory: workDirectory,
+                files: services.files,
+                homeDirectory: services.homeDirectory
             )
             for try await line in services.runner.run(invocation) {
                 update(id) { $0.log.append(line) }

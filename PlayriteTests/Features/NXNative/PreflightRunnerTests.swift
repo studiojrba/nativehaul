@@ -19,7 +19,7 @@ struct PreflightRunnerTests {
     @Test func allChecksPass() {
         let report = run()
         #expect(report.canBuild)
-        #expect(report.checks.map(\.kind) == PreflightKind.allCases)
+        #expect(report.checks.map(\.kind) == PreflightKind.allCases.filter { $0 != .pythonEnvironment })
         #expect(report.checks.allSatisfy { $0.outcome == .passed })
         #expect(report.inventory.map(\.name) == ["Tideborn.nsp", "readme.txt"])
         #expect(report.inventory.first?.kind == .titleFile)

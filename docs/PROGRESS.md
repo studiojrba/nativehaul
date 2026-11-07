@@ -561,8 +561,41 @@ approved by J.R when he set the rule). 333 tests (+6).
   - nxnative's command line (`build_ipa_from_nsp.py <game folder> -k <keys> --platform mac-app -o <app>`) doesn't
     match the default argument template, and the script needs NX Play's Python environment;
   - J.R's games use `.nx2apple-library`, while the default hidden library name is `.nxnative-lib`.
+  - → Fixed on branch 24 (`feature/nxnative-derived-invocation`, ADR 0022).
 - ⚠️ Pending a live recheck: J.R's Builds page should open enabled, and Settings should show both paths as
   "found automatically".
+
+## 24 · feature/nxnative-derived-invocation — last blocker before Phase 1's first test
+- 📣 **Context:** Ollie verified ADR 0021 live (the Builds page opens ready; NX Play's engine and the
+  ProdKeys.NET keys are detected). J.R scheduled the first nxnative test through Retriever: a Switch 2 game
+  downloading tonight. **This branch clears the last blocker:** a detected engine now builds with zero Settings edits.
+- 🔎 Read-only research on J.R's machine (NX Play's `nxplay`, its binary's tool path, nxnative's `-h` and input
+  handling, his game folders). The command shape was confirmed live through NX Play's Python, with nothing built.
+- ✅🧪 **Derived invocation** (`NXNativeCheckout`) for a detected or hand-picked nxnative checkout with the default
+  template:
+  - **Command:** `<NX Play venv>/bin/python3 scripts/build_ipa_from_nsp.py <game> [-k <keys>] --platform mac-app
+    -o <work>/<Title>.app`.
+  - **How it runs:** from the checkout, with `VIRTUAL_ENV` set and `PATH` starting with the venv, then mise and
+    Homebrew, as NX Play does. stdin is closed, so nothing can hang on a prompt.
+  - **Without NX Play's environment:** the system python3 is used, and preflight shows a warning.
+- ✅🧪 **Switch 2 shape:**
+  - Add Build gains "Please provide your Switch 2 game (its folder or .nup)".
+  - Dump layouts follow nxnative's `is_dump`. Packages beside a dump are built as packages.
+  - No `-k`, and the keys check reads "Not needed for a Switch 2 game."
+  - The title ID may be blank (nxnative reads it). `04…` IDs count as retail.
+  - Free space is measured over the whole folder.
+- ✅🧪 **Library:** a detected checkout uses `.nx2apple-library`. Cleanup files the app as
+  `~/Switch/Games/<Title>/<Title>.app` and creates the empty marker beside it, like J.R's existing games, never
+  overwriting.
+- ✅🧪 **Overrides unchanged:** a custom template or a non-checkout engine still uses the template,
+  `.nxnative-lib` and a flat output.
+- ✅🧪 **Tests:** both invocation shapes (package with keys; dump and `.nup` without), the environment and its
+  fallback, overrides, shape detection, Switch 2 preflight with no keys and no title ID, the cleanup layout and
+  marker, and a Switch 2 job end to end (queue → mock engine → cleanup → registered at
+  `/games/<Title>/<Title>.app`). 373 tests (+16).
+- ⚠️ **For tonight:** Retriever never unpacks archives. The multi-part set must be a dump folder or a `.nup` before
+  Add Build; unpacking or joining it is J.R's step. The full build on his Mac (toolchain, time) is unverified until that
+  first run.
 
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
@@ -591,6 +624,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 21 | `feature/detail-layout-fit` (QA #2) | ✅ | ✅ | 336 | ✅ |
 | 22 | `feature/hltb-cache-read` (QA #3) | ✅ | ✅ | 342 | ✅ |
 | 23 | `feature/nxnative-on-by-default` (J.R correction) | ✅ | ✅ | 357 | ✅ |
+| 24 | `feature/nxnative-derived-invocation` (Phase 1 blocker) | ✅ | ✅ | 373 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -630,7 +664,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0021)
+## Key decisions (see `docs/decisions/` ADR 0001–0022)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -647,13 +681,14 @@ and none should be.
 - Live Steam calls and the real Keychain wrapper. No key was available; both are covered with mocks.
 - The live NSWorkspace observer and `ProcessBuildEngineRunner` against a real engine. No engine was available;
   both are covered with mocks and checked with a build and a launch.
-- The nxnative CLI contract is unknown. Arguments are a configurable template, title metadata is entered manually,
-  and the troubleshooting patch is an editable template.
+- The nxnative CLI contract is now known for nxnative checkouts (ADR 0022), and a detected checkout's invocation
+  is derived. Other engines keep the configurable template. Title metadata is entered manually (optional title ID
+  for Switch 2), and the troubleshooting patch is an editable template.
 - Automatic HLTB lookup is intentionally not implemented. The `HLTBRemoteSearching` seam is ready.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 23 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 24 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

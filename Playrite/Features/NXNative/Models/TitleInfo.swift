@@ -3,7 +3,8 @@ import Foundation
 /// Identifying information for the title being built.
 struct TitleInfo: Codable, Equatable, Sendable {
     private static let titleIDLength = 16
-    private static let retailPrefix = "01"
+    /// Retail title IDs: Switch (`01…`) and Switch 2 (`04…`).
+    private static let retailPrefixes = ["01", "04"]
 
     /// 16-hex-digit title ID.
     var titleID: String
@@ -21,6 +22,6 @@ struct TitleInfo: Codable, Equatable, Sendable {
 
     /// `true` when the title ID does not follow the retail `01…` pattern (e.g. homebrew or dev builds).
     var isNonRetailTitleID: Bool {
-        hasValidTitleID && !titleID.hasPrefix(Self.retailPrefix)
+        hasValidTitleID && !Self.retailPrefixes.contains { titleID.hasPrefix($0) }
     }
 }

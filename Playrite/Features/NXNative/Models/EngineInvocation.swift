@@ -8,4 +8,6 @@ struct EngineInvocation: Equatable, Sendable {
     let arguments: [String]
     /// Working directory.
     let workingDirectory: String
+    /// Variables set on top of Retriever's own environment (empty for template-driven engines).
+    var environment: [String: String] = [:]
 }

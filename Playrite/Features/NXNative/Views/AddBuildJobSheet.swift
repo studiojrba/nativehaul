@@ -14,13 +14,14 @@ struct AddBuildJobSheet: View {
         Form {
             Section {
                 ProvideFilePrompt(request: EngineConfiguration.gameFileRequest) { sourcePath = $0 }
+                ProvideFilePrompt(request: EngineConfiguration.switch2GameRequest) { sourcePath = $0 }
                 if !sourcePath.isEmpty {
                     Label((sourcePath as NSString).lastPathComponent, systemImage: "checkmark.circle")
                         .foregroundStyle(Theme.success)
                 }
             }
             TextField("Real title (used to name the app)", text: $name)
-            TextField("Title ID (16 hex digits)", text: $titleID)
+            TextField("Title ID (16 hex digits; optional for Switch 2)", text: $titleID)
             Picker("Architecture", selection: $architecture) {
                 ForEach(TitleArchitecture.allCases) { Text($0.displayName).tag($0) }
             }

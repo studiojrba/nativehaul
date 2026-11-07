@@ -27,6 +27,7 @@ struct CleanupPlanView: View {
         switch action {
         case .moveApp: "app.badge.checkmark"
         case .moveLibrary: "folder.badge.gearshape"
+        case .markLibrary: "tag"
         case .moveToTrash: "trash"
         case .leave: "hand.raised"
         }

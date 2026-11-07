@@ -35,6 +35,11 @@ struct EngineConfiguration: Codable, Equatable, Sendable {
     /// copied to ``defaultKeysPath``.
     var keysPath: String?
 
+    /// `true` puts each built app in its own folder (`<output>/<Title>/<Title>.app`) with the library marker beside it,
+    /// the layout NX Play / NX2Apple use. Set at use time for a detected nxnative checkout (ADR 0022); `nil` means
+    /// apps go straight into the output folder.
+    var keepsAppInTitleFolder: Bool?
+
     /// Whether the module is on. Always on unless the user switched it off; switching it on clears that choice.
     var isEnabled: Bool {
         get { isSwitchedOffByUser != true }
@@ -64,6 +69,16 @@ struct EngineConfiguration: Codable, Equatable, Sendable {
         reason: "Retriever builds the Mac app from your own copy of the game.",
         destinationFolder: nil,
         allowedExtensions: StagedFileKind.titleExtensions.sorted()
+    )
+
+    /// "Please provide your Switch 2 game (its folder or .nup)" — a dump folder or `.nup` container, picked in place;
+    /// needs no prod.keys (ADR 0022).
+    static let switch2GameRequest = UserFileRequest(
+        fileDescription: "Switch 2 game (its folder or .nup)",
+        reason: "Switch 2 games build from their folder of game files or their .nup file, and need no prod.keys.",
+        destinationFolder: nil,
+        allowedExtensions: [GameSourceShape.nupExtension],
+        allowsFolders: true
     )
 
     /// Whether an engine override is set.

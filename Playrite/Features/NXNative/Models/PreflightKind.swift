@@ -10,6 +10,7 @@ enum PreflightKind: String, CaseIterable, Sendable {
     case stagedFiles
     case diskSpace
     case outputFolder
+    case pythonEnvironment
 
     /// User-facing name.
     var displayName: String {
@@ -22,6 +23,7 @@ enum PreflightKind: String, CaseIterable, Sendable {
         case .stagedFiles: "Staged files"
         case .diskSpace: "Free disk space"
         case .outputFolder: "Output folder"
+        case .pythonEnvironment: "nxnative's Python"
         }
     }
 }

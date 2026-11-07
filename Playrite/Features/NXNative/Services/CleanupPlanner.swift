@@ -2,7 +2,9 @@ import Foundation
 
 /// Computes the post-build cleanup plan for a job's work directory. Pure: it only reads.
 ///
-/// Rules: keep exactly one `.app` (renamed to the real title, never overwriting), keep the hidden library folder,
+/// Rules: keep exactly one `.app` (renamed to the real title, never overwriting; in its own `<Title>/` folder when
+/// ``EngineConfiguration/keepsAppInTitleFolder`` is set, with the library marker created beside it if the engine
+/// made none), keep the hidden library folder,
 /// move every other leftover to the Trash, and move the emptied work directory to the Trash. Anything ambiguous is
 /// left in place for manual review. The Trash is never emptied.
 struct CleanupPlanner: Sendable {
@@ -23,7 +25,10 @@ struct CleanupPlanner: Sendable {
         titleID: String,
         configuration: EngineConfiguration
     ) -> CleanupPlan {
-        let output = EngineConfiguration.expand(configuration.outputDirectory)
+        let root = EngineConfiguration.expand(configuration.outputDirectory)
+        let folderName = Self.sanitizedName(titleName, fallback: titleID)
+        let isTitleFolder = configuration.keepsAppInTitleFolder == true
+        let output = isTitleFolder ? (root as NSString).appendingPathComponent(folderName) : root
         let names = (try? files.contentsOfDirectory(atPath: workDirectory)) ?? []
         let path: (String) -> String = { (workDirectory as NSString).appendingPathComponent($0) }
         let apps = names.filter { ($0 as NSString).pathExtension == Self.appExtension }
@@ -37,18 +42,22 @@ struct CleanupPlanner: Sendable {
         )]
         var leftAnything = false
         let library = configuration.hiddenLibraryFolderName
+        let libraryDestination = (output as NSString).appendingPathComponent(library)
         for name in names where name != app {
             if name == library, library.hasPrefix(".") {
-                let destination = (output as NSString).appendingPathComponent(library)
-                if files.fileExists(atPath: destination) {
+                if files.fileExists(atPath: libraryDestination) {
                     actions.append(.leave(path(name), reason: "a library folder already exists in the output folder"))
                     leftAnything = true
                 } else {
-                    actions.append(.moveLibrary(from: path(name), to: destination))
+                    actions.append(.moveLibrary(from: path(name), to: libraryDestination))
                 }
             } else {
                 actions.append(.moveToTrash(path(name)))
             }
+        }
+        let needsMarker = isTitleFolder && library.hasPrefix(".") && !names.contains(library)
+        if needsMarker, !files.fileExists(atPath: libraryDestination) {
+            actions.append(.markLibrary(libraryDestination))
         }
         if !leftAnything {
             actions.append(.moveToTrash(workDirectory))

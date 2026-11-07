@@ -12,7 +12,8 @@ struct ProvideFilePrompt: View {
 
     private var contentTypes: [UTType] {
         let types = request.allowedExtensions.compactMap { UTType(filenameExtension: $0) }
-        return types.isEmpty ? [.data] : types
+        let files = types.isEmpty ? [UTType.data] : types
+        return request.allowsFolders ? files + [.folder] : files
     }
 
     var body: some View {
@@ -21,7 +22,7 @@ struct ProvideFilePrompt: View {
             Text(request.reason)
                 .foregroundStyle(Theme.secondaryText)
                 .fixedSize(horizontal: false, vertical: true)
-            Button("Choose File…", systemImage: "folder") { isPicking = true }
+            Button(request.allowsFolders ? "Choose…" : "Choose File…", systemImage: "folder") { isPicking = true }
         }
         .fileImporter(isPresented: $isPicking, allowedContentTypes: contentTypes) { result in
             if case let .success(url) = result {
