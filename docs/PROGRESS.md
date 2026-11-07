@@ -743,6 +743,33 @@ approved by J.R when he set the rule). 333 tests (+6).
 - ⚠️ On J.R's Mac the only copy today is the app-bundled one, so the Builds page will show "No nxnative engine
   found" until a standalone nxnative exists or he chooses one. Tonight's Ocarina build finishes as-is.
 
+## 30 · feature/builds-detail-showcase — J.R design direction for the Builds page
+- 📣 **J.R direction (00:37–00:38 EST):** the job detail takes two thirds of the Builds page; a screenshot slideshow
+  above the job title; one segmented progress bar for the build above the raw log.
+- ✅🧪 **Layout:** queue one third, detail two thirds, as fixed parents (no splitter). A layout guard keeps the
+  detail inside its share at 900, 1100 and 1280, and nothing overflows.
+- ✅🧪 **Showcase:** official screenshots the metadata pipeline already cached for the matching library game (by
+  title ID, then name). They advance every 3 s with a 0.8 s crossfade, loop, and pause on hover. There are no
+  gestures, so build controls keep every click. Fallbacks: the hero as one still, or nothing (no empty box). It is
+  a fixed 16:9 area, images decode off the main thread, and nothing shifts. Reduce Motion shows the first image
+  still.
+- ✅🧪 **Segmented progress:** the runner's lines are parsed into `BuildJob.progress` (nxnative's `[k/n]` starts,
+  `91%, …, 1:00 · ETA 0:06` beats and `✓ [k/n]` ticks). Finished segments are full accent, the current one fills,
+  upcoming ones stay on the track. Beside the bar: the stage name and "k of n", the overall percent and elapsed ·
+  ETA in mono. The percent never runs backwards; a 5 → 6 re-plan re-segments and holds the percent. Without stage
+  markers the bar is indeterminate. Reduce Motion lands values without animation. The log is unchanged below.
+- ✅🧪 Tests:
+  - parser: stage markers, percent lines, bare percent lines, the 5 → 6 re-plan, a percent that never drops within a
+    stage, missing markers, a failed stage, and the last tick reaching 100%;
+  - showcase source: screenshots, the hero fallback, no art;
+  - off-main decode;
+  - runner lines becoming structured state;
+  - the layout guard at three widths.
+  415 tests (+14); lint clean.
+- ✅ **Renders:** the job pane mid-build at 900, 1100 and 1280 (dark and light), inspected; a set is in
+  `docs/design/builds-page/`.
+- ⚠️ The slideshow appears only when the game is in the library with cached art. Not yet seen live on J.R's Mac.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -776,6 +803,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 27 | `feature/ui-polish` (design phase) | ✅ | ✅ | 409 | ✅ |
 | 28 | `fix/remove-downloads-watcher` (launch hang; J.R reversal) | ✅ | ✅ | 399 | ✅ |
 | 29 | `fix/standalone-nxnative-only` (J.R rule) | ✅ | ✅ | 401 | ✅ |
+| 30 | `feature/builds-detail-showcase` (J.R direction) | ✅ | ✅ | 415 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -815,7 +843,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0027)
+## Key decisions (see `docs/decisions/` ADR 0001–0028)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -839,7 +867,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 29 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 30 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

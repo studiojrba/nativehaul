@@ -16,6 +16,8 @@ struct BuildJob: Identifiable, Equatable, Sendable {
     var preflight: PreflightReport?
     /// Streamed output.
     var log: [BuildLogLine] = []
+    /// Stage progress parsed from the streamed output (ADR 0028).
+    var progress = BuildProgress()
     /// Cleanup plan awaiting approval.
     var cleanupPlan: CleanupPlan?
     /// Failure description.

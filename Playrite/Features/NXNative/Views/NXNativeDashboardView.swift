@@ -44,33 +44,52 @@ struct NXNativeDashboardView: View {
         }
     }
 
+    /// Fixed parents (QA Finding #2 contract): the queue keeps a third of the page, the job detail two thirds.
     private var content: some View {
-        HSplitView {
-            List(selection: $viewModel.selectedJobID) {
-                Section("Queue") {
-                    ForEach(viewModel.jobs) { BuildJobRow(job: $0).tag($0.id) }
-                }
-                Section {
-                    KnowledgeBaseView(cases: viewModel.knowledgeBase) { openCase = $0 }
-                }
+        GeometryReader { proxy in
+            let detailWidth = (proxy.size.width * DesignTokens.Builds.detailShare).rounded(.down)
+            HStack(spacing: DesignTokens.Spacing.none) {
+                queueColumn
+                    .frame(width: proxy.size.width - detailWidth - DesignTokens.Stroke.hairline)
+                HairlineDivider(axis: .vertical)
+                detailColumn
+                    .frame(width: detailWidth)
+                    .clipped()
             }
-            .scrollContentBackground(.hidden)
-            .background(Theme.surface)
-            .frame(minWidth: DesignTokens.Layout.sidebarMinWidth)
-            Group {
-                if let job = viewModel.selectedJob {
-                    BuildJobDetailView(job: job, viewModel: viewModel) { openCase = $0 }
-                } else {
-                    EmptyStateView(
-                        title: "Nothing selected",
-                        symbolName: "hammer",
-                        message: "Queue a game from the list, or use Add Job."
-                    )
-                }
-            }
-            .frame(minWidth: DesignTokens.Layout.detailMinWidth)
         }
-        .toolbar {
+        .toolbar { toolbarContent }
+    }
+
+    private var queueColumn: some View {
+        List(selection: $viewModel.selectedJobID) {
+            Section("Queue") {
+                ForEach(viewModel.jobs) { BuildJobRow(job: $0).tag($0.id) }
+            }
+            Section {
+                KnowledgeBaseView(cases: viewModel.knowledgeBase) { openCase = $0 }
+            }
+        }
+        .scrollContentBackground(.hidden)
+        .background(Theme.surface)
+    }
+
+    private var detailColumn: some View {
+        Group {
+            if let job = viewModel.selectedJob {
+                BuildJobDetailView(job: job, viewModel: viewModel) { openCase = $0 }
+            } else {
+                EmptyStateView(
+                    title: "Nothing selected",
+                    symbolName: "hammer",
+                    message: "Queue a game from the list, or use Add Job."
+                )
+            }
+        }
+        .background(Theme.canvas)
+    }
+
+    @ToolbarContentBuilder private var toolbarContent: some ToolbarContent {
+        ToolbarItemGroup {
             Button("Add Job", systemImage: "plus") { isAddingJob = true }
             if viewModel.isProcessing {
                 Button("Cancel Build", systemImage: "stop.fill") { viewModel.cancel() }

@@ -20,16 +20,19 @@ final class NXNativeViewModel {
     @ObservationIgnored let services: NXNativeServices
     @ObservationIgnored private let store: any EngineConfigurationStoring
     @ObservationIgnored private let onAppBuilt: @MainActor (TitleInfo, String) -> Void
+    @ObservationIgnored private let showcaseLookup: @MainActor (TitleInfo) -> BuildShowcase?
     @ObservationIgnored private var processingTask: Task<Void, Never>?
 
-    /// Creates the view model. `onAppBuilt(titleInfo, appPath)` registers finished apps in the library.
+    /// Creates the view model. `onAppBuilt` registers finished apps; `showcase` finds cached art (ADR 0028).
     init(
         services: NXNativeServices,
         store: any EngineConfigurationStoring,
+        showcase: @escaping @MainActor (TitleInfo) -> BuildShowcase? = { _ in nil },
         onAppBuilt: @escaping @MainActor (TitleInfo, String) -> Void
     ) {
         self.services = services
         self.store = store
+        showcaseLookup = showcase
         self.onAppBuilt = onAppBuilt
         refreshReadiness()
     }
@@ -37,6 +40,11 @@ final class NXNativeViewModel {
     /// Current configuration, with the detected engine and `prod.keys` filled in where Settings has no override.
     var configuration: EngineConfiguration {
         services.locator.resolve(store.load())
+    }
+
+    /// The art above a job's title, if the library has any for it.
+    func showcase(for title: TitleInfo) -> BuildShowcase? {
+        showcaseLookup(title)
     }
 
     /// Re-detects the engine and keys (e.g. when the page appears, after the user set things up elsewhere).
@@ -57,16 +65,6 @@ final class NXNativeViewModel {
     /// The selected job.
     var selectedJob: BuildJob? {
         jobs.first { $0.id == selectedJobID }
-    }
-
-    /// All documented troubleshooting cases.
-    var knowledgeBase: [TroubleshootingCase] {
-        services.knowledgeBase.cases()
-    }
-
-    /// Cases suggested by a job's log.
-    func suggestedCases(for job: BuildJob) -> [TroubleshootingCase] {
-        services.knowledgeBase.cases(matching: job.log)
     }
 
     /// Adds a job and runs its preflight immediately.
@@ -94,6 +92,7 @@ final class NXNativeViewModel {
             job.status = .queued
             job.failureReason = nil
             job.cleanupPlan = nil
+            job.progress = BuildProgress()
             job.log.append(BuildLogLine(timestamp: .now, stream: .system, text: "— re-queued —"))
         }
     }
@@ -211,7 +210,10 @@ final class NXNativeViewModel {
                 homeDirectory: services.homeDirectory
             )
             for try await line in services.runner.run(invocation) {
-                update(id) { $0.log.append(line) }
+                update(id) { job in
+                    job.log.append(line)
+                    job.progress.consume(line.text)
+                }
             }
             guard !Task.isCancelled else {
                 update(id) { $0.status = .cancelled }

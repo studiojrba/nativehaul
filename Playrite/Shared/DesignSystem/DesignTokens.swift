@@ -124,6 +124,24 @@ enum DesignTokens {
         static let minimumScale: CGFloat = 0.75
     }
 
+    /// The Builds page (ADR 0028).
+    enum Builds {
+        /// The job detail's share of the page width; the queue keeps the rest.
+        static let detailShare: CGFloat = 0.666_666_7
+        /// Height of the segmented progress bar.
+        static let progressHeight: CGFloat = 10
+        /// Gap between progress segments.
+        static let segmentGap: CGFloat = 3
+        /// Seconds each showcase screenshot stays up.
+        static let slideSeconds: Double = 3
+        /// Crossfade between screenshots (seconds).
+        static let crossfadeSeconds: Double = 0.8
+        /// Showcase aspect ratio (16:9), height divided by width.
+        static let showcaseHeightRatio: CGFloat = 0.5625
+        /// Longest edge showcase images are decoded at.
+        static let showcaseDecodePixels: CGFloat = 1600
+    }
+
     /// Colour sampled from a game's own artwork (ADR 0025): weak enough that text contrast never suffers.
     enum ArtTint {
         /// The detail hero's ambient wash, at its strongest point.

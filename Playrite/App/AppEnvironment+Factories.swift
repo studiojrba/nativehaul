@@ -96,7 +96,23 @@ extension AppEnvironment {
     /// Builds the NXNative queue view model. Finished apps are added to the library and tracked.
     func makeNXNativeViewModel(onLibraryChanged: @escaping @MainActor () -> Void) -> NXNativeViewModel {
         let registrar = BuiltAppRegistrar(repository: repository, watcher: watcher)
-        return NXNativeViewModel(services: nxnativeServices, store: engineConfiguration) { title, appPath in
+        let repository = repository
+        let showcase: @MainActor (TitleInfo) -> BuildShowcase? = { title in
+            let library = ((try? repository.fetchGames()) ?? []).map { game in
+                BuildShowcase.Artwork(
+                    titleID: game.switchTitleID,
+                    name: game.title,
+                    screenshots: game.carouselImagePaths,
+                    hero: game.heroImagePath
+                )
+            }
+            return BuildShowcase.resolve(for: title, in: library)
+        }
+        return NXNativeViewModel(
+            services: nxnativeServices,
+            store: engineConfiguration,
+            showcase: showcase
+        ) { title, appPath in
             _ = try? registrar.register(
                 title: title.name,
                 appPath: appPath,

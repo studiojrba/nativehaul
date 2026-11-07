@@ -12,6 +12,9 @@ struct BuildJobDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.xl) {
+                if let showcase = viewModel.showcase(for: job.title) {
+                    BuildShowcaseView(showcase: showcase)
+                }
                 HStack(spacing: DesignTokens.Spacing.md) {
                     Text(job.title.name).font(DesignTokens.Typography.display)
                         .tracking(DesignTokens.Typography.displayTracking)
@@ -44,6 +47,9 @@ struct BuildJobDetailView: View {
                     )
                 }
                 suggestions
+                if job.status == .building || job.progress.hasStages {
+                    BuildProgressBar(progress: job.progress)
+                }
                 BuildLogConsole(lines: job.log)
             }
             .padding(DesignTokens.Spacing.xl)
