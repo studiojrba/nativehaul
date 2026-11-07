@@ -15,7 +15,7 @@ struct OnboardingModuleView: View {
                     .font(DesignTokens.Typography.caption)
                     .foregroundStyle(Theme.secondaryText)
             }
-            Label(module.title, systemImage: module.symbolName).font(DesignTokens.Typography.largeTitle)
+            Label(module.title, systemImage: module.symbolName).font(DesignTokens.Typography.display)
             Text(module.subtitle).foregroundStyle(Theme.secondaryText)
             flow
         }

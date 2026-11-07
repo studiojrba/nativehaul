@@ -1,17 +1,38 @@
 import SwiftUI
 
-/// Semantic colours. Views reference roles (`Theme.accent`), never concrete colours.
+/// Semantic colours (ADR 0025). Views reference roles (`Theme.accent`), never concrete colours; both appearances
+/// come from ``Palette``.
 enum Theme {
-    static let accent: Color = .accentColor
-    static let background: Color = .init(nsColor: .windowBackgroundColor)
-    static let surface: Color = .init(nsColor: .controlBackgroundColor)
-    static let placeholder: Color = .secondary.opacity(DesignTokens.Opacity.subtle)
-    static let primaryText: Color = .primary
-    static let secondaryText: Color = .secondary
-    static let separator: Color = .init(nsColor: .separatorColor)
-    static let success: Color = .green
-    static let warning: Color = .orange
-    static let danger: Color = .red
-    static let info: Color = .blue
-    static let estimate: Color = .purple
+    /// The one signature pop: Play, selection, the active rail item, progress and small highlights (~5% of a screen).
+    static let accent = Color(nsColor: Palette.color(Palette.accent))
+    /// Text and icons on ``accent``.
+    static let onAccent = Color(nsColor: Palette.color(Palette.onAccent))
+    /// A faint accent wash for selected rows.
+    static let accentSoft = accent.opacity(DesignTokens.Opacity.selection)
+    /// The window canvas (near-black in dark mode).
+    static let canvas = Color(nsColor: Palette.color(Palette.canvas))
+    /// Same as ``canvas``; kept for existing call sites.
+    static let background = canvas
+    /// The icon rail: deliberately dimmer than the canvas.
+    static let sidebar = Color(nsColor: Palette.color(Palette.sidebar))
+    /// One step up from the canvas: cards, chips, tiles.
+    static let surface = Color(nsColor: Palette.color(Palette.surface))
+    /// Two steps up: hovered and raised surfaces.
+    static let surfaceRaised = Color(nsColor: Palette.color(Palette.surfaceRaised))
+    /// Hairline borders, used instead of shadows.
+    static let hairline = Color(nsColor: Palette.color(Palette.hairline))
+    /// A brighter hairline for hover rings.
+    static let hairlineStrong = Color(nsColor: Palette.color(Palette.hairlineStrong))
+    static let placeholder = Color(nsColor: Palette.color(Palette.surfaceRaised))
+    static let primaryText = Color(nsColor: Palette.color(Palette.textPrimary))
+    static let secondaryText = Color(nsColor: Palette.color(Palette.textSecondary))
+    static let tertiaryText = Color(nsColor: Palette.color(Palette.textTertiary))
+    static let separator = hairline
+    static let success = Color(nsColor: Palette.color(Palette.success))
+    static let warning = Color(nsColor: Palette.color(Palette.warning))
+    static let danger = Color(nsColor: Palette.color(Palette.danger))
+    /// Muted neutral for informational tags (formerly blue).
+    static let info = Color(nsColor: Palette.color(Palette.muted))
+    /// HLTB estimates are labelled, not coloured: quiet and monochrome.
+    static let estimate = secondaryText
 }

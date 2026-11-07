@@ -10,17 +10,17 @@ struct LibraryGridView: View {
     private let columns = [
         GridItem(
             .adaptive(minimum: DesignTokens.Cover.minWidth, maximum: DesignTokens.Cover.maxWidth),
-            spacing: DesignTokens.Spacing.lg
+            spacing: DesignTokens.Spacing.xl
         ),
     ]
 
     var body: some View {
         Group {
             if viewModel.visibleGames.isEmpty {
-                ContentUnavailableView(
-                    "No Games",
-                    systemImage: viewModel.filter.section.symbolName,
-                    description: Text("Add a game, import a library file, or sync Steam.")
+                EmptyStateView(
+                    title: "No games here yet",
+                    symbolName: viewModel.filter.section.symbolName,
+                    message: "Add a game, import a library file, or sync Steam."
                 )
             } else {
                 grid
@@ -32,7 +32,7 @@ struct LibraryGridView: View {
 
     private var grid: some View {
         ScrollView {
-            LazyVGrid(columns: columns, alignment: .leading, spacing: DesignTokens.Spacing.xl) {
+            LazyVGrid(columns: columns, alignment: .leading, spacing: DesignTokens.Spacing.xxl) {
                 ForEach(viewModel.visibleGames) { game in
                     NavigationLink(value: game.id) {
                         GameGridItem(game: game)
@@ -43,6 +43,7 @@ struct LibraryGridView: View {
             }
             .padding(DesignTokens.Spacing.xl)
         }
+        .canvasBackground()
     }
 
     @ViewBuilder

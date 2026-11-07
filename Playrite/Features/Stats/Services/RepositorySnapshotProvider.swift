@@ -21,7 +21,8 @@ final class RepositorySnapshotProvider: LibrarySnapshotProviding {
                     source: $0.source
                 ) },
                 steamAchievementsUnlocked: game.steamAchievementsUnlocked,
-                steamAchievementsTotal: game.steamAchievementsTotal
+                steamAchievementsTotal: game.steamAchievementsTotal,
+                coverImagePath: game.coverImagePath
             )
         }
         let series = try repository.fetchSeries().map { $0.orderedEntries.map(\.linkedStatus) }

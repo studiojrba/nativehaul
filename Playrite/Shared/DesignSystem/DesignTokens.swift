@@ -62,7 +62,6 @@ enum DesignTokens {
         static let expandedWidth: CGFloat = 232
         static let itemHeight: CGFloat = 36
         static let iconWidth: CGFloat = 24
-        static let shadowRadius: CGFloat = 12
     }
 
     /// Three-column game details layout.
@@ -77,26 +76,73 @@ enum DesignTokens {
     /// Opacity levels.
     enum Opacity {
         static let subtle: Double = 0.08
+        /// Selected rows and the active rail item: a faint accent wash.
+        static let selection: Double = 0.16
         static let muted: Double = 0.4
         static let disabled: Double = 0.35
         static let overlay: Double = 0.6
         static let full: Double = 1
     }
 
-    /// Typography roles.
+    /// Point sizes behind ``Typography`` (ADR 0025): 13 pt UI text, big confident display sizes.
+    enum TypeScale {
+        static let caption: CGFloat = 11
+        static let body: CGFloat = 13
+        static let launch: CGFloat = 15
+        static let title: CGFloat = 17
+        static let stat: CGFloat = 22
+        static let largeTitle: CGFloat = 26
+        static let display: CGFloat = 28
+        static let rank: CGFloat = 34
+        static let hero: CGFloat = 44
+    }
+
+    /// Typography roles (ADR 0025): small, precise UI text (13 pt) for data, and big, tight, confident display type
+    /// — (Not Boring) style — for page headers, empty states and onboarding.
     enum Typography {
-        static let largeTitle: Font = .largeTitle.weight(.bold)
-        static let title: Font = .title2.weight(.semibold)
-        static let headline: Font = .headline
-        static let body: Font = .body
-        static let caption: Font = .caption
-        static let captionEmphasis: Font = .caption.weight(.semibold)
-        static let monospaced: Font = .system(.body, design: .monospaced)
-        static let monospacedSmall: Font = .system(.caption, design: .monospaced)
-        static let statValue: Font = .system(.title, design: .rounded).weight(.bold)
-        static let launch: Font = .title3.weight(.bold)
+        /// The onboarding welcome.
+        static let hero: Font = .system(size: TypeScale.hero, weight: .black, design: .rounded)
+        /// Page and section headers, empty-state titles.
+        static let display: Font = .system(size: TypeScale.display, weight: .heavy, design: .rounded)
+        /// Tight tracking for display type.
+        static let displayTracking: CGFloat = -0.6
+        static let largeTitle: Font = .system(size: TypeScale.largeTitle, weight: .bold)
+        static let title: Font = .system(size: TypeScale.title, weight: .semibold)
+        static let headline: Font = .system(size: TypeScale.body, weight: .semibold)
+        static let body: Font = .system(size: TypeScale.body)
+        static let caption: Font = .system(size: TypeScale.caption)
+        static let captionEmphasis: Font = .system(size: TypeScale.caption, weight: .semibold)
+        /// Quiet section label inside dense panels (Linear-style small header).
+        static let sectionLabel: Font = .system(size: TypeScale.caption, weight: .semibold)
+        static let monospaced: Font = .system(size: TypeScale.body, design: .monospaced)
+        static let monospacedSmall: Font = .system(size: TypeScale.caption, design: .monospaced)
+        static let statValue: Font = .system(size: TypeScale.stat, weight: .bold, design: .rounded)
+        /// Rank numbers on the Stats story row.
+        static let rank: Font = .system(size: TypeScale.rank, weight: .black, design: .rounded)
+        static let launch: Font = .system(size: TypeScale.launch, weight: .bold)
         /// Smallest scale a fixed-width label may shrink to before it would otherwise clip.
         static let minimumScale: CGFloat = 0.75
+    }
+
+    /// Colour sampled from a game's own artwork (ADR 0025): weak enough that text contrast never suffers.
+    enum ArtTint {
+        /// The detail hero's ambient wash, at its strongest point.
+        static let heroGlowOpacity: Double = 0.32
+        /// How far the wash reaches beyond the hero, as a multiple of its height.
+        static let heroGlowReach: CGFloat = 1.8
+        /// Blur applied to the wash.
+        static let heroGlowBlur: CGFloat = 40
+        /// How far past the hero's sides the wash extends, in blur radii (the centre column clips it, so it reads
+        /// as an edge-to-edge glow rather than a box).
+        static let heroGlowSpread: CGFloat = 3
+        /// A card's hover wash.
+        static let hoverOpacity: Double = 0.14
+        /// Sampled colours are lifted to at least this saturation, so a muddy average still reads as colour.
+        static let minimumSaturation: CGFloat = 0.45
+        /// …and set to this brightness.
+        static let brightness: CGFloat = 0.62
+        /// Edge length the artwork is reduced to before sampling.
+        static let sampleSize: CGFloat = 32
     }
 
     /// Animation durations (seconds).

@@ -2,7 +2,9 @@ import SwiftUI
 
 /// Narrow icon rail that expands to full labels while hovered (Playnite-style).
 ///
-/// The rail floats over the content when expanded, so the grid never reflows on hover.
+/// The rail floats over the content when expanded (it is an overlay; the content is inset by the collapsed width
+/// only), so the grid never reflows or jitters on hover. It sits on the sidebar surface — dimmer than the canvas —
+/// with a hairline edge instead of a shadow (ADR 0025).
 struct IconRailView: View {
     /// Selected destination.
     @Binding var selection: SidebarDestination?
@@ -14,7 +16,10 @@ struct IconRailView: View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
             ForEach(Array(RailItem.groups.enumerated()), id: \.offset) { index, group in
                 if index > 0 {
-                    Divider().padding(.vertical, DesignTokens.Spacing.xs)
+                    Rectangle()
+                        .fill(Theme.hairline)
+                        .frame(height: DesignTokens.Stroke.hairline)
+                        .padding(.vertical, DesignTokens.Spacing.sm)
                 }
                 ForEach(group) { item in
                     RailItemRow(
@@ -30,8 +35,10 @@ struct IconRailView: View {
         .padding(DesignTokens.Spacing.sm)
         .frame(width: isExpanded ? DesignTokens.Rail.expandedWidth : DesignTokens.Rail.collapsedWidth)
         .frame(maxHeight: .infinity)
-        .background(Theme.surface)
-        .shadow(radius: isExpanded ? DesignTokens.Rail.shadowRadius : DesignTokens.Spacing.none)
+        .background(Theme.sidebar)
+        .overlay(alignment: .trailing) {
+            Rectangle().fill(Theme.hairline).frame(width: DesignTokens.Stroke.hairline)
+        }
         .onHover { hovering in
             withAnimation(.easeInOut(duration: DesignTokens.Motion.quick)) { isExpanded = hovering }
         }

@@ -29,6 +29,14 @@ enum GameInfoBuilder {
         [platformName(game), timePlayed(game)].compactMap(\.self).joined(separator: separator)
     }
 
+    /// The poster's one secondary line (ADR 0025): the largest real playtime figure with its source label ("66h 42m ·
+    /// SteamSynced"), or the status when nothing has been played. Sources are never added together.
+    static func cardLine(for game: Game) -> String {
+        let entries = game.playtimeBreakdown().entries.filter { !$0.source.isEstimate }
+        guard let top = entries.max(by: { $0.seconds < $1.seconds }) else { return game.status.displayName }
+        return "\(DurationFormatting.compact(seconds: top.seconds)) · \(top.source.label)"
+    }
+
     /// Where the game comes from: Steam locations, the tracked app, or the library.
     static func source(_ game: Game) -> String {
         var sources = game.steamInstalls.map(\.displayName)

@@ -30,6 +30,8 @@ struct PlayriteApp: App {
                 }
             }
             .frame(minWidth: DesignTokens.Layout.windowMinWidth, minHeight: DesignTokens.Layout.windowMinHeight)
+            .background(Theme.canvas)
+            .tint(Theme.accent)
         }
         Settings {
             if case let .success(environment) = launch {

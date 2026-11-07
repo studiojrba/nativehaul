@@ -17,14 +17,19 @@ struct RailItemRow: View {
         Button(action: onSelect) {
             HStack(spacing: DesignTokens.Spacing.md) {
                 Image(systemName: item.symbolName)
+                    .foregroundStyle(isSelected ? Theme.accent : Theme.secondaryText)
                     .frame(width: DesignTokens.Rail.iconWidth)
                 if isExpanded {
-                    Text(item.title).lineLimit(DesignTokens.Lines.single)
+                    Text(item.title)
+                        .font(DesignTokens.Typography.body)
+                        .foregroundStyle(isSelected ? Theme.primaryText : Theme.secondaryText)
+                        .lineLimit(DesignTokens.Lines.single)
                     Spacer(minLength: DesignTokens.Spacing.sm)
                     if let count {
                         Text("\(count)")
                             .font(DesignTokens.Typography.caption)
-                            .foregroundStyle(Theme.secondaryText)
+                            .foregroundStyle(Theme.tertiaryText)
+                            .monospacedDigit()
                     }
                 }
             }
@@ -32,7 +37,7 @@ struct RailItemRow: View {
             .frame(maxWidth: .infinity, minHeight: DesignTokens.Rail.itemHeight, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
-                    .fill(isSelected ? Theme.accent.opacity(DesignTokens.Opacity.muted) : Color.clear)
+                    .fill(isSelected ? Theme.accentSoft : Color.clear)
             )
             .contentShape(Rectangle())
         }

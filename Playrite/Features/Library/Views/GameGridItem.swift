@@ -1,14 +1,12 @@
 import SwiftUI
 
-/// One poster in the library grid, keeping title, platform/playtime and status under the cover.
+/// One poster in the library grid: the title and one quiet line — hours played, or the status (ADR 0025).
 struct GameGridItem: View {
     /// Game to render.
     let game: Game
 
     var body: some View {
-        CoverCard(title: game.title, subtitle: GameInfoBuilder.gridCaption(for: game), imagePath: game.coverImagePath) {
-            StatusTag(status: game.status)
-        }
+        CoverCard(title: game.title, subtitle: GameInfoBuilder.cardLine(for: game), imagePath: game.coverImagePath)
     }
 }
 

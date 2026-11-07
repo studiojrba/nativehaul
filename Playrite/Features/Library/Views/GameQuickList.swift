@@ -17,6 +17,8 @@ struct GameQuickList: View {
                 .tag(game.id)
         }
         .listStyle(.sidebar)
+        .scrollContentBackground(.hidden)
+        .background(Theme.surface)
         .frame(width: DesignTokens.Details.quickListWidth)
     }
 }

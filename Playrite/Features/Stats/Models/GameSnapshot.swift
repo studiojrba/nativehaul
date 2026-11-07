@@ -11,6 +11,8 @@ struct GameSnapshot: Equatable, Sendable, Identifiable {
     let sessions: [SessionSnapshot]
     let steamAchievementsUnlocked: Int?
     let steamAchievementsTotal: Int?
+    /// Local cover art, for presentation only (the Stats story row).
+    var coverImagePath: String?
 
     /// Real playtime per source (no HLTB). Sources are never added together.
     var realSecondsBySource: [PlaytimeSource: Int] {

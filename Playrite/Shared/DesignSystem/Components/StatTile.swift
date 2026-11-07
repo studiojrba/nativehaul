@@ -22,8 +22,8 @@ struct StatTile: View {
             Text(value).font(DesignTokens.Typography.statValue)
         }
         .padding(DesignTokens.Spacing.md)
-        .frame(minWidth: DesignTokens.Layout.statTileMinWidth, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: DesignTokens.Radius.lg).fill(Theme.surface))
+        .frame(minWidth: DesignTokens.Layout.statTileMinWidth, maxWidth: .infinity, alignment: .leading)
+        .surfaceCard()
     }
 }
 

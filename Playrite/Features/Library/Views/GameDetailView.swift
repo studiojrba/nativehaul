@@ -31,11 +31,12 @@ struct GameDetailView: View {
         HStack(spacing: DesignTokens.Spacing.none) {
             GameQuickList(games: quickListGames, selectedID: viewModel.game.id, onSelect: onSelectGame)
                 .layoutPriority(1)
-            Divider()
+            HairlineDivider(axis: .vertical)
             centre
                 .frame(minWidth: DesignTokens.Spacing.none, maxWidth: .infinity)
+                .background(Theme.canvas)
                 .clipped()
-            Divider()
+            HairlineDivider(axis: .vertical)
             GameDetailRail(viewModel: viewModel, launchViewModel: launchViewModel) { isManaging = true }
                 .layoutPriority(1)
         }
@@ -53,14 +54,17 @@ struct GameDetailView: View {
                     coverImagePath: viewModel.game.coverImagePath,
                     carouselImagePaths: viewModel.game.carouselImagePaths
                 )
+                .background(alignment: .top) {
+                    ArtGlowBackground(imagePath: viewModel.game.heroImagePath ?? viewModel.game.coverImagePath)
+                }
                 Text(viewModel.game.title)
-                    .font(DesignTokens.Typography.largeTitle)
+                    .font(DesignTokens.Typography.display)
+                    .tracking(DesignTokens.Typography.displayTracking)
                     .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, DesignTokens.Spacing.sm)
                 if !viewModel.game.genres.isEmpty {
                     FlowLayout {
-                        ForEach(viewModel.game.genres, id: \.self) {
-                            TagLabel(text: $0, symbolName: "tag", tint: Theme.info)
-                        }
+                        ForEach(viewModel.game.genres, id: \.self) { TagLabel(text: $0) }
                     }
                 }
                 Text(viewModel.game.summary.isEmpty ? "No description yet." : viewModel.game.summary)

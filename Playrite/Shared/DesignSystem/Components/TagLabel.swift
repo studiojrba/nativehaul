@@ -7,7 +7,7 @@ struct TagLabel: View {
     /// Optional SF Symbol.
     var symbolName: String?
     /// Tint colour from ``Theme``.
-    var tint: Color = Theme.accent
+    var tint: Color = Theme.secondaryText
 
     var body: some View {
         HStack(spacing: DesignTokens.Spacing.xxs) {
@@ -20,7 +20,8 @@ struct TagLabel: View {
         .foregroundStyle(tint)
         .padding(.horizontal, DesignTokens.Spacing.sm)
         .padding(.vertical, DesignTokens.Spacing.xxs)
-        .background(Capsule().fill(tint.opacity(DesignTokens.Opacity.subtle)))
+        .background(Capsule().fill(Theme.surface))
+        .overlay(Capsule().strokeBorder(Theme.hairline))
     }
 }
 

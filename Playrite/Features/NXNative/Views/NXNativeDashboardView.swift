@@ -62,15 +62,17 @@ struct NXNativeDashboardView: View {
                     KnowledgeBaseView(cases: viewModel.knowledgeBase) { openCase = $0 }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Theme.surface)
             .frame(minWidth: DesignTokens.Layout.sidebarMinWidth)
             Group {
                 if let job = viewModel.selectedJob {
                     BuildJobDetailView(job: job, viewModel: viewModel) { openCase = $0 }
                 } else {
-                    ContentUnavailableView(
-                        "No Job Selected",
-                        systemImage: "hammer",
-                        description: Text("Add a staged title to the queue.")
+                    EmptyStateView(
+                        title: "Nothing selected",
+                        symbolName: "hammer",
+                        message: "Queue a game from the list, or use Add Job."
                     )
                 }
             }

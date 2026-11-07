@@ -28,7 +28,7 @@ struct CoverArtView: View {
 
     private var placeholder: some View {
         ZStack {
-            Theme.placeholder
+            Theme.surface
             VStack(spacing: DesignTokens.Spacing.sm) {
                 Image(systemName: "gamecontroller")
                     .font(DesignTokens.Typography.title)

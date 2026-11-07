@@ -19,6 +19,7 @@ struct LaunchButton: View {
                 }
                 .menuStyle(.button)
                 .buttonStyle(.borderedProminent)
+                .tint(Theme.accent)
                 .controlSize(.large)
                 if primary.title != "Play" {
                     Text("via \(primary.title)")
@@ -39,7 +40,9 @@ struct LaunchButton: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             if let url = viewModel.helpURL {
-                Link("Get it from the official site", destination: url).font(DesignTokens.Typography.caption)
+                Link("Get it from the official site", destination: url)
+                    .font(DesignTokens.Typography.caption)
+                    .foregroundStyle(Theme.accent)
             }
             if let request = viewModel.fileRequest {
                 ProvideFilePrompt(request: request) { viewModel.provideFile(at: $0) }
@@ -56,6 +59,7 @@ struct LaunchButton: View {
     private func label(_ text: String, isEnabled: Bool) -> some View {
         Label(text, systemImage: isEnabled ? "play.fill" : "play.slash")
             .font(DesignTokens.Typography.launch)
+            .foregroundStyle(isEnabled ? Theme.onAccent : Theme.secondaryText)
             .frame(maxWidth: .infinity, minHeight: DesignTokens.Details.launchButtonHeight)
     }
 }

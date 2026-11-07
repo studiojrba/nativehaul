@@ -109,7 +109,7 @@ struct RootView: View {
         case .nxnative:
             NXNativeDashboardView(viewModel: nxnativeViewModel, inbox: buildsInbox)
         case nil:
-            ContentUnavailableView("Select a Section", systemImage: "sidebar.left")
+            EmptyStateView(title: "Pick a section", symbolName: "sidebar.left")
         }
     }
 

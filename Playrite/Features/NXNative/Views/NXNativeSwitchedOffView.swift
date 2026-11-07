@@ -6,12 +6,12 @@ struct NXNativeSwitchedOffView: View {
     let onTurnOn: () -> Void
 
     var body: some View {
-        ContentUnavailableView {
-            Label(NXNativeReadiness.switchedOffTitle, systemImage: "hammer")
-        } description: {
-            Text(NXNativeReadiness.switchedOffMessage)
-        } actions: {
-            Button(NXNativeReadiness.turnOnTitle, action: onTurnOn)
+        EmptyStateView(
+            title: NXNativeReadiness.switchedOffTitle,
+            symbolName: "hammer",
+            message: NXNativeReadiness.switchedOffMessage
+        ) {
+            Button(NXNativeReadiness.turnOnTitle, action: onTurnOn).buttonStyle(.borderedProminent)
         }
     }
 }

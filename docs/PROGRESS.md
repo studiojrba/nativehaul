@@ -668,6 +668,37 @@ approved by J.R when he set the rule). 333 tests (+6).
   - the section copy.
   402 tests (+11).
 
+## 27 · feature/ui-polish — J.R moves the design phase forward
+- 📣 **J.R's call:** "build something nice and ultra polished so I can see the changes when I wake up."
+  Benchmarks from the design research:
+  - Linear (tokens), Steam (poster grid), Infuse (detail hero), Steam Replay (Stats).
+  - The colour amendment: one signature accent, art-derived tints, muted statuses.
+  - The **(Not Boring) apps** as the character reference: "clean with pop".
+  Visual only; no behaviour, data or navigation changes.
+- ✅ **Tokens:** a `Palette` with dark and light pairs: canvas `#08090A`, surfaces `#101113` / `#16171B`,
+  hairlines `#1F2023`, and a sidebar dimmer than the canvas. A 13 pt type scale with big tight rounded display
+  type. Art-tint tokens. Views still contain no literals.
+- ✅ **Signature accent "Fetch orange"** (`#FF5A1F` / `#F24E12`, near-black text on it), used on Play, the active
+  rail item, selection, the app tint, links, empty-state symbols, Stats ranks and "Retriever" in the welcome.
+  Structure stays neutral and statuses muted ("Playing" moved off the accent).
+- ✅ **Grid:** title plus one quiet line ("66h 42m · SteamSynced", or the status), a hairline ring that brightens on
+  hover, a faint hover wash from the card's own art, and no shadows or pills.
+- ✅ **Rail:** verified as an overlay (it never reflows the grid). It now sits on the dimmer sidebar surface with a
+  hairline edge instead of a shadow, and the active item uses the accent.
+- ✅ **Detail:** an ambient hero glow sampled from the art (weak and behind everything), a display title, monochrome
+  HLTB chips, hairlines instead of dividers, and the same rail sections with tighter spacing.
+- ✅ **Stats:** leads with a ranked **Most played** row with art (each game's largest single real figure, never a
+  sum), with the totals beneath.
+- ✅ **Consistency:** one `EmptyStateView`, the canvas across screens, neutral outlined tags, display-size onboarding
+  titles, and "Hey! I'm **Retriever**." at 44 pt.
+- ✅🧪 **Renders:** the grid and detail page at 900, 1100 and 1280, plus Stats, the welcome and Builds, in dark and
+  light with stand-in art. All were inspected, and fixes followed (glow edges, link colour, header captions).
+  A curated set is in `docs/design/ui-polish/`.
+- ✅🧪 Layout guards are green. New tests cover the card line, a ranking that never merges sources, statuses off the
+  accent, a sidebar dimmer than the canvas, structural colours near-chroma-free with the accent the one saturated
+  colour, and art-tint sampling and caching. 409 tests (+7).
+- ⚠️ Not yet seen with J.R's real covers in a live window. The app rename stays queued after this.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -698,6 +729,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 24 | `feature/nxnative-derived-invocation` (Phase 1 blocker) | ✅ | ✅ | 373 | ✅ |
 | 25 | `feature/folder-first-add-build` (J.R requirement) | ✅ | ✅ | 391 | ✅ |
 | 26 | `feature/builds-inbox` (J.R feature) | ✅ | ✅ | 402 | ✅ |
+| 27 | `feature/ui-polish` (design phase) | ✅ | ✅ | 409 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -737,7 +769,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0024)
+## Key decisions (see `docs/decisions/` ADR 0001–0025)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -761,7 +793,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 26 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 27 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

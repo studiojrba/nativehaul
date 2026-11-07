@@ -34,7 +34,9 @@ struct BottleInstallPanel: View {
             Text("Windows games install through CrossOver, which isn't installed.")
                 .font(DesignTokens.Typography.caption).foregroundStyle(Theme.secondaryText)
             if let url = BottleInstallViewModel.crossOverURL {
-                Link("Get CrossOver from CodeWeavers", destination: url).font(DesignTokens.Typography.caption)
+                Link("Get CrossOver from CodeWeavers", destination: url)
+                    .font(DesignTokens.Typography.caption)
+                    .foregroundStyle(Theme.accent)
             }
         case let .blocked(verdict):
             CompatibilityVerdictView(verdict: verdict)

@@ -17,7 +17,8 @@ struct StatsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxl) {
-                SectionHeader(title: "Library")
+                TopGamesRow(games: viewModel.topGames)
+                SectionHeader(title: "Your library", style: .display)
                 LazyVGrid(columns: tileColumns, alignment: .leading, spacing: DesignTokens.Spacing.md) {
                     StatTile(title: "Games", value: "\(viewModel.stats.totalGames)", symbolName: "square.grid.2x2")
                     ForEach(GameStatus.allCases) { status in
@@ -36,7 +37,8 @@ struct StatsView: View {
                 }
                 SectionHeader(
                     title: "Badges",
-                    caption: "\(viewModel.earnedCount) of \(viewModel.badges.count) earned · real data only"
+                    caption: "\(viewModel.earnedCount) of \(viewModel.badges.count) earned · real data only",
+                    style: .display
                 )
                 LazyVGrid(columns: tileColumns, alignment: .leading, spacing: DesignTokens.Spacing.md) {
                     ForEach(viewModel.badges) { BadgeTile(result: $0) }
@@ -47,6 +49,7 @@ struct StatsView: View {
             }
             .padding(DesignTokens.Spacing.xl)
         }
+        .canvasBackground()
         .navigationTitle("Stats")
         .onAppear { viewModel.reload() }
     }

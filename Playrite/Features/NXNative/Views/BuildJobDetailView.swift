@@ -13,7 +13,8 @@ struct BuildJobDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.xl) {
                 HStack(spacing: DesignTokens.Spacing.md) {
-                    Text(job.title.name).font(DesignTokens.Typography.largeTitle)
+                    Text(job.title.name).font(DesignTokens.Typography.display)
+                        .tracking(DesignTokens.Typography.displayTracking)
                     TagLabel(text: job.status.displayName, tint: job.status.tint)
                     Spacer(minLength: DesignTokens.Spacing.none)
                     Button("Re-run Preflight") { viewModel.runPreflight(job.id) }

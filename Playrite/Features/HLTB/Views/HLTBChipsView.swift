@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// Main Story / Main Story+ / Completionist chips, labelled "HLTB estimate".
+/// Main Story / Main Story+ / Completionist chips, labelled "HLTB estimate". Quiet and monochrome (ADR 0025):
+/// estimates are labelled, never colour-coded like ratings.
 struct HLTBChipsView: View {
     /// Chips to show.
     let chips: [HLTBChip]
@@ -10,22 +11,23 @@ struct HLTBChipsView: View {
             HStack(spacing: DesignTokens.Spacing.xs) {
                 ForEach(chips) { chip in
                     VStack(spacing: DesignTokens.Spacing.xxs) {
-                        Text(chip.title).font(DesignTokens.Typography.captionEmphasis)
+                        Text(chip.title).font(DesignTokens.Typography.caption)
+                            .foregroundStyle(Theme.secondaryText)
                             .lineLimit(DesignTokens.Lines.single)
                             .minimumScaleFactor(DesignTokens.Typography.minimumScale)
-                        Text(chip.value).font(DesignTokens.Typography.monospacedSmall)
+                        Text(chip.value).font(DesignTokens.Typography.headline)
+                            .foregroundStyle(Theme.primaryText)
+                            .monospacedDigit()
                             .lineLimit(DesignTokens.Lines.single)
                             .minimumScaleFactor(DesignTokens.Typography.minimumScale)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(DesignTokens.Spacing.xs)
-                    .background(
-                        RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
-                            .fill(Theme.estimate.opacity(DesignTokens.Opacity.subtle))
-                    )
+                    .padding(.vertical, DesignTokens.Spacing.sm)
+                    .padding(.horizontal, DesignTokens.Spacing.xs)
+                    .surfaceCard(cornerRadius: DesignTokens.Radius.md, fill: Theme.canvas)
                 }
             }
-            TagLabel(text: HLTBEstimate.label, symbolName: PlaytimeSource.hltbEstimate.symbolName, tint: Theme.estimate)
+            TagLabel(text: HLTBEstimate.label, symbolName: PlaytimeSource.hltbEstimate.symbolName)
         }
     }
 }

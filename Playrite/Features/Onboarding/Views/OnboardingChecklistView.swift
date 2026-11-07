@@ -7,7 +7,8 @@ struct OnboardingChecklistView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
-            Text("What do you want to set up now?").font(DesignTokens.Typography.largeTitle)
+            Text("What do you want to set up now?").font(DesignTokens.Typography.display)
+                .tracking(DesignTokens.Typography.displayTracking)
             Text(OnboardingViewModel.reassurance).foregroundStyle(Theme.secondaryText)
             ForEach(viewModel.modules) { module in
                 Toggle(isOn: Binding(get: { viewModel.isSelected(module) }, set: { _ in viewModel.toggle(module) })) {

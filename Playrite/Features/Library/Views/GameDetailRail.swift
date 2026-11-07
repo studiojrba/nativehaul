@@ -12,14 +12,19 @@ struct GameDetailRail: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                 CoverArtView(imagePath: viewModel.game.coverImagePath, title: viewModel.game.title)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: DesignTokens.Radius.md).strokeBorder(Theme.hairline)
+                    )
                 BottleInstallPanel(viewModel: environment.makeBottleInstallViewModel(for: viewModel.game))
                 LaunchButton(viewModel: launchViewModel)
                 GameUpdateBadgeView(badge: environment.gameBadges.badge(for: viewModel.game))
                 Button("Manage…", systemImage: "slider.horizontal.3", action: onManage)
                     .frame(maxWidth: .infinity)
+                HairlineDivider().padding(.vertical, DesignTokens.Spacing.xs)
                 HLTBChipsView(chips: viewModel.hltbChips)
+                HairlineDivider().padding(.vertical, DesignTokens.Spacing.xs)
                 GameInfoList(rows: viewModel.infoRows)
             }
             .padding(DesignTokens.Spacing.lg)

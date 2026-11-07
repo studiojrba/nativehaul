@@ -11,6 +11,8 @@ final class StatsViewModel {
     private(set) var badges: [BadgeResult] = []
     /// Last error.
     private(set) var errorMessage: String?
+    /// The most-played games, for the story row that leads the page (ADR 0025).
+    private(set) var topGames: [RankedGame] = []
 
     /// Backlog main-story HLTB estimate. Shown separately, labelled "HLTB estimate", never added to real hours.
     private(set) var backlogEstimate = HLTBBacklogEstimate(seconds: 0, coveredGames: 0, backlogGames: 0)
@@ -58,6 +60,7 @@ final class StatsViewModel {
             let snapshot = try provider.snapshot()
             stats = StatsCalculator.stats(for: snapshot)
             badges = engine.evaluate(snapshot)
+            topGames = RankedGame.top(snapshot.games)
             backlogEstimate = HLTBBacklogEstimator.backlogEstimate(games: snapshot.games) { [hltb] in
                 hltb?.cachedEstimate(for: $0)
             }
