@@ -1,6 +1,6 @@
-# Playrite — Project Rules
+# Retriever — Project Rules
 
-Playrite is a native macOS game library hub: a Playnite-style library combined with an on-by-default
+Retriever (formerly Playrite) is a native macOS game library hub: a Playnite-style library combined with an on-by-default
 Switch build pipeline (driven by a **user-supplied, never-bundled** external engine).
 Start with `README.md` (quickstart + where things live), then `docs/PLAN.md` and `docs/decisions/`.
 
@@ -98,6 +98,15 @@ Figma designs will arrive later. Until then, **structure and function beat bespo
 - Unit tests for all non-UI logic (models, services, engines, ViewModels).
 - Run `./scripts/build.sh` (XcodeGen + xcodebuild build + test) after every feature; fix every compile error
   before moving on.
+
+- **One canonical build output (J.R, ADR 0029):** always build into Xcode's default DerivedData for the project
+  (`~/Library/Developer/Xcode/DerivedData/Playrite-<hash>/Build/Products/Debug/Retriever.app`), never a
+  `-derivedDataPath`. Quit any instance you launch to verify, and leave none running at the end of a session.
+
+## Name and frozen identifiers (J.R, ADR 0029)
+- The app is **Retriever** everywhere user-facing. Project, scheme, folders and the Swift module stay `Playrite`.
+- **Frozen, never change:** bundle ID `com.studiojrba.Playrite`, the `Application Support/Playrite` folder, the
+  SwiftData store (`default.store`), the Keychain service `com.studiojrba.Playrite` (see `AppInfo`).
 
 ## Data integrity rules (product invariants)
 - **Playtime sources are never silently merged.** Every figure carries a `PlaytimeSource`

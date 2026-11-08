@@ -13,7 +13,7 @@ struct TrackingDashboardView: View {
     var body: some View {
         List {
             Section {
-                Toggle("Track playtime while Playrite is open", isOn: Binding(
+                Toggle("Track playtime while Retriever is open", isOn: Binding(
                     get: { viewModel.isWatching },
                     set: { viewModel.setWatching($0) }
                 ))

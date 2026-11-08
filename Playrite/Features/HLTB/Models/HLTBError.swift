@@ -11,7 +11,7 @@ enum HLTBError: Error, Equatable, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .remoteUnavailable:
-            "HowLongToBeat has no official API, so Playrite doesn't fetch automatically. "
+            "HowLongToBeat has no official API, so Retriever doesn't fetch automatically. "
                 + "Look it up and enter the figures."
         case let .cacheUnreadable(reason):
             "The HLTB estimates file couldn't be read (\(reason)). It was left as it is."

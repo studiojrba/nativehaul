@@ -15,7 +15,7 @@ struct SteamGridDBImage: Decodable, Sendable {
     /// Flagged as an epilepsy risk.
     let epilepsy: Bool?
 
-    /// Whether the image passes Playrite's filters (no NSFW, humour, epilepsy-risk or blurred styles).
+    /// Whether the image passes Retriever's filters (no NSFW, humour, epilepsy-risk or blurred styles).
     var isAcceptable: Bool {
         nsfw != true && humor != true && epilepsy != true && !Self.excludedStyles.contains(style ?? "")
     }

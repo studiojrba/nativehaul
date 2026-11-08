@@ -1,6 +1,6 @@
 import Foundation
 
-/// The fields Playrite reads from the Steam store `appdetails` payload (snake_case keys converted).
+/// The fields Retriever reads from the Steam store `appdetails` payload (snake_case keys converted).
 struct SteamStoreAppDetails: Decodable, Sendable {
     /// Store type ("game", "dlc", …).
     let type: String?

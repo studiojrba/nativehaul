@@ -6,7 +6,7 @@ struct KeychainSecretStore: SecretStore {
     private let service: String
 
     /// Creates a store scoped to a Keychain service name.
-    init(service: String = "com.studiojrba.Playrite") {
+    init(service: String = AppInfo.keychainService) {
         self.service = service
     }
 

@@ -44,7 +44,7 @@ struct SessionTracker: Sendable {
         }
     }
 
-    /// Ends every active session at `date` (e.g. when Playrite quits or tracking is paused).
+    /// Ends every active session at `date` (e.g. when Retriever quits or tracking is paused).
     mutating func finishAll(at date: Date) -> [CompletedSession] {
         let sessions = activeSessions
         active.removeAll()

@@ -30,9 +30,10 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.studiojrba.Playrite
-        PRODUCT_NAME: Playrite
+        PRODUCT_NAME: Retriever
+        PRODUCT_MODULE_NAME: Playrite
         GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: Playrite
+        INFOPLIST_KEY_CFBundleDisplayName: Retriever
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.games
         INFOPLIST_KEY_NSHumanReadableCopyright: "© studiojrba"
         ENABLE_APP_SANDBOX: NO
@@ -48,7 +49,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.studiojrba.PlayriteTests
         GENERATE_INFOPLIST_FILE: YES
-        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Playrite.app/Contents/MacOS/Playrite"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Retriever.app/Contents/MacOS/Retriever"
         BUNDLE_LOADER: "$(TEST_HOST)"
 schemes:
   Playrite:

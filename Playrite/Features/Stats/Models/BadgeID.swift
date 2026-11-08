@@ -1,6 +1,6 @@
 import Foundation
 
-/// Identifiers of every badge Playrite can award.
+/// Identifiers of every badge Retriever can award.
 enum BadgeID: String, CaseIterable, Sendable {
     case firstCompletion
     case tenCompletions

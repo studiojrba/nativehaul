@@ -1,7 +1,7 @@
 import Foundation
 import SwiftData
 
-/// The SwiftData schema for Playrite.
+/// The SwiftData schema for Retriever.
 enum PlayriteSchema {
     /// All persistent model types.
     static let models: [any PersistentModel.Type] = [

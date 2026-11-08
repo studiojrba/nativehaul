@@ -76,7 +76,7 @@ struct RootView: View {
             isPresented: exportBinding,
             document: exportDocument,
             contentType: .json,
-            defaultFilename: "Playrite Library"
+            defaultFilename: "Retriever Library"
         ) { _ in exportDocument = nil }
         .alert("Library", isPresented: alertBinding, presenting: alertMessage) { _ in
             Button("OK") { clearAlert() }

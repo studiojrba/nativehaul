@@ -4,7 +4,7 @@ import Foundation
 enum PlaytimeSource: String, Codable, CaseIterable, Identifiable, Sendable {
     /// Total reported by the Steam Web API.
     case steamSynced
-    /// Measured by Playrite's NSWorkspace session tracker.
+    /// Measured by Retriever's NSWorkspace session tracker.
     case macTracked
     /// Entered manually by the player.
     case selfReported

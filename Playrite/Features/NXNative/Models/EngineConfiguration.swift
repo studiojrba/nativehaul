@@ -1,6 +1,6 @@
 import Foundation
 
-/// Settings for the user-supplied nxnative engine. Playrite never bundles the engine, keys, or games.
+/// Settings for the user-supplied nxnative engine. Retriever never bundles the engine, keys, or games.
 ///
 /// The module is **on by default** and paths are **detected** (``NXNativeLocator``); `enginePath` and `keysPath`
 /// are overrides only (ADR 0021).

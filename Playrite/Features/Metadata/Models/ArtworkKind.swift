@@ -1,6 +1,6 @@
 import Foundation
 
-/// The kinds of artwork Playrite stores per game. All are cached on disk, never hotlinked.
+/// The kinds of artwork Retriever stores per game. All are cached on disk, never hotlinked.
 enum ArtworkKind: String, Codable, CaseIterable, Sendable {
     /// Portrait cover (grid poster), roughly 2:3.
     case cover

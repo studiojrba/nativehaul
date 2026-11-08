@@ -15,7 +15,7 @@
         "id": 1,
         "kind": "backupScript",
         "title": "Back up the engine script",
-        "detail": "Copies the script to Playrite's backup folder and records its SHA-256, so it can be restored byte-for-byte. Nothing else changes."
+        "detail": "Copies the script to Retriever's backup folder and records its SHA-256, so it can be restored byte-for-byte. Nothing else changes."
       },
       {
         "id": 2,

@@ -7,7 +7,7 @@ struct TrackingPreferences: Codable, Equatable, Sendable {
     /// Sessions shorter than this are discarded as accidental launches.
     static let defaultMinimumSessionSeconds = 60
 
-    /// Whether the watcher runs while Playrite is open.
+    /// Whether the watcher runs while Retriever is open.
     var isEnabled = true
     /// Folder scanned for `.app` bundles (tilde allowed).
     var gamesFolder = defaultGamesFolder

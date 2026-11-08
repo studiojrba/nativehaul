@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Central source of every visual constant used by Playrite views.
+/// Central source of every visual constant used by Retriever views.
 ///
 /// Views must never contain literal spacing, sizes, radii, fonts, or colours. When Figma designs
 /// arrive, re-skinning happens here (and in ``Theme``) without touching view structure or logic.

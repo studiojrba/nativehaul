@@ -49,10 +49,11 @@ struct AppBundleScannerTests {
         #expect(apps.map(\.name) == ["Outer"])
     }
 
-    @Test func skipsTrashHiddenAndPlayrite() throws {
+    @Test func skipsTrashHiddenAndItself() throws {
         let root = makeRoot()
         try makeDirectory(root, ".Trash/Gone.app")
         try makeDirectory(root, "Playrite.app")
+        try makeDirectory(root, "Retriever.app")
         try makeDirectory(root, "Excluded/Own.app")
         try makeDirectory(root, "Kept.app")
         defer { try? fileManager.removeItem(at: root) }

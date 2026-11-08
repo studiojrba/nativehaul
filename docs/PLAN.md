@@ -1,4 +1,4 @@
-# Playrite — Architecture & Roadmap
+# Retriever — Architecture & Roadmap
 
 ## Vision
 A native macOS hub for your whole game library: Steam, Mac-native titles, and Switch titles you have

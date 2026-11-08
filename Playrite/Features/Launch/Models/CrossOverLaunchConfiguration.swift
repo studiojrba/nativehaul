@@ -1,6 +1,6 @@
 import Foundation
 
-/// How Playrite starts a bottle's Windows Steam through CrossOver.
+/// How Retriever starts a bottle's Windows Steam through CrossOver.
 ///
 /// Unverified against a live CrossOver install: the wine path and arguments follow CrossOver's documented
 /// command-line usage (`wine --bottle <name> --cx-app <exe> …`) and are kept here so they can be adjusted in one place.

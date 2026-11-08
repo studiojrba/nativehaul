@@ -7,7 +7,7 @@ struct LaunchFailureView: View {
 
     var body: some View {
         ContentUnavailableView(
-            "Playrite Could Not Open Its Library",
+            "Retriever Could Not Open Its Library",
             systemImage: "exclamationmark.triangle",
             description: Text(message)
         )

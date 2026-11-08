@@ -4,7 +4,7 @@ import SwiftUI
 struct NXNativeDisclaimer: View {
     var body: some View {
         Label {
-            Text("Optional module. Playrite does not include the nxnative engine, console keys, firmware or games. "
+            Text("Optional module. Retriever does not include the nxnative engine, console keys, firmware or games. "
                 + "You supply your own engine and your own legally obtained files.")
         } icon: {
             Image(systemName: "info.circle")

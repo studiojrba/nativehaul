@@ -17,7 +17,7 @@ struct AddGuideSheet: View {
             TextField("Author", text: $author)
             TextField("https://gamefaqs.gamespot.com/…/faqs/…", text: $url)
             Text(
-                "Playrite only stores the link and credits the author. Guides open in your browser; nothing is copied."
+                "Retriever only stores the link and credits the author. Guides open in your browser; nothing is copied."
             )
             .font(DesignTokens.Typography.caption)
             .foregroundStyle(Theme.secondaryText)

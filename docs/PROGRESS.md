@@ -770,6 +770,55 @@ approved by J.R when he set the rule). 333 tests (+6).
   `docs/design/builds-page/`.
 - ⚠️ The slideshow appears only when the game is in the library with cached art. Not yet seen live on J.R's Mac.
 
+## 31 · feature/app-rename-retriever — J.R GO (18:54 EST)
+- 📣 **J.R GO:** the app is renamed to Retriever. Bundle ID, the Application Support folder, the SwiftData store and
+  the Keychain service stay frozen, and the library has to survive untouched. There is one canonical build output
+  from now on. ADR 0029.
+- ⚠️ The brief cited (`~/workspace/playrite/rename-brief.md`) was not on this Mac (there is no `~/workspace`). The
+  requirements in J.R's message were used instead.
+- ✅ **Retriever, user-facing:**
+  - `CFBundleDisplayName` and `CFBundleName` are both Retriever, which covers the Dock, the menu bar app menu
+    (About, Hide, Quit) and the Settings window title;
+  - window titles come from the bundle;
+  - every user-facing string that said Playrite now says Retriever, including the library export filename;
+  - README, PLAN and CLAUDE.md are updated.
+  The sidebar and onboarding had no app-name text left to change. Historical ADRs and PROGRESS entries keep their
+  wording.
+- ✅ **Filename `Retriever.app`: low risk, so done.**
+  - `PRODUCT_NAME: Retriever` gives `Retriever.app` with a `Retriever` executable.
+  - The module stays `Playrite` (`PRODUCT_MODULE_NAME`), so `@testable import` is unchanged, and `TEST_HOST` was
+    updated.
+  - No data depends on the filename. The library is in `~/Library/Application Support/default.store` (SwiftData's
+    default, independent of the app name), and settings are keyed on the bundle ID.
+  - The scanner skips both `Retriever.app` and `Playrite.app`.
+- ✅🧪 **Frozen identifiers are in `AppInfo` and pinned by tests:**
+  - bundle ID `com.studiojrba.Playrite`, folder `Application Support/Playrite`, store `default.store`, Keychain
+    service `com.studiojrba.Playrite`;
+  - tests also check the real artwork, HLTB, audit and backup paths, the SwiftData default store URL, and that the
+    host bundle is `Retriever.app` with the frozen ID and display name.
+  - Project, scheme, folders and type names stay `Playrite`, since they are internal.
+- ✅ **One canonical build output.** `build.sh` now builds into Xcode's default DerivedData, the same folder Xcode
+  uses, and prints the path:
+  `~/Library/Developer/Xcode/DerivedData/Playrite-exinnpzvysdovkcwpocorbnjqrch/Build/Products/Debug/Retriever.app`
+  The old second output (`build/DerivedData`, 587 MB, with a stale `Playrite.app`) was moved to the Trash, not
+  deleted. Spotlight now finds exactly one app with this bundle ID outside the Trash. The rule is in CLAUDE.md.
+- ✅ **Launch-verified against J.R's real library:**
+  - the canonical `Retriever.app` opened on All Games with covers;
+  - a copy of the store taken after the run shows 125 games, 2 guide links, 13 series and 3 collections, the same as
+    the copy taken before;
+  - the Ocarina switchPort entry still has its 18:51 macTracked session (2 min 29 s);
+  - no `Retriever` Application Support folder was created;
+  - the test instance was quit (Apple Event quit), and **no instance is left running**.
+- ⚠️ **Tracking side effect of the verification launch:**
+  - Ocarina was already running (launched 18:58:32, still running). The test instance recorded it as a session
+    from 18:58:32 to 19:00:27, closed when the instance quit.
+  - When the watcher starts and a game is already running, it dates the session from the game's launch time
+    (`WorkspaceRunningApplicationObserver`). If Retriever is launched again while that same Ocarina process is still
+    running, its new session will also start at 18:58:32, and about 2 minutes will be counted twice.
+  - The watcher has always done this; it isn't new in this branch. J.R's store was not edited.
+  - The 06:52 → 18:55 Ocarina session (about 12 h) looks like a related tracking issue worth checking.
+- ✅🧪 419 tests (+4); lint clean.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -804,6 +853,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 28 | `fix/remove-downloads-watcher` (launch hang; J.R reversal) | ✅ | ✅ | 399 | ✅ |
 | 29 | `fix/standalone-nxnative-only` (J.R rule) | ✅ | ✅ | 401 | ✅ |
 | 30 | `feature/builds-detail-showcase` (J.R direction) | ✅ | ✅ | 415 | ✅ |
+| 31 | `feature/app-rename-retriever` (J.R GO) | ✅ | ✅ | 419 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -843,7 +893,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0028)
+## Key decisions (see `docs/decisions/` ADR 0001–0029)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -867,7 +917,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 30 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 31 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

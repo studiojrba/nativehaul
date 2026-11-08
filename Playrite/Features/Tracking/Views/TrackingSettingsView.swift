@@ -11,7 +11,7 @@ struct TrackingSettingsView: View {
 
     var body: some View {
         Form {
-            Toggle("Track playtime while Playrite is open", isOn: $viewModel.preferences.isEnabled)
+            Toggle("Track playtime while Retriever is open", isOn: $viewModel.preferences.isEnabled)
             TextField("Games folder", text: $viewModel.preferences.gamesFolder)
             Stepper(
                 "Ignore sessions shorter than \(viewModel.minimumSessionMinutes) min",
