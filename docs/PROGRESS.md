@@ -849,6 +849,21 @@ approved by J.R when he set the rule). 333 tests (+6).
   - Sources: the user's override, then a reviewed bundled database.
   - Safety: arguments and environment only, an allow-listed `DM_*` set, audited.
   - Ocarina needs no recipe. This is the standing mechanism for a title that does.
+- 📌 **Standing rule (J.R, 19:18 EST), recorded in CLAUDE.md:** games launch from inside Retriever, and QA user-flow
+  tests launch through Retriever's Play button. A direct `.app` launch is a diagnostic only and is labelled as one.
+  Tonight's `--no-launcher` Ocarina run was a **diagnostic**, not a user-flow test. CLAUDE.md also notes not to run
+  the test suite while J.R is playing, because its test host is a second Retriever that takes focus.
+- 📌 **Window by default (decided, J.R on Ollie's recommendation, 19:18 EST):**
+  - New ports launch in Window mode, recorded in the ADR 0031 recipe proposal as a per-title display-mode field
+    (`DM_FULLSCREEN=0` for nxnative ports), with Full Screen one toggle away.
+  - Why: tonight the switch into full screen itself dropped focus (black and silent), while a windowed launch stays
+    visible, shows the progress screen and is recoverable.
+  - Not built.
+  - Open questions are in the ADR: whether the port's saved launcher choice or the override wins, and whether Play
+    should skip the port's own launcher window.
+- ℹ️ For the record: as of 19:18 EST the renamed Retriever is the only instance running on J.R's Mac, and tonight's
+  relaunch goes through its Play button. This docs-only follow-up ran no build or tests, so nothing was launched
+  beside it.
 - 📌 **QA rule (polish log):** a QA run that reaches a working game leaves it running for J.R and doesn't quit it as
   cleanup. J.R was watching the Ocarina title screen when tonight's diagnostic run closed it.
 - ✅🧪 426 tests (+7); lint clean.

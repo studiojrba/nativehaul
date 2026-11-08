@@ -75,6 +75,15 @@ owns it. Retriever routes; it never emulates, translates or runs games itself.
   environment, from another app's bundle or Application Support folder, and never name other front ends in UI copy,
   preflight lines or docs.
 
+## Games launch from inside Retriever (J.R, 2026-11-07 19:18 EST)
+That is the point of the app, and it applies to QA too.
+- User-flow testing launches games through Retriever's **Play** button, never by opening the game's `.app` directly.
+- A direct `.app` launch (Finder, `open`, `--no-launcher`, environment overrides) is a **diagnostic method only**.
+  Whenever one is used, label it as a diagnostic in the report and in PROGRESS. Tonight's Finding #6
+  `--no-launcher` run was one.
+- A QA run that reaches a working game leaves it running for J.R; it is never quit as cleanup.
+- While J.R is playing, don't run the test suite on his Mac: its test host is a second Retriever that takes focus.
+
 ## User-provided files (owner directive, ADR 0019)
 Anything that must come from the user's own sources — `prod.keys` for Switch builds, a console BIOS, a game's
 `.nsp`/`.xci` — is asked for with **one** in-flow prompt: "Please provide your ___", a plain sentence on why, and a
