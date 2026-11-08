@@ -55,9 +55,19 @@ A **launch recipe** is stored per title and applied invisibly on Play.
 
 ## Open questions to settle before building
 - **Saved launcher choices.** The port's launcher remembers its own settings (`launcher.DM_FULLSCREEN` in the
-  title's preferences; J.R's Ocarina currently says Full Screen). Tonight's diagnostic needed `DM_SAVED_CHOICES=0`
-  to be sure the environment override won. The build has to confirm which wins, and must not erase the user's saved
-  choice.
+  title's preferences). Tonight's diagnostic needed `DM_SAVED_CHOICES=0` to be sure the environment override won.
+  The build has to confirm which wins, and must not erase the user's saved choice.
+  - **Data point, 19:21 EST:** Ollie set Ocarina's Display mode popup to Window in the port's settings window before
+    pressing Play. The control receipt confirmed the change, and the game ran windowed. So the popup choice carries
+    into that launch, and J.R's Ocarina is now set to Window.
+  - **Refinement, checked read-only at 19:30 EST:** the launcher saves only choices that differ from the default.
+    - Before the change, `org.nxnative.0400486024dec000` held `launcher.DM_FULLSCREEN = 1`.
+    - After choosing Window (the default), that domain no longer exists, and the run's log shows `DM_FULLSCREEN=0`
+      without the launcher's "(changed)" tag.
+    - So "saved as Window" means "no override saved".
+    - Consequence for the build: a recipe supplying `DM_FULLSCREEN=0` agrees with any port the user left on the
+      default. A port the user deliberately set to Full Screen in its own launcher has `= 1` saved, and the build must
+      decide, with J.R, whether Retriever's per-title choice or the port's saved one wins.
 - **The port's own launcher window.** Play in Retriever currently opens the port's launcher window, where the user
   presses Play again. Whether a recipe should skip that window (`--no-launcher`) for a true one-click start is J.R's
   call. It isn't decided here.

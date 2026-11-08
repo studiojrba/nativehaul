@@ -31,3 +31,50 @@ depends on Retriever handing the game the focus and never taking it back.
   without activating Retriever, such as a notification banner. The source scan enforces this.
 - Not exercised live by clicking Play: there is no accessibility access on the QA Mac, and a live run would add a
   tracked session to J.R's real library.
+
+## Amendment — Layer 1: a clean handoff for the whole session (scoped, not built; J.R, 2026-11-07 19:28 EST)
+J.R asked whether games launched in Retriever can be guaranteed to stay the topmost window. The answer comes in three
+layers. Layers 2 and 3 are in ADR 0032. Layer 1 needs no permission and extends this ADR from "Play doesn't take
+focus" to "Retriever stays out of the way for the whole time the game runs". That covers the moment of launch, which
+is where tonight's failures happened.
+
+**Behaviour:**
+- **After a successful tracked `.app` launch,** Retriever takes its windows out from over the game.
+  - It hides itself with `NSApp.hide`, which covers the main window, Settings and any panels.
+  - It never re-activates itself while the game runs.
+- **While a launched game runs,** Retriever shows nothing over it.
+  - Library and launch alerts, sheets and onboarding requests are deferred and shown after restore.
+  - No notification banners, no Dock bounce.
+- **When the game exits,** Retriever restores itself with `NSApp.unhideWithoutActivation()`.
+  - Whatever the user is doing next keeps the focus.
+  - The ADR 0030 source scan stays green, because `NSApp.activate` is still never called.
+- **The user wins:**
+  - If the user brings Retriever back while the game runs (Dock icon, Cmd-Tab), it stays visible and is never hidden
+    again for that session.
+  - If no launched process is seen within a short grace period (about 10 s, a named constant), Retriever restores
+    itself and the game is treated as not started.
+- **Scope:**
+  - Applies to tracked `.app` launches: nxnative ports, Mac-native games and emulator apps.
+  - Not applied to `steam://` and CrossOver launches. Their game process isn't the one Retriever opened, so the
+    handoff can't be tied to its exit. Those keep the plain ADR 0030 behaviour until the watcher can attribute them.
+- **Default on (ADR 0021).** A Settings switch, "Hide Retriever while a game is running", turns it off.
+
+**Design:**
+- A `GameSessionHandoff` coordinator, `@MainActor`, driven by:
+  - Play success from `GameLaunchViewModel`;
+  - process launch and exit events the `PlaytimeWatcher` already observes.
+- Window control behind a protocol, `AppVisibilityControlling` (hide, unhide without activation, is visible), with
+  `NSApp` live and a mock for tests.
+- An alert gate that `RootView`'s alert and sheet presenters consult. Deferred items replay on restore.
+
+**Tests (mocks only):**
+- hides after a tracked launch, not after a URL launch;
+- restores without activation when the game exits;
+- defers and replays alerts;
+- the user un-hiding wins;
+- the grace-period timeout restores;
+- turning it off in Settings disables it;
+- the source scan still forbids `NSApp.activate`.
+
+**Build note:** verifying it live means running the canonical build alongside a game. Per CLAUDE.md, that waits until
+J.R isn't playing, and it goes through Retriever's Play button.

@@ -864,6 +864,28 @@ approved by J.R when he set the rule). 333 tests (+6).
 - ℹ️ For the record: as of 19:18 EST the renamed Retriever is the only instance running on J.R's Mac, and tonight's
   relaunch goes through its Play button. This docs-only follow-up ran no build or tests, so nothing was launched
   beside it.
+- 📌 **"Keep games on top?" (J.R, 19:28 EST): answered in three layers and scoped. Nothing built.**
+  - **Layer 1, no permission, buildable (ADR 0030 amendment):**
+    - after a tracked Play, Retriever hides itself while the game runs and shows no sheets, alerts or notifications
+      over it;
+    - it restores itself without activating when the game exits;
+    - the user bringing it back wins, and a grace-period timeout restores it if the game never starts;
+    - on by default, with a Settings switch to turn it off;
+    - design and tests are listed in the ADR.
+    - Ready to build on J.R's go. Live checks wait until he isn't playing.
+  - **Layer 2, proposal (new ADR 0032):**
+    - an opt-in "keep games in front" assist using Accessibility (`kAXFrontmost` plus `AXRaise`);
+    - it re-asserts only if the front is taken within about 10 s of launch, and never fights deliberate switching;
+    - constraints recorded: Accessibility is heavy trust; the TCC grant is tied to the binary, so dev rebuilds
+      re-prompt and it waits for stable signing; sandboxed builds can't use it; never required for basic play.
+  - **Layer 3, honesty (ADR 0032 and CLAUDE.md):** macOS has no public always-on-top pin for another app's window, so
+    copy never promises "stays on top".
+- 📌 **ADR 0031 data point (19:21 EST):** Ollie set Ocarina's Display mode to Window in the port's settings window,
+  and the game ran windowed, so the popup choice carries into the launch.
+  - Read-only check at 19:30: the launcher saves only non-default choices.
+  - Choosing Window removed the saved `launcher.DM_FULLSCREEN = 1`, so the domain is now absent and the log shows
+    `DM_FULLSCREEN=0`, not "(changed)".
+  - J.R's Ocarina is on Window.
 - 📌 **QA rule (polish log):** a QA run that reaches a working game leaves it running for J.R and doesn't quit it as
   cleanup. J.R was watching the Ocarina title screen when tonight's diagnostic run closed it.
 - ✅🧪 426 tests (+7); lint clean.
@@ -943,7 +965,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0031)
+## Key decisions (see `docs/decisions/` ADR 0001–0032)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.

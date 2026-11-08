@@ -102,6 +102,9 @@ Figma designs will arrive later. Until then, **structure and function beat bespo
 - Keep views **compositional**: screens are assembled from small reusable components so they can be re-skinned
   from Figma by editing tokens/components only — never by touching ViewModels, services, or models.
 - No business logic or formatting logic in views.
+- **Never promise that games stay on top (J.R, ADR 0032).** macOS has no public way to pin another app's window, so
+  no UI copy or doc says games "stay on top", "always in front" or "pinned". Promise the clean handoff (ADR 0030),
+  and the guarded assist only if it is built and enabled.
 
 ## Testing & verification
 - Unit tests for all non-UI logic (models, services, engines, ViewModels).
