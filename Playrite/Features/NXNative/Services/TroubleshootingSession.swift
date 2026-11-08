@@ -84,6 +84,8 @@ final class TroubleshootingSession {
                 diffLines: [],
                 blockedReason: nil
             )
+        case .checkGame:
+            return StepPreview(summary: Self.checkGameSummary, diffLines: [], blockedReason: nil)
         }
     }
 
@@ -131,6 +133,8 @@ final class TroubleshootingSession {
             guard let backup else { throw TroubleshootingError.backupRequired }
             try backups.verifyRestore(backup)
             return "Script matches the backup exactly."
+        case .checkGame:
+            return "Checked."
         }
     }
 
@@ -140,4 +144,6 @@ final class TroubleshootingSession {
     }
 
     private static let hashPreviewLength = 12
+    /// Preview for a step that only asks the user to check the game.
+    static let checkGameSummary = "Nothing on your Mac changes. Check this on the game, then mark it done."
 }

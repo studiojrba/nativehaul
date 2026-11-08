@@ -12,4 +12,11 @@ enum TroubleshootingStepKind: String, Codable, Sendable {
     case restoreScript
     /// Verify the restored script matches the backup's hash and bytes.
     case verifyRestore
+    /// Something to check on the running game. Changes nothing on the Mac; the user marks it done when checked.
+    case checkGame
+
+    /// Title of the step's action button.
+    var actionTitle: String {
+        self == .checkGame ? "Mark Done" : "Run"
+    }
 }

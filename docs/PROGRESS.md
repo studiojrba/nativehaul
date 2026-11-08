@@ -819,6 +819,40 @@ approved by J.R when he set the rule). 333 tests (+6).
   - The 06:52 → 18:55 Ocarina session (about 12 h) looks like a related tracking issue worth checking.
 - ✅🧪 419 tests (+4); lint clean.
 
+## 32 · feature/nxnative-first-launch-guidance — QA Finding #6 follow-ups
+- 🔎 **Finding #6 resolved:** the Ocarina port works. With its window in front it reached the title screen at 60 fps.
+  The QA black screens came from the game pausing itself whenever it lost focus. Part of the fullscreen run's black
+  screen was caused by this session's own test host and verification launch. There was no shader compile (0 pipelines
+  compiled), and nothing was wrong in Retriever or the build. No hack was needed.
+- ✅🧪 **Knowledge base:** new case `nxnative-game-black-screen`, "A built game shows a black screen", written for
+  someone launching their first port. It covers:
+  - the game only draws while its window is in front and focused;
+  - a covered or unfocused game shows black, and its music may continue;
+  - an intro movie can play black with sound, and the port's log may show "a packet refused with" lines;
+  - a cold first open can take about 30 seconds behind the game's own progress screen.
+  The steps are a new advice-only step kind, `checkGame` ("Mark Done"). It changes nothing on the Mac: no backup, no
+  audit entry, no engine script. The case view hides the script, patch and revert controls for advice-only cases.
+  Build logs never suggest this case. Doc page: `docs/troubleshooting/nxnative-game-black-screen.md`.
+- ✅🧪 **Launch focus verified (ADR 0030):** after Play, Retriever never raises its own window, opens a sheet or alert,
+  or takes focus from the game.
+  - Play opens the game activated (`activates = true`, now in `WorkspaceGameLauncher.openConfiguration`).
+  - Play's only feedback is inline text under the button.
+  - No source activates the app, orders a window front, requests attention or opens a window.
+  - The playtime watcher posts nothing.
+  - Locked by `LaunchFocusTests`: games open activated; a source scan forbids focus-taking APIs; Play opens nothing.
+  - No fix was needed.
+  - ⚠️ Verified by code audit and tests, not by clicking Play live. There is no accessibility access on the QA Mac,
+    and a live run would add a tracked session to J.R's real library.
+- 📝 **Proposal, not built (ADR 0031): per-title launch recipes.**
+  - If a title ever needs launch flags or environment overrides (like tonight's diagnostic `--no-launcher` and
+    `DM_FULLSCREEN=0`), Retriever stores them per title (key: Switch title ID) and applies them invisibly on Play.
+  - Sources: the user's override, then a reviewed bundled database.
+  - Safety: arguments and environment only, an allow-listed `DM_*` set, audited.
+  - Ocarina needs no recipe. This is the standing mechanism for a title that does.
+- 📌 **QA rule (polish log):** a QA run that reaches a working game leaves it running for J.R and doesn't quit it as
+  cleanup. J.R was watching the Ocarina title screen when tonight's diagnostic run closed it.
+- ✅🧪 426 tests (+7); lint clean.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -854,6 +888,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 29 | `fix/standalone-nxnative-only` (J.R rule) | ✅ | ✅ | 401 | ✅ |
 | 30 | `feature/builds-detail-showcase` (J.R direction) | ✅ | ✅ | 415 | ✅ |
 | 31 | `feature/app-rename-retriever` (J.R GO) | ✅ | ✅ | 419 | ✅ |
+| 32 | `feature/nxnative-first-launch-guidance` (Finding #6 follow-ups) | ✅ | ✅ | 426 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -893,7 +928,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0029)
+## Key decisions (see `docs/decisions/` ADR 0001–0031)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -917,7 +952,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 31 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 32 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

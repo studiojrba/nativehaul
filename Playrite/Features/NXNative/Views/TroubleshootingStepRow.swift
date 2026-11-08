@@ -18,7 +18,7 @@ struct TroubleshootingStepRow: View {
                 Text(step.title).font(DesignTokens.Typography.headline)
                 Spacer(minLength: DesignTokens.Spacing.none)
                 stateTag
-                Button("Run", action: onRun).disabled(preview.blockedReason != nil || state.isDone)
+                Button(step.kind.actionTitle, action: onRun).disabled(preview.blockedReason != nil || state.isDone)
             }
             Text(step.detail).font(DesignTokens.Typography.caption).foregroundStyle(Theme.secondaryText)
             StepPreviewView(preview: preview)

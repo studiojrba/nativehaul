@@ -17,23 +17,30 @@ struct TroubleshootingView: View {
                 Text(session.troubleshootingCase.title).font(DesignTokens.Typography.title)
                 LabeledValueRow(label: "Symptom") { Text(session.troubleshootingCase.symptom) }
                 LabeledValueRow(label: "Cause") { Text(session.troubleshootingCase.cause) }
-                LabeledValueRow(label: "Engine script") {
-                    Text(session.scriptPath).font(DesignTokens.Typography.monospacedSmall)
+                if session.troubleshootingCase.editsEngineScript {
+                    LabeledValueRow(label: "Engine script") {
+                        Text(session.scriptPath).font(DesignTokens.Typography.monospacedSmall)
+                    }
+                    patchEditor
                 }
-                patchEditor
                 ForEach(session.troubleshootingCase.steps) { step in
                     TroubleshootingStepRow(step: step, state: session.state(of: step), preview: session.preview(step)) {
                         viewModel.run(step)
                     }
                 }
-                HStack(spacing: DesignTokens.Spacing.md) {
-                    Button("Revert Patch (restore backup)") { viewModel.revertPatch() }.disabled(session.backup == nil)
-                    if session.isComplete {
-                        Label("Case closed — script verified", systemImage: "checkmark.seal")
-                            .foregroundStyle(Theme.success)
+                if session.troubleshootingCase.editsEngineScript {
+                    HStack(spacing: DesignTokens.Spacing.md) {
+                        Button("Revert Patch (restore backup)") { viewModel.revertPatch() }
+                            .disabled(session.backup == nil)
+                        if session.isComplete {
+                            Label("Case closed — script verified", systemImage: "checkmark.seal")
+                                .foregroundStyle(Theme.success)
+                        }
                     }
+                    AuditLogView(entries: viewModel.auditEntries)
+                } else if session.isComplete {
+                    Label("All checked", systemImage: "checkmark.seal").foregroundStyle(Theme.success)
                 }
-                AuditLogView(entries: viewModel.auditEntries)
             }
             .padding(DesignTokens.Spacing.xl)
         }

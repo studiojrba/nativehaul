@@ -12,20 +12,14 @@ final class WorkspaceGameLauncher: GameLaunching {
     func launch(_ target: LaunchTarget) async throws {
         switch target {
         case let .application(path):
-            let configuration = NSWorkspace.OpenConfiguration()
-            configuration.activates = true
             _ = try await NSWorkspace.shared.openApplication(
                 at: URL(fileURLWithPath: path),
-                configuration: configuration
+                configuration: Self.openConfiguration(arguments: nil)
             )
         case let .applicationWithArguments(path, arguments):
-            let configuration = NSWorkspace.OpenConfiguration()
-            configuration.activates = true
-            configuration.arguments = arguments
-            configuration.createsNewApplicationInstance = true
             _ = try await NSWorkspace.shared.openApplication(
                 at: URL(fileURLWithPath: path),
-                configuration: configuration
+                configuration: Self.openConfiguration(arguments: arguments)
             )
         case let .url(url):
             guard NSWorkspace.shared.open(url) else { throw LaunchError.noHandler(url.absoluteString) }
@@ -38,5 +32,17 @@ final class WorkspaceGameLauncher: GameLaunching {
             process.arguments = arguments
             try process.run()
         }
+    }
+
+    /// How a game app is opened (ADR 0030): it is always activated, so it starts in front with the focus, and
+    /// Retriever never takes the focus back. A game launched with arguments gets its own instance.
+    static func openConfiguration(arguments: [String]?) -> NSWorkspace.OpenConfiguration {
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.activates = true
+        if let arguments {
+            configuration.arguments = arguments
+            configuration.createsNewApplicationInstance = true
+        }
+        return configuration
     }
 }

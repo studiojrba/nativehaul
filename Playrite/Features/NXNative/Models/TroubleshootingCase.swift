@@ -16,4 +16,10 @@ struct TroubleshootingCase: Codable, Equatable, Sendable, Identifiable {
     let steps: [TroubleshootingStep]
     /// Default patch for the patch step; the user reviews and may edit it before applying.
     let suggestedPatch: ScriptPatch?
+
+    /// Whether working the case edits the engine script (backup, patch, restore). Advice-only cases, made of
+    /// ``TroubleshootingStepKind/checkGame`` steps, change nothing on the Mac.
+    var editsEngineScript: Bool {
+        steps.contains { $0.kind != .checkGame }
+    }
 }
