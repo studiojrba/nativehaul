@@ -8,7 +8,7 @@ struct RootView: View {
     let environment: AppEnvironment
     @State private var libraryViewModel: LibraryViewModel
     @State private var nxnativeViewModel: NXNativeViewModel
-    @State private var selection: SidebarDestination? = .library(.all)
+    @State private var selection: SidebarDestination? = .home
     @State private var path: [UUID] = []
     @State private var isAddingGame = false
     @State private var isImporting = false
@@ -85,6 +85,13 @@ struct RootView: View {
 
     @ViewBuilder private var content: some View {
         switch selection {
+        case .home:
+            HomeView(
+                libraryViewModel: libraryViewModel,
+                makeLaunch: environment.makeGameLaunchViewModel(for:),
+                onAddGame: { isAddingGame = true },
+                onBrowseLibrary: { selection = .library(.all) }
+            )
         case let .library(section):
             LibraryGridView(viewModel: libraryViewModel)
                 .onAppear { libraryViewModel.filter.section = section }

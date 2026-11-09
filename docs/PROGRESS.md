@@ -984,6 +984,32 @@ approved by J.R when he set the rule). 333 tests (+6).
 - ⚠️ Not exercised live: no Play clicks against J.R's library. The first real check is J.R's next port session,
   which should come out as one session whose length matches the game.
 
+## 36 · feature/home-page — F4 Home (J.R, rescoped 09:55)
+- ✅🧪 **Home is the landing page and the first rail entry (ADR 0035).**
+  - **Hero:** installed games with banner art, most recently played first. It shows a 56 pt black title, one mono
+    state line and Play.
+  - **Rotation:** about every 6 s with a crossfade, paused on hover, arrows and dots, and no auto-advance under
+    Reduce Motion.
+  - **Ambient colour:** the featured art's colour washes full-bleed behind the page (design pass item 2, folded in
+    as asked).
+  - **Rows:** Jump Back In, then Recently Added (the last 30 days, from `addedAt`). The Quick Wins row was dropped
+    with the feature.
+  - **No dead ends:** an empty library offers Add Game, and "Browse All Games" ends the page.
+- ✅🧪 **`InstallState`, the shared install rule** (installed / not installed / unknown). The per-source table is in
+  ADR 0035, and F5 uses it.
+- **J.R's hero today:** Soul Reaver 1&2, Final Fantasy Resonance, Digimon Story Time Stranger and RollerCoaster
+  Tycoon 3. The other installed ports have no banner art yet.
+- 🧪 Tests:
+  - `InstallStateTests` (4);
+  - `HomeFeedTests` (7): hero rules, a missing banner file, no hero, caps, the Recently Added window, Jump Back In's
+    Completed rule;
+  - `HeroCarouselTests` (5);
+  - `HomeRenderTests` at 900, 1100 and 1280.
+  472 tests; lint clean.
+- ✅ **Renders inspected** (`docs/design/home/`). The menu-backed Play button doesn't draw offscreen; the design pass
+  replaces it.
+- ⚠️ No Play clicks against J.R's library.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1023,6 +1049,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 33 | `feature/jump-back-in` (F1, Completed rule fixed) | ✅ | ✅ | 433 | ✅ |
 | 34 | `feature/launch-handoff` (Layer 1 minimal) | ✅ | ✅ | 439 | ✅ |
 | 35 | `fix/tracker-liveness` (Finding #7, stored data cleaned) | ✅ | ✅ | 455 | ✅ |
+| 36 | `feature/home-page` (F4) | ✅ | ✅ | 472 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1062,7 +1089,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0034)
+## Key decisions (see `docs/decisions/` ADR 0001–0035)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -1086,7 +1113,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 35 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 36 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

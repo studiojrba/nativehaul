@@ -35,4 +35,8 @@ enum Theme {
     static let info = Color(nsColor: Palette.color(Palette.muted))
     /// HLTB estimates are labelled, not coloured: quiet and monochrome.
     static let estimate = secondaryText
+    /// Text drawn over artwork behind a dark scrim: light in both appearances, because the scrim is always dark.
+    static let onArtwork = Color(nsColor: .white)
+    /// The scrim colour laid under text on artwork.
+    static let artworkScrim = Color(nsColor: .black)
 }

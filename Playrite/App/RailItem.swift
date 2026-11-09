@@ -16,7 +16,12 @@ struct RailItem: Identifiable, Hashable, Sendable {
 
     /// Rail contents, top to bottom, grouped by section.
     static let groups: [[RailItem]] = [
-        LibrarySection.allCases.map { RailItem(destination: .library($0), title: $0.title, symbolName: $0.symbolName) },
+        [RailItem(destination: .home, title: "Home", symbolName: "house")]
+            + LibrarySection.allCases.map { RailItem(
+                destination: .library($0),
+                title: $0.title,
+                symbolName: $0.symbolName
+            ) },
         [
             RailItem(destination: .series, title: "Series", symbolName: "books.vertical"),
             RailItem(destination: .collections, title: "Collections", symbolName: "square.stack.3d.up"),
