@@ -1010,6 +1010,24 @@ approved by J.R when he set the rule). 333 tests (+6).
   replaces it.
 - ⚠️ No Play clicks against J.R's library.
 
+## 37 · feature/installed-filter — F5 Installed filter (J.R, rescoped 09:55)
+- ✅🧪 **"Installed" toggle in the grid toolbar (ADR 0036).**
+  - It filters the current view: All Games and every status grid, with section and search included.
+  - A mono count line, also the window subtitle: "N installed · N can't tell · N not installed".
+  - Unknown games sit in a flagged "Can't tell if installed" group with Show/Hide. They never vanish silently.
+  - Jump Back In follows the filter.
+  - Nothing to show gives a "Show All Games" way out.
+- **Which sources report installed reliably:**
+  - tracked `.app` and ROM: yes, checked live;
+  - Steam: as of the last scan;
+  - a Steam app ID with no copy, or a manual entry: no, so "can't tell".
+- ⚠️ **Gap for J.R:** 99 of his 100 Steam games have no Steam app ID and no recorded install, so they land under
+  "Can't tell". Linking them to Steam app IDs would close it. Only RollerCoaster Tycoon 3 has a recorded copy; all 18
+  recorded port apps are present.
+- 🧪 `InstalledFilterTests` (3: the split and its summary, plus the view model across sections, search and the
+  shelf) and `InstalledFilterRenderTests` at 900, 1100 and 1280. 476 tests; lint clean.
+- ✅ **Renders inspected** (`docs/design/installed-filter/`). The window toolbar isn't part of offscreen renders.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1050,6 +1068,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 34 | `feature/launch-handoff` (Layer 1 minimal) | ✅ | ✅ | 439 | ✅ |
 | 35 | `fix/tracker-liveness` (Finding #7, stored data cleaned) | ✅ | ✅ | 455 | ✅ |
 | 36 | `feature/home-page` (F4) | ✅ | ✅ | 472 | ✅ |
+| 37 | `feature/installed-filter` (F5) | ✅ | ✅ | 476 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1089,7 +1108,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0035)
+## Key decisions (see `docs/decisions/` ADR 0001–0036)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -1113,7 +1132,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 36 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 37 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

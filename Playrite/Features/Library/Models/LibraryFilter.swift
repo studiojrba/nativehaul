@@ -6,6 +6,9 @@ struct LibraryFilter: Equatable, Sendable {
     var section: LibrarySection = .all
     /// Case- and diacritic-insensitive title search.
     var searchText = ""
+    /// Show only games with a present, launchable install (ADR 0036). Applied by ``LibraryViewModel``, because
+    /// install state needs the disk.
+    var installedOnly = false
 
     /// Returns `games` filtered by section and search, sorted by title.
     func apply(to games: [Game]) -> [Game] {

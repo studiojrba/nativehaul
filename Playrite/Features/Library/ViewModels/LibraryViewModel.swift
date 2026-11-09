@@ -106,7 +106,7 @@ final class LibraryViewModel {
 
     /// Games after section and search filtering.
     var visibleGames: [Game] {
-        filter.apply(to: games)
+        filter.installedOnly ? installedSplit.installed : filter.apply(to: games)
     }
 
     /// Number of games in a section.
