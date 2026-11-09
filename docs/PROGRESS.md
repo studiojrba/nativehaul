@@ -1065,6 +1065,16 @@ approved by J.R when he set the rule). 333 tests (+6).
   - Recorded in ADR 0037 under "Tried and rejected" so it doesn't return in a later pass, in any pattern.
     `EnergyPassTests.noBackgroundTextureComesBack` guards the source.
   - Everything else in the pass is unchanged. The renders predate this and still show the grid.
+- ✅🧪 **Design feedback round 2 (J.R, Mon 13:48 EST; plan confirmed 13:55):** "Have the background go into the side
+  there. Make that side bar also a floating side bar, and not top aligned, center aligned please."
+  - One continuous page background across the whole window, Home's ambient wash included; the sidebar's own backdrop
+    is gone (`RailShell`, shared by the app and the renders).
+  - The sidebar is a floating panel: inset, rounded, its own surface, hairline and shadow, vertically centred and as
+    tall as its items. Hover still expands it over the page.
+  - Short windows: margins shrink first, then full height, then it scrolls inside. Never clips
+    (`FloatingRailMetrics`, 5 tests).
+  - Same at every dial position. Renders in `docs/design/energy-pass/round-2/` (Home at 1100, 640 and 420 tall, plus
+    light and the grid). The comparison sheets and per-position renders still predate rounds 1 and 2.
 
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
@@ -1107,7 +1117,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 35 | `fix/tracker-liveness` (Finding #7, stored data cleaned) | ✅ | ✅ | 455 | ✅ |
 | 36 | `feature/home-page` (F4) | ✅ | ✅ | 472 | ✅ |
 | 37 | `feature/installed-filter` (F5) | ✅ | ✅ | 476 | ✅ |
-| 38 | `feature/meebits-energy-pass` (look; J.R's eyeball first) | ✅ | ✅ | 483 | ✅ |
+| 38 | `feature/meebits-energy-pass` (look; J.R's eyeball first) | ✅ | ✅ | 490 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches

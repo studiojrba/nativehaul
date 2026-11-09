@@ -2,7 +2,8 @@ import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// Top-level layout: hover-expanding icon rail + navigable content (poster grid → three-column details).
+/// Top-level layout: the floating sidebar over one continuous page background (``RailShell``) + navigable content
+/// (poster grid → three-column details).
 struct RootView: View {
     /// App dependencies.
     let environment: AppEnvironment
@@ -25,6 +26,49 @@ struct RootView: View {
     }
 
     var body: some View {
+        RailShell(selection: $selection, libraryViewModel: libraryViewModel) { navigation }
+            .environment(environment)
+            .onChange(of: selection) { path.removeAll() }
+            .task {
+                isOnboarding = !environment.onboarding.hasCompletedOnboarding
+                environment.watcher.start()
+                await libraryViewModel.runAutomaticUpkeep()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: OnboardingRequest.name)) { _ in isOnboarding = true }
+            .sheet(isPresented: onboardingBinding) {
+                OnboardingView(viewModel: environment.makeOnboardingViewModel {
+                    isOnboarding = false
+                    Task { await libraryViewModel.runAutomaticUpkeep() }
+                })
+                .environment(environment)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.willTerminateNotification)) { _ in
+                environment.watcher.stop()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: LibraryChangeNotification.name)) { _ in
+                libraryViewModel.reload()
+                Task { await libraryViewModel.fetchMetadataQuietly() }
+            }
+            .toolbar { libraryToolbar }
+            .sheet(isPresented: $isAddingGame) {
+                AddGameSheet { libraryViewModel.addGame(title: $0, platform: $1, status: $2) }
+            }
+            .sheet(isPresented: $isMergingDuplicates) {
+                MergeDuplicatesSheet(viewModel: environment.makeMergeDuplicatesViewModel { libraryViewModel.reload() })
+            }
+            .fileImporter(isPresented: $isImporting, allowedContentTypes: [.json], onCompletion: handleImport)
+            .fileExporter(
+                isPresented: exportBinding,
+                document: exportDocument,
+                contentType: .json,
+                defaultFilename: "Retriever Library"
+            ) { _ in exportDocument = nil }
+            .alert("Library", isPresented: alertBinding, presenting: alertMessage) { _ in
+                Button("OK") { clearAlert() }
+            } message: { Text($0) }
+    }
+
+    private var navigation: some View {
         NavigationStack(path: $path) {
             content
                 .navigationDestination(for: UUID.self) { id in
@@ -38,49 +82,6 @@ struct RootView: View {
                     }
                 }
         }
-        .padding(.leading, DesignTokens.Rail.collapsedWidth)
-        .overlay(alignment: .leading) {
-            IconRailView(selection: $selection, libraryViewModel: libraryViewModel)
-        }
-        .environment(environment)
-        .onChange(of: selection) { path.removeAll() }
-        .task {
-            isOnboarding = !environment.onboarding.hasCompletedOnboarding
-            environment.watcher.start()
-            await libraryViewModel.runAutomaticUpkeep()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: OnboardingRequest.name)) { _ in isOnboarding = true }
-        .sheet(isPresented: onboardingBinding) {
-            OnboardingView(viewModel: environment.makeOnboardingViewModel {
-                isOnboarding = false
-                Task { await libraryViewModel.runAutomaticUpkeep() }
-            })
-            .environment(environment)
-        }
-        .onReceive(NotificationCenter.default.publisher(for: NSApplication.willTerminateNotification)) { _ in
-            environment.watcher.stop()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: LibraryChangeNotification.name)) { _ in
-            libraryViewModel.reload()
-            Task { await libraryViewModel.fetchMetadataQuietly() }
-        }
-        .toolbar { libraryToolbar }
-        .sheet(isPresented: $isAddingGame) {
-            AddGameSheet { libraryViewModel.addGame(title: $0, platform: $1, status: $2) }
-        }
-        .sheet(isPresented: $isMergingDuplicates) {
-            MergeDuplicatesSheet(viewModel: environment.makeMergeDuplicatesViewModel { libraryViewModel.reload() })
-        }
-        .fileImporter(isPresented: $isImporting, allowedContentTypes: [.json], onCompletion: handleImport)
-        .fileExporter(
-            isPresented: exportBinding,
-            document: exportDocument,
-            contentType: .json,
-            defaultFilename: "Retriever Library"
-        ) { _ in exportDocument = nil }
-        .alert("Library", isPresented: alertBinding, presenting: alertMessage) { _ in
-            Button("OK") { clearAlert() }
-        } message: { Text($0) }
     }
 
     @ViewBuilder private var content: some View {

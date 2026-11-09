@@ -25,6 +25,8 @@ enum Theme {
     static let surface = Color(nsColor: Palette.color(Palette.surface))
     /// Two steps up: hovered and raised surfaces.
     static let surfaceRaised = Color(nsColor: Palette.color(Palette.surfaceRaised))
+    /// The floating sidebar's shadow, the one shadow in the app (ADR 0037, round 2).
+    static let panelShadow = Color.black.opacity(DesignTokens.FloatingRail.shadowOpacity)
     /// Hairline borders, used instead of shadows.
     static let hairline = Color(nsColor: Palette.color(Palette.hairline))
     /// A brighter hairline for hover rings.

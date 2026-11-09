@@ -56,7 +56,24 @@
     Surfaces stay flat; colour comes from the art and the type. `EnergyPassTests.noBackgroundTextureComesBack` guards
     the source.
   - Everything else in the pass stays as it was.
-- The renders in `docs/design/energy-pass/` predate this ruling and still show the grid.
+- The per-position renders and comparison sheets predate this ruling and still show the grid.
+
+## Round 2 — floating, centred sidebar over one background (J.R, Mon 2026-11-09 13:48 EST; plan confirmed 13:55)
+J.R: "Have the background go into the side there. Make that side bar also a floating side bar, and not top aligned,
+center aligned please." Structural, so the same at every dial position.
+- **One continuous background.** The page background, Home's ambient wash included, runs across the whole window,
+  sidebar area included. The sidebar's own dim backdrop and its edge hairline are gone. `RailShell` keeps the
+  collapsed panel's width clear with a safe-area inset, so backgrounds that ignore the safe area run under the panel.
+  The app and the render harness share `RailShell`, so renders show the real layout.
+- **Floating panel.** Inset 16 pt from the leading edge, 16 pt corner radius, `Theme.surface` with a hairline and the
+  app's one shadow (`Theme.panelShadow`, tokens in `DesignTokens.FloatingRail`). This supersedes ADR 0025's
+  "hairlines instead of shadows" for this panel only. Hover still expands it to labels over the page, without reflow.
+- **Centred.** Vertically centred, as tall as its nav items, not full height.
+- **Short windows** (`FloatingRailMetrics`, tested): the space above and below shrinks first, then the panel grows to
+  the full height, and only if the items still don't fit does it scroll inside. Nav items are never clipped.
+- Renders in `docs/design/energy-pass/round-2/`: Home at 1100 × 1100, 640 and 420 (dark), 1100 light, and the grid.
+- **The comparison sheets and the per-position renders predate rounds 1 and 2:** they still show the grid texture and
+  the old full-height sidebar.
 
 ## Open for J.R
 - **Which dial position.** The default is Leaned in.
