@@ -67,8 +67,7 @@ struct LibraryGridView: View {
             }
             .padding(DesignTokens.Spacing.xl)
         }
-        .scrollContentBackground(.hidden)
-        .background { GraphPaperBackground() }
+        .canvasBackground()
     }
 
     private func gameGrid(_ games: [Game]) -> some View {

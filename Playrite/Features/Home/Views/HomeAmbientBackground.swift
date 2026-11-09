@@ -9,7 +9,7 @@ struct HomeAmbientBackground: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            GraphPaperBackground()
+            Theme.canvas
             if let tint = ArtworkTint.color(forImageAt: imagePath) {
                 LinearGradient(
                     colors: [tint.opacity(EnergyLevel.of(intensity).ambientOpacity), .clear],

@@ -23,7 +23,6 @@ struct EnergyPassTests {
             #expect(lower.tileFieldOpacity < higher.tileFieldOpacity)
             #expect(lower.hoverLift < higher.hoverLift)
             #expect(lower.hoverArtScale < higher.hoverArtScale)
-            #expect(lower.gridLineOpacity < higher.gridLineOpacity)
             #expect(lower.sectionTitleSize < higher.sectionTitleSize)
             #expect(lower.heroTitleSize < higher.heroTitleSize)
             #expect(lower.ambientOpacity < higher.ambientOpacity)
@@ -51,5 +50,19 @@ struct EnergyPassTests {
             }
         }
         #expect(offenders.isEmpty, "Accent outside Play, nav and links: \(offenders)")
+    }
+
+    /// J.R rejected the graph-paper background (2026-11-09 13:31): library surfaces stay flat at every position.
+    @Test func noBackgroundTextureComesBack() throws {
+        let enumerator = FileManager.default.enumerator(at: sourceRoot, includingPropertiesForKeys: nil)
+        var offenders: [String] = []
+        while let url = enumerator?.nextObject() as? URL {
+            guard url.pathExtension == "swift" else { continue }
+            let text = try String(contentsOf: url, encoding: .utf8)
+            if text.contains("GraphPaper") || text.contains("gridLineOpacity") {
+                offenders.append(url.lastPathComponent)
+            }
+        }
+        #expect(offenders.isEmpty, "Rejected background texture is back: \(offenders)")
     }
 }

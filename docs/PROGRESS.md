@@ -1041,7 +1041,7 @@ approved by J.R when he set the rule). 333 tests (+6).
   - item 7, detail: a 280 pt hero, and the rail repeated the art.
 - ✅🧪 **Built behind a three-position dial (As specced / Leaned in / Full send, `EnergyLevel` tokens).**
   - Art-coloured tile fields, with neutral tiles when there's no art.
-  - Graph paper on the grid and Home.
+  - ~~Graph paper on the grid and Home~~: rejected by J.R in round 1 and removed (below).
   - Shelf headers 24 / 32 / 44 pt black; Home hero title 60 / 80 / 104.
   - All listed data stragglers in mono.
   - The accent pulled back to Play, nav, links and the wordmark, guarded by a source scan. Play has the one
@@ -1052,12 +1052,19 @@ approved by J.R when he set the rule). 333 tests (+6).
   `defaults write com.studiojrba.Playrite design.intensity fullSend` (or `specced`), then relaunch.
 - ✅ **Renders** in `docs/design/energy-pass/`: `before/`, then each position for Home and the grid at 900, 1100 and
   1280, plus two comparison sheets.
-- 🧪 `EnergyPassTests` (4: default position, every value rises with the dial, fades under a second, the accent scan)
-  and `EnergyPassRenderTests` (6). 482 tests; lint clean.
+- 🧪 `EnergyPassTests` (5: default position, every value rises with the dial, fades under a second, the accent scan,
+  no background texture) and `EnergyPassRenderTests` (6). 483 tests; lint clean.
 - ⚠️ **Open for J.R:**
   - the dial position;
   - whether "electric indigo" means switching from our Fetch orange (a two-colour palette change);
   - moving playtime and sessions into the detail rail (item 7's remaining gap).
+- ✅🧪 **Design feedback round 1 (J.R, Mon 13:31 EST):** "I like the direction for sure but I don't like that grid
+  background."
+  - The graph-paper texture is **tried and rejected**. Removed at every dial position: `GraphPaperBackground`, its
+    two `EnergyLevel` values, and its uses on the grid and Home. Both are back on the flat canvas.
+  - Recorded in ADR 0037 under "Tried and rejected" so it doesn't return in a later pass, in any pattern.
+    `EnergyPassTests.noBackgroundTextureComesBack` guards the source.
+  - Everything else in the pass is unchanged. The renders predate this and still show the grid.
 
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
@@ -1100,7 +1107,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 35 | `fix/tracker-liveness` (Finding #7, stored data cleaned) | ✅ | ✅ | 455 | ✅ |
 | 36 | `feature/home-page` (F4) | ✅ | ✅ | 472 | ✅ |
 | 37 | `feature/installed-filter` (F5) | ✅ | ✅ | 476 | ✅ |
-| 38 | `feature/meebits-energy-pass` (look; J.R's eyeball first) | ✅ | ✅ | 482 | ✅ |
+| 38 | `feature/meebits-energy-pass` (look; J.R's eyeball first) | ✅ | ✅ | 483 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches

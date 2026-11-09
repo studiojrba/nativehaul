@@ -10,10 +10,6 @@ struct EnergyLevel: Sendable {
     let hoverLift: CGFloat
     /// How much the art scales inside its tile on hover.
     let hoverArtScale: CGFloat
-    /// Opacity of the graph-paper lines on library surfaces.
-    let gridLineOpacity: Double
-    /// Graph-paper cell size.
-    let gridSpacing: CGFloat
     /// Shelf and section header size.
     let sectionTitleSize: CGFloat
     /// Page header size.
@@ -56,8 +52,6 @@ struct EnergyLevel: Sendable {
         tileInset: Specced.tileInset,
         hoverLift: Specced.hoverLift,
         hoverArtScale: Specced.hoverArtScale,
-        gridLineOpacity: Specced.gridLineOpacity,
-        gridSpacing: Specced.gridSpacing,
         sectionTitleSize: Specced.sectionTitleSize,
         displaySize: Specced.displaySize,
         heroTitleSize: Specced.heroTitleSize,
@@ -71,8 +65,6 @@ struct EnergyLevel: Sendable {
         tileInset: LeanedIn.tileInset,
         hoverLift: LeanedIn.hoverLift,
         hoverArtScale: LeanedIn.hoverArtScale,
-        gridLineOpacity: LeanedIn.gridLineOpacity,
-        gridSpacing: LeanedIn.gridSpacing,
         sectionTitleSize: LeanedIn.sectionTitleSize,
         displaySize: LeanedIn.displaySize,
         heroTitleSize: LeanedIn.heroTitleSize,
@@ -86,8 +78,6 @@ struct EnergyLevel: Sendable {
         tileInset: FullSend.tileInset,
         hoverLift: FullSend.hoverLift,
         hoverArtScale: FullSend.hoverArtScale,
-        gridLineOpacity: FullSend.gridLineOpacity,
-        gridSpacing: FullSend.gridSpacing,
         sectionTitleSize: FullSend.sectionTitleSize,
         displaySize: FullSend.displaySize,
         heroTitleSize: FullSend.heroTitleSize,
@@ -102,8 +92,6 @@ struct EnergyLevel: Sendable {
         static let tileInset: CGFloat = 10
         static let hoverLift: CGFloat = 3
         static let hoverArtScale: CGFloat = 1.03
-        static let gridLineOpacity: Double = 0.035
-        static let gridSpacing: CGFloat = 28
         static let sectionTitleSize: CGFloat = 24
         static let displaySize: CGFloat = 34
         static let heroTitleSize: CGFloat = 60
@@ -118,8 +106,6 @@ struct EnergyLevel: Sendable {
         static let tileInset: CGFloat = 14
         static let hoverLift: CGFloat = 5
         static let hoverArtScale: CGFloat = 1.05
-        static let gridLineOpacity: Double = 0.06
-        static let gridSpacing: CGFloat = 24
         static let sectionTitleSize: CGFloat = 32
         static let displaySize: CGFloat = 44
         static let heroTitleSize: CGFloat = 80
@@ -134,8 +120,6 @@ struct EnergyLevel: Sendable {
         static let tileInset: CGFloat = 18
         static let hoverLift: CGFloat = 8
         static let hoverArtScale: CGFloat = 1.08
-        static let gridLineOpacity: Double = 0.09
-        static let gridSpacing: CGFloat = 20
         static let sectionTitleSize: CGFloat = 44
         static let displaySize: CGFloat = 56
         static let heroTitleSize: CGFloat = 104
