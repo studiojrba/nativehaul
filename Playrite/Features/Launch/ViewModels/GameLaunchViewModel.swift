@@ -17,6 +17,7 @@ final class GameLaunchViewModel {
     private let crossOver: CrossOverLaunchConfiguration
     private let fileExists: (String) -> Bool
     private let emulators: EmulatorRouter?
+    private let handoff: GameSessionHandoff?
     /// Result of the last provided file, if any.
     private(set) var providedFileMessage: String?
     private var revision = 0
@@ -28,7 +29,8 @@ final class GameLaunchViewModel {
         watcher: any PlaytimeWatching,
         crossOver: CrossOverLaunchConfiguration = .standard,
         fileExists: @escaping (String) -> Bool = { FileManager.default.fileExists(atPath: $0) },
-        emulators: EmulatorRouter? = nil
+        emulators: EmulatorRouter? = nil,
+        handoff: GameSessionHandoff? = nil
     ) {
         self.game = game
         self.launcher = launcher
@@ -36,6 +38,7 @@ final class GameLaunchViewModel {
         self.crossOver = crossOver
         self.fileExists = fileExists
         self.emulators = emulators
+        self.handoff = handoff
     }
 
     /// Current launch options or the reason launching is disabled.
@@ -110,6 +113,9 @@ final class GameLaunchViewModel {
             try await launcher.launch(option.target)
             lastLaunched = option.title
             errorMessage = nil
+            if option.isTracked, let appPath = option.target.appPath {
+                handoff?.gameDidLaunch(appPath: appPath)
+            }
         } catch {
             errorMessage = error.localizedDescription
         }

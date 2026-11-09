@@ -213,6 +213,6 @@ extension AppEnvironment {
 
     /// Builds the launch view model for a game.
     func makeGameLaunchViewModel(for game: Game) -> GameLaunchViewModel {
-        GameLaunchViewModel(game: game, launcher: launcher, watcher: watcher, emulators: emulators)
+        GameLaunchViewModel(game: game, launcher: launcher, watcher: watcher, emulators: emulators, handoff: handoff)
     }
 }

@@ -56,6 +56,8 @@ final class AppEnvironment {
     let components: any ComponentUpdating
     /// Per-source game update badges.
     let gameBadges: GameUpdateBadgeProvider
+    /// Keeps Retriever out of the way while a launched game runs (ADR 0030 Layer 1).
+    let handoff: GameSessionHandoff
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -83,7 +85,8 @@ final class AppEnvironment {
         onboarding: any OnboardingStoring,
         emulators: EmulatorRouter,
         components: any ComponentUpdating,
-        gameBadges: GameUpdateBadgeProvider
+        gameBadges: GameUpdateBadgeProvider,
+        handoff: GameSessionHandoff? = nil
     ) {
         self.container = container
         self.repository = repository
@@ -110,6 +113,8 @@ final class AppEnvironment {
         self.emulators = emulators
         self.components = components
         self.gameBadges = gameBadges
+        self.handoff = handoff
+            ?? GameSessionHandoff(visibility: MockAppVisibility(), observer: MockRunningApplicationObserver())
     }
 
     /// Seeded in-memory environment with mock services for SwiftUI previews.

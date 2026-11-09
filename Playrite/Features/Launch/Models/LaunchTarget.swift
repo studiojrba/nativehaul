@@ -11,4 +11,12 @@ enum LaunchTarget: Equatable, Sendable {
     case url(URL)
     /// Run an executable with arguments (e.g. CrossOver's wine starting a bottle's Steam).
     case process(executable: String, arguments: [String])
+
+    /// The `.app` this target opens, if it opens one (used by the launch handoff, ADR 0030).
+    var appPath: String? {
+        switch self {
+        case let .application(path), let .applicationWithArguments(path, _): path
+        case .url, .process: nil
+        }
+    }
 }

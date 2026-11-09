@@ -50,7 +50,7 @@ struct RootView: View {
             await libraryViewModel.runAutomaticUpkeep()
         }
         .onReceive(NotificationCenter.default.publisher(for: OnboardingRequest.name)) { _ in isOnboarding = true }
-        .sheet(isPresented: $isOnboarding) {
+        .sheet(isPresented: onboardingBinding) {
             OnboardingView(viewModel: environment.makeOnboardingViewModel {
                 isOnboarding = false
                 Task { await libraryViewModel.runAutomaticUpkeep() }
@@ -144,8 +144,14 @@ struct RootView: View {
             ?? libraryViewModel.metadataSummary?.description
     }
 
+    /// Onboarding never appears over a running game; it waits until Retriever is back (ADR 0030 Layer 1).
+    private var onboardingBinding: Binding<Bool> {
+        Binding(get: { isOnboarding && !environment.handoff.isGameRunning }, set: { isOnboarding = $0 })
+    }
+
+    /// Alerts never appear over a running game; they wait until Retriever is back (ADR 0030 Layer 1).
     private var alertBinding: Binding<Bool> {
-        Binding(get: { alertMessage != nil }, set: {
+        Binding(get: { alertMessage != nil && !environment.handoff.isGameRunning }, set: {
             if !$0 {
                 clearAlert()
             }

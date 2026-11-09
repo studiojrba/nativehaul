@@ -49,8 +49,13 @@ extension AppEnvironment {
             onboarding: UserDefaultsOnboardingStore(),
             emulators: emulators,
             components: makeLiveComponents(emulators: emulators),
-            gameBadges: GameUpdateBadgeProvider(files: LocalFileOperations(), switchVersions: .bundled())
+            gameBadges: GameUpdateBadgeProvider(files: LocalFileOperations(), switchVersions: .bundled()),
+            handoff: makeLiveHandoff()
         )
+    }
+
+    private static func makeLiveHandoff() -> GameSessionHandoff {
+        GameSessionHandoff(visibility: ApplicationVisibility(), observer: WorkspaceRunningApplicationObserver())
     }
 
     private static func makeLiveSteamSync(

@@ -78,3 +78,26 @@ is where tonight's failures happened.
 
 **Build note:** verifying it live means running the canonical build alongside a game. Per CLAUDE.md, that waits until
 J.R isn't playing, and it goes through Retriever's Play button.
+
+## Layer 1 built — approved minimal scope (J.R, 2026-11-08)
+J.R approved Layer 1 in its minimal form. After Play, Retriever hides or orders out its own window while a launched
+game runs and restores it when the game exits. No sheets, alerts or notifications appear over a running game.
+Nothing else about launch changes. Built on `feature/launch-handoff`:
+
+- **`GameSessionHandoff`:**
+  - after a successful **tracked `.app`** launch (the target opens an `.app`), it calls `NSApp.hide`;
+  - it watches that app's processes with its own `WorkspaceRunningApplicationObserver`;
+  - when the last one exits, it calls `NSApp.unhideWithoutActivation()`.
+  - A port's launcher and its game host are both counted.
+  - A game already running at Play counts as seen.
+  - If the app never appears within 10 s, Retriever restores itself.
+- **Gating:** `RootView`'s library alert and the onboarding sheet are held while a game runs, and appear when
+  Retriever is back. There are no notification banners.
+- **Not in this scope (unchanged from plain ADR 0030):**
+  - `steam://` and CrossOver launches;
+  - a Settings switch;
+  - re-hiding after the user brings Retriever back.
+- The launch path itself (planner, `WorkspaceGameLauncher`, `activates = true`) is untouched. The source scan still
+  forbids every focus-taking API.
+- **Tests:** `GameSessionHandoffTests` (mocks only).
+- Not exercised live: no Play clicks against J.R's library, per the brief.

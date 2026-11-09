@@ -917,6 +917,27 @@ approved by J.R when he set the rule). 333 tests (+6).
   played within 30 days **and not Completed**. A Completed game comes back only when its status is set to Playing; a
   fresh session alone never brings it back. New test: `aCompletedGameLeavesTheShelfUntilItIsPlayingAgain`. 433 tests.
 
+## 34 · feature/launch-handoff — ADR 0030 Layer 1, minimal (approved by J.R)
+- ✅🧪 **Retriever gets out of the game's way.**
+  - After Play opens a tracked `.app`, Retriever hides itself while the game runs.
+  - It restores itself without taking focus when the last process of that app exits. A port's launcher and its game
+    host are both counted.
+  - It restores itself after 10 s if the game never appears.
+  - The library alert and the onboarding sheet are held while a game runs.
+  - Nothing else about launch changed: Steam and CrossOver launches are not covered, there is no Settings switch, and
+    the launcher is untouched.
+- ✅🧪 Tests:
+  - hide on launch, unhide on exit;
+  - waits for the last process, and ignores other apps and a path with a trailing slash;
+  - grace-period restore;
+  - an already-running game;
+  - only tracked `.app` launches hand off (a Steam URL doesn't);
+  - a failed launch doesn't hide.
+  439 tests (+6); lint clean. (Was 449 before J.R removed Pick for Me and Quick Wins and this branch was restacked
+  onto `feature/jump-back-in`, 2026-11-09.)
+- ⚠️ Not exercised live: no Play clicks against J.R's library, per the brief. The first real check is J.R pressing
+  Play.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -953,7 +974,8 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 30 | `feature/builds-detail-showcase` (J.R direction) | ✅ | ✅ | 415 | ✅ |
 | 31 | `feature/app-rename-retriever` (J.R GO) | ✅ | ✅ | 419 | ✅ |
 | 32 | `feature/nxnative-first-launch-guidance` (Finding #6 follow-ups) | ✅ | ✅ | 426 | ✅ |
-| 33 | `feature/jump-back-in` (F1) | ✅ | ✅ | 432 | ✅ |
+| 33 | `feature/jump-back-in` (F1, Completed rule fixed) | ✅ | ✅ | 433 | ✅ |
+| 34 | `feature/launch-handoff` (Layer 1 minimal) | ✅ | ✅ | 439 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1017,7 +1039,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 33 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 34 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.
