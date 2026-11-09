@@ -9,7 +9,10 @@ struct RailShell<Content: View>: View {
     /// Library state for section counts.
     let libraryViewModel: LibraryViewModel
     /// The page.
+    /// The sidebar's hover state, when the caller drives it (tests). Otherwise the shell owns it.
+    var railExpansion: Binding<Bool>?
     @ViewBuilder let content: Content
+    @State private var isRailExpanded = false
 
     var body: some View {
         content
@@ -17,7 +20,11 @@ struct RailShell<Content: View>: View {
                 Color.clear.frame(width: DesignTokens.FloatingRail.reservedWidth)
             }
             .overlay(alignment: .leading) {
-                IconRailView(selection: $selection, libraryViewModel: libraryViewModel)
+                IconRailView(
+                    selection: $selection,
+                    isExpanded: railExpansion ?? $isRailExpanded,
+                    libraryViewModel: libraryViewModel
+                )
             }
             .background(Theme.canvas)
     }

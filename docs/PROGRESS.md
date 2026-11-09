@@ -1075,6 +1075,15 @@ approved by J.R when he set the rule). 333 tests (+6).
     (`FloatingRailMetrics`, 5 tests).
   - Same at every dial position. Renders in `docs/design/energy-pass/round-2/` (Home at 1100, 640 and 420 tall, plus
     light and the grid). The comparison sheets and per-position renders still predate rounds 1 and 2.
+- ✅🧪 **Round 2.1 (J.R, Mon 15:15–15:23 EST): hover hop fixed.** Hovering the sidebar hopped vertically before
+  expanding. Now the expansion is width-only, to the right, anchored left, and never moves vertically.
+  - The geometry is pinned: height and position come from the resting layout; only the width animates; the
+    `ScrollView` exists only in short windows; collapsed rows fit the panel exactly.
+  - J.R's negative-offset experiment: there's no position offset on the panel (only the shadow's), so nothing to
+    cancel. Went structural. The exact hop wasn't reproduced offscreen; every path that could cause it is removed.
+  - `FloatingRailHoverTests` samples frames through the hover animation and asserts that the panel's left-edge pixel
+    column never changes, at 1100 / 640 / 420 pt, all three dial positions, and borderless and titled windows. Resting
+    vs hovered renders are in `round-2/`.
 
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
@@ -1117,7 +1126,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 35 | `fix/tracker-liveness` (Finding #7, stored data cleaned) | ✅ | ✅ | 455 | ✅ |
 | 36 | `feature/home-page` (F4) | ✅ | ✅ | 472 | ✅ |
 | 37 | `feature/installed-filter` (F5) | ✅ | ✅ | 476 | ✅ |
-| 38 | `feature/meebits-energy-pass` (look; J.R's eyeball first) | ✅ | ✅ | 490 | ✅ |
+| 38 | `feature/meebits-energy-pass` (look; J.R's eyeball first) | ✅ | ✅ | 492 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches

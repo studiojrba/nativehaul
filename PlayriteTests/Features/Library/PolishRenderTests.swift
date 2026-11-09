@@ -34,15 +34,12 @@ struct PolishRenderTests {
     }
 
     private func shell(_ content: some View, environment: AppEnvironment, selection: SidebarDestination) -> some View {
-        NavigationStack { content }
-            .padding(.leading, DesignTokens.Rail.collapsedWidth)
-            .overlay(alignment: .leading) {
-                IconRailView(selection: .constant(selection), libraryViewModel: environment.makeLibraryViewModel())
-            }
-            .background(Theme.canvas)
-            .tint(Theme.accent)
-            .environment(environment)
-            .modelContainer(environment.container)
+        RailShell(selection: .constant(selection), libraryViewModel: environment.makeLibraryViewModel()) {
+            NavigationStack { content }
+        }
+        .tint(Theme.accent)
+        .environment(environment)
+        .modelContainer(environment.container)
     }
 
     private func renderBoth(_ view: some View, width: Double, name: String) {

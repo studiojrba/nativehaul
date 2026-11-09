@@ -48,4 +48,27 @@ struct FloatingRailRenderTests {
             appearance: .darkAqua
         ) != nil)
     }
+
+    /// Round 2.1: the same window, resting and hovered. The panel's top and bottom edges match; only its width changes.
+    @Test(arguments: [false, true])
+    func homeRestingAndHovered(isHovered: Bool) throws {
+        let environment = try LibraryRenderFixture.environment()
+        try LibraryRenderFixture.addHeroes(to: environment)
+        let screen = RailShell(
+            selection: .constant(.home),
+            libraryViewModel: environment.makeLibraryViewModel(),
+            railExpansion: .constant(isHovered)
+        ) {
+            NavigationStack { LibraryRenderFixture.home(environment) }
+        }
+        .tint(Theme.accent)
+        .environment(environment)
+        .modelContainer(environment.container)
+        #expect(OffscreenRenderer.render(
+            screen,
+            size: CGSize(width: Self.width, height: Self.width),
+            name: "floating-rail-home-1100-\(isHovered ? "hovered" : "resting")-dark",
+            appearance: .darkAqua
+        ) != nil)
+    }
 }

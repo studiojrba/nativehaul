@@ -75,6 +75,36 @@ center aligned please." Structural, so the same at every dial position.
 - **The comparison sheets and the per-position renders predate rounds 1 and 2:** they still show the grid texture and
   the old full-height sidebar.
 
+## Round 2.1 — hover widens the sidebar only (J.R, Mon 2026-11-09 15:15–15:23 EST)
+J.R: hovering the floating sidebar made it hop vertically first, then expand to the right.
+- **Requirement:** on hover the panel never moves vertically: no lift, no top-edge movement, no height change. The
+  expansion is width-only, to the right, anchored on the left edge, in one smooth motion.
+- **J.R's experiment (a negative offset):** the panel has no position offset, lift or transform (cause (b) ruled
+  out). The only vertical offset is the shadow's (`FloatingRail.shadowOffset`), which moves the shadow, not the panel,
+  so there was nothing for a negative value to cancel. We went straight to the structural pin.
+- **What was fragile:**
+  - Collapsed rows needed 48 pt but got 40 pt, so the content overflowed the panel and re-centred while the width
+    animated.
+  - The nav sat in a `ScrollView` in every state. ScrollViews adjust to safe areas, overlay scrollers and elastic
+    scrolling.
+  - The content height was re-measured during the hover animation (cause (a)).
+  - `withAnimation` animated every change in the hover transaction (cause (c)).
+  - Offscreen, the panel's edges did not move in either a borderless window or a titled window with a toolbar. So the
+    hop in J.R's window wasn't reproduced exactly. The fix removes every path that could cause it rather than
+    tuning one.
+- **The pin:**
+  - The panel's height and vertical position come only from the resting layout.
+  - Only the width frame animates (`.animation(value: isExpanded)`, none under Reduce Motion), anchored leading.
+  - The `ScrollView` exists only when the window is too short for the items.
+  - The panel padding is 4 pt horizontally, so collapsed rows fit exactly.
+- **Tests:**
+  - `FloatingRailHoverTests` drives the real `RailShell` from rest to hover with a deliberately slow animation. It
+    samples frames throughout and asserts that a pixel column through the panel's left edge never changes: at 1100,
+    640 and 420 pt, at all three dial positions, in borderless and titled-with-toolbar windows.
+  - A second test checks that the collapsed rows fit the panel.
+- **Renders:** `round-2/floating-rail-home-1100-{resting,hovered}-dark.png` and a side-by-side
+  (`floating-rail-hover-resting-vs-hovered.png`). The panel spans 310–789 pt in both.
+
 ## Open for J.R
 - **Which dial position.** The default is Leaned in.
 - **"Electric indigo".** Ollie's item 5 names indigo, but that is Meebits' accent. Retriever's accent is Fetch orange

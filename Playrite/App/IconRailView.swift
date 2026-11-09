@@ -3,20 +3,23 @@ import SwiftUI
 /// The floating sidebar (ADR 0037, round 2): a rounded panel with its own surface and shadow, inset from the window
 /// edges and vertically centred, as tall as its nav items. It shows icons and expands to full labels while hovered,
 /// floating over the page so the grid never reflows. In a short window it keeps every item reachable
-/// (``FloatingRailMetrics``).
+/// (``FloatingRailMetrics``). Hovering never moves it vertically: the expansion is width-only, to the right
+/// (round 2.1).
 struct IconRailView: View {
     /// Selected destination.
     @Binding var selection: SidebarDestination?
+    /// Whether the panel shows labels (true while hovered). Owned by the shell, so tests can drive it.
+    @Binding var isExpanded: Bool
     /// Library state for section counts.
     let libraryViewModel: LibraryViewModel
-    @State private var isExpanded = false
     @State private var availableHeight: CGFloat = 0
-    @State private var contentHeight: CGFloat = 0
+    @State private var restingContentHeight: CGFloat = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         let metrics = FloatingRailMetrics(
             available: availableHeight,
-            content: contentHeight,
+            content: restingContentHeight,
             preferredMargin: DesignTokens.FloatingRail.margin
         )
         panel(metrics)
@@ -26,32 +29,50 @@ struct IconRailView: View {
             .padding(.leading, DesignTokens.FloatingRail.margin)
     }
 
+    /// Hover changes the width only (round 2.1): the height and vertical position come from the resting layout, and
+    /// only the width frame animates, anchored on the left edge.
     private func panel(_ metrics: FloatingRailMetrics) -> some View {
         let shape = RoundedRectangle(cornerRadius: DesignTokens.FloatingRail.cornerRadius, style: .continuous)
-        return ScrollView(.vertical) {
-            items
-                .padding(DesignTokens.Spacing.sm)
-                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { contentHeight = $0 }
+        return content(scrolls: metrics.needsScroll)
+            .frame(height: metrics.panelHeight, alignment: .top)
+            .frame(
+                width: isExpanded ? DesignTokens.Rail.expandedWidth : DesignTokens.Rail.collapsedWidth,
+                alignment: .leading
+            )
+            .clipShape(shape)
+            .background {
+                shape.fill(Theme.surface)
+                    .shadow(
+                        color: Theme.panelShadow,
+                        radius: DesignTokens.FloatingRail.shadowRadius,
+                        y: DesignTokens.FloatingRail.shadowOffset
+                    )
+            }
+            .overlay { shape.strokeBorder(Theme.hairline) }
+            .animation(reduceMotion ? nil : .easeInOut(duration: DesignTokens.Motion.quick), value: isExpanded)
+            .onHover { isExpanded = $0 }
+    }
+
+    /// The nav items, in a scroll view only when the window is too short for them.
+    @ViewBuilder private func content(scrolls: Bool) -> some View {
+        if scrolls {
+            ScrollView(.vertical) { paddedItems }
+        } else {
+            paddedItems
         }
-        .scrollDisabled(!metrics.needsScroll)
-        .scrollIndicators(metrics.needsScroll ? .automatic : .hidden)
-        .frame(
-            width: isExpanded ? DesignTokens.Rail.expandedWidth : DesignTokens.Rail.collapsedWidth,
-            height: metrics.panelHeight
-        )
-        .clipShape(shape)
-        .background {
-            shape.fill(Theme.surface)
-                .shadow(
-                    color: Theme.panelShadow,
-                    radius: DesignTokens.FloatingRail.shadowRadius,
-                    y: DesignTokens.FloatingRail.shadowOffset
-                )
-        }
-        .overlay { shape.strokeBorder(Theme.hairline) }
-        .onHover { hovering in
-            withAnimation(.easeInOut(duration: DesignTokens.Motion.quick)) { isExpanded = hovering }
-        }
+    }
+
+    /// Collapsed rows fit the panel exactly (icon plus row padding), so nothing re-centres as the width changes.
+    private var paddedItems: some View {
+        items
+            .padding(.horizontal, DesignTokens.Spacing.xs)
+            .padding(.vertical, DesignTokens.Spacing.sm)
+            .fixedSize(horizontal: false, vertical: true)
+            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                if !isExpanded || restingContentHeight == 0 {
+                    restingContentHeight = height
+                }
+            }
     }
 
     private var items: some View {
@@ -84,7 +105,11 @@ struct IconRailView: View {
 }
 
 #Preview {
-    IconRailView(selection: .constant(.library(.all)), libraryViewModel: AppEnvironment.preview.makeLibraryViewModel())
-        .frame(height: DesignTokens.Layout.windowMinHeight)
-        .background(Theme.canvas)
+    IconRailView(
+        selection: .constant(.library(.all)),
+        isExpanded: .constant(true),
+        libraryViewModel: AppEnvironment.preview.makeLibraryViewModel()
+    )
+    .frame(height: DesignTokens.Layout.windowMinHeight)
+    .background(Theme.canvas)
 }
