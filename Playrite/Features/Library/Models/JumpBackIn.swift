@@ -1,7 +1,9 @@
 import Foundation
 
 /// The "Jump Back In" shelf at the top of All Games: games marked Playing, or with a recorded session in the last
-/// 30 days, most recent session first. Each card says quietly when it was last played and the time played from its
+/// 30 days and not Completed (J.R, 2026-11-09), most recent session first. A Completed game comes back only when its
+/// status is set to Playing; a fresh session alone never brings it back. Each card says quietly when it was last played
+/// and the time played from its
 /// largest real source, labelled; sources are never added together (ADR 0006).
 enum JumpBackIn {
     /// How far back a recorded session still counts.
@@ -18,7 +20,8 @@ enum JumpBackIn {
         let cutoff = now.addingTimeInterval(-window)
         return library
             .filter { game in
-                game.status == .playing || latestSessionEnd(game).map { $0 >= cutoff } == true
+                game.status == .playing
+                    || (game.status != .completed && latestSessionEnd(game).map { $0 >= cutoff } == true)
             }
             .sorted { lhs, rhs in
                 switch (lastActivity(lhs), lastActivity(rhs)) {

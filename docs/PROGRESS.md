@@ -912,8 +912,10 @@ approved by J.R when he set the rule). 333 tests (+6).
   432 tests (+6); lint clean.
 - ✅ **Renders inspected** (`docs/design/jump-back-in/`). The first render cut off the single line, so the shelf now
   uses the card's two-line form.
-- ⚠️ No live run against J.R's library (no Play clicks, per the brief). As written, a Completed game played in the
-  last 30 days appears; that is easy to narrow if he prefers.
+- ⚠️ No live run against J.R's library (no Play clicks, per the brief).
+- ✅🧪 **Completed games rule (J.R ruling, Mon 2026-11-09 09:36):** the shelf is games whose status is Playing, or
+  played within 30 days **and not Completed**. A Completed game comes back only when its status is set to Playing; a
+  fresh session alone never brings it back. New test: `aCompletedGameLeavesTheShelfUntilItIsPlayingAgain`. 433 tests.
 
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |

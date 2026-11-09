@@ -26,6 +26,7 @@ up where you left off should take no searching.
 
 ## Consequences
 - Full value on defaults (zero-tinker, ADR 0016).
-- A Completed game played in the last 30 days appears, as the rule is written. If J.R wants the shelf limited to
-  unfinished games, it's a one-line filter.
+- **Completed games (J.R ruling, 2026-11-09):** the shelf is games whose status is Playing, or played within 30 days
+  and not Completed. A Completed game leaves the shelf and comes back only when the user sets it to Playing; a fresh
+  session alone never brings it back.
 - Renders in `docs/design/jump-back-in/`.

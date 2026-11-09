@@ -39,7 +39,7 @@ struct JumpBackInTests {
         let repository = try MockLibraryRepository()
         let playingIdle = game("Playing, no sessions", status: .playing, in: repository)
         let fiveDays = game("Five days", sessionEndedDaysAgo: 5, in: repository)
-        let yesterday = game("Yesterday", status: .completed, sessionEndedDaysAgo: 1, in: repository)
+        let yesterday = game("Yesterday", status: .backlog, sessionEndedDaysAgo: 1, in: repository)
         _ = game("Forty days", sessionEndedDaysAgo: 40, in: repository)
         _ = game("Never played", in: repository)
         let shelf = JumpBackIn.games(from: [playingIdle, fiveDays, yesterday], now: now)
@@ -50,6 +50,14 @@ struct JumpBackInTests {
             "Five days",
             "Playing, no sessions",
         ])
+    }
+
+    @Test func aCompletedGameLeavesTheShelfUntilItIsPlayingAgain() throws {
+        let repository = try MockLibraryRepository()
+        let finished = game("Finished", status: .completed, sessionEndedDaysAgo: 0.1, in: repository)
+        #expect(JumpBackIn.games(from: [finished], now: now).isEmpty)
+        finished.status = .playing
+        #expect(JumpBackIn.games(from: [finished], now: now).map(\.title) == ["Finished"])
     }
 
     @Test func emptyLibraryMeansHiddenShelf() throws {
