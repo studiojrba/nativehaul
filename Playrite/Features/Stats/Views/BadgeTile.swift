@@ -10,7 +10,7 @@ struct BadgeTile: View {
             Image(systemName: result.definition.symbolName)
                 .font(DesignTokens.Typography.title)
                 .frame(width: DesignTokens.Layout.badgeSize, height: DesignTokens.Layout.badgeSize)
-                .foregroundStyle(result.isEarned ? Theme.accent : Theme.secondaryText)
+                .foregroundStyle(result.isEarned ? Theme.primaryText : Theme.tertiaryText)
                 .background(Circle().fill(Theme.placeholder))
             Text(result.definition.title).font(DesignTokens.Typography.headline)
             Text(result.definition.criteria)

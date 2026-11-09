@@ -10,7 +10,11 @@ struct JumpBackInShelf: View {
     var body: some View {
         if !games.isEmpty {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
-                SectionHeader(title: "Jump Back In", caption: "playing, or unfinished and played in the last 30 days")
+                SectionHeader(
+                    title: "Jump Back In",
+                    caption: "playing, or unfinished and played in the last 30 days",
+                    style: .shelf
+                )
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack(alignment: .top, spacing: DesignTokens.Spacing.xl) {
                         ForEach(games) { game in
@@ -22,7 +26,7 @@ struct JumpBackInShelf: View {
                                 ) {
                                     if let played = JumpBackIn.timePlayed(for: game) {
                                         Text(played)
-                                            .font(DesignTokens.Typography.caption)
+                                            .font(DesignTokens.Typography.monospacedSmall)
                                             .foregroundStyle(Theme.secondaryText)
                                             .lineLimit(DesignTokens.Lines.single)
                                     }

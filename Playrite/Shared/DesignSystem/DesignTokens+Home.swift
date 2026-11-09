@@ -1,14 +1,9 @@
 import SwiftUI
 
 extension DesignTokens {
-    /// The Home page (ADR 0035): a big art-carried hero whose colour washes into the page behind it.
+    /// The Home page (ADR 0035): a big art-carried hero whose colour washes into the page behind it. Hero size, title
+    /// size and wash strength come from the energy dial (``EnergyLevel``, ADR 0037).
     enum Home {
-        /// Hero banner height.
-        static let heroHeight: CGFloat = 440
-        /// Hero title size: much larger and heavier than page headers.
-        static let heroTitleSize: CGFloat = 56
-        /// Hero title.
-        static let heroTitle: Font = .system(size: heroTitleSize, weight: .black, design: .rounded)
         /// Tight tracking for the hero title.
         static let heroTitleTracking: CGFloat = -1.2
         /// The hero's Play button width.
@@ -21,8 +16,6 @@ extension DesignTokens {
         static let crossfadeSeconds: Double = 0.7
         /// Diameter of a navigation dot.
         static let dotSize: CGFloat = 8
-        /// The ambient wash behind the page, at its strongest point (top of the page).
-        static let ambientOpacity: Double = 0.55
         /// How far down the page the wash reaches.
         static let ambientHeight: CGFloat = 900
         /// Blur on the wash.

@@ -10,7 +10,7 @@ struct RecentlyAddedShelf: View {
     var body: some View {
         if !games.isEmpty {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
-                SectionHeader(title: "Recently Added", caption: "added in the last 30 days")
+                SectionHeader(title: "Recently Added", caption: "added in the last 30 days", style: .shelf)
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack(alignment: .top, spacing: DesignTokens.Spacing.xl) {
                         ForEach(games) { game in

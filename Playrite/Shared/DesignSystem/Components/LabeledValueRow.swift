@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A label/value row used in detail screens.
+/// A label/value row used in detail screens. Values are data, so they're mono (ADR 0037).
 struct LabeledValueRow<Value: View>: View {
     /// Leading label.
     let label: String
@@ -14,6 +14,7 @@ struct LabeledValueRow<Value: View>: View {
                 .foregroundStyle(Theme.secondaryText)
                 .frame(width: DesignTokens.Layout.formLabelWidth, alignment: .leading)
             value()
+                .font(DesignTokens.Typography.monospaced)
             Spacer(minLength: DesignTokens.Spacing.none)
         }
     }

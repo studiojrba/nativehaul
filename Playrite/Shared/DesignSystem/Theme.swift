@@ -3,8 +3,14 @@ import SwiftUI
 /// Semantic colours (ADR 0025). Views reference roles (`Theme.accent`), never concrete colours; both appearances
 /// come from ``Palette``.
 enum Theme {
-    /// The one signature pop: Play, selection, the active rail item, progress and small highlights (~5% of a screen).
+    /// The one electric accent, spent only on Play, the active nav item, links and the wordmark (ADR 0037).
     static let accent = Color(nsColor: Palette.color(Palette.accent))
+    /// Play's gradient, the signature surface: the accent running into a deeper, hotter red (ADR 0037).
+    static let playGradient = LinearGradient(
+        colors: [accent, Color(nsColor: Palette.color(Palette.accentDeep))],
+        startPoint: .leading,
+        endPoint: .trailing
+    )
     /// Text and icons on ``accent``.
     static let onAccent = Color(nsColor: Palette.color(Palette.onAccent))
     /// A faint accent wash for selected rows.

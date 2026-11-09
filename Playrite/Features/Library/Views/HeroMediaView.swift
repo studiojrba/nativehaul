@@ -12,11 +12,12 @@ struct HeroMediaView: View {
     /// Extra carousel slides.
     var carouselImagePaths: [String] = []
     @State private var index = 0
+    @Environment(\.designIntensity) private var intensity
 
     var body: some View {
         Theme.placeholder
             .frame(maxWidth: .infinity)
-            .frame(height: DesignTokens.Details.heroHeight)
+            .frame(height: EnergyLevel.of(intensity).detailHeroHeight)
             .overlay {
                 // An overlay takes the placeholder's size, so a wide image fills it without widening the column.
                 if let image = currentImage {
@@ -41,8 +42,7 @@ struct HeroMediaView: View {
         HStack(spacing: DesignTokens.Spacing.sm) {
             Button("Previous image", systemImage: "chevron.left") { step(by: -1) }
             Text("\(index + 1) / \(slides.count)")
-                .font(DesignTokens.Typography.captionEmphasis)
-                .monospacedDigit()
+                .font(DesignTokens.Typography.monospacedSmall)
             Button("Next image", systemImage: "chevron.right") { step(by: 1) }
         }
         .labelStyle(.iconOnly)

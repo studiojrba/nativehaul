@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// The big Launch button. Extra launch routes appear in its menu; with no target it is disabled and says why.
+/// The big Launch button: Play in the signature gradient (ADR 0037), other routes in a small menu beside it; with no
+/// target it is disabled and says why.
 struct LaunchButton: View {
     /// Launch state.
     let viewModel: GameLaunchViewModel
@@ -8,19 +9,13 @@ struct LaunchButton: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
             if let primary = viewModel.primaryOption {
-                Menu {
-                    ForEach(viewModel.availability.options) { option in
-                        Button(option.title) { Task { await viewModel.launch(option) } }
+                HStack(spacing: DesignTokens.Spacing.sm) {
+                    Button { Task { await viewModel.launch() } } label: { label("Play", isEnabled: true) }
+                        .buttonStyle(PlayButtonStyle())
+                    if viewModel.availability.options.count > 1 {
+                        otherRoutes
                     }
-                } label: {
-                    label("Play", isEnabled: true)
-                } primaryAction: {
-                    Task { await viewModel.launch() }
                 }
-                .menuStyle(.button)
-                .buttonStyle(.borderedProminent)
-                .tint(Theme.accent)
-                .controlSize(.large)
                 if primary.title != "Play" {
                     Text("via \(primary.title)")
                         .font(DesignTokens.Typography.caption)
@@ -54,6 +49,23 @@ struct LaunchButton: View {
                 Text(error).font(DesignTokens.Typography.caption).foregroundStyle(Theme.danger)
             }
         }
+    }
+
+    /// The other launch routes (Steam via a bottle, …) in a small menu beside Play.
+    private var otherRoutes: some View {
+        Menu {
+            ForEach(viewModel.availability.options) { option in
+                Button(option.title) { Task { await viewModel.launch(option) } }
+            }
+        } label: {
+            Image(systemName: "chevron.down")
+        }
+        .menuStyle(.button)
+        .menuIndicator(.hidden)
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+        .fixedSize()
+        .accessibilityLabel("Other ways to play")
     }
 
     private func label(_ text: String, isEnabled: Bool) -> some View {

@@ -13,6 +13,7 @@ struct HomeHero: View {
     /// Reference time for the state line.
     var now: Date = .now
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.designIntensity) private var intensity
 
     var body: some View {
         if let game = current {
@@ -23,7 +24,7 @@ struct HomeHero: View {
                 details(for: game)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: DesignTokens.Home.heroHeight)
+            .frame(height: EnergyLevel.of(intensity).heroHeight)
             .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
             .overlay(alignment: .bottomTrailing) {
                 if heroes.count > 1 {
@@ -46,7 +47,7 @@ struct HomeHero: View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             NavigationLink(value: game.id) {
                 Text(game.title)
-                    .font(DesignTokens.Home.heroTitle)
+                    .font(EnergyLevel.of(intensity).heroTitle)
                     .tracking(DesignTokens.Home.heroTitleTracking)
                     .lineLimit(DesignTokens.Lines.title)
                     .minimumScaleFactor(DesignTokens.Typography.minimumScale)

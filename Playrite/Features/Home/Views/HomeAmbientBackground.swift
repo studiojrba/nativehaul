@@ -5,13 +5,14 @@ import SwiftUI
 struct HomeAmbientBackground: View {
     /// The featured game's banner art.
     let imagePath: String?
+    @Environment(\.designIntensity) private var intensity
 
     var body: some View {
         ZStack(alignment: .top) {
-            Theme.canvas
+            GraphPaperBackground()
             if let tint = ArtworkTint.color(forImageAt: imagePath) {
                 LinearGradient(
-                    colors: [tint.opacity(DesignTokens.Home.ambientOpacity), .clear],
+                    colors: [tint.opacity(EnergyLevel.of(intensity).ambientOpacity), .clear],
                     startPoint: .top,
                     endPoint: .bottom
                 )

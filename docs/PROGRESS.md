@@ -1028,6 +1028,37 @@ approved by J.R when he set the rule). 333 tests (+6).
   shelf) and `InstalledFilterRenderTests` at 900, 1100 and 1280. 476 tests; lint clean.
 - ✅ **Renders inspected** (`docs/design/installed-filter/`). The window toolbar isn't part of offscreen renders.
 
+## 38 · feature/meebits-energy-pass — design pass at three intensities (J.R 09:41 + 09:55; not to merge without his eyeball)
+- ✅ **ADR 0025 item 7 recorded** on `fix/tracker-liveness`: sub-second transitions, no surface breaks the tokens,
+  no dead ends.
+- ✅ **Audit** (full table in ADR 0037), state before this branch:
+  - item 1, colour fields: gap;
+  - item 2, ambient Home: done in F4;
+  - item 3, graph paper: gap;
+  - item 4, type: partial, with about ten proportional-type data stragglers;
+  - item 5, accent: crept into six places, and Play was a stock button;
+  - item 6, hover: a ring plus a wash, no lift;
+  - item 7, detail: a 280 pt hero, and the rail repeated the art.
+- ✅🧪 **Built behind a three-position dial (As specced / Leaned in / Full send, `EnergyLevel` tokens).**
+  - Art-coloured tile fields, with neutral tiles when there's no art.
+  - Graph paper on the grid and Home.
+  - Shelf headers 24 / 32 / 44 pt black; Home hero title 60 / 80 / 104.
+  - All listed data stragglers in mono.
+  - The accent pulled back to Play, nav, links and the wordmark, guarded by a source scan. Play has the one
+    gradient.
+  - Hover lifts the card and scales the art, and does nothing under Reduce Motion.
+  - Detail hero 380 / 460 / 560 pt; the rail cover shows only when there's no hero art.
+- **The app runs at Leaned in.** Try another position live with
+  `defaults write com.studiojrba.Playrite design.intensity fullSend` (or `specced`), then relaunch.
+- ✅ **Renders** in `docs/design/energy-pass/`: `before/`, then each position for Home and the grid at 900, 1100 and
+  1280, plus two comparison sheets.
+- 🧪 `EnergyPassTests` (4: default position, every value rises with the dial, fades under a second, the accent scan)
+  and `EnergyPassRenderTests` (6). 482 tests; lint clean.
+- ⚠️ **Open for J.R:**
+  - the dial position;
+  - whether "electric indigo" means switching from our Fetch orange (a two-colour palette change);
+  - moving playtime and sessions into the detail rail (item 7's remaining gap).
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1069,6 +1100,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 35 | `fix/tracker-liveness` (Finding #7, stored data cleaned) | ✅ | ✅ | 455 | ✅ |
 | 36 | `feature/home-page` (F4) | ✅ | ✅ | 472 | ✅ |
 | 37 | `feature/installed-filter` (F5) | ✅ | ✅ | 476 | ✅ |
+| 38 | `feature/meebits-energy-pass` (look; J.R's eyeball first) | ✅ | ✅ | 482 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1108,7 +1140,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0036)
+## Key decisions (see `docs/decisions/` ADR 0001–0037)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -1132,7 +1164,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 37 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 38 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

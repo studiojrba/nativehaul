@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// One horizontal bar, 0–100%, split into a segment per build stage (J.R's direction, ADR 0028). Finished segments
-/// are full accent, the current one fills with its stage fraction, upcoming ones stay on the track colour. Without
+/// are full strength, the current one fills with its stage fraction, upcoming ones stay on the track colour. Without
 /// stage markers it is indeterminate rather than a stuck 0%. Reduce Motion: values land without animation.
 struct BuildProgressBar: View {
     /// Parsed stage state.
@@ -15,7 +15,7 @@ struct BuildProgressBar: View {
                 segments
             } else {
                 Text("Building…").font(DesignTokens.Typography.headline)
-                ProgressView().progressViewStyle(.linear).tint(Theme.accent)
+                ProgressView().progressViewStyle(.linear).tint(Theme.primaryText)
             }
         }
         .accessibilityElement(children: .combine)
@@ -27,7 +27,7 @@ struct BuildProgressBar: View {
             Text(stageTitle).font(DesignTokens.Typography.headline)
             Text("\(progress.displayedPercent)%")
                 .font(DesignTokens.Typography.monospaced)
-                .foregroundStyle(Theme.accent)
+                .foregroundStyle(Theme.primaryText)
             if let times {
                 Text(times).font(DesignTokens.Typography.monospacedSmall).foregroundStyle(Theme.secondaryText)
             }
@@ -40,7 +40,7 @@ struct BuildProgressBar: View {
                 GeometryReader { proxy in
                     ZStack(alignment: .leading) {
                         Capsule().fill(Theme.surfaceRaised)
-                        Capsule().fill(Theme.accent).frame(width: proxy.size.width * fill)
+                        Capsule().fill(Theme.primaryText).frame(width: proxy.size.width * fill)
                     }
                 }
             }

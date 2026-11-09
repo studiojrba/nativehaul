@@ -10,7 +10,7 @@ struct UnknownInstallHeader: View {
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: DesignTokens.Spacing.md) {
-            SectionHeader(title: "Can't tell if installed", caption: "no install record from any source")
+            SectionHeader(title: "Can't tell if installed", caption: "no install record from any source", style: .shelf)
             Spacer()
             Button(isShowing ? "Hide \(count)" : "Show \(count)") { isShowing.toggle() }
                 .font(DesignTokens.Typography.monospacedSmall)

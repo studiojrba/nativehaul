@@ -2,12 +2,14 @@ import SwiftUI
 
 /// Title for a content section, with optional trailing caption (ADR 0025).
 ///
-/// `.display` is the big, tight page-level header; `.panel` (the default) is the calm header used inside dense panels
-/// such as the detail page, so data screens stay quiet.
+/// `.display` is the big, tight page-level header; `.shelf` heads a row of games on Home and the grids; `.panel` (the
+/// default) is the calm header used inside dense panels such as the detail page, so data screens stay quiet.
+/// Display and shelf sizes come from the energy dial (ADR 0037).
 struct SectionHeader: View {
     /// How loud the header is.
     enum Style {
         case display
+        case shelf
         case panel
     }
 
@@ -17,6 +19,7 @@ struct SectionHeader: View {
     var caption: String?
     /// How loud the header is.
     var style = Style.panel
+    @Environment(\.designIntensity) private var intensity
 
     var body: some View {
         Group {
@@ -25,6 +28,17 @@ struct SectionHeader: View {
                 VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxs) {
                     titleText
                     captionText
+                }
+            case .shelf:
+                ViewThatFits(in: .horizontal) {
+                    HStack(alignment: .firstTextBaseline, spacing: DesignTokens.Spacing.md) {
+                        titleText
+                        captionText
+                    }
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxs) {
+                        titleText
+                        captionText
+                    }
                 }
             case .panel:
                 FlowLayout(spacing: DesignTokens.Spacing.sm) {
@@ -47,7 +61,9 @@ struct SectionHeader: View {
     @ViewBuilder private var titleText: some View {
         switch style {
         case .display:
-            Text(title).font(DesignTokens.Typography.display).tracking(DesignTokens.Typography.displayTracking)
+            Text(title).font(EnergyLevel.of(intensity).display).tracking(DesignTokens.Typography.displayTracking)
+        case .shelf:
+            Text(title).font(EnergyLevel.of(intensity).sectionTitle).tracking(DesignTokens.Typography.displayTracking)
         case .panel:
             Text(title).font(DesignTokens.Typography.title)
         }

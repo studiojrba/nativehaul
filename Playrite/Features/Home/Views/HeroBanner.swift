@@ -30,5 +30,5 @@ struct HeroBanner: View {
 
 #Preview {
     HeroBanner(imagePath: nil)
-        .frame(height: DesignTokens.Home.heroHeight)
+        .frame(height: EnergyLevel.of(.leanedIn).heroHeight)
 }

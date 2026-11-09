@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// Right rail of the details screen: cover, Launch, Manage, HLTB chips, info list.
+/// Right rail of the details screen: the quiet narrow info column beside the hero (ADR 0037, item 7). Launch, Manage,
+/// HLTB chips and the info list; the cover only when the game has no hero art, so the art appears once.
 struct GameDetailRail: View {
     /// Detail state.
     let viewModel: GameDetailViewModel
@@ -13,10 +14,12 @@ struct GameDetailRail: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
-                CoverArtView(imagePath: viewModel.game.coverImagePath, title: viewModel.game.title)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: DesignTokens.Radius.md).strokeBorder(Theme.hairline)
-                    )
+                if viewModel.game.heroImagePath == nil {
+                    CoverArtView(imagePath: viewModel.game.coverImagePath, title: viewModel.game.title)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: DesignTokens.Radius.md).strokeBorder(Theme.hairline)
+                        )
+                }
                 BottleInstallPanel(viewModel: environment.makeBottleInstallViewModel(for: viewModel.game))
                 LaunchButton(viewModel: launchViewModel)
                 GameUpdateBadgeView(badge: environment.gameBadges.badge(for: viewModel.game))

@@ -1,11 +1,11 @@
 import SwiftUI
 
-/// A confident empty state (ADR 0025): one accent-coloured symbol, a big display title, a calm sentence and an
+/// A confident empty state (ADR 0025): one quiet symbol, a big display title, a calm sentence and an
 /// optional action.
 struct EmptyStateView<Actions: View>: View {
     /// Big title.
     let title: String
-    /// SF Symbol, drawn in the accent (the one pop on an empty screen).
+    /// SF Symbol, drawn quietly (the accent is spent only on Play, nav and links, ADR 0037).
     let symbolName: String
     /// One plain sentence.
     var message: String?
@@ -16,7 +16,7 @@ struct EmptyStateView<Actions: View>: View {
         VStack(spacing: DesignTokens.Spacing.lg) {
             Image(systemName: symbolName)
                 .font(DesignTokens.Typography.display)
-                .foregroundStyle(Theme.accent)
+                .foregroundStyle(Theme.secondaryText)
             Text(title)
                 .font(DesignTokens.Typography.display)
                 .tracking(DesignTokens.Typography.displayTracking)

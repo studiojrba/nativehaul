@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// The story that leads the Stats page (ADR 0025): your most-played games, ranked, with their art. The rank numbers
-/// are the page's one accent pop.
+/// are the page's loudest type.
 struct TopGamesRow: View {
     /// Ranked games.
     let games: [RankedGame]
@@ -31,7 +31,7 @@ struct TopGamesRow: View {
                     .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.md).strokeBorder(Theme.hairline))
                 Text("\(game.rank)")
                     .font(DesignTokens.Typography.rank)
-                    .foregroundStyle(Theme.accent)
+                    .foregroundStyle(Theme.primaryText)
                     .padding(.horizontal, DesignTokens.Spacing.sm)
                     .background(
                         UnevenRoundedRectangle(topTrailingRadius: DesignTokens.Radius.md)

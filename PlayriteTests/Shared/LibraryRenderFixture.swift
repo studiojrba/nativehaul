@@ -3,7 +3,7 @@ import Foundation
 @testable import Playrite
 import SwiftUI
 
-/// A preview library dressed for offscreen renders of the discovery features (Jump Back In, Pick for Me, Quick Wins):
+/// A preview library dressed for offscreen renders (Jump Back In, Home, the Installed filter, the energy pass):
 /// stand-in covers, a mix of statuses, recent tracked sessions and HLTB main-story estimates.
 @MainActor
 enum LibraryRenderFixture {
@@ -61,6 +61,48 @@ enum LibraryRenderFixture {
         }
         try environment.repository.save()
         return environment
+    }
+
+    /// A fake installed app path that ``fileExists`` reports present.
+    static let installedPath = "/Games/Installed.app"
+    private static let bannerSize = CGSize(width: 1600, height: 640)
+    private static let heroHues: [CGFloat] = [0.58, 0.02, 0.33]
+
+    /// Gives the first three games an installed app and wide banner art, so they qualify for Home's hero.
+    static func addHeroes(to environment: AppEnvironment) throws {
+        let games = try environment.repository.fetchGames().prefix(heroHues.count)
+        for (game, hue) in zip(games, heroHues) {
+            game.appBundlePath = installedPath
+            game.heroImagePath = OffscreenRenderer.placeholderArt(
+                name: "home-banner-\(game.title)",
+                hue: hue,
+                size: bannerSize
+            )
+        }
+        try environment.repository.save()
+    }
+
+    /// The disk as Home's renders see it: the fake installed app plus real files.
+    static func fileExists(_ path: String) -> Bool {
+        path == installedPath || FileManager.default.fileExists(atPath: path)
+    }
+
+    /// Home wired for renders, with a launcher that sees the fake installed app.
+    static func home(_ environment: AppEnvironment) -> HomeView {
+        HomeView(
+            libraryViewModel: environment.makeLibraryViewModel(),
+            makeLaunch: { game in
+                GameLaunchViewModel(
+                    game: game,
+                    launcher: RecordingGameLauncher(),
+                    watcher: MockPlaytimeWatcher(),
+                    fileExists: { $0 == installedPath }
+                )
+            },
+            onAddGame: {},
+            onBrowseLibrary: {},
+            fileExists: fileExists
+        )
     }
 
     /// Wraps a screen the way ``RootView`` does: icon rail, canvas, accent, environment.

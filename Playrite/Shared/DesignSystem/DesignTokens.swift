@@ -22,6 +22,8 @@ enum DesignTokens {
         static let sm: CGFloat = 4
         static let md: CGFloat = 8
         static let lg: CGFloat = 12
+        /// Cover tiles (Meebits' ~16 px cards, ADR 0037).
+        static let tile: CGFloat = 16
     }
 
     /// Stroke widths (points).
@@ -116,7 +118,7 @@ enum DesignTokens {
         static let sectionLabel: Font = .system(size: TypeScale.caption, weight: .semibold)
         static let monospaced: Font = .system(size: TypeScale.body, design: .monospaced)
         static let monospacedSmall: Font = .system(size: TypeScale.caption, design: .monospaced)
-        static let statValue: Font = .system(size: TypeScale.stat, weight: .bold, design: .rounded)
+        static let statValue: Font = .system(size: TypeScale.stat, weight: .bold, design: .monospaced)
         /// Rank numbers on the Stats story row.
         static let rank: Font = .system(size: TypeScale.rank, weight: .black, design: .rounded)
         static let launch: Font = .system(size: TypeScale.launch, weight: .bold)
@@ -153,8 +155,8 @@ enum DesignTokens {
         /// How far past the hero's sides the wash extends, in blur radii (the centre column clips it, so it reads
         /// as an edge-to-edge glow rather than a box).
         static let heroGlowSpread: CGFloat = 3
-        /// A card's hover wash.
-        static let hoverOpacity: Double = 0.14
+        /// A tile field's bottom strength, as a share of its top (the field deepens downward).
+        static let fieldFalloff: Double = 0.7
         /// Sampled colours are lifted to at least this saturation, so a muddy average still reads as colour.
         static let minimumSaturation: CGFloat = 0.45
         /// …and set to this brightness.

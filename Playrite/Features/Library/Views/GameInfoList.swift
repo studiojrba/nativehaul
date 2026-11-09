@@ -14,7 +14,7 @@ struct GameInfoList: View {
                         .foregroundStyle(Theme.secondaryText)
                         .frame(width: DesignTokens.Details.infoLabelWidth, alignment: .leading)
                     Text(row.value)
-                        .font(DesignTokens.Typography.caption)
+                        .font(DesignTokens.Typography.monospacedSmall)
                         .textSelection(.enabled)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .fixedSize(horizontal: false, vertical: true)

@@ -1,9 +1,15 @@
 import SwiftUI
 
-/// A grid cell (ADR 0025, Steam-style restraint): cover art, the title, and ONE quiet state-driven line underneath.
+/// A grid cell (ADR 0025, ADR 0037): the cover sitting on a saturated field of its own art's colour, the title, and
+/// ONE quiet state line underneath in mono.
 ///
-/// Hover brightens a hairline ring and lays a faint wash of the art's own colour behind the card; selection uses the
-/// accent ring. Both are overlays/backgrounds, so the grid never reflows.
+/// - **Colour field:** the tile behind the cover is a gradient of the art's sampled colour, so a grid reads as a
+///   saturated mosaic. With no art, the tile is the neutral surface: no fake colour.
+/// - **The one hover gesture:** the card lifts and the art scales slightly inside its tile. Nothing else reacts.
+///   Under Reduce Motion, hover does nothing.
+/// - **Selection** is a strong ring in the primary text colour (the accent is spent only on Play, nav and links).
+///
+/// Everything is drawn as backgrounds, overlays and transforms, so the grid never reflows.
 struct CoverCard<Accessory: View>: View {
     /// Primary text.
     let title: String
@@ -16,29 +22,36 @@ struct CoverCard<Accessory: View>: View {
     /// Optional small view under the subtitle (kept empty in the library grid).
     @ViewBuilder let accessory: () -> Accessory
     @State private var isHovered = false
+    @Environment(\.designIntensity) private var intensity
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
+        let level = EnergyLevel.of(intensity)
+        let isLifted = isHovered && !reduceMotion
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
             CoverArtView(imagePath: imagePath, title: title)
-                .overlay(
-                    RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
-                        .strokeBorder(ringColor, lineWidth: ringWidth)
-                )
+                .scaleEffect(isLifted ? level.hoverArtScale : 1)
+                .padding(level.tileInset)
+                .background { field(level) }
+                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.tile))
+                .overlay {
+                    RoundedRectangle(cornerRadius: DesignTokens.Radius.tile)
+                        .strokeBorder(
+                            isSelected ? Theme.primaryText : Theme.hairline,
+                            lineWidth: isSelected ? DesignTokens.Stroke.emphasis : DesignTokens.Stroke.hairline
+                        )
+                }
+                .offset(y: isLifted ? -level.hoverLift : 0)
             Text(title)
                 .font(DesignTokens.Typography.headline)
                 .foregroundStyle(Theme.primaryText)
                 .lineLimit(DesignTokens.Lines.single)
                 .padding(.top, DesignTokens.Spacing.xs)
             Text(subtitle)
-                .font(DesignTokens.Typography.caption)
+                .font(DesignTokens.Typography.monospacedSmall)
                 .foregroundStyle(Theme.secondaryText)
                 .lineLimit(DesignTokens.Lines.single)
             accessory()
-        }
-        .background {
-            RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
-                .fill(hoverWash)
-                .padding(-DesignTokens.Spacing.sm)
         }
         .contentShape(Rectangle())
         .onHover { hovering in
@@ -46,21 +59,20 @@ struct CoverCard<Accessory: View>: View {
         }
     }
 
-    private var ringColor: Color {
-        if isSelected {
-            return Theme.accent
+    @ViewBuilder
+    private func field(_ level: EnergyLevel) -> some View {
+        if let tint = ArtworkTint.color(forImageAt: imagePath) {
+            LinearGradient(
+                colors: [
+                    tint.opacity(level.tileFieldOpacity),
+                    tint.opacity(level.tileFieldOpacity * DesignTokens.ArtTint.fieldFalloff),
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        } else {
+            Theme.surfaceRaised
         }
-        return isHovered ? Theme.hairlineStrong : Theme.hairline
-    }
-
-    private var ringWidth: CGFloat {
-        isSelected ? DesignTokens.Stroke.emphasis : DesignTokens.Stroke.hairline
-    }
-
-    private var hoverWash: Color {
-        guard isHovered else { return .clear }
-        return (ArtworkTint.color(forImageAt: imagePath) ?? Theme.surfaceRaised)
-            .opacity(DesignTokens.ArtTint.hoverOpacity)
     }
 }
 

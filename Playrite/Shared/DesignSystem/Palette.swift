@@ -27,6 +27,8 @@ enum Palette {
     static let textTertiary = Pair(dark: 0x62666D, light: 0x8A8F98)
     /// Fetch orange: a saturated, warm, slightly playful red-orange that pops on near-black and on white.
     static let accent = Pair(dark: 0xFF5A1F, light: 0xF24E12)
+    /// The far end of Play's gradient, the one saturated gradient in the app (ADR 0037).
+    static let accentDeep = Pair(dark: 0xFF2D55, light: 0xE6194B)
     /// Text and icons on the accent (near-black reads bolder and clearer on the orange than white does).
     static let onAccent = Pair(dark: 0x0B0B0C, light: 0x0B0B0C)
     static let success = Pair(dark: 0x5BA37F, light: 0x2F7D58)
