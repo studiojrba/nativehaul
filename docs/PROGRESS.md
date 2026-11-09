@@ -938,6 +938,31 @@ approved by J.R when he set the rule). 333 tests (+6).
 - ⚠️ Not exercised live: no Play clicks against J.R's library, per the brief. The first real check is J.R pressing
   Play.
 
+## 35 · fix/tracker-liveness — QA Finding #7, top of the queue (J.R, Mon 2026-11-09)
+- **Sequence (my call, as J.R allowed):** the tracker fix went first. It changes the process-watching code that the
+  Layer 1 handoff also uses, and the shelf F4 builds on shows these totals. Then F4, then F5.
+- ✅🧪 **Cause, confirmed read-only.** I copied `default.store` to a scratch folder and queried the copy.
+  - Every port Play made two overlapping sessions, one for the launcher and one for the game host (`dmhost`).
+  - The host session closed when the game quit. The launcher session stayed open until Retriever itself quit, at
+    18:55 Nov 7 and 09:26 this morning.
+  - Full table and figures: ADR 0034.
+- ✅🧪 **New sessions:**
+  - one run per game, so overlapping sessions are gone;
+  - once a port's game host has run, it alone ends the session, even if the launcher stays open;
+  - a liveness sweep every 60 s closes an exit that sent no event, at the last time the process was seen;
+  - a 12 h cap stops the session there and flags it with a note;
+  - Mac sleep splits the session;
+  - after a restart, counting never starts before the last stored session's end.
+- ✅🧪 **Handoff uses the same rules:** Retriever comes back when the game host exits, and a 5 s liveness check means
+  a missed exit can't leave it hidden.
+- ⛔ **Already-stored sessions are untouched,** pending J.R's ruling. Options A–D are in ADR 0034; I recommend B,
+  flag and leave out, which is reversible.
+  - Left after removing the suspects: Ocarina 3h 02m (now shown as 88h 20m), Smash 2m 55s (now 35h 14m).
+- 🧪 `SessionLivenessTests` (8, including a replay of Ollie's 19:19:22 / 19:20:32 Ocarina pair), 2 new watcher tests
+  and 2 new handoff tests. 451 tests; lint clean.
+- ⚠️ Not exercised live: no Play clicks against J.R's library. The first real check is J.R's next port session,
+  which should come out as one session whose length matches the game.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -976,6 +1001,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 32 | `feature/nxnative-first-launch-guidance` (Finding #6 follow-ups) | ✅ | ✅ | 426 | ✅ |
 | 33 | `feature/jump-back-in` (F1, Completed rule fixed) | ✅ | ✅ | 433 | ✅ |
 | 34 | `feature/launch-handoff` (Layer 1 minimal) | ✅ | ✅ | 439 | ✅ |
+| 35 | `fix/tracker-liveness` (Finding #7) | ✅ | ✅ | 451 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1015,7 +1041,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0033)
+## Key decisions (see `docs/decisions/` ADR 0001–0034)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -1039,7 +1065,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 34 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 35 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

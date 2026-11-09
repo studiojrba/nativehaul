@@ -64,4 +64,29 @@ struct PlaytimeWatcherTests {
         watcher.start()
         #expect(!watcher.isRunning)
     }
+
+    @Test func theSweepRecordsAMissedExitAndFlagsNothingElse() throws {
+        let (watcher, observer, _, game) = try makeWatcher()
+        observer.running = [.launched(bundlePath: path, processID: 5, at: start)]
+        watcher.start()
+        observer.exitedProcessIDs = [5]
+        watcher.sweep()
+        #expect(watcher.activeSessions.isEmpty)
+        #expect(game.sessions.count == 1)
+        #expect(game.sessions.first?.note == "")
+        watcher.stop()
+    }
+
+    @Test func aRestartStartsAfterTheLastStoredSession() throws {
+        let (watcher, observer, repository, game) = try makeWatcher()
+        let earlier = PlaySession(startedAt: start, endedAt: start.addingTimeInterval(3600), source: .macTracked)
+        repository.insert(earlier)
+        earlier.game = game
+        try repository.save()
+        observer.running = [.launched(bundlePath: path, processID: 5, at: start)]
+        watcher.start()
+        #expect(watcher.activeSessions.first?.startedAt == start.addingTimeInterval(3600))
+        watcher.stop()
+        #expect(game.sessions.map(\.durationSeconds).sorted() == [3600, 3600])
+    }
 }

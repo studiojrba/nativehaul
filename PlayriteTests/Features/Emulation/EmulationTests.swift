@@ -140,7 +140,7 @@ struct EmulationTests {
             processID: 1,
             at: start.addingTimeInterval(600)
         ))
-        #expect(session?.gameID == gameID)
+        #expect(session.first?.gameID == gameID)
         _ = tracker.handle(.launched(bundlePath: retroArch, processID: 2, at: start))
         #expect(tracker.activeSessions.isEmpty)
     }

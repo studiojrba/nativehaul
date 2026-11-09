@@ -4,6 +4,10 @@ import Observation
 /// The clean handoff after Play (ADR 0030 Layer 1, approved minimal scope): once a tracked game app has launched,
 /// Retriever hides its own windows while the game runs and restores them, without taking the focus, when the game
 /// exits. While a game runs, nothing of Retriever's is shown over it (``isGameRunning`` gates alerts and sheets).
+///
+/// "Exits" follows the tracker's rules (ADR 0034): once a port's game host has run, the game is over when the host
+/// exits, even if the port's launcher window stays open; and a liveness check every ``livenessInterval`` catches an
+/// exit that sent no event, so Retriever is never left hidden.
 @MainActor
 @Observable
 final class GameSessionHandoff {
@@ -18,15 +22,20 @@ final class GameSessionHandoff {
     /// How long a launched game has to appear before Retriever restores itself (the launch didn't happen).
     static let launchGrace: Duration = .seconds(launchGraceSeconds)
 
+    /// How often the game's processes are checked for an exit that sent no event.
+    static let livenessInterval: Duration = .seconds(livenessIntervalSeconds)
+
     private static let launchGraceSeconds = 10
+    private static let livenessIntervalSeconds = 5
 
     @ObservationIgnored private let visibility: any AppVisibilityControlling
     @ObservationIgnored private let observer: any RunningApplicationObserving
     @ObservationIgnored private let sleep: @Sendable (Duration) async -> Void
-    @ObservationIgnored private var processIDs: Set<Int32> = []
+    @ObservationIgnored private var processes: [Int32: ProcessRole] = [:]
     @ObservationIgnored private var hasSeenGame = false
+    @ObservationIgnored private var hasSeenHelper = false
     @ObservationIgnored private var eventsTask: Task<Void, Never>?
-    @ObservationIgnored private var graceTask: Task<Void, Never>?
+    @ObservationIgnored private var monitorTask: Task<Void, Never>?
 
     /// Creates the handoff. `observer` must be its own instance (one consumer per observer).
     init(
@@ -44,8 +53,9 @@ final class GameSessionHandoff {
         stopWatching()
         let path = Self.normalized(appPath)
         gamePath = path
-        processIDs = Set(observer.currentlyRunning().compactMap { Self.launchedID($0, path: path) })
-        hasSeenGame = !processIDs.isEmpty
+        for event in observer.currentlyRunning() {
+            handle(event)
+        }
         visibility.hide()
         let stream = observer.events()
         eventsTask = Task { [weak self] in
@@ -53,26 +63,45 @@ final class GameSessionHandoff {
                 self?.handle(event)
             }
         }
-        graceTask = Task { [weak self, sleep] in
+        monitorTask = Task { [weak self, sleep] in
             await sleep(Self.launchGrace)
-            guard !Task.isCancelled, let self, !hasSeenGame else { return }
-            restore()
+            guard !Task.isCancelled, let self else { return }
+            guard hasSeenGame else { return restore() }
+            while !Task.isCancelled, isGameRunning {
+                await sleep(Self.livenessInterval)
+                guard !Task.isCancelled else { return }
+                removeExitedProcesses()
+            }
         }
     }
 
     private func handle(_ event: RunningAppEvent) {
         guard let path = gamePath else { return }
         switch event {
-        case let .launched(bundlePath, processID, _) where Self.normalized(bundlePath) == path:
-            processIDs.insert(processID)
+        case let .launched(bundlePath, processID, _, role) where Self.normalized(bundlePath) == path:
+            processes[processID] = role
             hasSeenGame = true
+            hasSeenHelper = hasSeenHelper || role == .helper
         case let .terminated(bundlePath, processID, _) where Self.normalized(bundlePath) == path:
-            processIDs.remove(processID)
-            if processIDs.isEmpty {
-                restore()
-            }
+            processes.removeValue(forKey: processID)
+            restoreIfGameEnded()
         default:
             break
+        }
+    }
+
+    private func removeExitedProcesses() {
+        guard let path = gamePath else { return }
+        for processID in processes.keys where !observer.isRunning(processID: processID, bundlePath: path) {
+            processes.removeValue(forKey: processID)
+        }
+        restoreIfGameEnded()
+    }
+
+    private func restoreIfGameEnded() {
+        let gameEnded = processes.isEmpty || (hasSeenHelper && !processes.values.contains(.helper))
+        if hasSeenGame, gameEnded {
+            restore()
         }
     }
 
@@ -85,19 +114,13 @@ final class GameSessionHandoff {
 
     private func stopWatching() {
         eventsTask?.cancel()
-        graceTask?.cancel()
+        monitorTask?.cancel()
         eventsTask = nil
-        graceTask = nil
+        monitorTask = nil
         observer.stopObserving()
-        processIDs = []
+        processes = [:]
         hasSeenGame = false
-    }
-
-    private static func launchedID(_ event: RunningAppEvent, path: String) -> Int32? {
-        if case let .launched(bundlePath, processID, _) = event, normalized(bundlePath) == path {
-            return processID
-        }
-        return nil
+        hasSeenHelper = false
     }
 
     private static func normalized(_ path: String) -> String {

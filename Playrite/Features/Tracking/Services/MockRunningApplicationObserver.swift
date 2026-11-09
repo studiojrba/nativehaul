@@ -5,6 +5,8 @@ import Foundation
 final class MockRunningApplicationObserver: RunningApplicationObserving {
     /// Events returned by ``currentlyRunning()``.
     var running: [RunningAppEvent] = []
+    /// Processes ``isRunning(processID:bundlePath:)`` reports as gone (an exit that sent no event).
+    var exitedProcessIDs: Set<Int32> = []
     private var continuation: AsyncStream<RunningAppEvent>.Continuation?
 
     /// Creates the mock.
@@ -18,6 +20,10 @@ final class MockRunningApplicationObserver: RunningApplicationObserving {
         let (stream, continuation) = AsyncStream<RunningAppEvent>.makeStream()
         self.continuation = continuation
         return stream
+    }
+
+    func isRunning(processID: Int32, bundlePath _: String) -> Bool {
+        !exitedProcessIDs.contains(processID)
     }
 
     func stopObserving() {

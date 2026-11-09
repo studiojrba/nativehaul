@@ -92,6 +92,35 @@ struct GameSessionHandoffTests {
         #expect(visibility.calls == ["hide", "unhide"])
     }
 
+    @Test func restoresWhenThePortsGameHostExitsEvenIfItsLauncherStaysOpen() async throws {
+        let (handoff, visibility, observer) = make()
+        handoff.gameDidLaunch(appPath: gamePath)
+        observer.send(.launched(bundlePath: gamePath, processID: 30, at: .now))
+        observer.send(.launched(bundlePath: gamePath, processID: 31, at: .now, role: .helper))
+        try await settle()
+        #expect(handoff.isGameRunning)
+        observer.send(.terminated(bundlePath: gamePath, processID: 31, at: .now))
+        try await settle()
+        #expect(!handoff.isGameRunning)
+        #expect(visibility.calls == ["hide", "unhide"])
+    }
+
+    @Test func theLivenessCheckRestoresAfterAnExitThatSentNoEvent() async throws {
+        let gate = Gate()
+        let (handoff, visibility, observer) = make(gate: gate)
+        handoff.gameDidLaunch(appPath: gamePath)
+        observer.send(.launched(bundlePath: gamePath, processID: 40, at: .now))
+        try await settle()
+        gate.release()
+        try await settle()
+        #expect(handoff.isGameRunning)
+        observer.exitedProcessIDs = [40]
+        gate.release()
+        try await settle()
+        #expect(!handoff.isGameRunning)
+        #expect(visibility.calls == ["hide", "unhide"])
+    }
+
     @Test func onlyTrackedAppLaunchesHandOff() async {
         let (handoff, visibility, _) = make()
         let port = Game(title: "Tideborn", platform: .switchPort)

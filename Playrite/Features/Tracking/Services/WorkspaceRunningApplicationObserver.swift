@@ -1,6 +1,6 @@
 import AppKit
 
-/// Live ``RunningApplicationObserving`` using `NSWorkspace` running-application notifications.
+/// Live ``RunningApplicationObserving`` using `NSWorkspace` running-application and sleep/wake notifications.
 @MainActor
 final class WorkspaceRunningApplicationObserver: RunningApplicationObserving {
     private let workspace: NSWorkspace
@@ -16,7 +16,12 @@ final class WorkspaceRunningApplicationObserver: RunningApplicationObserving {
         let now = Date.now
         return workspace.runningApplications.compactMap { app in
             guard let path = app.bundleURL?.path else { return nil }
-            return .launched(bundlePath: path, processID: app.processIdentifier, at: app.launchDate ?? now)
+            return .launched(
+                bundlePath: path,
+                processID: app.processIdentifier,
+                at: app.launchDate ?? now,
+                role: Self.role(of: app)
+            )
         }
     }
 
@@ -26,24 +31,36 @@ final class WorkspaceRunningApplicationObserver: RunningApplicationObserving {
         self.continuation = continuation
         let center = workspace.notificationCenter
         tokens = [
-            center
-                .addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: .main) { note in
-                    if let (path, pid) = Self.extract(note) {
-                        continuation.yield(.launched(bundlePath: path, processID: pid, at: .now))
-                    }
-                },
-            center
-                .addObserver(
-                    forName: NSWorkspace.didTerminateApplicationNotification,
-                    object: nil,
-                    queue: .main
-                ) { note in
-                    if let (path, pid) = Self.extract(note) {
-                        continuation.yield(.terminated(bundlePath: path, processID: pid, at: .now))
-                    }
-                },
+            center.addObserver(forName: NSWorkspace.didLaunchApplicationNotification, object: nil, queue: .main) {
+                if let (app, path) = Self.extract($0) {
+                    continuation.yield(.launched(
+                        bundlePath: path,
+                        processID: app.processIdentifier,
+                        at: .now,
+                        role: Self.role(of: app)
+                    ))
+                }
+            },
+            center.addObserver(forName: NSWorkspace.didTerminateApplicationNotification, object: nil, queue: .main) {
+                if let (app, path) = Self.extract($0) {
+                    continuation.yield(.terminated(bundlePath: path, processID: app.processIdentifier, at: .now))
+                }
+            },
+            center.addObserver(forName: NSWorkspace.willSleepNotification, object: nil, queue: .main) { _ in
+                continuation.yield(.systemWillSleep(at: .now))
+            },
+            center.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { _ in
+                continuation.yield(.systemDidWake(at: .now))
+            },
         ]
         return stream
+    }
+
+    func isRunning(processID: Int32, bundlePath: String) -> Bool {
+        guard let app = NSRunningApplication(processIdentifier: processID), !app.isTerminated,
+              let path = app.bundleURL?.path
+        else { return false }
+        return BundlePath.normalize(path) == BundlePath.normalize(bundlePath)
     }
 
     func stopObserving() {
@@ -53,10 +70,19 @@ final class WorkspaceRunningApplicationObserver: RunningApplicationObserving {
         continuation = nil
     }
 
-    private nonisolated static func extract(_ notification: Notification) -> (String, Int32)? {
+    private nonisolated static func extract(_ notification: Notification) -> (NSRunningApplication, String)? {
         guard let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication,
               let path = app.bundleURL?.path
         else { return nil }
-        return (path, app.processIdentifier)
+        return (app, path)
+    }
+
+    /// `.helper` when the process runs an executable other than its bundle's main one (a built port's game host).
+    private nonisolated static func role(of app: NSRunningApplication) -> ProcessRole {
+        guard let bundleURL = app.bundleURL, let executable = app.executableURL,
+              let main = Bundle(url: bundleURL)?.executableURL
+        else { return .main }
+        let isMain = executable.resolvingSymlinksInPath().path == main.resolvingSymlinksInPath().path
+        return isMain ? .main : .helper
     }
 }
