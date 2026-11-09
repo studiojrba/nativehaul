@@ -892,6 +892,29 @@ approved by J.R when he set the rule). 333 tests (+6).
   cleanup. J.R was watching the Ocarina title screen when tonight's diagnostic run closed it.
 - ✅🧪 426 tests (+7); lint clean.
 
+## 33 · feature/jump-back-in — overnight feature F1 (J.R keeps or reverts)
+- ✅🧪 **"Jump Back In" shelf (ADR 0033).**
+  - **Content:** at the top of All Games, games marked Playing or with a recorded session in the last 30 days, most
+    recent session first.
+  - **Card:** a quiet "last played" subtitle, plus the time played from the largest real source, labelled. Sources
+    are never merged, and there are no HLTB figures.
+  - **Visibility:** hidden while searching, on other sections, and when empty.
+  - **Data:** computed only. No stored data, no settings.
+- ✅🧪 Tests:
+  - who qualifies: Playing, a 5-day-old session and yesterday's session are in; a 40-day-old session and never played
+    are out;
+  - order, including idle Playing games last;
+  - the hidden-when-empty rule;
+  - the line keeps the largest source with its label (10h SteamSynced beats 2h MacTracked, never 12h);
+  - relative days, including future clock skew;
+  - shown on All Games only and not while searching;
+  - renders at 900, 1100 and 1280.
+  432 tests (+6); lint clean.
+- ✅ **Renders inspected** (`docs/design/jump-back-in/`). The first render cut off the single line, so the shelf now
+  uses the card's two-line form.
+- ⚠️ No live run against J.R's library (no Play clicks, per the brief). As written, a Completed game played in the
+  last 30 days appears; that is easy to narrow if he prefers.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -928,6 +951,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 30 | `feature/builds-detail-showcase` (J.R direction) | ✅ | ✅ | 415 | ✅ |
 | 31 | `feature/app-rename-retriever` (J.R GO) | ✅ | ✅ | 419 | ✅ |
 | 32 | `feature/nxnative-first-launch-guidance` (Finding #6 follow-ups) | ✅ | ✅ | 426 | ✅ |
+| 33 | `feature/jump-back-in` (F1) | ✅ | ✅ | 432 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -967,7 +991,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0032)
+## Key decisions (see `docs/decisions/` ADR 0001–0033)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
@@ -991,7 +1015,7 @@ and none should be.
 - A live Nintendo eShop metadata source (ADR 0014), extra providers, and the Figma visual pass are future work.
 
 ## Next steps
-1. Open PRs into `production` in order 0 → 32 (`production` is the default branch; there is no `main`).
+1. Open PRs into `production` in order 0 → 33 (`production` is the default branch; there is no `main`).
 2. **GitHub Actions CI** (`feature/ci`, planned in `docs/PLAN.md`): run lint, build and test on pull requests,
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.

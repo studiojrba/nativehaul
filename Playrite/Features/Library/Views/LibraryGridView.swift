@@ -32,13 +32,16 @@ struct LibraryGridView: View {
 
     private var grid: some View {
         ScrollView {
-            LazyVGrid(columns: columns, alignment: .leading, spacing: DesignTokens.Spacing.xxl) {
-                ForEach(viewModel.visibleGames) { game in
-                    NavigationLink(value: game.id) {
-                        GameGridItem(game: game)
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxl) {
+                JumpBackInShelf(games: viewModel.jumpBackIn())
+                LazyVGrid(columns: columns, alignment: .leading, spacing: DesignTokens.Spacing.xxl) {
+                    ForEach(viewModel.visibleGames) { game in
+                        NavigationLink(value: game.id) {
+                            GameGridItem(game: game)
+                        }
+                        .buttonStyle(.plain)
+                        .contextMenu { contextMenu(for: game) }
                     }
-                    .buttonStyle(.plain)
-                    .contextMenu { contextMenu(for: game) }
                 }
             }
             .padding(DesignTokens.Spacing.xl)
