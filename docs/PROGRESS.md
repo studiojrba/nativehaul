@@ -873,7 +873,9 @@ approved by J.R when he set the rule). 333 tests (+6).
     - on by default, with a Settings switch to turn it off;
     - design and tests are listed in the ADR.
     - Ready to build on J.R's go. Live checks wait until he isn't playing.
-  - **Layer 2, proposal (new ADR 0032):**
+  - **Layer 2 — REJECTED by J.R (2026-11-08):** going blank on losing focus is normal macOS behaviour, one click
+    fixes it, so don't fix what isn't broken. ADR 0032 is marked rejected and nothing will be built. Originally
+    proposed (new ADR 0032) as:
     - an opt-in "keep games in front" assist using Accessibility (`kAXFrontmost` plus `AXRaise`);
     - it re-asserts only if the front is taken within about 10 s of launch, and never fights deliberate switching;
     - constraints recorded: Accessibility is heavy trust; the TCC grant is tied to the binary, so dev rebuilds

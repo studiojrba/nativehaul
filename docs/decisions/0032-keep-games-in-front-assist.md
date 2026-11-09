@@ -1,6 +1,11 @@
-# ADR 0032 — "Keep games in front": an opt-in assist, and what macOS cannot do (proposal)
+# ADR 0032 — "Keep games in front": an opt-in assist (rejected), and what macOS cannot do
 
-- Status: **proposed**, not built (J.R's question, 2026-11-07 19:28 EST)
+- Status: **Layer 2 rejected by J.R** (2026-11-08). Not built and not to be built. Layer 3, the honesty constraint and
+  copy rule, stands.
+  - J.R's reasoning: a game going blank when it loses focus is normal macOS behaviour, and one click on its window
+    already fixes it. Don't fix what isn't broken.
+  - Layer 1, the clean handoff in ADR 0030, was approved separately in its minimal form.
+- Proposed: 2026-11-07 19:28 EST (J.R's question)
 - Recorded on: `feature/nxnative-first-launch-guidance`
 - Related: ADR 0030 (Layer 1, the clean handoff), ADR 0016 (zero-tinker), ADR 0021 (features ship on)
 
@@ -12,7 +17,7 @@ layers:
 - **Layer 2:** what it could do with extra trust. This ADR.
 - **Layer 3:** what macOS doesn't allow at all. This ADR.
 
-## Layer 2 — opt-in assist using the Accessibility API (proposal only)
+## Layer 2 — opt-in assist using the Accessibility API (REJECTED; kept for the record)
 **Mechanism:**
 - With Accessibility (AX) trust, an app can bring another app forward: set `kAXFrontmostAttribute` on the target's
   application element, and `AXRaise` its main window. Window managers use the same mechanism.
@@ -62,4 +67,5 @@ layers:
   - Layer 2 would guard the first seconds, opt-in, with Accessibility.
   - Nothing can make a game permanently topmost.
 - The copy rule is recorded in CLAUDE.md so no screen over-promises.
-- Layer 2 isn't scheduled. It waits for J.R's approval and stable signing.
+- Layer 2 is rejected (J.R, 2026-11-08): no Accessibility permission is requested, and no keep-in-front code is
+  written. The design above is kept only as the record of what was considered and why it was declined.

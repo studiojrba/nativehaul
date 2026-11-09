@@ -104,7 +104,7 @@ Figma designs will arrive later. Until then, **structure and function beat bespo
 - No business logic or formatting logic in views.
 - **Never promise that games stay on top (J.R, ADR 0032).** macOS has no public way to pin another app's window, so
   no UI copy or doc says games "stay on top", "always in front" or "pinned". Promise the clean handoff (ADR 0030),
-  and the guarded assist only if it is built and enabled.
+  The Accessibility assist was rejected (J.R, ADR 0032): never request Accessibility to keep games in front.
 
 ## Testing & verification
 - Unit tests for all non-UI logic (models, services, engines, ViewModels).
