@@ -38,7 +38,14 @@ design phase forward ahead of Figma. He gave three inputs, summarised from the r
    - **Detail page shape** confirms ours: a quiet narrow info column (mono stats, two pill actions, primary black and
      secondary white) beside one huge full-height hero card. Buttons are pills everywhere; cards are about 16 px
      radius, the hero about 20 px.
-   - Item 7 ("what not to copy") arrived cut off in the handoff and is not recorded yet.
+   - **Item 7 — what NOT to copy** (from Ollie's walk; it arrived cut off in November and was supplied by J.R and
+     Ollie on 2026-11-09):
+     - **(a) No slow transitions.** Meebits' page transition takes about 8 seconds. Every transition in Retriever stays
+       fast, well under a second.
+     - **(b) No surface breaks the design system.** Meebits' shop abandons its own design system completely. No
+       Retriever surface, the Builds pages included, may step outside the token system for a one-off look.
+     - **(c) No dead ends.** Meebits has dead 404 pages with no way back. Every empty state in Retriever offers an
+       action or a way back.
    These rules were recorded after the pass shipped. Applying them (mono for data, a quieter hover, pill buttons,
    16/20 px radii, one motion gesture) is follow-up work, not done in this branch.
 

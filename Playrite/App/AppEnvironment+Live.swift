@@ -5,6 +5,7 @@ extension AppEnvironment {
     static func live() throws -> AppEnvironment {
         let container = try ModelContainerFactory.make(inMemory: false)
         let repository = SwiftDataLibraryRepository(context: container.mainContext)
+        repairStaleSessions(repository: repository)
         let secrets = KeychainSecretStore()
         let emulators = EmulatorRouter(preferences: UserDefaultsEmulatorPreferences(), files: LocalFileOperations())
         let steamAccount = SteamAccountStore(secrets: secrets)
@@ -52,6 +53,15 @@ extension AppEnvironment {
             gameBadges: GameUpdateBadgeProvider(files: LocalFileOperations(), switchVersions: .bundled()),
             handoff: makeLiveHandoff()
         )
+    }
+
+    /// One-time cleanup of stale tracked sessions booked before the tracker fix (ADR 0034). Runs before tracking.
+    private static func repairStaleSessions(repository: any LibraryRepository) {
+        TrackedSessionRepair(
+            repository: repository,
+            audit: FileAuditLog(path: FileAuditLog.defaultPath(), files: LocalFileOperations()),
+            defaults: .standard
+        ).runOnce()
     }
 
     private static func makeLiveHandoff() -> GameSessionHandoff {

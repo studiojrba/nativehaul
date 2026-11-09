@@ -939,8 +939,11 @@ approved by J.R when he set the rule). 333 tests (+6).
   Play.
 
 ## 35 · fix/tracker-liveness — QA Finding #7, top of the queue (J.R, Mon 2026-11-09)
-- **Sequence (my call, as J.R allowed):** the tracker fix went first. It changes the process-watching code that the
-  Layer 1 handoff also uses, and the shelf F4 builds on shows these totals. Then F4, then F5.
+- **Sequence:** J.R made the tracker fix the top priority (09:36). With it he removed Pick for Me and Quick Wins,
+  fixed the Jump Back In rule, and had the stack restacked: guidance → jump-back-in → launch-handoff → this branch.
+  Next come F4 Home, F5 Installed, then the Meebits energy pass.
+- **ADR 0025 item 7 recorded** (what not to copy from Meebits): sub-second transitions, no surface breaks the token
+  system, no dead ends.
 - ✅🧪 **Cause, confirmed read-only.** I copied `default.store` to a scratch folder and queried the copy.
   - Every port Play made two overlapping sessions, one for the launcher and one for the game host (`dmhost`).
   - The host session closed when the game quit. The launcher session stayed open until Retriever itself quit, at
@@ -955,11 +958,29 @@ approved by J.R when he set the rule). 333 tests (+6).
   - after a restart, counting never starts before the last stored session's end.
 - ✅🧪 **Handoff uses the same rules:** Retriever comes back when the game host exits, and a 5 s liveness check means
   a missed exit can't leave it hidden.
-- ⛔ **Already-stored sessions are untouched,** pending J.R's ruling. Options A–D are in ADR 0034; I recommend B,
-  flag and leave out, which is reversible.
-  - Left after removing the suspects: Ocarina 3h 02m (now shown as 88h 20m), Smash 2m 55s (now 35h 14m).
+- ✅🧪 **Stored stale sessions cleaned (J.R ruling, Mon 09:36 EST: apply the fix's rules retroactively).**
+  - **Evidence:** the macOS system log (WindowServer process lifecycle) shows every launcher died within 0.2 s of its
+    game host. The exits were missed by the tracker; the launchers didn't linger. Details in ADR 0034.
+  - **Rule (`StaleSessionPlan`):** a MacTracked session containing another of the same game is a launcher half. Under
+    the fix only the host's time counts, and that is already stored, so the row is removed. Overlap trims and the
+    12 h cap matched nothing on J.R's data.
+  - **Applied once at launch (`TrackedSessionRepair`)** at 09:50 EST:
+    - J.R's Retriever was quit cleanly first, with no game running;
+    - the store was copied to `Application Support/Playrite/Backups/store-before-tracker-repair-20261109-0949…/`;
+    - every change was written to the audit log with the session's ID and original times.
+
+  | Game | Before | After | Removed rows |
+  |---|---|---|---|
+  | The Legend of Zelda Ocarina of Time | 88h 20m 38s (7 sessions) | **3h 02m 18s** (4) | 06:52→18:55 Nov 7, 19:19 Nov 7→09:26 Nov 9, 22:18 Nov 7→09:26 Nov 9 |
+  | Super Smash Bros. Ultimate | 35h 14m 07s (2 sessions) | **2m 54s** (1) | 22:15 Nov 7→09:26 Nov 9 |
+
+  - **`lastPlayedAt`** for both games was Nov 9 09:26:32, Retriever's quit time. It is now their last real session:
+    Ocarina Nov 7 22:22:22, Smash Nov 7 22:18:17.
+  - **Verified on a copy of the store** against the backup: 125 games; no other session, game or field changed.
+    These were the library's only MacTracked rows, and there are no other session sources stored.
+  - **Left unproven: nothing.** Every stale row was matched by the rule and confirmed by the system log.
 - 🧪 `SessionLivenessTests` (8, including a replay of Ollie's 19:19:22 / 19:20:32 Ocarina pair), 2 new watcher tests
-  and 2 new handoff tests. 451 tests; lint clean.
+  and 2 new handoff tests, plus `StaleSessionRepairTests` (4, replaying J.R's nine rows). 455 tests; lint clean.
 - ⚠️ Not exercised live: no Play clicks against J.R's library. The first real check is J.R's next port session,
   which should come out as one session whose length matches the game.
 
@@ -1001,7 +1022,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 32 | `feature/nxnative-first-launch-guidance` (Finding #6 follow-ups) | ✅ | ✅ | 426 | ✅ |
 | 33 | `feature/jump-back-in` (F1, Completed rule fixed) | ✅ | ✅ | 433 | ✅ |
 | 34 | `feature/launch-handoff` (Layer 1 minimal) | ✅ | ✅ | 439 | ✅ |
-| 35 | `fix/tracker-liveness` (Finding #7) | ✅ | ✅ | 451 | ✅ |
+| 35 | `fix/tracker-liveness` (Finding #7, stored data cleaned) | ✅ | ✅ | 455 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
