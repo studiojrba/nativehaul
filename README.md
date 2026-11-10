@@ -112,5 +112,11 @@ nativehaul/ (repo root)
 - Conventional Commits (`feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`).
 - Run `./scripts/lint.sh` and `./scripts/build.sh` before pushing; update `docs/PROGRESS.md`.
 
+## Releases, privacy and licence
+- Releases: `scripts/release.sh` builds the signed, notarized and stapled DMG and the Sparkle appcast; see
+  [docs/RELEASING.md](docs/RELEASING.md). Changes are listed in [CHANGELOG.md](CHANGELOG.md) (semantic versioning).
+- Privacy: no telemetry and no account; every host the app talks to is in [docs/PRIVACY.md](docs/PRIVACY.md).
+
 ## License
-MIT — see [LICENSE](LICENSE).
+MIT © 2026 Studio Jrba inc.: see [LICENSE](LICENSE). Third-party software and services are credited in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md); the audit is [docs/LICENSE_AUDIT.md](docs/LICENSE_AUDIT.md).

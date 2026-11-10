@@ -1326,6 +1326,38 @@ approved by J.R when he set the rule). 333 tests (+6).
 - **J.R action:** back up the update key once: `generate_keys --account nativehaul -x ~/nativehaul-sparkle.key`,
   stored offline (the tool is in DerivedData `SourcePackages/artifacts/sparkle/Sparkle/bin/`).
 
+## 55 · feature/release-pipeline — semver, changelog, signed DMG, notarization (release track 3/3)
+- **Built:** ADR 0051.
+  - Version `1.0.0`, build `2` (development builds were `0.1.0` / `1`). `CHANGELOG.md` (Keep a Changelog) has the
+    1.0.0 section, still marked Unreleased.
+  - `scripts/release.sh`: archive, Developer ID export (hardened runtime, timestamps), notarize and staple the app,
+    then a signed DMG (notarized and stapled), a Gatekeeper check and a signed Sparkle appcast. `--publish` tags and
+    creates the GitHub release, after asking.
+  - `docs/RELEASING.md`: setup, steps, and the clean-machine, upgrade and Sparkle checklists. README links the
+    release, privacy and licence docs.
+- **Verified locally (`--skip-notarize`, 2026-11-10):**
+  - archive and export succeed;
+  - the app and every Sparkle helper (Autoupdate, Updater.app, Downloader.xpc, Installer.xpc) are signed with
+    Developer ID (team N8FMX72NM8), with the hardened runtime and secure timestamps;
+  - `codesign --verify --deep --strict` passes, including on a copy taken from the mounted DMG;
+  - the DMG (3.4 MB) is signed and timestamped and holds the app plus the Applications link; Info.plist says 1.0.0
+    (2);
+  - Gatekeeper rejects it only as "Unnotarized Developer ID", as expected before notarization.
+- **Not verified, blocked on J.R:**
+  - notarization and stapling: no `nativehaul-notary` credentials yet;
+  - appcast signing: Sparkle's `generate_appcast` waits for Keychain approval to use the update key. It was
+    stopped, not approved on J.R's behalf;
+  - clean-machine install and the Sparkle end-to-end update: these need a notarized DMG and a clean Mac or VM.
+- **Upgrade from the current build:**
+  - Same bundle ID, store path, defaults domain and schema, so the library carries over.
+  - The signer changes (Apple Development 4ZWPGVUMHV → Developer ID N8FMX72NM8), so keys pasted under a dev build
+    would trigger one Keychain prompt. There are none in the nativehaul Keychain service today.
+  - The drag-replace upgrade on J.R's Mac waits for the notarized DMG.
+- **Tests:** `ReleasePolicyTests` now also checks the changelog section and the integer build number. 433 tests, all
+  green; lint clean.
+- **J.R's live copy:** after setup it adopted all 18 ports with their title IDs under the nativehaul identity
+  (checked read-only in `nativehaul.store`).
+
 ## Name lock: state on J.R's Mac (2026-11-10)
 - **J.R's copy:** the working-name app was quit (no game running) and `nativehaul.app` opened from the new
   canonical path, `DerivedData/nativehaul-avvohnucushygrhktagpqdqkqjmt/Build/Products/Debug/nativehaul.app`.
@@ -1415,6 +1447,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 52 | `feature/nativehaul-name` (name locked) | ✅ | ✅ | 423 | ✅ |
 | 53 | `feature/release-licensing` (release 1/3) | ✅ | ✅ | 427 | ✅ |
 | 54 | `feature/sparkle-updates` (release 2/3) | ✅ | ✅ | 432 | ✅ |
+| 55 | `feature/release-pipeline` (release 3/3) | ✅ | ✅ | 433 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1454,7 +1487,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0050)
+## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0051)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.

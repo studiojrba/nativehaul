@@ -45,6 +45,13 @@ struct ReleasePolicyTests {
         #expect(Set(frameworks).isSubset(of: Self.auditedFrameworks), "Unaudited: \(frameworks)")
     }
 
+    @Test func theVersionHasAChangelogSectionAndAnIntegerBuild() throws {
+        let changelog = try String(contentsOf: Self.repoRoot.appending(path: "CHANGELOG.md"), encoding: .utf8)
+        #expect(changelog.contains("## [\(AppInfo.version)]"))
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
+        #expect(build.flatMap(Int.init) != nil)
+    }
+
     @Test func everyAuditedFrameworkHasANotice() throws {
         let notices = try String(
             contentsOf: Self.repoRoot.appending(path: "THIRD_PARTY_NOTICES.md"), encoding: .utf8
