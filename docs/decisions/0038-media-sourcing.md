@@ -139,3 +139,11 @@ and swap is audit-logged.
   session are skipped).
 - **Trailer URLs may age.** Steam's stream URLs carry a version path. If one stops loading, the slide falls back
   to its poster. **Refresh Metadata** on that game fetches the current one.
+
+### Result on the real library (2026-11-09)
+Full report: `docs/reports/media-coverage-2026-11-09.md`.
+- **Trailers:** 215 (212 Steam games, plus 3 ports with a Steam twin).
+- **Port slideshows:** 3 → 21 (18 from titledb).
+- **Descriptions:** none filled for ports, because they already had imported text.
+- **Hero swaps:** 0.
+- **IGDB:** silently skipped (no credentials).

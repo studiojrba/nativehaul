@@ -1174,6 +1174,15 @@ approved by J.R when he set the rule). 333 tests (+6).
   - unavailable.
 - 🧪 `MediaPriorityTests` (priority through the real fetcher, YouTube parsing, the player page, Settings).
 - Not verified live: there are no credentials yet.
+- **Real-library pass** (J.R's copy, relaunched 19:49; report in `docs/reports/media-coverage-2026-11-09.md`):
+  - **Trailers:** 215 from Steam (212 Steam games + 3 ports with a Steam twin).
+  - **Port slideshows:** 3 → 21 (18 from titledb).
+  - **Hero swaps:** 0. All SteamGridDB port heroes are already 1920 px or wider.
+  - **Descriptions:** 0 port descriptions filled, because they were already present.
+  - **Still missing:**
+    - trailers for 21 ports (waiting on IGDB credentials);
+    - slideshows for Fortune's Weave, Pokopia and Ocarina of Time;
+    - trailers for 39 Steam games (no store movie).
 
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
