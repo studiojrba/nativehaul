@@ -39,7 +39,7 @@ struct EnergyPassTests {
     @Test func theAccentStaysOnPlayNavAndLinks() throws {
         let allowed: Set = [
             "Theme.swift", "PlayriteApp.swift", "RailItemRow.swift", "LaunchButton.swift", "BottleInstallPanel.swift",
-            "OnboardingWelcomeView.swift",
+            "TypingText.swift", "GuideHotspotModifier.swift", "GuideBubble.swift",
         ]
         let enumerator = FileManager.default.enumerator(at: sourceRoot, includingPropertiesForKeys: nil)
         var offenders: [String] = []

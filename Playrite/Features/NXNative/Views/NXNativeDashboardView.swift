@@ -91,6 +91,7 @@ struct NXNativeDashboardView: View {
     @ToolbarContentBuilder private var toolbarContent: some ToolbarContent {
         ToolbarItemGroup {
             Button("Add Job", systemImage: "plus") { isAddingJob = true }
+                .guideHotspot(.addBuildJob)
             if viewModel.isProcessing {
                 Button("Cancel Build", systemImage: "stop.fill") { viewModel.cancel() }
             } else {

@@ -47,7 +47,43 @@ J.R sent screenshots of two sites. In both, the pattern matters, not the product
   - its strength (the former ambient opacity).
 - **Type stays big and friendly** per the dial.
 
+## Decision: onboarding, rebuilt the Kriss way
+It replaces the old first-run sheet, which is deleted with its checklist and modules. "Run setup again" in
+Settings → General restarts it.
+- **Retriever talks:**
+  - Short first-person lines (at most three per step, each under 100 characters) appear one at a time, typed out at
+    48 characters a second with a visible blinking caret while it "speaks" (`TypingText`, `TypingSchedule`).
+  - They sit in a frosted bubble with a paw avatar (`GuideBubble`). No walls of text, no static pages.
+- **Each step moves to the part of the app it describes** (`GuideStep`, `GuideHost`):
+
+  | Step | Where it happens | What is highlighted |
+  |------|------------------|---------------------|
+  | Welcome | Home | — |
+  | Folders | Library | The Library File menu. The step's button opens the real folder picker; chosen folders are added and scanned |
+  | Detail and Play | A game page (one with cover art) | Play Now |
+  | Port building | Builds | Add Job |
+  | Steam sign-in and credential pastes | The Settings window, opened on its Steam tab, where the bubble appears | Sign in through Steam |
+  | Farewell | Home | — |
+
+  The highlight is a soft pulsing accent ring (`guideHotspot`).
+- **Interactive:**
+  - The user advances by pressing the step's button, or by using the highlighted control.
+  - Every step can be skipped.
+  - The tour can be exited at any point (×). An exited tour leaves a quiet "Continue the tour" pill that resumes it
+    where it left off ("No thanks" puts it away for good).
+  - Progress is remembered across launches (`GuideProgress` in UserDefaults).
+- **Nothing in it is required** to use the app (ADR 0016).
+  - It starts by itself only on a first launch.
+  - Someone who finished or skipped the old sheet counts as finished.
+  - The game page step is skipped when the library is empty.
+  - The bubble never appears over a running game (ADR 0030).
+- **Reduce Motion:** lines appear whole, with no typing and no caret, and the highlight does not pulse.
+- **Accent budget:** the tour adds two sanctioned uses of the accent, the caret and the hotspot ring. The main
+  bubble button is accent-tinted as a call to action.
+
 ## Consequences
 - **Art-heavy areas stay dark:** game art and the media backdrop behind trailers are not re-coloured.
+- **J.R won't see the tour by itself:** he finished the old first-run sheet, so it does not auto-start for him. He
+  can open it from Settings → General → Run setup again.
 - **Old dark-mode renders are stale:** comparison sheets and earlier renders that show dark mode are out of date.
   The current renders are light.

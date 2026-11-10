@@ -3,10 +3,10 @@ import Foundation
 /// Mock ``OnboardingStoring``.
 @MainActor
 final class InMemoryOnboardingStore: OnboardingStoring {
-    var hasCompletedOnboarding: Bool
+    var guideProgress: GuideProgress
 
     /// Creates the store.
-    init(hasCompletedOnboarding: Bool = false) {
-        self.hasCompletedOnboarding = hasCompletedOnboarding
+    init(progress: GuideProgress = .notStarted) {
+        guideProgress = progress
     }
 }

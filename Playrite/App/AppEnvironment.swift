@@ -52,6 +52,8 @@ final class AppEnvironment {
     let bottleInstaller: any BottleInstalling
     /// Whether first-run setup was finished or skipped.
     let onboarding: any OnboardingStoring
+    /// The guided tour, shared by the main window and Settings (ADR 0040).
+    let guide: OnboardingGuide
     /// Routes emulated games to their emulator app.
     let emulators: EmulatorRouter
     /// Managed components (emulator installs and updates).
@@ -114,6 +116,7 @@ final class AppEnvironment {
         self.imageHTTP = imageHTTP
         self.bottleInstaller = bottleInstaller
         self.onboarding = onboarding
+        guide = OnboardingGuide(store: onboarding)
         self.emulators = emulators
         self.components = components
         self.gameBadges = gameBadges
@@ -148,7 +151,7 @@ final class AppEnvironment {
                 steamSignIn: MockSteamSignInService(account: steamAccount),
                 imageHTTP: nil,
                 bottleInstaller: MockBottleInstaller(goldenStatus: .notSetUp),
-                onboarding: InMemoryOnboardingStore(hasCompletedOnboarding: true),
+                onboarding: InMemoryOnboardingStore(progress: .finished),
                 emulators: EmulatorRouter(preferences: InMemoryEmulatorPreferences(), files: InMemoryFileOperations()),
                 components: MockComponentUpdater(),
                 gameBadges: GameUpdateBadgeProvider(files: InMemoryFileOperations(), switchVersions: .bundled())

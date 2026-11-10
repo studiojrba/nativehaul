@@ -12,6 +12,7 @@ struct LaunchButton: View {
                 HStack(spacing: DesignTokens.Spacing.sm) {
                     Button { Task { await viewModel.launch() } } label: { label("Play Now", isEnabled: true) }
                         .buttonStyle(PlayButtonStyle())
+                        .guideHotspot(.playNow)
                     if viewModel.availability.options.count > 1 {
                         otherRoutes
                     }
@@ -27,6 +28,7 @@ struct LaunchButton: View {
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
                     .disabled(true)
+                    .guideHotspot(.playNow)
             }
             if let reason = viewModel.unavailableReason {
                 Text(reason)

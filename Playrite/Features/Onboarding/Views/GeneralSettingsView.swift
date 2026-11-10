@@ -1,14 +1,14 @@
 import SwiftUI
 
-/// Settings → General: re-run the first-run walkthrough.
+/// Settings → General: take the guided tour again (ADR 0040).
 struct GeneralSettingsView: View {
     var body: some View {
         Form {
             Section {
                 Button("Run setup again", systemImage: "sparkles") { OnboardingRequest.post() }
             } footer: {
-                Text("Walks through finding games, Steam, CrossOver and Switch ports. Everything is optional, and "
-                    + "Retriever works without it.")
+                Text("Retriever shows you around again: your library, a game page, Builds and Steam. Every step "
+                    + "is optional, and Retriever works without it.")
                     .foregroundStyle(Theme.secondaryText)
             }
         }

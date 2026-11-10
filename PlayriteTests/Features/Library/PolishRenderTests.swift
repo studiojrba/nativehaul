@@ -66,12 +66,6 @@ struct PolishRenderTests {
         let (environment, _) = try dressedEnvironment()
         let stats = StatsView(viewModel: environment.makeStatsViewModel())
         renderBoth(shell(stats, environment: environment, selection: .stats), width: 1280, name: "stats")
-        renderBoth(
-            OnboardingWelcomeView().padding(DesignTokens.Spacing.xxl)
-                .frame(maxWidth: .infinity, maxHeight: .infinity).background(Theme.canvas),
-            width: 900,
-            name: "welcome"
-        )
         renderBoth(shell(
             NXNativeDashboardView(viewModel: environment.makeNXNativeViewModel {}),
             environment: environment,

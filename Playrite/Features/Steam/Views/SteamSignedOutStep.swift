@@ -23,6 +23,7 @@ struct SteamSignedOutStep: View {
                 Button("Cancel") { viewModel.cancelSignIn() }
             } else {
                 Button("Sign in through Steam", systemImage: "person.badge.key") { viewModel.startSignIn() }
+                    .guideHotspot(.steamSignIn)
                     .buttonStyle(.borderedProminent)
                     .disabled(viewModel.isWorking)
             }

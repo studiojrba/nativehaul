@@ -11,10 +11,10 @@ struct RootView: View {
     @State private var nxnativeViewModel: NXNativeViewModel
     @State private var selection: SidebarDestination? = .home
     @State private var path: [UUID] = []
+    @Environment(\.openSettings) private var openSettings
     @State private var isAddingGame = false
     @State private var isImporting = false
     @State private var isMergingDuplicates = false
-    @State private var isOnboarding = false
     @State private var exportDocument: LibraryJSONDocument?
 
     /// Creates the root view.
@@ -28,20 +28,18 @@ struct RootView: View {
     var body: some View {
         RailShell(selection: $selection, libraryViewModel: libraryViewModel) { navigation }
             .environment(environment)
+            .environment(\.onboardingGuide, environment.guide)
             .onChange(of: selection) { path.removeAll() }
             .task {
-                isOnboarding = !environment.onboarding.hasCompletedOnboarding
                 environment.watcher.start()
                 await libraryViewModel.runAutomaticUpkeep()
             }
-            .onReceive(NotificationCenter.default.publisher(for: OnboardingRequest.name)) { _ in isOnboarding = true }
-            .sheet(isPresented: onboardingBinding) {
-                OnboardingView(viewModel: environment.makeOnboardingViewModel {
-                    isOnboarding = false
-                    Task { await libraryViewModel.runAutomaticUpkeep() }
-                })
-                .environment(environment)
-            }
+            .modifier(GuideHost(
+                guide: environment.guide,
+                isGameRunning: environment.handoff.isGameRunning,
+                onNavigate: navigate(to:),
+                onChooseFolders: addGuideFolders
+            ))
             .onReceive(NotificationCenter.default.publisher(for: NSApplication.willTerminateNotification)) { _ in
                 environment.watcher.stop()
             }
@@ -133,6 +131,7 @@ struct RootView: View {
                 Button("Fetch Missing Metadata") { Task { await libraryViewModel.fetchMissingMetadata() } }
                     .disabled(!libraryViewModel.canFetchMetadata)
             }
+            .guideHotspot(.gameFolders)
         }
     }
 
@@ -149,11 +148,6 @@ struct RootView: View {
             ?? libraryViewModel.importSummary?.description
             ?? libraryViewModel.folderImportSummary?.description
             ?? libraryViewModel.metadataSummary?.description
-    }
-
-    /// Onboarding never appears over a running game; it waits until Retriever is back (ADR 0030 Layer 1).
-    private var onboardingBinding: Binding<Bool> {
-        Binding(get: { isOnboarding && !environment.handoff.isGameRunning }, set: { isOnboarding = $0 })
     }
 
     /// Alerts never appear over a running game; they wait until Retriever is back (ADR 0030 Layer 1).
@@ -189,6 +183,41 @@ struct RootView: View {
         case let .failure(error):
             libraryViewModel.errorMessage = error.localizedDescription
         }
+    }
+
+    /// Moves to the place a tour step describes (ADR 0040). The game page step uses a game with cover art when there
+    /// is one, and is skipped when the library is empty.
+    private func navigate(to destination: GuideDestination) {
+        switch destination {
+        case .home:
+            selection = .home
+        case .library:
+            selection = .library(.all)
+        case .gamePage:
+            let games = libraryViewModel.games
+            guard let game = games.first(where: { $0.coverImagePath != nil }) ?? games.first else {
+                environment.guide.skipStep()
+                return
+            }
+            selection = .library(.all)
+            Task {
+                // After the selection change has cleared the path.
+                await Task.yield()
+                path = [game.id]
+            }
+        case .builds:
+            selection = .nxnative
+        case .steamSettings:
+            openSettings()
+        }
+    }
+
+    /// The library step's real action: the chosen folders are added and scanned, then the tour moves on.
+    private func addGuideFolders(_ urls: [URL]) {
+        let folders = environment.makeGameFoldersViewModel()
+        folders.add(urls)
+        Task { await folders.scan() }
+        environment.guide.advance()
     }
 }
 

@@ -1240,6 +1240,37 @@ approved by J.R when he set the rule). 333 tests (+6).
 - 🧪 `PolishRulesTests` rewritten for warm neutrals (cream, never blue-grey, never pure white). Every render test
   switched to light.
 
+## 45 · feature/guided-onboarding — onboarding rebuilt the Kriss way (J.R 20:00; look first)
+- ✅ The old first-run sheet is deleted. A guided tour replaces it, and "Run setup again" uses it too.
+- ✅ Retriever talks: short first-person lines typed out with a caret, one idea at a time, in a frosted bubble.
+- ✅ Each step moves to its real place, with the real control highlighted (soft pulsing ring):
+  - welcome on Home;
+  - folders on the Library (real folder picker → add + scan);
+  - Play Now on a game page;
+  - Add Job on Builds;
+  - Steam sign-in in Settings on the Steam tab (the bubble shows there);
+  - farewell on Home.
+- ✅ Interactive throughout:
+  - use the control or press the button to advance;
+  - every step can be skipped;
+  - exit at any time, then "Continue the tour" resumes where it left off;
+  - progress is remembered;
+  - nothing is required;
+  - it never shows over a running game;
+  - Reduce Motion means instant lines and no pulse.
+- 🧪 `GuideTests`:
+  - first launch only;
+  - every place visited in order;
+  - skip, exit, resume;
+  - hotspot use advances;
+  - restart and put away;
+  - persistence, including the legacy "completed" flag;
+  - short lines;
+  - the typing schedule.
+- 🧪 `GuideRenderTests`: welcome, library and game page at 900/1100/1280, light.
+- Light renders for J.R's look (Home, library, detail, onboarding at 900/1100/1280) are in `docs/design/light-pass/`.
+- J.R finished the old sheet, so the tour won't auto-start for him: Settings → General → Run setup again.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1288,6 +1319,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 42 | `feature/igdb-media-seam` (media pass 4/4) | ✅ | ✅ | 531 | ✅ |
 | 43 | `feature/detail-case-redesign` (look; J.R's eyeball first) | ✅ | ✅ | 542 | ✅ |
 | 44 | `feature/light-feel` (look; J.R's eyeball first) | ✅ | ✅ | 546 | ✅ |
+| 45 | `feature/guided-onboarding` (look; J.R's eyeball first) | ✅ | ✅ | 548 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
