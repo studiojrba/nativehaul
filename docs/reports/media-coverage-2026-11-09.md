@@ -45,7 +45,7 @@ were their first metadata fills.
 - **Slideshow:** *Fire Emblem: Fortune's Weave*, *Pokémon Pokopia*, *Ocarina of Time* (IGDB candidates).
 - **Description:** *Ocarina of Time*.
 
-**Steam: 39 games without a trailer.** Most are tools, betas, test servers, delisted or very old store pages with
+**Steam: 39 library rows (37 titles; two titles appear twice) without a trailer.** Most are tools, betas, test servers, delisted or very old store pages with
 no store movie. Each is asked again once per launch.
 
 - Arma 2: Operation Arrowhead Beta (Obsolete) | missing: trailer, slideshow, description
