@@ -39,15 +39,16 @@ struct UpdatesSettingsView: View {
                     }
                 }
             }
-            Section("nativehaul") {
-                if let latest = viewModel.appUpdate {
-                    TagLabel(text: "nativehaul \(latest) is available", symbolName: "arrow.up.circle", tint: Theme.info)
-                    if let url = UpdatesSettingsViewModel.releasesURL {
-                        Link("See the release", destination: url)
-                    }
-                } else {
-                    Text("No newer nativehaul release found.").foregroundStyle(Theme.secondaryText)
-                }
+            Section {
+                LabeledContent("Version", value: AppInfo.version)
+                Toggle("Check for nativehaul updates automatically", isOn: $viewModel.checksForAppUpdates)
+                CheckForUpdatesButton(updater: viewModel.appUpdater)
+            } header: {
+                Text("nativehaul")
+            } footer: {
+                Text("Checks once a day. nativehaul asks before installing anything, and the check sends nothing about "
+                    + "you or your library.")
+                    .foregroundStyle(Theme.secondaryText)
             }
         }
         .formStyle(.grouped)
@@ -55,5 +56,7 @@ struct UpdatesSettingsView: View {
 }
 
 #Preview {
-    UpdatesSettingsView(viewModel: UpdatesSettingsViewModel(updater: MockComponentUpdater()))
+    UpdatesSettingsView(
+        viewModel: UpdatesSettingsViewModel(updater: MockComponentUpdater(), appUpdater: MockAppUpdater())
+    )
 }

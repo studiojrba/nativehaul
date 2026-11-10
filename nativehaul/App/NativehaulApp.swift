@@ -12,6 +12,14 @@ struct NativehaulApp: App {
         ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
     }
 
+    private var appUpdater: (any AppUpdating)? {
+        if case let .success(environment) = launch {
+            environment.appUpdater
+        } else {
+            nil
+        }
+    }
+
     init() {
         launch = Self.isHostingTests ? nil : Result { try AppEnvironment.live() }
     }
@@ -38,5 +46,6 @@ struct NativehaulApp: App {
                 SettingsView(environment: environment)
             }
         }
+        .commands { CheckForUpdatesCommands(updater: appUpdater) }
     }
 }

@@ -12,8 +12,6 @@ struct ComponentPreferences: Codable, Equatable, Sendable {
     var lastChecked: Date?
     /// Cached latest releases by component ID.
     var latest: [String: ComponentRelease] = [:]
-    /// Cached newest nativehaul release tag, when known.
-    var latestAppVersion: String?
 
     /// Whether `id` updates itself.
     func updatesAutomatically(_ id: String) -> Bool {

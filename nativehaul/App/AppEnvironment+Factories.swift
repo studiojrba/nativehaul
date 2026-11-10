@@ -180,7 +180,7 @@ extension AppEnvironment {
 
     /// Builds Settings → Updates.
     func makeUpdatesSettingsViewModel() -> UpdatesSettingsViewModel {
-        UpdatesSettingsViewModel(updater: components)
+        UpdatesSettingsViewModel(updater: components, appUpdater: appUpdater)
     }
 
     /// Builds the first-run walkthrough. `onFinish` closes it.

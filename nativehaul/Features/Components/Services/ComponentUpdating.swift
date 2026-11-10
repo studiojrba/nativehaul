@@ -8,8 +8,6 @@ protocol ComponentUpdating: AnyObject {
     var catalog: ComponentCatalog { get }
     /// Current settings.
     var preferences: ComponentPreferences { get }
-    /// A newer nativehaul release tag, when one is known (notify-only).
-    var appUpdate: String? { get }
     /// Status of a component, or `nil` if it isn't in the catalog.
     func status(for id: String) -> ComponentStatus?
     /// Checks official sources — at most once a day unless `force`.

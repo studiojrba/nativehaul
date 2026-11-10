@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Sparkle (ADR 0050). Everything else is generated from project.yml. -->
+	<key>SUFeedURL</key>
+	<string>https://github.com/studiojrba/nativehaul/releases/latest/download/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>nHFIss35ruAWrDXep9UzGcp6k4ihWGZ0S6iJ0aQ/7SA=</string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUScheduledCheckInterval</key>
+	<integer>86400</integer>
+	<key>SUAutomaticallyUpdate</key>
+	<false/>
+	<key>SUEnableSystemProfiling</key>
+	<false/>
+</dict>
+</plist>

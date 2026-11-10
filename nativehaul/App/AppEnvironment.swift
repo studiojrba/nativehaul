@@ -54,6 +54,8 @@ final class AppEnvironment {
     let gameBadges: GameUpdateBadgeProvider
     /// Keeps nativehaul out of the way while a launched game runs (ADR 0030 Layer 1).
     let handoff: GameSessionHandoff
+    /// nativehaul's own updates (Sparkle, ADR 0050).
+    let appUpdater: any AppUpdating
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -80,7 +82,8 @@ final class AppEnvironment {
         emulators: EmulatorRouter,
         components: any ComponentUpdating,
         gameBadges: GameUpdateBadgeProvider,
-        handoff: GameSessionHandoff? = nil
+        handoff: GameSessionHandoff? = nil,
+        appUpdater: any AppUpdating = MockAppUpdater()
     ) {
         self.container = container
         self.repository = repository
@@ -107,6 +110,7 @@ final class AppEnvironment {
         self.gameBadges = gameBadges
         self.handoff = handoff
             ?? GameSessionHandoff(visibility: MockAppVisibility(), observer: MockRunningApplicationObserver())
+        self.appUpdater = appUpdater
     }
 
     /// Seeded in-memory environment with mock services for SwiftUI previews.

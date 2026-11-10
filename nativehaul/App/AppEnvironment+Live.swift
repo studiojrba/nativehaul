@@ -46,7 +46,8 @@ extension AppEnvironment {
             emulators: emulators,
             components: makeLiveComponents(emulators: emulators),
             gameBadges: GameUpdateBadgeProvider(switchVersions: .bundled()),
-            handoff: makeLiveHandoff()
+            handoff: makeLiveHandoff(),
+            appUpdater: SparkleAppUpdater()
         )
     }
 
