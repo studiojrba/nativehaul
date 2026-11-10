@@ -1,9 +1,9 @@
-# ADR 0046 — NX Shelf 1.0: Switch + emulators only; Steam and CrossOver removed; no sign-in anywhere
+# ADR 0046 — nativehaul 1.0: Switch + emulators only; Steam and CrossOver removed; no sign-in anywhere
 
 **Status:** Accepted · 2026-11-09 (J.R, Mon 21:29 EST, corrected 22:48 EST)
 
 ## Context
-J.R narrowed 1.0 to what NX Shelf does better than anything else on his Mac:
+J.R narrowed 1.0 to what nativehaul does better than anything else on his Mac:
 - adopt the Switch ports and ROMs already on disk, without rebuilding them (the thing NX Play would not do);
 - build native Switch ports on standalone nxnative;
 - route emulated games to the emulator that owns them.
@@ -50,7 +50,7 @@ His correction made two things total:
     Switch port. This works wherever it sits in a scanned folder, and the title ID is stored on the game, so
     titledb media and update badges work at once.
   - A rescan adopts the stamped ID for a game it already knows. It never overwrites an ID recorded by a build
-    through NX Shelf.
+    through nativehaul.
   - ROM files become emulated games with their system. `~/Switch/Games` is scanned even when nothing is
     configured.
   - Re-scans add nothing.
@@ -60,7 +60,7 @@ His correction made two things total:
   - SteamGridDB (pasted key, art fallback).
 
   Every key read happens off the main thread (ADR 0044).
-- **No sign-in:** the account-shaped features are pasted API keys in the Keychain (`com.studiojrba.NXShelf`):
+- **No sign-in:** the account-shaped features are pasted API keys in the Keychain (`com.studiojrba.nativehaul`):
   - SteamGridDB;
   - IGDB;
   - RetroAchievements (username + web API key, ADR 0047).

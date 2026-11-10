@@ -1,4 +1,4 @@
-# NX Shelf
+# nativehaul
 
 A native macOS shelf for your Switch ports and emulated games: it adopts what is already on your Mac (existing
 nxnative builds and ROM folders) with zero rebuilding, launches each game through the app that owns it, and has one
@@ -38,7 +38,7 @@ The project file is generated from `project.yml` and is not committed.
 ```
 
 ```bash
-open NXShelf.xcodeproj
+open nativehaul.xcodeproj
 ```
 
 ### Build and test
@@ -48,7 +48,7 @@ open NXShelf.xcodeproj
 ```
 
 It builds into Xcode's default DerivedData, the one canonical output on this Mac:
-`~/Library/Developer/Xcode/DerivedData/NXShelf-<hash>/Build/Products/Debug/NX Shelf.app` (the script prints the
+`~/Library/Developer/Xcode/DerivedData/nativehaul-<hash>/Build/Products/Debug/nativehaul.app` (the script prints the
 full path). In Xcode: ⌘B / ⌘U build into the same folder.
 
 ### Lint and format
@@ -66,7 +66,7 @@ Use `./scripts/lint.sh --check` to verify without rewriting files.
 - **Game folders**: Settings → Game Folders. `~/Switch/Games` is scanned even if you configure nothing.
 - **nxnative engine**: a standalone copy of upstream nxnative, found automatically in `~/Switch` or Homebrew
   (ADR 0021); `prod.keys` likewise. Settings → NXNative only overrides or switches the module off.
-  NX Shelf never ships the engine, keys, firmware, or game files.
+  nativehaul never ships the engine, keys, firmware, or game files.
 
 ## Architecture overview
 - **SwiftUI + MVVM**: views render `@MainActor @Observable` ViewModels; no business logic in views.
@@ -82,7 +82,7 @@ See `docs/PLAN.md` for the roadmap and `docs/decisions/` for architecture decisi
 ## Where things live
 
 ```
-nx-shelf/ (repo root)
+nativehaul/ (repo root)
 ├── project.yml                 XcodeGen spec (source of truth for the Xcode project)
 ├── CLAUDE.md                   Project rules for humans and AI contributors
 ├── scripts/                    bootstrap.sh · build.sh · lint.sh
@@ -90,7 +90,7 @@ nx-shelf/ (repo root)
 │   ├── PLAN.md                 Architecture & roadmap
 │   ├── PROGRESS.md             Build status log per branch
 │   └── decisions/              ADRs (0001-…)
-├── NXShelf/                    App source
+├── nativehaul/                    App source
 │   ├── App/                    Entry point, RootView, AppEnvironment
 │   ├── Features/
 │   │   └── <FeatureName>/
@@ -104,7 +104,7 @@ nx-shelf/ (repo root)
 │       ├── Networking/         HTTP client protocol + implementations
 │       ├── Persistence/        SwiftData container & schema
 │       └── Utilities/          Formatters, Keychain, helpers
-└── NXShelfTests/               Unit tests mirroring the source tree
+└── nativehaulTests/               Unit tests mirroring the source tree
 ```
 
 ## Contributing

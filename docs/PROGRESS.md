@@ -1,6 +1,6 @@
-# NX Shelf — Progress Log
+# nativehaul — Progress Log
 
-> The app was Playrite, then Retriever, and is now NX Shelf (ADR 0043). Entries below keep the name the app had
+> The app was Playrite, then Retriever, and is now nativehaul (ADR 0043). Entries below keep the name the app had
 > when they were written.
 
 Living status log. Each branch appends its section. Legend: ✅ built & compiles · 🧪 unit-tested · 🟡 stubbed · ⛔ blocked.
@@ -1203,10 +1203,10 @@ approved by J.R when he set the rule). 333 tests (+6).
 - This record: `chore/revert-v2-pass` from `e275e64`, documentation only (ADR 0042).
 - **Retriever is on hold again.** Nothing else starts until J.R says so, relayed through Ollie.
 
-## 47 · feature/rename-nx-shelf — Retriever becomes NX Shelf (J.R, Mon 21:29; stage 1 of 4)
-- ✅ **Public name:** NX Shelf in the display name, bundle name and executable (`NX Shelf.app`), every user-facing
+## 47 · feature/rename-nx-shelf — Retriever becomes nativehaul (J.R, Mon 21:29; stage 1 of 4)
+- ✅ **Public name:** nativehaul in the display name, bundle name and executable (`nativehaul.app`), every user-facing
   string, README, CLAUDE.md and PLAN, the update checker's repository, and the GitHub repository
-  (`studiojrba/nx-shelf`).
+  (`studiojrba/nativehaul`).
 - ✅ **Data untouched:** the bundle ID, `Application Support/Playrite`, `default.store` and the Keychain service are
   unchanged as legacy internal identifiers. Nothing was migrated or flagged; none of them needed to change.
 - ✅ **Bottle names kept:** CrossOver bottle names, their installer folder and the `.retriever-backup` suffix keep the
@@ -1234,11 +1234,11 @@ approved by J.R when he set the rule). 333 tests (+6).
 
 ## 49 · feature/nx-shelf-identity — a full clean identity (J.R, Mon 22:48; redoes stage 1)
 - ✅ **Identity:**
-  - bundle ID `com.studiojrba.NXShelf`;
-  - `Application Support/NX Shelf`;
-  - store `NXShelf.store` inside it (explicit URL);
-  - Keychain service `com.studiojrba.NXShelf`;
-  - project, scheme, targets, folders and module `NXShelf`.
+  - bundle ID `com.studiojrba.nativehaul`;
+  - `Application Support/nativehaul`;
+  - store `nativehaul.store` inside it (explicit URL);
+  - Keychain service `com.studiojrba.nativehaul`;
+  - project, scheme, targets, folders and module `nativehaul`.
 - ✅ **Nothing reads or migrates the old identity's data.** `AppInfoTests` guards against any reference to it. The
   legacy tracker repair and the old own-app names are removed.
 - 🧪 Suite green; lint clean.
@@ -1285,8 +1285,38 @@ approved by J.R when he set the rule). 333 tests (+6).
   - settings.
 - Not verified live: there are no credentials yet.
 
+## 52 · feature/nativehaul-name — the name is locked: nativehaul (J.R, Message 11)
+- **Built:** the working name is swapped for **nativehaul** everywhere (ADR 0048), on the fresh-start terms of
+  ADR 0045 (no migration):
+  - display name and wordmark `nativehaul` (lowercase, one word);
+  - bundle ID `com.studiojrba.nativehaul`, support folder `~/Library/Application Support/nativehaul`, store
+    `nativehaul.store`, Keychain service `com.studiojrba.nativehaul`;
+  - project, scheme, targets, source folders and module `nativehaul` / `nativehaulTests`; types `NativehaulApp`,
+    `NativehaulSchema`;
+  - docs, strings and ADRs swept (ADRs 0043 and 0045 renamed to match). Real git branch names stay as they are.
+- **Repo:** GitHub `studiojrba/nx-shelf` renamed to `studiojrba/nativehaul`; `origin` updated (GitHub redirects
+  the old URL).
+- **Guard:** `AppInfoTests` also fails if any source mentions the working name's bundle ID, folder, store or name.
+- **Tests:** 423, all green; lint clean. One UI line was reworded to fit 120 columns ("nativehaul keeps only the
+  link and credits the author…").
+
+## Name lock: state on J.R's Mac (2026-11-10)
+- **J.R's copy:** the working-name app was quit (no game running) and `nativehaul.app` opened from the new
+  canonical path, `DerivedData/nativehaul-avvohnucushygrhktagpqdqkqjmt/Build/Products/Debug/nativehaul.app`.
+  One instance runs, on the first-run welcome. Its library is empty until J.R clicks **Get started**, which adopts
+  the ports on disk (covered by the adoption tests; not clicked on his behalf).
+- **Working-name data orphaned on disk.** Not read, not migrated, not deleted; J.R decides the purge:
+  - `~/Library/Application Support/NX Shelf/` (106 MB: Artwork, Audit, TitleDB, `NXShelf.store` + `-shm`/`-wal`);
+  - `~/Library/Preferences/com.studiojrba.NXShelf.plist`, plus seven `NXShelfTests.*.plist` test-suite domains;
+  - `~/Library/Caches/com.studiojrba.NXShelf` and `~/Library/HTTPStorages/com.studiojrba.NXShelf`;
+  - the old build output, `~/Library/Developer/Xcode/DerivedData/NXShelf-copbtfiladibxqcfsvuhlltypdej` (293 MB);
+  - the generated `NXShelf.xcodeproj` in the project folder (git-ignored);
+  - the Keychain service `com.studiojrba.NXShelf` holds no items.
+- **Local folder rename, still flagged:** rename `~/Projects/Retriever` to `nativehaul` between sessions, then run
+  `scripts/build.sh` once.
+
 ## Identity redo + surgery: state on J.R's Mac (2026-11-09 23:25)
-- **J.R's copy:** relaunched as the new identity (`com.studiojrba.NXShelf`). It started fresh and adopted all 18
+- **J.R's copy:** relaunched as the new identity (`com.studiojrba.nativehaul`). It started fresh and adopted all 18
   built ports from `~/Switch/Games`, each with its stamped title ID, with no rebuilding. titledb media fills in the
   background.
 - **Nothing to adopt yet for emulators:** RetroArch is detected at `~/Applications/RetroArch.app` but has no cores
@@ -1301,7 +1331,7 @@ approved by J.R when he set the rule). 333 tests (+6).
     `com.studiojrba.Playrite.binarycookies`;
   - the old build output, `~/Library/Developer/Xcode/DerivedData/Playrite-exinnpzvysdovkcwpocorbnjqrch` (517 MB);
   - the old `Retriever.app` build, moved to the Trash earlier tonight.
-- **Local folder rename flagged, not done:** renaming `~/Projects/Retriever` to `NXShelf` would pull the running
+- **Local folder rename flagged, not done:** renaming `~/Projects/Retriever` to `nativehaul` would pull the running
   session's working folder out from under it, and change Xcode's DerivedData folder (the canonical build path J.R's
   copy runs from). Best done between sessions; then rebuild once with `scripts/build.sh`.
 
@@ -1356,6 +1386,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 49 | `feature/nx-shelf-identity` (full clean identity) | ✅ | ✅ | 527 | ✅ |
 | 50 | `feature/switch-emulators-scope` (1.0 scope surgery) | ✅ | ✅ | 415 | ✅ |
 | 51 | `feature/retroachievements` | ✅ | ✅ | 423 | ✅ |
+| 52 | `feature/nativehaul-name` (name locked) | ✅ | ✅ | 423 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1395,7 +1426,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0047)
+## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0048)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.

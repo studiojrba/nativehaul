@@ -1,6 +1,6 @@
 included:
-  - NXShelf
-  - NXShelfTests
+  - nativehaul
+  - nativehaulTests
 excluded:
   - build
   - DerivedData
@@ -55,8 +55,8 @@ custom_rules:
   no_inline_padding_literal:
     name: "Use DesignTokens"
     regex: '\.(padding|frame|cornerRadius|spacing)\([^)]*\b[0-9]+(\.[0-9]+)?\b'
-    included: 'NXShelf/.*\.swift'
-    excluded: 'NXShelf/Shared/DesignSystem/.*\.swift'
+    included: 'nativehaul/.*\.swift'
+    excluded: 'nativehaul/Shared/DesignSystem/.*\.swift'
     message: "Inline styling literal — use DesignTokens instead."
     severity: error
 

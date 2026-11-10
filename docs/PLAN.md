@@ -1,7 +1,7 @@
-# NX Shelf — Architecture & Roadmap
+# nativehaul — Architecture & Roadmap
 
 ## Vision
-**NX Shelf 1.0 (ADR 0046): Switch + emulators only.** A beautiful shelf that launches games: it adopts existing
+**nativehaul 1.0 (ADR 0046): Switch + emulators only.** A beautiful shelf that launches games: it adopts existing
 standalone nxnative builds and ROM folders with zero rebuilding; native Switch building on standalone nxnative is the
 one big tool inside; and an emulator hub detects the user's emulators, maps ROM folders by system and launches
 through the owning emulator. No sign-in anywhere: the only accounts are pasted API keys (RetroAchievements,
@@ -13,8 +13,8 @@ CrossOver were built, then removed for 1.0.)
 Single app module, strict feature folders (see `README.md` for the full tree).
 
 ```
-NXShelf/
-├── App/            NXShelfApp, RootView, AppEnvironment (dependency container)
+nativehaul/
+├── App/            NativehaulApp, RootView, AppEnvironment (dependency container)
 ├── Features/
 │   ├── Library/        SwiftData models (Game, PlaySession…), grid, sidebar, detail, JSON import/export
 │   ├── FolderImport/   Adoption of existing builds and ROM folders (first run and rescan)

@@ -10,7 +10,7 @@ games that RetroAchievements supports.
 ## Decision
 - **Credentials:**
   - Settings has a RetroAchievements tab (username + web API key).
-  - Both are stored in the Keychain (`com.studiojrba.NXShelf`, `retroachievements.username` and
+  - Both are stored in the Keychain (`com.studiojrba.nativehaul`, `retroachievements.username` and
     `retroachievements.apikey`), never read back into the UI, and read off the main thread (ADR 0044).
   - No OAuth and no login window.
 - **The API** (`https://retroachievements.org/API/`, checked against the official API docs on 2026-11-09):
@@ -34,7 +34,7 @@ games that RetroAchievements supports.
   - earned achievements at full strength with their badge, unearned ones dimmed with the locked badge
     (`media.retroachievements.org/Badge/<name>[_lock].png`).
   - If the hash isn't in the list, a plain line says so. If the service is down, a plain line says to try later.
-  - Without credentials, or for a system NX Shelf can't identify, the section is absent: no nagging.
+  - Without credentials, or for a system nativehaul can't identify, the section is absent: no nagging.
 
 ## Consequences
 - **Not verified live:** there are no credentials yet, so the calls are covered by recorded-shape fixtures. The
