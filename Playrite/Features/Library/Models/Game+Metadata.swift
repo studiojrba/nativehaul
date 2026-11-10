@@ -23,6 +23,14 @@ extension Game {
 
     /// The lookup key for metadata providers.
     var metadataQuery: MetadataQuery {
-        MetadataQuery(gameID: id, title: title, steamAppID: steamAppID, platform: platform)
+        MetadataQuery(
+            gameID: id,
+            title: title,
+            steamAppID: steamAppID,
+            platform: platform,
+            switchTitleID: platform == .switchPort
+                ? switchTitleID ?? NXNativeAppTitleID.titleID(ofAppAt: appBundlePath)
+                : nil
+        )
     }
 }

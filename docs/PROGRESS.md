@@ -1094,6 +1094,30 @@ approved by J.R when he set the rule). 333 tests (+6).
   must survive, and the visible frame must have the image's shape).
 - Visible change: wide heroes on the detail page now show whole, so they are shorter than the old cropped hero.
 
+## 40 · feature/titledb-media — media pass 2/4: Nintendo media via titledb
+- ✅ `TitleDBStore` downloads titledb's `US.en.json` once (about 90 MB) and caches a compact index in
+  `Application Support/Playrite/TitleDB/`. It refreshes after 30 days at most. A failed refresh keeps the old cache,
+  and no cache at all means no media, never an error.
+- ✅ Title ID → NSUID in `TitleDBIndex`:
+  - the record's own title ID first;
+  - then the base application of an update or add-on ID;
+  - then a single exact title match.
+  - When records share an ID, Switch 2 Edition and bundle listings lose to the original.
+- ✅ Ports without a stored title ID get it from the built app's bundle ID, `org.nxnative.<id>`
+  (`NXNativeAppTitleID`).
+- ✅ What a match fills:
+  - screenshots fill the slideshow;
+  - the official description fills only empty descriptions;
+  - the key art fills empty heroes, and replaces a hero only when it is SteamGridDB art narrower than 1920 px
+    (`HeroUpgradeRule`).
+  - Every fill and swap writes an audit entry (`metadata.fill`, `metadata.heroUpgrade`).
+- 🧪 `TitleDBIndexTests`, `TitleDBStoreTests` (cache, stale refresh, failed refresh, offline) and
+  `TitleDBMediaFetchTests`. The last runs the real fetcher with: no overwrite of an existing description, the hero
+  upgrade only for small SteamGridDB art, audit entries, and no dataset.
+- Measured with the real index code on the real file: 15/18 built ports match by ID and 6/6 unbuilt ports by exact
+  title, so 21/24. Fortune's Weave, Pokopia and Ocarina of Time are not in titledb.
+- Note: 23 of 24 ports already have an imported description, so titledb fills descriptions only where one is empty.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1137,6 +1161,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 37 | `feature/installed-filter` (F5) | ✅ | ✅ | 476 | ✅ |
 | 38 | `feature/meebits-energy-pass` (look; J.R's eyeball first) | ✅ | ✅ | 492 | ✅ |
 | 39 | `feature/media-slideshow-fit` (media pass 1/4) | ✅ | ✅ | 503 | ✅ |
+| 40 | `feature/titledb-media` (media pass 2/4) | ✅ | ✅ | 522 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches

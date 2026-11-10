@@ -10,4 +10,6 @@ struct MetadataQuery: Equatable, Sendable {
     let steamAppID: Int?
     /// Library platform.
     let platform: GamePlatform
+    /// Switch title ID of a port (stored, or read from its nxnative build), joined to titledb (ADR 0038).
+    var switchTitleID: String?
 }

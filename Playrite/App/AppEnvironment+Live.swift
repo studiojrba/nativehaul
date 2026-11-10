@@ -160,9 +160,10 @@ extension AppEnvironment {
         return MetadataFetcher(
             repository: repository,
             steamStore: SteamStoreMetadataProvider(http: http),
-            nintendo: NintendoStoreMetadataProvider(store: UnavailableNintendoStoreSearch()),
+            nintendo: TitleDBMetadataProvider(store: TitleDBStore(http: URLSessionHTTPClient())),
             steamGridDB: SteamGridDBMetadataProvider(http: http, secrets: secrets),
-            downloader: ArtworkDownloader(http: http, cache: FileArtworkCache())
+            downloader: ArtworkDownloader(http: http, cache: FileArtworkCache()),
+            audit: FileAuditLog(path: FileAuditLog.defaultPath(), files: LocalFileOperations())
         )
     }
 
