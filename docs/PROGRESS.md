@@ -1286,6 +1286,23 @@ approved by J.R when he set the rule). 333 tests (+6).
   - a pixel test that a cover fills its card edge to edge.
 - 🧪 `TypeFamilyChoiceRenderTests` renders Home in both families.
 
+## ⏸ ON HOLD (J.R, Mon 2026-11-09 21:01 EST)
+Retriever is paused. No new work, and no queued items picked up. Work resumes only when J.R says so, relayed through
+Ollie.
+- **Tip:** `feature/type-and-bare-covers` (`0d66a0e`), stacked on branches 39–45. Everything is pushed; nothing is
+  merged.
+- **Tests:** 553 green. Lint clean.
+- **J.R's copy:** relaunched on the tip build (light, Leaned in, Inter).
+- **Parked as is:** the font question, Inter vs SF Pro. Inter is the current default. The renders for his pick are in
+  `docs/design/type-choice/`. Nothing is locked or removed.
+- **Waiting on J.R's look before any merge:**
+  - the detail redesign (43);
+  - light feel (44);
+  - guided onboarding (45);
+  - type and bare covers (46);
+  - the energy pass (38).
+- **Waiting on J.R's input:** IGDB is built but needs his Twitch credentials (Settings → Artwork).
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
