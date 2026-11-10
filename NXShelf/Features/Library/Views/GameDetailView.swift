@@ -76,6 +76,9 @@ struct GameDetailView: View {
                 SeriesMembershipSection(viewModel: environment.makeSeriesMembershipViewModel(for: viewModel.game))
                 PlaytimeBreakdownView(breakdown: viewModel.breakdown)
                 SessionListView(sessions: viewModel.sessions)
+                if viewModel.game.platform == .emulated {
+                    RetroAchievementsSection(viewModel: environment.makeRetroAchievementsViewModel(for: viewModel.game))
+                }
                 GuidesSection(viewModel: environment.makeGuidesViewModel(for: viewModel.game))
                 if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage).foregroundStyle(Theme.danger)

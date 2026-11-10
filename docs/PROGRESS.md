@@ -1265,6 +1265,26 @@ approved by J.R when he set the rule). 333 tests (+6).
 - 🧪 Suite green; lint clean. `GameFolderImporterTests` now covers adoption: stamped builds anywhere, title-ID
   adoption on rescan, no overwrite of an ID recorded by a build, ROMs with systems, idempotent rescans.
 
+## 51 · feature/retroachievements — RetroAchievements by pasted key (the new 1.0 feature)
+- ✅ **Credentials:** a Settings tab for the username + web API key, stored in the new Keychain service and read off
+  the main thread. No sign-in.
+- ✅ **API:** RetroAchievements web API (game list with hashes, cached per session; user progress). The key goes
+  only to RetroAchievements, as `y`.
+- ✅ **ROM identification** by RetroAchievements' hash rules: GB/GBC/GBA whole file, NES without the iNES header,
+  SNES without the copier header, N64 normalised to big-endian. A match is remembered on the game.
+- ✅ **Game page section:** progress, points and the set with earned/locked badges. Absent without keys or for
+  systems not identified yet (disc-based, DS).
+- 🧪 `RetroAchievementsTests`:
+  - each hash rule;
+  - silent without keys;
+  - match and progress, with the key only to RetroAchievements and the list cached;
+  - not found, unsupported, failure;
+  - a known ID skips hashing;
+  - no main-thread Keychain reads;
+  - the section remembers the match and hides without keys;
+  - settings.
+- Not verified live: there are no credentials yet.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1315,6 +1335,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 48 | `fix/launch-freezes` (crash pass) | ✅ | ✅ | 532 | ✅ |
 | 49 | `feature/nx-shelf-identity` (full clean identity) | ✅ | ✅ | 527 | ✅ |
 | 50 | `feature/switch-emulators-scope` (1.0 scope surgery) | ✅ | ✅ | 415 | ✅ |
+| 51 | `feature/retroachievements` | ✅ | ✅ | 423 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1354,7 +1375,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0046)
+## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0047)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.

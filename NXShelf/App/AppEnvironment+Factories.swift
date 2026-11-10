@@ -153,6 +153,16 @@ extension AppEnvironment {
         ArtworkSettingsViewModel(store: steamGridDBKey)
     }
 
+    /// Builds the Settings → RetroAchievements view model.
+    func makeRetroAchievementsSettingsViewModel() -> RetroAchievementsSettingsViewModel {
+        RetroAchievementsSettingsViewModel(store: retroAchievementsCredentials)
+    }
+
+    /// Builds the RetroAchievements section's view model for an emulated game.
+    func makeRetroAchievementsViewModel(for game: Game) -> RetroAchievementsViewModel {
+        RetroAchievementsViewModel(game: game, service: retroAchievements, repository: repository)
+    }
+
     /// Builds the Settings → Artwork IGDB section's view model.
     func makeIGDBSettingsViewModel() -> IGDBSettingsViewModel {
         IGDBSettingsViewModel(store: igdbCredentials)

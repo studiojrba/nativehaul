@@ -40,6 +40,10 @@ final class AppEnvironment {
     let steamGridDBKey: any SteamGridDBKeyStoring
     /// Optional IGDB credentials (Keychain), ADR 0038.
     let igdbCredentials: any IGDBCredentialStoring
+    /// Optional RetroAchievements credentials (Keychain), ADR 0047.
+    let retroAchievementsCredentials: any RetroAchievementsCredentialStoring
+    /// RetroAchievements lookups for emulated games.
+    let retroAchievements: any RetroAchievementsProviding
     /// Whether first-run setup was finished or skipped.
     let onboarding: any OnboardingStoring
     /// Routes emulated games to their emulator app.
@@ -70,6 +74,8 @@ final class AppEnvironment {
         metadataFetcher: any MetadataFetching,
         steamGridDBKey: any SteamGridDBKeyStoring,
         igdbCredentials: any IGDBCredentialStoring = MockIGDBCredentialStore(),
+        retroAchievementsCredentials: any RetroAchievementsCredentialStoring = MockRetroAchievementsCredentialStore(),
+        retroAchievements: any RetroAchievementsProviding = MockRetroAchievementsService(),
         onboarding: any OnboardingStoring,
         emulators: EmulatorRouter,
         components: any ComponentUpdating,
@@ -93,6 +99,8 @@ final class AppEnvironment {
         self.metadataFetcher = metadataFetcher
         self.steamGridDBKey = steamGridDBKey
         self.igdbCredentials = igdbCredentials
+        self.retroAchievementsCredentials = retroAchievementsCredentials
+        self.retroAchievements = retroAchievements
         self.onboarding = onboarding
         self.emulators = emulators
         self.components = components

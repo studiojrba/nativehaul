@@ -37,6 +37,11 @@ extension AppEnvironment {
             metadataFetcher: makeLiveMetadataFetcher(repository: repository, secrets: secrets),
             steamGridDBKey: SteamGridDBKeyStore(secrets: secrets),
             igdbCredentials: IGDBCredentialStore(secrets: secrets),
+            retroAchievementsCredentials: RetroAchievementsCredentialStore(secrets: secrets),
+            retroAchievements: RetroAchievementsService(client: RetroAchievementsClient(
+                http: ThrottledHTTPClient(base: URLSessionHTTPClient(), policy: .metadata),
+                credentials: RetroAchievementsCredentialStore(secrets: secrets)
+            )),
             onboarding: UserDefaultsOnboardingStore(),
             emulators: emulators,
             components: makeLiveComponents(emulators: emulators),

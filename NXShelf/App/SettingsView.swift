@@ -9,6 +9,8 @@ struct SettingsView: View {
         TabView {
             GeneralSettingsView()
                 .tabItem { Label("General", systemImage: "gearshape") }
+            RetroAchievementsSettingsView(viewModel: environment.makeRetroAchievementsSettingsViewModel())
+                .tabItem { Label("RetroAchievements", systemImage: "trophy") }
             ArtworkSettingsView(
                 viewModel: environment.makeArtworkSettingsViewModel(),
                 igdbViewModel: environment.makeIGDBSettingsViewModel()

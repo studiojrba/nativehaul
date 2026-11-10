@@ -8,4 +8,8 @@ enum SecretKey: String, CaseIterable, Sendable {
     case twitchClientID = "twitch.client.id"
     /// Twitch developer client secret for IGDB.
     case twitchClientSecret = "twitch.client.secret"
+    /// RetroAchievements username (ADR 0047).
+    case retroAchievementsUsername = "retroachievements.username"
+    /// RetroAchievements web API key.
+    case retroAchievementsAPIKey = "retroachievements.apikey"
 }

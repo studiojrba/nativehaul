@@ -6,6 +6,9 @@ extension ThrottlePolicy {
     /// IGDB allows four requests a second.
     private static let igdbMilliseconds = 300
     private static let igdbSpacing = Duration.milliseconds(igdbMilliseconds)
+    /// RetroAchievements rate-limits its web API.
+    private static let retroAchievementsMilliseconds = 500
+    private static let retroAchievementsSpacing = Duration.milliseconds(retroAchievementsMilliseconds)
     private static let steamGridDBSpacing = Duration.milliseconds(steamGridDBMilliseconds)
     private static let imageSpacing = Duration.milliseconds(imageMilliseconds)
 
@@ -15,6 +18,7 @@ extension ThrottlePolicy {
         hostIntervals: [
             "www.steamgriddb.com": steamGridDBSpacing,
             "api.igdb.com": igdbSpacing,
+            "retroachievements.org": retroAchievementsSpacing,
         ]
     )
 }

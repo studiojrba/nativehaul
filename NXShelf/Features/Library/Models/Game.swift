@@ -55,6 +55,8 @@ final class Game {
     var switchTitleID: String?
     /// Numeric version the port was built from, when known.
     var switchVersion: Int?
+    /// RetroAchievements game ID, once a ROM hash matched (ADR 0047), so the ROM isn't hashed again.
+    var retroAchievementsGameID: Int?
     /// HowLongToBeat game identifier, when known (used for a direct link-out; never fetched).
     var hltbID: Int?
     /// Recorded play sessions.
