@@ -27,6 +27,10 @@ targets:
     platform: macOS
     sources:
       - path: nativehaul
+      - path: LICENSE
+        buildPhase: resources
+      - path: THIRD_PARTY_NOTICES.md
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.studiojrba.nativehaul
@@ -35,7 +39,7 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: nativehaul
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.games
-        INFOPLIST_KEY_NSHumanReadableCopyright: "© studiojrba"
+        INFOPLIST_KEY_NSHumanReadableCopyright: "© 2026 Studio Jrba inc. MIT License."
         ENABLE_APP_SANDBOX: NO
         ENABLE_TESTABILITY: YES
   nativehaulTests:
