@@ -68,7 +68,6 @@ enum DesignTokens {
 
     /// Three-column game details layout.
     enum Details {
-        static let quickListWidth: CGFloat = 220
         static let rightRailWidth: CGFloat = 280
         static let heroHeight: CGFloat = 280
         static let launchButtonHeight: CGFloat = 48
@@ -144,15 +143,6 @@ enum DesignTokens {
 
     /// Colour sampled from a game's own artwork (ADR 0025): weak enough that text contrast never suffers.
     enum ArtTint {
-        /// The detail hero's ambient wash, at its strongest point.
-        static let heroGlowOpacity: Double = 0.32
-        /// How far the wash reaches beyond the hero, as a multiple of its height.
-        static let heroGlowReach: CGFloat = 1.8
-        /// Blur applied to the wash.
-        static let heroGlowBlur: CGFloat = 40
-        /// How far past the hero's sides the wash extends, in blur radii (the centre column clips it, so it reads
-        /// as an edge-to-edge glow rather than a box).
-        static let heroGlowSpread: CGFloat = 3
         /// A tile field's bottom strength, as a share of its top (the field deepens downward).
         static let fieldFalloff: Double = 0.7
         /// Sampled colours are lifted to at least this saturation, so a muddy average still reads as colour.

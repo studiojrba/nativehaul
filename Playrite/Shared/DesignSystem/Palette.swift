@@ -35,6 +35,8 @@ enum Palette {
     static let warning = Pair(dark: 0xD6A250, light: 0xA86E12)
     static let danger = Pair(dark: 0xE56B6B, light: 0xC23B3B)
     static let muted = Pair(dark: 0x7D8796, light: 0x66707E)
+    /// Title printed on a game case's spine (ADR 0039): warm off-white on the case colour.
+    static let caseSpineText = Pair(dark: 0xF7F3EC, light: 0xF7F3EC)
 
     /// A colour that follows the current appearance.
     static func color(_ pair: Pair) -> NSColor {

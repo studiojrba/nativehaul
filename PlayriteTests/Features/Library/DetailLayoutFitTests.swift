@@ -28,13 +28,13 @@ struct DetailLayoutFitTests {
         return (game, games)
     }
 
-    private func detail(_ environment: AppEnvironment, game: Game, games: [Game]) -> some View {
+    private func detail(_ environment: AppEnvironment, game: Game, games _: [Game]) -> some View {
         GameDetailView(
             viewModel: environment.makeGameDetailViewModel(for: game),
-            launchViewModel: environment.makeGameLaunchViewModel(for: game),
-            quickListGames: games
-        ) { _ in }
-            .environment(environment)
+            launchViewModel: environment.makeGameLaunchViewModel(for: game)
+        )
+        .environment(environment)
+        .environment(\.gameCaseRendersStill, true)
     }
 
     private func fittedWidth(_ view: some View, width: CGFloat) -> CGFloat {

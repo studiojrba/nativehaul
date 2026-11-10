@@ -1184,6 +1184,40 @@ approved by J.R when he set the rule). 333 tests (+6).
     - slideshows for Fortune's Weave, Pokopia and Ocarina of Time;
     - trailers for 39 Steam games (no store movie).
 
+## 43 · feature/detail-case-redesign — game detail page: sticky 3D case + ordered column (J.R 19:45; look first)
+- ✅ Two zones (Floema pattern, ADR 0039): a sticky left panel and a scrolling right column with a hairline
+  between. The floating sidebar is untouched. The quick list and info rail are removed; Manage… is in the toolbar.
+- ✅ The 3D case (SceneKit), front to back:
+  - drag to turn, inertia on release, easing back to a resting angle that shows the spine;
+  - idle sway;
+  - zoom buttons;
+  - front = cover, spine = title, back = hero or screenshot, edges = sampled art tint;
+  - one keep-case proportion for every game;
+  - the cover is trimmed to the face, the only crop allowed;
+  - no cover means the plain media panel;
+  - Reduce Motion means no sway or inertia, but dragging works.
+- ✅ The column in J.R's order:
+  1. title at the dial's display size;
+  2. short description;
+  3. Play Now with the status control;
+  4. slideshow (trailer, then screenshots);
+  5. HLTB bar with "Your time" per source;
+  6. the full description when longer;
+  7. specs table (rows only with data), then session history.
+- 🧪 `DetailRedesignModelTests`:
+  - inertia, then settle to rest;
+  - Reduce Motion;
+  - tilt limit;
+  - the face crop;
+  - the description split;
+  - spec rows only with data;
+  - the HLTB bar uses the largest real source, never a merged total;
+  - case artwork.
+- 🧪 `DetailRedesignRenderTests`: 900/1100/1280 in dark and light, no-cover, and a non-blank case still.
+  `DetailLayoutFitTests` and `PolishRenderTests` are updated.
+- Renders: `docs/design/detail-redesign/`. Not verified offscreen: the live drag and inertia feel. It needs J.R's
+  hands.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1230,6 +1264,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 40 | `feature/titledb-media` (media pass 2/4) | ✅ | ✅ | 515 | ✅ |
 | 41 | `feature/steam-trailers` (media pass 3/4) | ✅ | ✅ | 519 | ✅ |
 | 42 | `feature/igdb-media-seam` (media pass 4/4) | ✅ | ✅ | 531 | ✅ |
+| 43 | `feature/detail-case-redesign` (look; J.R's eyeball first) | ✅ | ✅ | 542 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1269,7 +1304,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0038)
+## Key decisions (see `docs/decisions/` ADR 0001–0039)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.

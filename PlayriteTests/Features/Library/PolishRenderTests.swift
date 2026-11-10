@@ -57,9 +57,9 @@ struct PolishRenderTests {
         let game = try #require(games.first)
         let detail = GameDetailView(
             viewModel: environment.makeGameDetailViewModel(for: game),
-            launchViewModel: environment.makeGameLaunchViewModel(for: game),
-            quickListGames: games
-        ) { _ in }
+            launchViewModel: environment.makeGameLaunchViewModel(for: game)
+        )
+        .environment(\.gameCaseRendersStill, true)
         renderBoth(shell(detail, environment: environment, selection: .library(.all)), width: width, name: "detail")
     }
 

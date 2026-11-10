@@ -16,13 +16,18 @@ enum ArtworkTint {
 
     /// The tint for the image at `path`, or `nil` when there's no readable image.
     static func color(forImageAt path: String?) -> Color? {
+        nsColor(forImageAt: path).map(Color.init(nsColor:))
+    }
+
+    /// The tint as an AppKit colour (for SceneKit materials), or `nil` when there's no readable image.
+    static func nsColor(forImageAt path: String?) -> NSColor? {
         guard let path else { return nil }
         if let cached = cache.object(forKey: path as NSString) {
-            return Color(nsColor: cached)
+            return cached
         }
         guard let sampled = sample(path) else { return nil }
         cache.setObject(sampled, forKey: path as NSString)
-        return Color(nsColor: sampled)
+        return sampled
     }
 
     private static func sample(_ path: String) -> NSColor? {

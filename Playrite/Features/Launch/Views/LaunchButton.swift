@@ -10,7 +10,7 @@ struct LaunchButton: View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
             if let primary = viewModel.primaryOption {
                 HStack(spacing: DesignTokens.Spacing.sm) {
-                    Button { Task { await viewModel.launch() } } label: { label("Play", isEnabled: true) }
+                    Button { Task { await viewModel.launch() } } label: { label("Play Now", isEnabled: true) }
                         .buttonStyle(PlayButtonStyle())
                     if viewModel.availability.options.count > 1 {
                         otherRoutes
@@ -23,7 +23,7 @@ struct LaunchButton: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
             } else {
-                Button {} label: { label("Play", isEnabled: false) }
+                Button {} label: { label("Play Now", isEnabled: false) }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.large)
                     .disabled(true)

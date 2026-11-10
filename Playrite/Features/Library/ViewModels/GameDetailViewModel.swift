@@ -54,6 +54,31 @@ final class GameDetailViewModel {
         GameInfoBuilder.rows(for: game)
     }
 
+    /// Real playtime only, per source (paired with the HLTB bar, ADR 0039).
+    var playtime: PlaytimeBreakdown {
+        game.playtimeBreakdown()
+    }
+
+    /// The HLTB bar, or `nil` when no estimate is cached.
+    var hltbBar: HLTBBar? {
+        HLTBBar(estimate: hltb?.cachedEstimate(for: game.id), breakdown: playtime)
+    }
+
+    /// The lead and full description (ADR 0039).
+    var description: DetailDescription {
+        DetailDescription(summary: game.summary)
+    }
+
+    /// Specs table rows, only where data exists.
+    var specRows: [GameSpecRow] {
+        GameSpecRow.rows(for: game)
+    }
+
+    /// What the case prints, or `nil` without cover art.
+    var caseArtwork: CaseArtwork? {
+        CaseArtwork.make(for: game)
+    }
+
     /// HLTB chips (Main Story / Main Story+ / Completionist), each labelled as an estimate in the view.
     var hltbChips: [HLTBChip] {
         HLTBChip.chips(for: hltb?.cachedEstimate(for: game.id))

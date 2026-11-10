@@ -15,6 +15,8 @@ struct HeroMediaView: View {
     var trailerVideoURL: String?
     /// Trailer poster.
     var trailerPosterPath: String?
+    /// Whether the hero (or cover) leads the images; the detail page prints those on its case instead (ADR 0039).
+    var includesArt = true
     @State private var index = 0
     @Environment(\.designIntensity) private var intensity
 
@@ -91,7 +93,8 @@ struct HeroMediaView: View {
             trailerPosterPath: trailerPosterPath,
             heroImagePath: heroImagePath,
             coverImagePath: coverImagePath,
-            carouselImagePaths: carouselImagePaths
+            carouselImagePaths: carouselImagePaths,
+            includingArt: includesArt
         )
     }
 

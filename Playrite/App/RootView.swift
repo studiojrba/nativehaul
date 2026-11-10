@@ -75,10 +75,9 @@ struct RootView: View {
                     if let game = libraryViewModel.game(withID: id) {
                         GameDetailView(
                             viewModel: environment.makeGameDetailViewModel(for: game),
-                            launchViewModel: environment.makeGameLaunchViewModel(for: game),
-                            quickListGames: libraryViewModel.visibleGames
-                        ) { path = [$0] }
-                            .id(id)
+                            launchViewModel: environment.makeGameLaunchViewModel(for: game)
+                        )
+                        .id(id)
                     }
                 }
         }
