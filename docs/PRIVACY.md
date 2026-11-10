@@ -11,7 +11,7 @@ that is not in this table.
 |---|---|---|
 | `raw.githubusercontent.com` | Fetching the titledb Switch title list (when the cached copy is over 30 days old) | Nothing beyond the request |
 | `api.github.com` | Checking emulator releases (at most once a day) | Nothing beyond the request |
-| `github.com` | Opening nativehaul's releases page, and downloading emulators the user chose to install | Nothing beyond the request |
+| `github.com` | Checking for nativehaul updates (see below), and downloading emulators the user chose to install | Nothing beyond the request |
 | `buildbot.libretro.com`, `dl.dolphin-emu.org` | Downloading an emulator the user chose to install | Nothing beyond the request |
 | `retroachievements.org`, `media.retroachievements.org` | Only with the user's RetroAchievements key | Username, API key, the matched game's ID or a ROM hash |
 | `id.twitch.tv`, `api.igdb.com`, `images.igdb.com` | Only with the user's IGDB credentials | Client ID and secret (for a token), game titles |
@@ -25,4 +25,9 @@ that is not in this table.
 Network requests carry only what each request needs. Like any connection, they reveal the Mac's IP address to the
 host.
 
-<!-- app-updates -->
+## App updates (Sparkle)
+nativehaul checks for its own updates once a day (Settings → Updates can turn this off), and on "Check for
+Updates…". The check downloads `appcast.xml` from the latest GitHub release (`github.com`, which redirects to
+GitHub's download host). System profiling is off, so the request carries no information about the Mac beyond what
+any download does. An update is installed only after the user agrees, and only if it is signed with nativehaul's
+update key and Developer ID.

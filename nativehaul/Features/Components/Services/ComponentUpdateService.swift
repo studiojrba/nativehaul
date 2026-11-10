@@ -7,7 +7,6 @@ import Foundation
 @MainActor
 final class ComponentUpdateService: ComponentUpdating {
     private static let checkInterval: TimeInterval = 86400
-    private static let appRepo = (owner: "studiojrba", repo: "nativehaul")
 
     let catalog: ComponentCatalog
     private let store: any ComponentPreferencesStoring
@@ -15,7 +14,6 @@ final class ComponentUpdateService: ComponentUpdating {
     private let installer: ComponentInstaller
     private let files: any FileOperating
     private let assessor: any SignatureAssessing
-    private let appVersion: String?
     private let onInstalled: @MainActor (ComponentEntry) -> Void
     private let now: () -> Date
     private var staged: [String: StagedComponent] = [:]
@@ -28,7 +26,6 @@ final class ComponentUpdateService: ComponentUpdating {
         installer: ComponentInstaller,
         files: any FileOperating,
         assessor: any SignatureAssessing,
-        appVersion: String? = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
         onInstalled: @escaping @MainActor (ComponentEntry) -> Void = { _ in },
         now: @escaping () -> Date = Date.init
     ) {
@@ -38,20 +35,12 @@ final class ComponentUpdateService: ComponentUpdating {
         self.installer = installer
         self.files = files
         self.assessor = assessor
-        self.appVersion = appVersion
         self.onInstalled = onInstalled
         self.now = now
     }
 
     var preferences: ComponentPreferences {
         store.preferences
-    }
-
-    var appUpdate: String? {
-        guard let latest = store.preferences.latestAppVersion.flatMap(AppVersion.init),
-              let current = appVersion.flatMap(AppVersion.init), current < latest
-        else { return nil }
-        return latest.text
     }
 
     func status(for id: String) -> ComponentStatus? {
@@ -78,9 +67,6 @@ final class ComponentUpdateService: ComponentUpdating {
             if let release = try? await fetcher.latest(for: entry) {
                 preferences.latest[entry.id] = release
             }
-        }
-        if let release = try? await fetcher.latestRelease(owner: Self.appRepo.owner, repo: Self.appRepo.repo) {
-            preferences.latestAppVersion = release.tagName
         }
         preferences.lastChecked = now()
         store.preferences = preferences

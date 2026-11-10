@@ -9,7 +9,7 @@ struct ReleasePolicyTests {
         .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
 
     /// Frameworks the licence audit (`docs/LICENSE_AUDIT.md`) allows inside the app bundle.
-    private static let auditedFrameworks: Set<String> = []
+    private static let auditedFrameworks: Set<String> = ["Sparkle.framework"]
 
     @Test func everyHostInTheSourceIsDocumentedInThePrivacyPolicy() throws {
         let policy = try String(contentsOf: Self.repoRoot.appending(path: "docs/PRIVACY.md"), encoding: .utf8)

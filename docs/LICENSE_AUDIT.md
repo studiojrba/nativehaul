@@ -15,7 +15,7 @@ network host changes.
 
 | Item | Kind | Licence | Shipped? | Notes |
 |---|---|---|---|---|
-| Swift packages / frameworks | Code | n/a | n/a | None before Sparkle. A test checks the app's Frameworks folder against this audit. |
+| Sparkle 2.10.1 (SwiftPM, exact version) | Code | MIT (+ BSD-2-Clause bsdiff, MIT sais-lite, zlib ed25519, BSD-2-Clause SUSignatureVerifier) | Yes | The only bundled framework. Full licence in the notices. A test checks the app's Frameworks folder against this audit. |
 | `ComponentCatalog.json` | Data | Ours (MIT) | Yes | Written by us: emulator names, official URLs, version pins. |
 | `SwitchTitleVersions.json` | Data | Ours (MIT) | Yes | Ships empty (schema only). |
 | `TroubleshootingKnowledgeBase.json` | Data | Ours (MIT) | Yes | Written by us. |

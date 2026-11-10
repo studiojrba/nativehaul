@@ -13,6 +13,10 @@ enum AppInfo {
     static let keychainService = "com.studiojrba.nativehaul"
     /// The SwiftData store's file name inside ``supportDirectory``.
     static let storeFileName = "nativehaul.store"
+    /// The marketing version (`CFBundleShortVersionString`), semantic versioning (ADR 0051).
+    static var version: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+    }
 
     /// `~/Library/Application Support/nativehaul`.
     static var supportDirectory: URL {

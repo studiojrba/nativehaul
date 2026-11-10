@@ -65,8 +65,7 @@ struct ComponentUpdateTests {
                 files: files, runner: runner, assessor: assessor, stagingRoot: "/tmp/stage"
             ),
             files: files,
-            assessor: assessor,
-            appVersion: "0.1.0"
+            assessor: assessor
         ) { adopted.append($0.id) }
         return (Bed(files: files, http: http, store: store, runner: runner, service: service), { adopted })
     }
@@ -124,11 +123,10 @@ struct ComponentUpdateTests {
         let (bed, _) = await bed()
         await bed.service.checkForUpdates(force: false)
         await bed.service.checkForUpdates(force: false)
-        #expect(await bed.http.requestedURLs.count == 2)
+        #expect(await bed.http.requestedURLs.count == 1)
         await bed.service.checkForUpdates(force: true)
-        #expect(await bed.http.requestedURLs.count == 4)
+        #expect(await bed.http.requestedURLs.count == 2)
         #expect(bed.service.preferences.latest["melonds"]?.version == "1.1")
-        #expect(bed.service.appUpdate == nil)
     }
 
     @Test func userInstalledCopiesAreOfferedNotTakenOver() async {

@@ -1310,6 +1310,22 @@ approved by J.R when he set the rule). 333 tests (+6).
 - **Tests:** `ReleasePolicyTests` (4): every source host is in the privacy policy; licence and notices ship; only
   audited frameworks are bundled; each has a notice. 427 tests, all green; lint clean.
 
+## 54 · feature/sparkle-updates — Sparkle app updates (release track 2/3)
+- **Built:** ADR 0050.
+  - Sparkle 2.10.1 (exact pin), behind `AppUpdating`, with `SparkleAppUpdater` (live) and `MockAppUpdater`.
+  - "Check for Updates…" in the app menu and in Settings → Updates, plus the automatic-check switch (on, daily) and
+    the version.
+  - Feed: `github.com/studiojrba/nativehaul/releases/latest/download/appcast.xml`. `SUPublicEDKey` is set; the
+    private key is in J.R's login Keychain (account `nativehaul`), never in the repo.
+  - The old GitHub-API "newer release" check is removed; Sparkle owns app updates.
+  - Sparkle's full licence is in `THIRD_PARTY_NOTICES.md`; the audit and privacy policy are updated.
+- **Tests:** `AppUpdateTests` (5) cover the feed, the key, the defaults, the Settings wiring and the semantic
+  version. `ReleasePolicyTests` now allows exactly `Sparkle.framework`. 432 tests, all green; lint clean.
+- **Known flake:** `SlideshowFitRenderTests.buildsShowcaseShowsTheWholeImage` failed once under full-suite load,
+  then passed alone twice and in a full rerun.
+- **J.R action:** back up the update key once: `generate_keys --account nativehaul -x ~/nativehaul-sparkle.key`,
+  stored offline (the tool is in DerivedData `SourcePackages/artifacts/sparkle/Sparkle/bin/`).
+
 ## Name lock: state on J.R's Mac (2026-11-10)
 - **J.R's copy:** the working-name app was quit (no game running) and `nativehaul.app` opened from the new
   canonical path, `DerivedData/nativehaul-avvohnucushygrhktagpqdqkqjmt/Build/Products/Debug/nativehaul.app`.
@@ -1398,6 +1414,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 51 | `feature/retroachievements` | ✅ | ✅ | 423 | ✅ |
 | 52 | `feature/nativehaul-name` (name locked) | ✅ | ✅ | 423 | ✅ |
 | 53 | `feature/release-licensing` (release 1/3) | ✅ | ✅ | 427 | ✅ |
+| 54 | `feature/sparkle-updates` (release 2/3) | ✅ | ✅ | 432 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1437,7 +1454,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0049)
+## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0050)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.

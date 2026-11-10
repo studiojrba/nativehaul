@@ -5,6 +5,10 @@ options:
     macOS: "15.0"
   createIntermediateGroups: true
   developmentLanguage: en
+packages:
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    exactVersion: 2.10.1
 settings:
   base:
     SWIFT_VERSION: "6.0"
@@ -31,9 +35,12 @@ targets:
         buildPhase: resources
       - path: THIRD_PARTY_NOTICES.md
         buildPhase: resources
+    dependencies:
+      - package: Sparkle
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.studiojrba.nativehaul
+        INFOPLIST_FILE: nativehaul/App/Info.plist
         PRODUCT_NAME: nativehaul
         PRODUCT_MODULE_NAME: nativehaul
         GENERATE_INFOPLIST_FILE: YES

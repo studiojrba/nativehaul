@@ -5,7 +5,6 @@ import Foundation
 final class MockComponentUpdater: ComponentUpdating {
     let catalog: ComponentCatalog
     private(set) var preferences = ComponentPreferences()
-    var appUpdate: String?
     /// Statuses to report.
     var statuses: [String: ComponentStatus]
     /// Stage the install stops at.
