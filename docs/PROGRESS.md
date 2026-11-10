@@ -1184,6 +1184,22 @@ approved by J.R when he set the rule). 333 tests (+6).
     - slideshows for Fortune's Weave, Pokopia and Ocarina of Time;
     - trailers for 39 Steam games (no store movie).
 
+## ⏸ v2 pass reverted, then back on hold (J.R, Mon 2026-11-09 21:18 EST)
+- J.R chose a **full revert** of the Floema/Kriss v2 pass. J.R's copy now runs the pre-v2 tip, `e275e64` on
+  `feature/igdb-media-seam`:
+  - the media stack over the design stack as it was;
+  - dark theme, energy pass at Leaned in;
+  - floating sidebar, F4 Home, F5 filter.
+- **Kept on GitHub, untouched, not merged:**
+  - `feature/detail-case-redesign` (`3930924`);
+  - `feature/light-feel` (`0ca3084`);
+  - `feature/guided-onboarding` (`cab3179`);
+  - `feature/type-and-bare-covers` (`a38148a`, which includes the earlier hold note).
+
+  Their PROGRESS sections (43–46) and ADRs live on those branches. The Inter vs SF Pro question is closed as moot.
+- This record: `chore/revert-v2-pass` from `e275e64`, documentation only (ADR 0042).
+- **Retriever is on hold again.** Nothing else starts until J.R says so, relayed through Ollie.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1269,7 +1285,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0038)
+## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
