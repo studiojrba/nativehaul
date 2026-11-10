@@ -5,7 +5,7 @@ import SwiftUI
 @MainActor
 enum OffscreenRenderer {
     /// Where renders go.
-    static let folder = (NSTemporaryDirectory() as NSString).appendingPathComponent("RetrieverPolish")
+    static let folder = (NSTemporaryDirectory() as NSString).appendingPathComponent("NXShelfPolish")
     private static let defaultSettle: TimeInterval = 0.4
     private static let offscreenOrigin: CGFloat = -20000
 

@@ -1,6 +1,6 @@
 import Foundation
 
-/// The slice of a titledb record that Retriever keeps in its local cache (ADR 0038).
+/// The slice of a titledb record that NX Shelf keeps in its local cache (ADR 0038).
 struct TitleDBEntry: Codable, Equatable, Sendable {
     /// Switch title ID, uppercased; `nil` when titledb doesn't know it.
     let titleID: String?

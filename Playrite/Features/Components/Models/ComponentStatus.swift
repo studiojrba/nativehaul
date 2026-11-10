@@ -7,7 +7,7 @@ enum ComponentStatus: Equatable, Sendable {
     /// Installed and current (or no newer version known).
     case upToDate(version: String?)
     /// A newer official build exists. `isManaged` is false for copies the user installed themselves, which
-    /// Retriever only offers to take over.
+    /// NX Shelf only offers to take over.
     case updateAvailable(current: String?, latest: String, isManaged: Bool)
 
     /// Badge text, if any.

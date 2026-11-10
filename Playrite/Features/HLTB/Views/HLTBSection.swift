@@ -49,7 +49,7 @@ struct HLTBSection: View {
                 Button("Enter Estimates…") { isEditing = true }
             }
             Text(
-                "Source: HowLongToBeat.com. Retriever does not scrape HowLongToBeat; "
+                "Source: HowLongToBeat.com. NX Shelf does not scrape HowLongToBeat; "
                     + "figures are entered by you and cached locally."
             )
             .font(DesignTokens.Typography.caption)

@@ -2,6 +2,7 @@ import Foundation
 
 /// One new bottle per game, named "Retriever – <title>", with a number added if that name is taken.
 struct PerGameBottlePlanner: BottlePlanning {
+    // Legacy identifier (ADR 0043): existing per-game bottles carry this prefix, so it keeps the old app name.
     private static let prefix = "Retriever – "
     private static let maxNameLength = 60
     private static let firstSuffix = 2

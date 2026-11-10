@@ -53,7 +53,7 @@ struct AppBundleScannerTests {
         let root = makeRoot()
         try makeDirectory(root, ".Trash/Gone.app")
         try makeDirectory(root, "Playrite.app")
-        try makeDirectory(root, "Retriever.app")
+        try makeDirectory(root, "NX Shelf.app")
         try makeDirectory(root, "Excluded/Own.app")
         try makeDirectory(root, "Kept.app")
         defer { try? fileManager.removeItem(at: root) }

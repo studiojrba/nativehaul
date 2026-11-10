@@ -4,7 +4,7 @@ import Foundation
 protocol AppBundleScanning: Sendable {
     /// Returns `.app` bundles under `folder` within `options`, sorted by name.
     ///
-    /// Never descends into a bundle once found, skips hidden items, the Trash and Retriever itself.
+    /// Never descends into a bundle once found, skips hidden items, the Trash and NX Shelf itself.
     func scan(folder: String, options: AppBundleScanOptions) throws -> [DiscoveredApp]
 }
 

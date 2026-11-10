@@ -1,6 +1,6 @@
-# Retriever — Project Rules
+# NX Shelf — Project Rules
 
-Retriever (formerly Playrite) is a native macOS game library hub: a Playnite-style library combined with an on-by-default
+NX Shelf (formerly Retriever, and before that Playrite) is a native macOS game library hub: a Playnite-style library combined with an on-by-default
 Switch build pipeline (driven by a **user-supplied, never-bundled** external engine).
 Start with `README.md` (quickstart + where things live), then `docs/PLAN.md` and `docs/decisions/`.
 
@@ -65,24 +65,24 @@ has are **detected, not re-demanded**.
 
 ## Shelf and router, never the engine (owner directive, ADR 0019)
 Like the Cocoon launcher on J.R's AYN Thor: one front end, and each kind of game is run by the specialist app that
-owns it. Retriever routes; it never emulates, translates or runs games itself.
+owns it. NX Shelf routes; it never emulates, translates or runs games itself.
 - Native `.app` (including nxnative-built Switch ports) → direct launch. Mac Steam → `steam://`. Windows Steam →
   a CrossOver bottle. Emulated ROMs → the system's emulator app. Every route lives in the launch planning model.
-- Nothing that runs games is bundled: no emulators, no cores, no engines. Retriever detects them, routes to them,
+- Nothing that runs games is bundled: no emulators, no cores, no engines. NX Shelf detects them, routes to them,
   and says honestly when one is missing (with its official page).
 - **The build engine is upstream nxnative (J.R, ADR 0027).** Auto-detection finds standalone nxnative only
   (`~/Switch`, then Homebrew); a Settings path is the user's own choice. Never source the engine, or its Python
   environment, from another app's bundle or Application Support folder, and never name other front ends in UI copy,
   preflight lines or docs.
 
-## Games launch from inside Retriever (J.R, 2026-11-07 19:18 EST)
+## Games launch from inside NX Shelf (J.R, 2026-11-07 19:18 EST)
 That is the point of the app, and it applies to QA too.
-- User-flow testing launches games through Retriever's **Play** button, never by opening the game's `.app` directly.
+- User-flow testing launches games through NX Shelf's **Play** button, never by opening the game's `.app` directly.
 - A direct `.app` launch (Finder, `open`, `--no-launcher`, environment overrides) is a **diagnostic method only**.
   Whenever one is used, label it as a diagnostic in the report and in PROGRESS. Tonight's Finding #6
   `--no-launcher` run was one.
 - A QA run that reaches a working game leaves it running for J.R; it is never quit as cleanup.
-- While J.R is playing, don't run the test suite on his Mac: its test host is a second Retriever that takes focus.
+- While J.R is playing, don't run the test suite on his Mac: its test host is a second NX Shelf that takes focus.
 
 ## User-provided files (owner directive, ADR 0019)
 Anything that must come from the user's own sources — `prod.keys` for Switch builds, a console BIOS, a game's
@@ -90,7 +90,7 @@ Anything that must come from the user's own sources — `prod.keys` for Switch b
 file picker (`ProvideFilePrompt` / `UserFileRequest`). When the app knows where the file belongs (a BIOS folder), it
 copies the user's file there, never overwriting.
 - The app never sources, downloads, links to or hints at sources for these files. It asks; the user provides.
-- **Protected folders (J.R, ADR 0026):** Retriever never reads or watches a macOS-protected folder (Downloads,
+- **Protected folders (J.R, ADR 0026):** NX Shelf never reads or watches a macOS-protected folder (Downloads,
   Desktop, Documents, …) by itself, and never asks for Full Disk Access. Access follows the user's pick (a picker
   may *open* in Downloads; the pick is the consent). Nothing on the launch path touches a protected folder.
 
@@ -112,13 +112,17 @@ Figma designs will arrive later. Until then, **structure and function beat bespo
   before moving on.
 
 - **One canonical build output (J.R, ADR 0029):** always build into Xcode's default DerivedData for the project
-  (`~/Library/Developer/Xcode/DerivedData/Playrite-<hash>/Build/Products/Debug/Retriever.app`), never a
+  (`~/Library/Developer/Xcode/DerivedData/Playrite-<hash>/Build/Products/Debug/NX Shelf.app`), never a
   `-derivedDataPath`. Quit any instance you launch to verify, and leave none running at the end of a session.
 
-## Name and frozen identifiers (J.R, ADR 0029)
-- The app is **Retriever** everywhere user-facing. Project, scheme, folders and the Swift module stay `Playrite`.
+## Name and frozen identifiers (J.R, ADR 0029, ADR 0043)
+- The app is **NX Shelf** everywhere user-facing (GitHub: `studiojrba/nx-shelf`). Project, scheme, folders and the
+  Swift module stay `Playrite`.
 - **Frozen, never change:** bundle ID `com.studiojrba.Playrite`, the `Application Support/Playrite` folder, the
-  SwiftData store (`default.store`), the Keychain service `com.studiojrba.Playrite` (see `AppInfo`).
+  SwiftData store (`default.store`), the Keychain service `com.studiojrba.Playrite` (see `AppInfo`). They are legacy
+  internal identifiers. If one ever truly has to change, stop and flag it; never migrate it silently.
+- Strings that name things already on disk under an old app name (CrossOver bottles `Retriever – …`,
+  `Retriever Steam`, `.retriever-backup`) are legacy identifiers too and keep the old name.
 
 ## Data integrity rules (product invariants)
 - **Playtime sources are never silently merged.** Every figure carries a `PlaytimeSource`

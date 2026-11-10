@@ -9,14 +9,14 @@ import Foundation
 /// | Steam | a copy was found in a detected Steam library folder at the last scan | as of the last scan |
 ///
 /// A recorded `.app` or ROM path that's gone is **not installed**. A game with none of these, including a Steam game
-/// with an app ID but no copy found, is **unknown**: Retriever can't tell "not installed" from "never scanned", so it
+/// with an app ID but no copy found, is **unknown**: NX Shelf can't tell "not installed" from "never scanned", so it
 /// never guesses.
 enum InstallState: Equatable, Sendable {
     /// A launchable install is present.
     case installed
     /// The recorded install is gone.
     case notInstalled
-    /// Nothing Retriever knows can say.
+    /// Nothing NX Shelf knows can say.
     case unknown
 
     /// The state for `game`.

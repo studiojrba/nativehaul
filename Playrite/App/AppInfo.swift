@@ -1,13 +1,13 @@
 import Foundation
 
-/// Static metadata about the Retriever application.
+/// Static metadata about the NX Shelf application.
 ///
-/// The app was renamed from Playrite to Retriever (ADR 0029). Only the user-facing name changed. The identifiers
-/// below are **frozen** at their Playrite values so the user's library, settings and secrets carry over untouched;
-/// never change them.
+/// The app was named Playrite, then Retriever (ADR 0029), and is now NX Shelf (ADR 0043). Only the user-facing name
+/// changed each time. The identifiers below are **frozen** at their Playrite values as legacy internal identifiers,
+/// so the user's library, settings and secrets carry over untouched; never change them.
 enum AppInfo {
     /// Human-readable product name, shown everywhere user-facing.
-    static let productName = "Retriever"
+    static let productName = "NX Shelf"
     /// Frozen bundle identifier (UserDefaults domain, TCC grants).
     static let bundleIdentifier = "com.studiojrba.Playrite"
     /// Frozen Application Support folder name (artwork, HLTB cache, audit log, backups).

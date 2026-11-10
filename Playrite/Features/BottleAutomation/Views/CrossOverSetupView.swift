@@ -14,7 +14,7 @@ struct CrossOverSetupView: View {
             if let stage = viewModel.stage {
                 Text(stage.displayText).font(DesignTokens.Typography.headline)
                 if viewModel.isWaitingForSignIn {
-                    Text("Sign in in Steam's window. Retriever never sees your password.")
+                    Text("Sign in in Steam's window. NX Shelf never sees your password.")
                         .foregroundStyle(Theme.secondaryText)
                     Button("Open Steam", systemImage: "arrow.up.forward.app") { viewModel.openSteam() }
                 }

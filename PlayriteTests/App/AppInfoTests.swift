@@ -3,11 +3,11 @@ import Foundation
 import SwiftData
 import Testing
 
-/// ADR 0029: the app is called Retriever, while every identifier the user's data depends on stays frozen at its
+/// ADR 0029: the app is called NX Shelf, while every identifier the user's data depends on stays frozen at its
 /// Playrite value.
 struct AppInfoTests {
-    @Test func productNameIsRetriever() {
-        #expect(AppInfo.productName == "Retriever")
+    @Test func productNameIsNXShelf() {
+        #expect(AppInfo.productName == "NX Shelf")
     }
 
     @Test func dataIdentifiersStayFrozen() {
@@ -19,9 +19,9 @@ struct AppInfoTests {
 
     @Test func hostBundleKeepsTheFrozenIdentifierUnderTheNewName() {
         #expect(Bundle.main.bundleIdentifier == AppInfo.bundleIdentifier)
-        #expect(Bundle.main.bundleURL.lastPathComponent == "Retriever.app")
-        #expect(Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String == "Retriever")
-        #expect(Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String == "Retriever")
+        #expect(Bundle.main.bundleURL.lastPathComponent == "NX Shelf.app")
+        #expect(Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String == "NX Shelf")
+        #expect(Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String == "NX Shelf")
     }
 
     @Test func applicationSupportPathsStayInThePlayriteFolder() {

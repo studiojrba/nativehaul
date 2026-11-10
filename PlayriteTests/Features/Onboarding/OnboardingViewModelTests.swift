@@ -74,7 +74,7 @@ struct OnboardingViewModelTests {
         let status = LiveOnboardingStatus(
             gameFolders: folders,
             steamAccount: account,
-            bottles: MockBottleInstaller(goldenStatus: .ready(bottleName: "Retriever Steam")),
+            bottles: MockBottleInstaller(goldenStatus: .ready(bottleName: "NX Shelf Steam")),
             tracking: tracking
         ) { _ in false }
         #expect(status.isSetUp(.findGames))

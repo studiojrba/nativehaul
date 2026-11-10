@@ -1,4 +1,7 @@
-# Playrite — Progress Log
+# NX Shelf — Progress Log
+
+> The app was Playrite, then Retriever, and is now NX Shelf (ADR 0043). Entries below keep the name the app had
+> when they were written.
 
 Living status log. Each branch appends its section. Legend: ✅ built & compiles · 🧪 unit-tested · 🟡 stubbed · ⛔ blocked.
 
@@ -1200,6 +1203,17 @@ approved by J.R when he set the rule). 333 tests (+6).
 - This record: `chore/revert-v2-pass` from `e275e64`, documentation only (ADR 0042).
 - **Retriever is on hold again.** Nothing else starts until J.R says so, relayed through Ollie.
 
+## 47 · feature/rename-nx-shelf — Retriever becomes NX Shelf (J.R, Mon 21:29; stage 1 of 4)
+- ✅ **Public name:** NX Shelf in the display name, bundle name and executable (`NX Shelf.app`), every user-facing
+  string, README, CLAUDE.md and PLAN, the update checker's repository, and the GitHub repository
+  (`studiojrba/nx-shelf`).
+- ✅ **Data untouched:** the bundle ID, `Application Support/Playrite`, `default.store` and the Keychain service are
+  unchanged as legacy internal identifiers. Nothing was migrated or flagged; none of them needed to change.
+- ✅ **Bottle names kept:** CrossOver bottle names, their installer folder and the `.retriever-backup` suffix keep the
+  old name because they name existing things on disk. They are marked in code as legacy.
+- 🧪 531 tests green; lint clean. `AppInfoTests` asserts the new product name and the frozen identifiers.
+- Base: `chore/revert-v2-pass` (the pre-v2 app J.R chose). Next: the crash pass, before any new surface.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1246,6 +1260,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 40 | `feature/titledb-media` (media pass 2/4) | ✅ | ✅ | 515 | ✅ |
 | 41 | `feature/steam-trailers` (media pass 3/4) | ✅ | ✅ | 519 | ✅ |
 | 42 | `feature/igdb-media-seam` (media pass 4/4) | ✅ | ✅ | 531 | ✅ |
+| 47 | `feature/rename-nx-shelf` (stacked on `chore/revert-v2-pass`; 43–46 retained, unmerged) | ✅ | ✅ | 531 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1285,7 +1300,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042)
+## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0043)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.

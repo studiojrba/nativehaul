@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A missing-file notice above the build queue when no engine exists anywhere Retriever looked (ADR 0021).
+/// A missing-file notice above the build queue when no engine exists anywhere NX Shelf looked (ADR 0021).
 struct EngineNotFoundBanner: View {
     /// Opens the file picker.
     let onChooseEngine: () -> Void

@@ -12,8 +12,8 @@ struct EmulatorSettingsView: View {
     var body: some View {
         Form {
             Section {
-                Text("Retriever finds ROMs in your game folders and opens each one in the emulator that runs it. "
-                    + "Emulators are separate apps; Retriever never includes one.")
+                Text("NX Shelf finds ROMs in your game folders and opens each one in the emulator that runs it. "
+                    + "Emulators are separate apps; NX Shelf never includes one.")
                     .foregroundStyle(Theme.secondaryText)
                 LabeledContent("Installed") {
                     Text(viewModel.installedEmulators.isEmpty

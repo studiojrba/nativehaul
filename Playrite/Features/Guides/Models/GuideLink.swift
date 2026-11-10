@@ -3,7 +3,7 @@ import SwiftData
 
 /// A link to an external GameFAQs guide for a game, with attribution and chapter links.
 ///
-/// Retriever links out only: it never downloads, scrapes, caches or embeds guide content.
+/// NX Shelf links out only: it never downloads, scrapes, caches or embeds guide content.
 @Model
 final class GuideLink {
     /// Identity.

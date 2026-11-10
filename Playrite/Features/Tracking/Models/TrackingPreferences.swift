@@ -7,7 +7,7 @@ struct TrackingPreferences: Codable, Equatable, Sendable {
     /// Sessions shorter than this are discarded as accidental launches.
     static let defaultMinimumSessionSeconds = 60
 
-    /// Whether the watcher runs while Retriever is open.
+    /// Whether the watcher runs while NX Shelf is open.
     var isEnabled = true
     /// Folder scanned for `.app` bundles (tilde allowed).
     var gamesFolder = defaultGamesFolder

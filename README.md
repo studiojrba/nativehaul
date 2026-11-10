@@ -1,8 +1,9 @@
-# Retriever
+# NX Shelf
 
-> Formerly Playrite. The app is called **Retriever**; the Xcode project, scheme, source folders and Swift module keep the
-> name `Playrite`, and so do the identifiers your data lives under (bundle ID `com.studiojrba.Playrite`, the
-> `~/Library/Application Support/Playrite` folder, the SwiftData store, Keychain service). See ADR 0029.
+> Formerly Retriever, and before that Playrite. The app is called **NX Shelf**; the Xcode project, scheme, source
+> folders and Swift module keep the name `Playrite`, and so do the identifiers your data lives under, as legacy
+> internal identifiers (bundle ID `com.studiojrba.Playrite`, the `~/Library/Application Support/Playrite` folder, the
+> SwiftData store, Keychain service). See ADR 0029 and ADR 0043.
 
 A native macOS game library hub — a Playnite-style library (Steam, Mac-native and Switch titles,
 series, stats, badges, guides) plus an **optional** Switch build pipeline UI that drives a
@@ -50,7 +51,7 @@ open Playrite.xcodeproj
 ```
 
 It builds into Xcode's default DerivedData, the one canonical output on this Mac:
-`~/Library/Developer/Xcode/DerivedData/Playrite-<hash>/Build/Products/Debug/Retriever.app` (the script prints the
+`~/Library/Developer/Xcode/DerivedData/Playrite-<hash>/Build/Products/Debug/NX Shelf.app` (the script prints the
 full path). In Xcode: ⌘B / ⌘U build into the same folder.
 
 ### Lint and format
@@ -68,7 +69,7 @@ Use `./scripts/lint.sh --check` to verify without rewriting files.
   Library menu). CrossOver bottles and launchers are detected automatically.
 - **nxnative engine**: a standalone copy of upstream nxnative, found automatically in `~/Switch` or Homebrew
   (ADR 0021); `prod.keys` likewise. Settings → NXNative only overrides or switches the module off.
-  Retriever never ships the engine, keys, firmware, or game files.
+  NX Shelf never ships the engine, keys, firmware, or game files.
 
 ## Architecture overview
 - **SwiftUI + MVVM**: views render `@MainActor @Observable` ViewModels; no business logic in views.
@@ -84,7 +85,7 @@ See `docs/PLAN.md` for the roadmap and `docs/decisions/` for architecture decisi
 ## Where things live
 
 ```
-Retriever/ (repo root)
+nx-shelf/ (repo root)
 ├── project.yml                 XcodeGen spec (source of truth for the Xcode project)
 ├── CLAUDE.md                   Project rules for humans and AI contributors
 ├── scripts/                    bootstrap.sh · build.sh · lint.sh

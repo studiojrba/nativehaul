@@ -2,7 +2,7 @@ import Foundation
 @testable import Playrite
 import Testing
 
-/// ADR 0030 Layer 1 (minimal): after Play, Retriever hides while the launched game runs and restores itself, without
+/// ADR 0030 Layer 1 (minimal): after Play, NX Shelf hides while the launched game runs and restores itself, without
 /// activating, when the game exits.
 @MainActor
 struct GameSessionHandoffTests {

@@ -21,8 +21,8 @@ struct UpdatesSettingsView: View {
                     }
                 }
             } footer: {
-                Text("Off by default: Retriever tells you about updates and you click to install. Checks run at most "
-                    + "once a day, only while Retriever is open.")
+                Text("Off by default: NX Shelf tells you about updates and you click to install. Checks run at most "
+                    + "once a day, only while NX Shelf is open.")
                     .foregroundStyle(Theme.secondaryText)
             }
             Section("Emulators") {
@@ -39,14 +39,14 @@ struct UpdatesSettingsView: View {
                     }
                 }
             }
-            Section("Retriever") {
+            Section("NX Shelf") {
                 if let latest = viewModel.appUpdate {
-                    TagLabel(text: "Retriever \(latest) is available", symbolName: "arrow.up.circle", tint: Theme.info)
+                    TagLabel(text: "NX Shelf \(latest) is available", symbolName: "arrow.up.circle", tint: Theme.info)
                     if let url = UpdatesSettingsViewModel.releasesURL {
                         Link("See the release", destination: url)
                     }
                 } else {
-                    Text("No newer Retriever release found.").foregroundStyle(Theme.secondaryText)
+                    Text("No newer NX Shelf release found.").foregroundStyle(Theme.secondaryText)
                 }
             }
         }

@@ -1,6 +1,6 @@
 import Foundation
 
-/// IGDB and Twitch endpoints and the query Retriever sends (ADR 0038).
+/// IGDB and Twitch endpoints and the query NX Shelf sends (ADR 0038).
 enum IGDBEndpoint {
     /// Twitch's token endpoint (client-credentials grant).
     static let token = URL(string: "https://id.twitch.tv/oauth2/token")

@@ -6,13 +6,13 @@ struct ComponentPreferences: Codable, Equatable, Sendable {
     var autoUpdateAll = false
     /// Per-component automatic update opt-ins.
     var autoUpdate: Set<String> = []
-    /// Components Retriever installed or was allowed to take over.
+    /// Components NX Shelf installed or was allowed to take over.
     var managed: Set<String> = []
     /// When releases were last checked.
     var lastChecked: Date?
     /// Cached latest releases by component ID.
     var latest: [String: ComponentRelease] = [:]
-    /// Cached newest Retriever release tag, when known.
+    /// Cached newest NX Shelf release tag, when known.
     var latestAppVersion: String?
 
     /// Whether `id` updates itself.

@@ -16,7 +16,7 @@ enum SteamSignInError: Error, Equatable, LocalizedError {
     case couldNotConfirm
     /// The browser sign-in wasn't finished in time (for example, the tab was closed).
     case timedOut
-    /// Retriever couldn't open its private sign-in listener on this Mac.
+    /// NX Shelf couldn't open its private sign-in listener on this Mac.
     case couldNotListen
 
     /// User-facing description.
@@ -31,7 +31,7 @@ enum SteamSignInError: Error, Equatable, LocalizedError {
             "The sign-in wasn't finished in the browser, so you weren't signed in. Press Sign in through Steam to "
                 + "try again."
         case .couldNotListen:
-            "Retriever couldn't open its private sign-in address on this Mac. Try again, or enter your details "
+            "NX Shelf couldn't open its private sign-in address on this Mac. Try again, or enter your details "
                 + "manually below."
         }
     }

@@ -1,6 +1,6 @@
 import Foundation
 
-/// Link-out URLs on howlongtobeat.com. Retriever never fetches these pages; it only opens them in the browser.
+/// Link-out URLs on howlongtobeat.com. NX Shelf never fetches these pages; it only opens them in the browser.
 enum HLTBLink {
     private static let gameBase = "https://howlongtobeat.com/game/"
 

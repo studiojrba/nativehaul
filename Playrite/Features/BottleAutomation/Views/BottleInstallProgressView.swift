@@ -22,7 +22,7 @@ struct BottleInstallProgressView: View {
                 ProgressView(value: fraction)
             }
             if viewModel.isWaitingForUser {
-                Text("Sign in in Steam's window. Retriever never sees your password.")
+                Text("Sign in in Steam's window. NX Shelf never sees your password.")
                     .font(DesignTokens.Typography.caption).foregroundStyle(Theme.secondaryText)
                 Button("Open Steam", systemImage: "arrow.up.forward.app") { viewModel.openSteam() }
             }

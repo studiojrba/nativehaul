@@ -2,7 +2,7 @@ import Foundation
 
 /// A game's update badge. Each source updates differently, so the badge only reports — it never updates a game:
 /// - **Steam** (Mac or a CrossOver bottle): from the appmanifest. Steam does the updating, the next time it runs.
-/// - **Switch ports**: compared with a community dataset. Retriever never downloads game files.
+/// - **Switch ports**: compared with a community dataset. NX Shelf never downloads game files.
 /// - **Emulated ROMs**: static files, so there is never a badge.
 enum GameUpdateBadge: Equatable, Sendable {
     /// Steam has an update waiting; launching through Steam installs it.

@@ -58,7 +58,7 @@ final class AppEnvironment {
     let components: any ComponentUpdating
     /// Per-source game update badges.
     let gameBadges: GameUpdateBadgeProvider
-    /// Keeps Retriever out of the way while a launched game runs (ADR 0030 Layer 1).
+    /// Keeps NX Shelf out of the way while a launched game runs (ADR 0030 Layer 1).
     let handoff: GameSessionHandoff
 
     /// Creates an environment from explicit dependencies.

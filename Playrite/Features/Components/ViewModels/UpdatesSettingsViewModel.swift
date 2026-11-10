@@ -2,12 +2,12 @@ import Foundation
 import Observation
 
 /// Settings → Updates: every component with current → latest, the auto-update switch (off by default) and the
-/// notify-only Retriever release check.
+/// notify-only NX Shelf release check.
 @MainActor
 @Observable
 final class UpdatesSettingsViewModel {
-    /// Retriever's releases page.
-    static let releasesURL = URL(string: "https://github.com/studiojrba/retriever/releases")
+    /// NX Shelf's releases page.
+    static let releasesURL = URL(string: "https://github.com/studiojrba/nx-shelf/releases")
 
     /// One control per component.
     let rows: [ComponentInstallViewModel]
@@ -42,7 +42,7 @@ final class UpdatesSettingsViewModel {
         return updater.preferences.lastChecked
     }
 
-    /// A newer Retriever release, notify-only.
+    /// A newer NX Shelf release, notify-only.
     var appUpdate: String? {
         _ = revision
         return updater.appUpdate

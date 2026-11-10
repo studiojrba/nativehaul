@@ -8,6 +8,7 @@ import Foundation
 struct SteamBottleClient: StoreClientInstalling {
     /// Valve's Steam installer.
     static let installerURL = URL(string: "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe")
+    // Legacy identifiers (ADR 0043): folders inside bottles that already exist keep the old app name.
     private static let installerFolder = "drive_c/Retriever"
     private static let installerWindowsPath = "C:\\Retriever\\SteamSetup.exe"
     private static let silentFlag = "/S"

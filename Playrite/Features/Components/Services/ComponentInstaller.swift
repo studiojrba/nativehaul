@@ -25,7 +25,7 @@ final class ComponentInstaller {
         files: any FileOperating,
         runner: any CommandRunning,
         assessor: any SignatureAssessing,
-        stagingRoot: String = (NSTemporaryDirectory() as NSString).appendingPathComponent("RetrieverComponents"),
+        stagingRoot: String = (NSTemporaryDirectory() as NSString).appendingPathComponent("NXShelfComponents"),
         now: @escaping () -> Date = Date.init
     ) {
         self.downloader = downloader
@@ -71,7 +71,7 @@ final class ComponentInstaller {
         let stamp = String(Int(now().timeIntervalSince1970), radix: Self.hexRadix)
         try await run(
             Self.xattr,
-            ["-w", "com.apple.quarantine", "0081;\(stamp);Retriever;", destination],
+            ["-w", "com.apple.quarantine", "0081;\(stamp);NX Shelf;", destination],
             step: "mark the app as downloaded"
         )
         return destination

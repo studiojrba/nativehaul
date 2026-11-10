@@ -13,7 +13,7 @@ enum MetadataSource: String, Codable, CaseIterable, Sendable {
     case igdb
     /// SteamGridDB (fallback artwork, needs the user's key).
     case steamGridDB
-    /// Set by hand in Retriever (Choose Cover…, Choose Hero Image…). Never overwritten.
+    /// Set by hand in NX Shelf (Choose Cover…, Choose Hero Image…). Never overwritten.
     case user
 
     /// Sources a Fetch Missing Metadata pass queries, in priority order.

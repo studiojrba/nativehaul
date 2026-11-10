@@ -8,6 +8,6 @@ enum GameFolderScan: Equatable, Sendable {
     case failure(String)
 
     /// No Switch or Switch 2 game files at all.
-    static let noGameFilesReason = "No game files found in this folder. Retriever looks for .nsp, .xci, .nsz and "
+    static let noGameFilesReason = "No game files found in this folder. NX Shelf looks for .nsp, .xci, .nsz and "
         + ".xcz files, a Switch 2 game folder, or a .nup file."
 }

@@ -51,7 +51,7 @@ struct ComponentUpdateTests {
         }
         let http = MockHTTPClient()
         await http.stub(urlContaining: "melonDS-emu/melonDS/releases/latest", json: Self.releaseJSON)
-        await http.stub(urlContaining: "studiojrba/retriever", json: "{}", statusCode: 404)
+        await http.stub(urlContaining: "studiojrba/nx-shelf", json: "{}", statusCode: 404)
         let store = InMemoryComponentPreferences()
         var adopted: [String] = []
         let catalog = ComponentCatalog(schemaVersion: 1, catalogVersion: "t", components: [melon])

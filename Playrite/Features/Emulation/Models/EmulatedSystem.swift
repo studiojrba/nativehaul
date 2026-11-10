@@ -1,6 +1,6 @@
 import Foundation
 
-/// A console whose games run in an emulator. Retriever only routes to the emulator; it never emulates.
+/// A console whose games run in an emulator. NX Shelf only routes to the emulator; it never emulates.
 enum EmulatedSystem: String, Codable, CaseIterable, Identifiable, Sendable {
     case gameBoy
     case gameBoyColor

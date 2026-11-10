@@ -60,7 +60,7 @@ struct BuildsPageTests {
             files: Fix.files(), disk: FixedDiskSpaceProvider(bytes: .max),
             runner: HoldingBuildEngineRunner(lines: Self.midBuild), audit: InMemoryAuditLog(),
             knowledgeBase: BundledKnowledgeBase(), backupDirectory: "/backups",
-            appBundlePath: "/Applications/Retriever.app", homeDirectory: "/Users/jr"
+            appBundlePath: "/Applications/NX Shelf.app", homeDirectory: "/Users/jr"
         )
         let showcase = art.isEmpty ? nil : BuildShowcase(images: art, isSlideshow: art.count > 1)
         let queue = NXNativeViewModel(

@@ -35,7 +35,7 @@ final class WorkspaceGameLauncher: GameLaunching {
     }
 
     /// How a game app is opened (ADR 0030): it is always activated, so it starts in front with the focus, and
-    /// Retriever never takes the focus back. A game launched with arguments gets its own instance.
+    /// NX Shelf never takes the focus back. A game launched with arguments gets its own instance.
     static func openConfiguration(arguments: [String]?) -> NSWorkspace.OpenConfiguration {
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.activates = true

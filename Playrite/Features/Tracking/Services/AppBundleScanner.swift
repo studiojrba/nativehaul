@@ -3,7 +3,7 @@ import Foundation
 /// Live ``AppBundleScanning`` using `FileManager`. Read-only: never modifies the folder.
 ///
 /// Rules: an `.app` bundle is a candidate and is never descended into; hidden items, anything inside the
-/// Trash, symlinked folders and Retriever itself are skipped; the walk stops at ``AppBundleScanOptions/maxDepth``.
+/// Trash, symlinked folders and NX Shelf itself are skipped; the walk stops at ``AppBundleScanOptions/maxDepth``.
 struct AppBundleScanner: AppBundleScanning {
     private static let appExtension = "app"
     private static let trashComponents: Set = [".Trash", ".Trashes"]

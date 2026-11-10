@@ -44,7 +44,7 @@ struct SessionTracker: Sendable {
     }
 
     /// The end of each game's last stored tracked session. A new stretch never starts before it, so a game that was
-    /// already running when Retriever restarted isn't counted twice.
+    /// already running when NX Shelf restarted isn't counted twice.
     mutating func setLastRecordedEnds(_ ends: [UUID: Date]) {
         lastRecordedEnds = ends
     }
@@ -89,7 +89,7 @@ struct SessionTracker: Sendable {
         return completed
     }
 
-    /// Ends every active session at `date` (e.g. when Retriever quits or tracking is paused).
+    /// Ends every active session at `date` (e.g. when NX Shelf quits or tracking is paused).
     mutating func finishAll(at date: Date) -> [CompletedSession] {
         var completed: [CompletedSession] = []
         for gameID in Array(runs.keys) {

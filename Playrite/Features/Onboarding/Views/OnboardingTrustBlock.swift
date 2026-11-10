@@ -9,7 +9,7 @@ struct OnboardingTrustBlock: View {
             Label("No account to create.", systemImage: "person.crop.circle.badge.xmark")
             Label("No telemetry. Nothing about you or your games is sent anywhere.", systemImage: "eye.slash")
             Label(
-                "No weird permissions. Retriever never asks for Accessibility or Screen Recording access.",
+                "No weird permissions. NX Shelf never asks for Accessibility or Screen Recording access.",
                 systemImage: "lock.shield"
             )
             Label(

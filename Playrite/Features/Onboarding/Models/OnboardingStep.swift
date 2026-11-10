@@ -2,7 +2,7 @@ import Foundation
 
 /// A screen of the walkthrough.
 enum OnboardingStep: Equatable, Sendable {
-    /// "Hey! I'm Retriever." plus the trust block.
+    /// "Hey! I'm NX Shelf." plus the trust block.
     case welcome
     /// "What do you want to set up now?"
     case checklist

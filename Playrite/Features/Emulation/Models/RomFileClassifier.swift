@@ -17,7 +17,7 @@ enum RomFileClassifier {
         ("ngc", .gameCube), ("wii", .wii),
     ]
 
-    /// Every extension Retriever looks for.
+    /// Every extension NX Shelf looks for.
     static var extensions: Set<String> {
         Set(unique.keys).union(shared)
     }

@@ -1,6 +1,6 @@
 import Foundation
 
-/// The fields Retriever reads from the Steam store `appdetails` payload (snake_case keys converted).
+/// The fields NX Shelf reads from the Steam store `appdetails` payload (snake_case keys converted).
 struct SteamStoreAppDetails: Decodable, Sendable {
     /// Store type ("game", "dlc", …).
     let type: String?

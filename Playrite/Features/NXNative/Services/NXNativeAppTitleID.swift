@@ -1,7 +1,7 @@
 import Foundation
 
 /// Reads the Switch title ID that nxnative stamps into a built app's bundle identifier (`org.nxnative.<title id>`),
-/// for ports imported from a folder rather than built through Retriever (ADR 0038).
+/// for ports imported from a folder rather than built through NX Shelf (ADR 0038).
 enum NXNativeAppTitleID {
     private static let prefix = "org.nxnative."
 

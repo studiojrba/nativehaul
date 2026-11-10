@@ -7,7 +7,7 @@ struct PreflightRunner: Sendable {
     private let appBundlePath: String
     private let homeDirectory: String
 
-    /// Creates the runner. `appBundlePath` is Retriever's own bundle, used to prove the engine is external.
+    /// Creates the runner. `appBundlePath` is NX Shelf's own bundle, used to prove the engine is external.
     init(
         files: any FileOperating,
         disk: any DiskSpaceProviding,
@@ -70,7 +70,7 @@ struct PreflightRunner: Sendable {
             ? PreflightCheck(
                 kind: .notBundled,
                 outcome: .failed,
-                message: "The engine must live outside Retriever.app; Retriever never bundles it."
+                message: "The engine must live outside NX Shelf.app; NX Shelf never bundles it."
             )
             : PreflightCheck(
                 kind: .notBundled,

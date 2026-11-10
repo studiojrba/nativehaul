@@ -1,6 +1,6 @@
 import AppKit
 
-/// Live ``AppVisibilityControlling`` over `NSApp`. Restoring never activates Retriever, so the user's next app keeps
+/// Live ``AppVisibilityControlling`` over `NSApp`. Restoring never activates NX Shelf, so the user's next app keeps
 /// the focus.
 @MainActor
 final class ApplicationVisibility: AppVisibilityControlling {

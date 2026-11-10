@@ -1,6 +1,6 @@
 import Foundation
 
-/// Settings for the user-supplied nxnative engine. Retriever never bundles the engine, keys, or games.
+/// Settings for the user-supplied nxnative engine. NX Shelf never bundles the engine, keys, or games.
 ///
 /// The module is **on by default** and paths are **detected** (``NXNativeLocator``); `enginePath` and `keysPath`
 /// are overrides only (ADR 0021).
@@ -67,7 +67,7 @@ struct EngineConfiguration: Codable, Equatable, Sendable {
     static let gameFolderRequest = UserFileRequest(
         fileDescription: "game folder",
         reason: "Choose one folder with your game's files — base game, update and DLC in any mix, or a Switch 2 "
-            + "game. Retriever sorts them out.",
+            + "game. NX Shelf sorts them out.",
         destinationFolder: nil,
         allowsFolders: true,
         startingFolder: UserFileRequest.downloadsFolder

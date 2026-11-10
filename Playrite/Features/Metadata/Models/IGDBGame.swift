@@ -1,6 +1,6 @@
 import Foundation
 
-/// The fields Retriever reads from an IGDB `games` result (ADR 0038).
+/// The fields NX Shelf reads from an IGDB `games` result (ADR 0038).
 struct IGDBGame: Decodable, Equatable, Sendable {
     /// One expanded image or video reference.
     struct Media: Decodable, Equatable, Sendable {

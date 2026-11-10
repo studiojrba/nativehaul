@@ -71,7 +71,7 @@ final class SteamConnectionViewModel {
         profile?.personaName ?? steamID.map { "Steam account \($0)" } ?? "Steam account"
     }
 
-    /// Whether the browser sign-in is in progress (Retriever is waiting for Steam's redirect).
+    /// Whether the browser sign-in is in progress (NX Shelf is waiting for Steam's redirect).
     var isSigningIn: Bool {
         signInTask != nil
     }

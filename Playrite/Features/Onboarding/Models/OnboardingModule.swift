@@ -40,7 +40,7 @@ enum OnboardingModule: String, CaseIterable, Identifiable, Sendable {
     /// Checklist subtitle.
     var subtitle: String {
         switch self {
-        case .findGames: "Point Retriever at the folders where your games live."
+        case .findGames: "Point NX Shelf at the folders where your games live."
         case .steam: "Sign in and add your API key so your library, playtime and achievements sync."
         case .crossOver: "Windows games with one-click installs, each in its own bottle."
         case .switchPorts: "Pick the folder that holds your native Switch port apps."

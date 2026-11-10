@@ -1,6 +1,6 @@
 import Foundation
 
-/// Routes emulated games to the emulator app that owns them — Retriever is the shelf and the router, never the engine
+/// Routes emulated games to the emulator app that owns them — NX Shelf is the shelf and the router, never the engine
 /// (ADR 0019). Detection and argument building only; nothing is bundled or downloaded.
 @MainActor
 final class EmulatorRouter {

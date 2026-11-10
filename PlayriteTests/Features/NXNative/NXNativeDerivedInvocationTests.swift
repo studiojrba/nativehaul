@@ -78,7 +78,7 @@ struct NXNativeDerivedInvocationTests {
         #expect(result.executable == "/usr/bin/python3")
         #expect(result.environment["VIRTUAL_ENV"] == nil)
         let report = PreflightRunner(
-            files: files, disk: FixedDiskSpaceProvider(bytes: .max), appBundlePath: "/Applications/Retriever.app",
+            files: files, disk: FixedDiskSpaceProvider(bytes: .max), appBundlePath: "/Applications/NX Shelf.app",
             homeDirectory: Play.home
         ).run(for: BuildJob(sourcePath: Fix.source, title: Fix.title), configuration: Play.resolved(files))
         #expect(report.checks.first { $0.kind == .pythonEnvironment }?.outcome == .warning)

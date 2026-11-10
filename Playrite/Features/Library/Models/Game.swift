@@ -16,7 +16,7 @@ final class Game {
     var summary: String
     /// Original release date, if known.
     var releaseDate: Date?
-    /// When the game was added to Retriever.
+    /// When the game was added to NX Shelf.
     var addedAt: Date
     /// When the game was marked completed.
     var completedAt: Date?

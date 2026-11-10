@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Folder-first Add Build (ADR 0023): choose one folder (or a lone file), see what Retriever understood, and queue
+/// Folder-first Add Build (ADR 0023): choose one folder (or a lone file), see what NX Shelf understood, and queue
 /// one job per game. A folder that can't be built says why, and nothing is queued.
 struct AddBuildJobSheet: View {
     /// Called once per queued game with its source path and title info.

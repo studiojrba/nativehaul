@@ -8,7 +8,7 @@ struct GeneralSettingsView: View {
                 Button("Run setup again", systemImage: "sparkles") { OnboardingRequest.post() }
             } footer: {
                 Text("Walks through finding games, Steam, CrossOver and Switch ports. Everything is optional, and "
-                    + "Retriever works without it.")
+                    + "NX Shelf works without it.")
                     .foregroundStyle(Theme.secondaryText)
             }
         }

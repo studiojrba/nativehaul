@@ -16,7 +16,7 @@ struct CrossOverCommands: Sendable {
         try await run(configuration.cxbottleExecutablePath, configuration.createBottleArguments(
             bottle: plan.bottleName,
             template: template,
-            description: "Created by Retriever"
+            description: "Created by NX Shelf"
         ), step: "create the bottle")
     }
 

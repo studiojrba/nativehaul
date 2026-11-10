@@ -1,6 +1,6 @@
 import Foundation
 
-/// A file found in the staging folder. Retriever never reads title contents.
+/// A file found in the staging folder. NX Shelf never reads title contents.
 struct StagedFile: Equatable, Sendable, Identifiable {
     /// Absolute path.
     let path: String

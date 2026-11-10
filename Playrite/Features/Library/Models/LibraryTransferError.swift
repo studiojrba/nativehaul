@@ -9,7 +9,7 @@ enum LibraryTransferError: Error, Equatable, LocalizedError {
     var errorDescription: String? {
         switch self {
         case let .unsupportedFormatVersion(version):
-            "This library file uses format version \(version), which this version of Retriever cannot read."
+            "This library file uses format version \(version), which this version of NX Shelf cannot read."
         }
     }
 }

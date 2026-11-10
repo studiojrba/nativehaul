@@ -3,7 +3,7 @@ import Foundation
 @testable import Playrite
 import Testing
 
-/// ADR 0030: Play hands the game the focus and Retriever never takes it back (QA Finding #6: a built game only draws
+/// ADR 0030: Play hands the game the focus and NX Shelf never takes it back (QA Finding #6: a built game only draws
 /// while it is in front and focused).
 @MainActor
 struct LaunchFocusTests {

@@ -1,10 +1,10 @@
 import SwiftUI
 
-/// "Hey! I'm Retriever." — what it does, then the trust block, before any setup is asked for.
+/// "Hey! I'm NX Shelf." — what it does, then the trust block, before any setup is asked for.
 struct OnboardingWelcomeView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.xl) {
-            (Text("Hey! I'm ") + Text("Retriever").foregroundStyle(Theme.accent) + Text("."))
+            (Text("Hey! I'm ") + Text("NX Shelf").foregroundStyle(Theme.accent) + Text("."))
                 .font(DesignTokens.Typography.hero)
                 .tracking(DesignTokens.Typography.displayTracking)
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {

@@ -19,9 +19,9 @@ final class LoopbackCallbackServer: Sendable {
 
     private static let maxRequestBytes = 65536
     private static let okPage = """
-    <!doctype html><meta charset="utf-8"><title>Retriever</title>
+    <!doctype html><meta charset="utf-8"><title>NX Shelf</title>
     <body style="font: 16px -apple-system, sans-serif; margin: 3em">
-    <h2>Steam sent your sign-in back to Retriever.</h2><p>You can close this tab and return to Retriever.</p>
+    <h2>Steam sent your sign-in back to NX Shelf.</h2><p>You can close this tab and return to NX Shelf.</p>
     """
 
     /// The path that ends the wait.

@@ -2,7 +2,7 @@ import Foundation
 
 /// Minimal reader for Valve's KeyValues text files (`appmanifest_*.acf`, `libraryfolders.vdf`).
 ///
-/// Only flat `"key"  "value"` pairs are read; nesting is ignored, which is all Retriever needs.
+/// Only flat `"key"  "value"` pairs are read; nesting is ignored, which is all NX Shelf needs.
 enum SteamKeyValues {
     /// Every value for `key` (case-insensitive), in file order, with `\\` and `\"` unescaped.
     static func values(forKey key: String, in text: String) -> [String] {

@@ -26,7 +26,7 @@ struct HomeView: View {
                 EmptyStateView(
                     title: "Your library is empty",
                     symbolName: "house",
-                    message: "Add a game, or let Retriever find the ones already on your Mac."
+                    message: "Add a game, or let NX Shelf find the ones already on your Mac."
                 ) {
                     Button("Add Game", systemImage: "plus", action: onAddGame)
                 }

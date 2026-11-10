@@ -29,7 +29,7 @@ struct SteamKeyStep: View {
                     }
                 }
                 SteamNumberedStep(number: Step.nameKey) {
-                    Text("If Steam asks, sign in there. Give the key any name — for example, Retriever.")
+                    Text("If Steam asks, sign in there. Give the key any name — for example, NX Shelf.")
                 }
                 SteamNumberedStep(number: Step.copyKey) { Text("Copy the key Steam shows you.") }
                 SteamNumberedStep(number: Step.pasteKey) { Text("Paste it below.") }

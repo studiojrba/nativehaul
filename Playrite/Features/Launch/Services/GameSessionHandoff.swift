@@ -2,24 +2,24 @@ import Foundation
 import Observation
 
 /// The clean handoff after Play (ADR 0030 Layer 1, approved minimal scope): once a tracked game app has launched,
-/// Retriever hides its own windows while the game runs and restores them, without taking the focus, when the game
-/// exits. While a game runs, nothing of Retriever's is shown over it (``isGameRunning`` gates alerts and sheets).
+/// NX Shelf hides its own windows while the game runs and restores them, without taking the focus, when the game
+/// exits. While a game runs, nothing of NX Shelf's is shown over it (``isGameRunning`` gates alerts and sheets).
 ///
 /// "Exits" follows the tracker's rules (ADR 0034): once a port's game host has run, the game is over when the host
 /// exits, even if the port's launcher window stays open; and a liveness check every ``livenessInterval`` catches an
-/// exit that sent no event, so Retriever is never left hidden.
+/// exit that sent no event, so NX Shelf is never left hidden.
 @MainActor
 @Observable
 final class GameSessionHandoff {
-    /// The game app Retriever is out of the way for, if any.
+    /// The game app NX Shelf is out of the way for, if any.
     private(set) var gamePath: String?
 
-    /// `true` while Retriever is hidden for a running game.
+    /// `true` while NX Shelf is hidden for a running game.
     var isGameRunning: Bool {
         gamePath != nil
     }
 
-    /// How long a launched game has to appear before Retriever restores itself (the launch didn't happen).
+    /// How long a launched game has to appear before NX Shelf restores itself (the launch didn't happen).
     static let launchGrace: Duration = .seconds(launchGraceSeconds)
 
     /// How often the game's processes are checked for an exit that sent no event.
@@ -48,7 +48,7 @@ final class GameSessionHandoff {
         self.sleep = sleep
     }
 
-    /// Call after Play opened the tracked app at `appPath`. Hides Retriever until that app exits.
+    /// Call after Play opened the tracked app at `appPath`. Hides NX Shelf until that app exits.
     func gameDidLaunch(appPath: String) {
         stopWatching()
         let path = Self.normalized(appPath)

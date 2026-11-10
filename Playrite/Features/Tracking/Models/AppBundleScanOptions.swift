@@ -10,11 +10,11 @@ struct AppBundleScanOptions: Equatable, Sendable {
         excludedBundlePaths: [Bundle.main.bundlePath]
     )
 
-    /// Hidden sibling markers that identify a bundle as a Switch native port: Retriever's own, plus a marker older
+    /// Hidden sibling markers that identify a bundle as a Switch native port: NX Shelf's own, plus a marker older
     /// ports in users' game folders already carry (read-only recognition, so existing ports stay recognised).
     static let portLibraryFolderNames: Set = [".nx2apple-library", EngineConfiguration.defaultHiddenLibraryFolderName]
-    /// Bundle filenames never imported (Retriever itself).
-    static let excludedBundleNames: Set = ["Playrite.app", "Retriever.app"]
+    /// Bundle filenames never imported (NX Shelf itself).
+    static let excludedBundleNames: Set = ["Playrite.app", "Retriever.app", "NX Shelf.app"]
 
     /// Deepest level searched; items directly inside the root are level 1.
     var maxDepth: Int

@@ -33,7 +33,7 @@ struct ComponentInstallControl: View {
             if isManaged {
                 Button("Update") { viewModel.start() }
             } else {
-                Text("You installed this copy yourself. Let Retriever manage and update it?")
+                Text("You installed this copy yourself. Let NX Shelf manage and update it?")
                     .foregroundStyle(Theme.secondaryText)
                 Button("Manage and Update") { viewModel.takeOverAndUpdate() }
             }

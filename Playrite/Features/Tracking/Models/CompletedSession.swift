@@ -13,6 +13,6 @@ struct CompletedSession: Equatable, Sendable {
     var isCapped = false
 
     /// The note stored on a capped session.
-    static let noteForCappedSession = "Stopped at the 12-hour cap: the game was still open, but Retriever can't "
+    static let noteForCappedSession = "Stopped at the 12-hour cap: the game was still open, but NX Shelf can't "
         + "tell whether it was still being played."
 }

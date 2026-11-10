@@ -1,6 +1,6 @@
 import Foundation
 
-/// The parts of a GitHub release Retriever reads (`/repos/{owner}/{repo}/releases/latest`).
+/// The parts of a GitHub release NX Shelf reads (`/repos/{owner}/{repo}/releases/latest`).
 struct GitHubRelease: Decodable, Sendable {
     /// Release asset.
     struct Asset: Decodable, Sendable {

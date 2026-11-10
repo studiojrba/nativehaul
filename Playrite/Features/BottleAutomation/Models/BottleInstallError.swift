@@ -41,7 +41,7 @@ enum BottleInstallError: Error, Equatable, LocalizedError {
         case .steamInstallerDownloadFailed: "Steam's installer couldn't be downloaded. Check your connection."
         case .steamNotInstalled: "Steam's installer finished, but Steam isn't in the bottle."
         case .signInTimedOut:
-            "Steam sign-in wasn't finished with the account linked in Retriever. Open Steam in the bottle, "
+            "Steam sign-in wasn't finished with the account linked in NX Shelf. Open Steam in the bottle, "
                 + "sign in with that account, then try again."
         case .goldenBottleNotReady: "Steam in CrossOver isn't set up yet."
         case let .signInNeededInBottle(name):

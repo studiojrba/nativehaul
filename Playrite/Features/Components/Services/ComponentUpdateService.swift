@@ -7,7 +7,7 @@ import Foundation
 @MainActor
 final class ComponentUpdateService: ComponentUpdating {
     private static let checkInterval: TimeInterval = 86400
-    private static let appRepo = (owner: "studiojrba", repo: "retriever")
+    private static let appRepo = (owner: "studiojrba", repo: "nx-shelf")
 
     let catalog: ComponentCatalog
     private let store: any ComponentPreferencesStoring
@@ -150,7 +150,7 @@ final class ComponentUpdateService: ComponentUpdating {
         }
     }
 
-    /// Where the component is installed: Retriever's destination first, then /Applications.
+    /// Where the component is installed: NX Shelf's destination first, then /Applications.
     func installedPath(of entry: ComponentEntry) -> String? {
         [entry.installedPath, ("/Applications" as NSString).appendingPathComponent(entry.appName)]
             .first { files.isDirectory(atPath: $0) }

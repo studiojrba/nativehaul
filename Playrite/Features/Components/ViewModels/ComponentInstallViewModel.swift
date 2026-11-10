@@ -54,7 +54,7 @@ final class ComponentInstallViewModel {
         Task { await updater.prepareInstall(entry.id) { [weak self] in self?.stage = $0 } }
     }
 
-    /// For a copy the user installed themselves: let Retriever manage it, then update.
+    /// For a copy the user installed themselves: let NX Shelf manage it, then update.
     func takeOverAndUpdate() {
         updater.takeOver(entry.id)
         start()

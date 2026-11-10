@@ -5,7 +5,7 @@ import Foundation
 enum NXNativeReadiness: Equatable, Sendable {
     /// An engine was detected or chosen.
     case ready(enginePath: String)
-    /// On, but no engine exists anywhere Retriever looked.
+    /// On, but no engine exists anywhere NX Shelf looked.
     case engineNotFound
     /// The user switched the module off in Settings.
     case switchedOff
@@ -13,7 +13,7 @@ enum NXNativeReadiness: Equatable, Sendable {
     /// Headline for the engine-not-found state.
     static let engineNotFoundTitle = "No nxnative engine found on this Mac"
     /// Explanation for the engine-not-found state.
-    static let engineNotFoundMessage = "Retriever looked in ~/Switch and Homebrew. If your engine is somewhere "
+    static let engineNotFoundMessage = "NX Shelf looked in ~/Switch and Homebrew. If your engine is somewhere "
         + "else, choose it."
     /// The engine-not-found action.
     static let chooseEngineTitle = "Choose Engine…"

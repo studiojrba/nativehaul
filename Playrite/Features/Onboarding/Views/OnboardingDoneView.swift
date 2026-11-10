@@ -9,7 +9,7 @@ struct OnboardingDoneView: View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
             Text("You're all set").font(DesignTokens.Typography.display)
                 .tracking(DesignTokens.Typography.displayTracking)
-            Text("Retriever keeps finding installed games, syncing and filling in artwork by itself.")
+            Text("NX Shelf keeps finding installed games, syncing and filling in artwork by itself.")
                 .foregroundStyle(Theme.secondaryText)
             ForEach(outcomes) { outcome in
                 if outcome.isSetUp {

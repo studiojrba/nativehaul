@@ -14,7 +14,7 @@ struct NXNativeServices: Sendable {
     let knowledgeBase: any KnowledgeBaseProviding
     /// Folder for script backups.
     let backupDirectory: String
-    /// Retriever's own bundle path (to prove the engine is external).
+    /// NX Shelf's own bundle path (to prove the engine is external).
     let appBundlePath: String
     /// Home folder used to resolve the `~` search paths of ``NXNativeLocator``.
     var homeDirectory = NSHomeDirectory()

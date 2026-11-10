@@ -60,7 +60,7 @@ struct BottleInstallServiceTests {
         #expect(bed.makeService().goldenStatus() == .steamNotLinked)
     }
 
-    @Test func firstRunCreatesRetrieverSteamInstallsSteamAndWaitsForTheOneSignIn() async throws {
+    @Test func firstRunCreatesTheDedicatedSteamBottleInstallsSteamAndWaitsForTheOneSignIn() async throws {
         let bed = try await BottleTestbed()
         let service = bed.makeService()
         var stages: [BottleInstallStage] = []

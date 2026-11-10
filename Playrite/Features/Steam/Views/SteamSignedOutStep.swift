@@ -8,7 +8,7 @@ struct SteamSignedOutStep: View {
     var body: some View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
             SteamStageHeader(title: "Not signed in", symbolName: "person.crop.circle.badge.questionmark")
-            Text("Sign in to tell Retriever which Steam account is yours. Signing in only confirms your account — "
+            Text("Sign in to tell NX Shelf which Steam account is yours. Signing in only confirms your account — "
                 + "it doesn't give access to your library, playtime or achievements. That needs a Steam API key, "
                 + "which is the next step.")
                 .foregroundStyle(Theme.secondaryText)
@@ -16,7 +16,7 @@ struct SteamSignedOutStep: View {
             if viewModel.isSigningIn {
                 HStack(spacing: DesignTokens.Spacing.md) {
                     ProgressView().controlSize(.small)
-                    Text("Finish signing in on Steam's page in your browser. Retriever is waiting for Steam to send "
+                    Text("Finish signing in on Steam's page in your browser. NX Shelf is waiting for Steam to send "
                         + "you back.")
                         .fixedSize(horizontal: false, vertical: true)
                 }

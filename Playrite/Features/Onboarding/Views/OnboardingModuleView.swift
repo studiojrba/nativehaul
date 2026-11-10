@@ -35,7 +35,7 @@ struct OnboardingModuleView: View {
             TrackingSettingsView(viewModel: environment.makeTrackingSettingsViewModel())
                 .frame(minHeight: DesignTokens.Layout.logMinHeight)
         case .emulators:
-            Text("Add your ROM folders in “Find your games” — Retriever sorts ROMs by system on its own.")
+            Text("Add your ROM folders in “Find your games” — NX Shelf sorts ROMs by system on its own.")
                 .foregroundStyle(Theme.secondaryText)
             EmulatorSettingsView(viewModel: environment.makeEmulatorSettingsViewModel())
                 .frame(minHeight: DesignTokens.Layout.logMinHeight)

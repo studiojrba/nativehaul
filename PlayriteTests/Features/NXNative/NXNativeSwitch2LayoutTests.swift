@@ -42,7 +42,7 @@ struct NXNativeSwitch2LayoutTests {
         Play.addSwitch2Dump(files, at: "/stage/Ridgeback")
         let title = TitleInfo(titleID: "", name: "Ridgeback", architecture: .bit64)
         let report = PreflightRunner(
-            files: files, disk: FixedDiskSpaceProvider(bytes: .max), appBundlePath: "/Applications/Retriever.app",
+            files: files, disk: FixedDiskSpaceProvider(bytes: .max), appBundlePath: "/Applications/NX Shelf.app",
             homeDirectory: Play.home
         ).run(for: BuildJob(sourcePath: "/stage/Ridgeback", title: title), configuration: Play.resolved(files))
         #expect(report.canBuild)
@@ -56,7 +56,7 @@ struct NXNativeSwitch2LayoutTests {
         let files = Play.jrFiles(withKeys: false)
         files.addFile(Fix.source, contents: Data(repeating: 1, count: 10))
         let report = PreflightRunner(
-            files: files, disk: FixedDiskSpaceProvider(bytes: .max), appBundlePath: "/Applications/Retriever.app",
+            files: files, disk: FixedDiskSpaceProvider(bytes: .max), appBundlePath: "/Applications/NX Shelf.app",
             homeDirectory: Play.home
         ).run(for: BuildJob(sourcePath: Fix.source, title: Fix.title), configuration: Play.resolved(files))
         #expect(report.checks.first { $0.kind == .keys }?.message == "Please provide your prod.keys.")
@@ -113,7 +113,7 @@ struct NXNativeSwitch2LayoutTests {
         let services = NXNativeServices(
             files: files, disk: FixedDiskSpaceProvider(bytes: .max), runner: runner, audit: InMemoryAuditLog(),
             knowledgeBase: BundledKnowledgeBase(), backupDirectory: "/backups",
-            appBundlePath: "/Applications/Retriever.app", homeDirectory: Play.home
+            appBundlePath: "/Applications/NX Shelf.app", homeDirectory: Play.home
         )
         var stored = EngineConfiguration()
         stored.workRoot = "/work"

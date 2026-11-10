@@ -8,7 +8,7 @@
     "graphicsBackend": "d3dMetal",
     "syncMode": "msync",
     "environment": {},
-    "notes": "No recipe for this game yet, so Retriever uses its general starting point for DirectX 11/12 games.",
+    "notes": "No recipe for this game yet, so NX Shelf uses its general starting point for DirectX 11/12 games.",
     "verdict": { "rating": "untested", "reason": "Nobody has recorded a result for this game yet." },
     "installSizeGB": 60
   },

@@ -16,7 +16,7 @@ struct NXNativeDefaultOnTests {
         let services = NXNativeServices(
             files: files, disk: FixedDiskSpaceProvider(bytes: .max), runner: MockBuildEngineRunner(),
             audit: InMemoryAuditLog(), knowledgeBase: BundledKnowledgeBase(), backupDirectory: "/backups",
-            appBundlePath: "/Applications/Retriever.app", homeDirectory: Self.home
+            appBundlePath: "/Applications/NX Shelf.app", homeDirectory: Self.home
         )
         return NXNativeViewModel(services: services, store: store) { _, _ in }
     }
@@ -131,7 +131,7 @@ struct NXNativeDefaultOnTests {
     }
 
     /// ADR 0027: the engine is upstream nxnative. A machine whose only copy is bundled inside another app's folder
-    /// (J.R's NX Play copy) has no engine as far as Retriever is concerned.
+    /// (J.R's NX Play copy) has no engine as far as NX Shelf is concerned.
     @Test func anotherAppsBundledCopyIsNeverDetected() {
         let files = InMemoryFileOperations()
         files.addFile("\(Self.home)/Library/Application Support/NX Play/nxnative/scripts/build_ipa_from_nsp.py")
@@ -187,7 +187,7 @@ struct NXNativeDefaultOnTests {
         #expect(model.readiness == .engineNotFound)
         #expect(NXNativeReadiness.engineNotFoundTitle == "No nxnative engine found on this Mac")
         #expect(NXNativeReadiness.engineNotFoundMessage
-            == "Retriever looked in ~/Switch and Homebrew. If your engine is somewhere else, choose it.")
+            == "NX Shelf looked in ~/Switch and Homebrew. If your engine is somewhere else, choose it.")
         #expect(NXNativeReadiness.chooseEngineTitle == "Choose Engine…")
         let copy = [NXNativeReadiness.engineNotFoundTitle, NXNativeReadiness.engineNotFoundMessage]
         #expect(!copy.contains { $0.contains("Settings") || $0.localizedCaseInsensitiveContains("enable") })

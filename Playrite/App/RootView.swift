@@ -61,7 +61,7 @@ struct RootView: View {
                 isPresented: exportBinding,
                 document: exportDocument,
                 contentType: .json,
-                defaultFilename: "Retriever Library"
+                defaultFilename: "NX Shelf Library"
             ) { _ in exportDocument = nil }
             .alert("Library", isPresented: alertBinding, presenting: alertMessage) { _ in
                 Button("OK") { clearAlert() }
@@ -152,12 +152,12 @@ struct RootView: View {
             ?? libraryViewModel.metadataSummary?.description
     }
 
-    /// Onboarding never appears over a running game; it waits until Retriever is back (ADR 0030 Layer 1).
+    /// Onboarding never appears over a running game; it waits until NX Shelf is back (ADR 0030 Layer 1).
     private var onboardingBinding: Binding<Bool> {
         Binding(get: { isOnboarding && !environment.handoff.isGameRunning }, set: { isOnboarding = $0 })
     }
 
-    /// Alerts never appear over a running game; they wait until Retriever is back (ADR 0030 Layer 1).
+    /// Alerts never appear over a running game; they wait until NX Shelf is back (ADR 0030 Layer 1).
     private var alertBinding: Binding<Bool> {
         Binding(get: { alertMessage != nil && !environment.handoff.isGameRunning }, set: {
             if !$0 {

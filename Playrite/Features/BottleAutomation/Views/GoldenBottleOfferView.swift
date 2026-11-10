@@ -25,7 +25,7 @@ struct GoldenBottleOfferView: View {
                 Button("Install Steam via CrossOver", systemImage: "arrow.down.app", action: onAccept)
                     .buttonStyle(.borderedProminent)
                     .frame(maxWidth: .infinity)
-                Text("You'll sign in to Steam once, in Steam's own window. Retriever never sees your password.")
+                Text("You'll sign in to Steam once, in Steam's own window. NX Shelf never sees your password.")
                     .font(DesignTokens.Typography.caption)
                     .foregroundStyle(Theme.secondaryText)
             case .crossOverMissing, .ready:

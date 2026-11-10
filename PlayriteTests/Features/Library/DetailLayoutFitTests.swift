@@ -10,7 +10,7 @@ struct DetailLayoutFitTests {
     private static let height: CGFloat = 760
     private static let settle: TimeInterval = 0.3
     private static let longTitle = "The Extraordinarily Long Adventure of Lantern Keepers: Director's Cut Remastered"
-    private static let renderFolder = (NSTemporaryDirectory() as NSString).appendingPathComponent("RetrieverLayout")
+    private static let renderFolder = (NSTemporaryDirectory() as NSString).appendingPathComponent("NXShelfLayout")
 
     private func detailGame(_ environment: AppEnvironment) throws -> (Game, [Game]) {
         let games = try environment.repository.fetchGames()
@@ -23,7 +23,7 @@ struct DetailLayoutFitTests {
         game.genres = ["Action", "Adventure", "Role-playing", "Metroidvania", "Open World", "Co-op"]
         game.developer = "An Uncommonly Long Studio Name Interactive Entertainment Ltd."
         game.steamAppID = 1_091_500
-        game.steamInstalls = [.crossOver(bottle: "Retriever – \(Self.longTitle)", steamRoot: "/b/drive_c/Steam")]
+        game.steamInstalls = [.crossOver(bottle: "NX Shelf – \(Self.longTitle)", steamRoot: "/b/drive_c/Steam")]
         games.dropFirst().first?.title = Self.longTitle + " II"
         return (game, games)
     }
@@ -56,7 +56,7 @@ struct DetailLayoutFitTests {
         let inner = DesignTokens.Details.rightRailWidth - 2 * DesignTokens.Spacing.lg
         let game = Game(title: Self.longTitle)
         game.steamAppID = 1
-        game.steamInstalls = [.crossOver(bottle: "Retriever – \(Self.longTitle)", steamRoot: "/b/drive_c/Steam")]
+        game.steamInstalls = [.crossOver(bottle: "NX Shelf – \(Self.longTitle)", steamRoot: "/b/drive_c/Steam")]
         let launch = GameLaunchViewModel(game: game, launcher: RecordingGameLauncher(), watcher: MockPlaytimeWatcher())
         let unplayable = GameLaunchViewModel(
             game: Game(title: "Logbook only"), launcher: RecordingGameLauncher(), watcher: MockPlaytimeWatcher()

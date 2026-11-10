@@ -39,7 +39,7 @@ struct ComponentReleaseFetcher: Sendable {
         guard let url = URL(string: "\(Self.apiBase)/\(owner)/\(repo)/releases/latest") else { return nil }
         var request = URLRequest(url: url)
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
-        request.setValue("Retriever", forHTTPHeaderField: "User-Agent")
+        request.setValue("NXShelf", forHTTPHeaderField: "User-Agent")
         let (data, response) = try await http.data(for: request)
         if response.statusCode == Self.notFound {
             return nil
