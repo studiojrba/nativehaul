@@ -1358,6 +1358,34 @@ approved by J.R when he set the rule). 333 tests (+6).
 - **J.R's live copy:** after setup it adopted all 18 ports with their title IDs under the nativehaul identity
   (checked read-only in `nativehaul.store`).
 
+## 1.0.0 release candidate: verification on J.R's Mac (2026-11-10)
+`./scripts/release.sh` (full, not published) built `build/release/1.0.0/nativehaul-1.0.0.dmg` (SHA-256
+`2f25e6aad1ca5d61d0fd092ecb2e7dd1840974cf700c15a99e34d40dfd86958e`). Nothing is tagged or published yet.
+- **Notarization:**
+  - the app and the DMG were both **Accepted** by Apple's notary service, and both are stapled
+    (`stapler validate` passes);
+  - `spctl` reports both as "accepted, source=Notarized Developer ID";
+  - `syspolicy_check distribution`: "App passed all pre-distribution checks and is ready for distribution".
+- **Download-style install check:** the DMG was copied with a Safari quarantine flag. It still passes Gatekeeper,
+  and the app inside it passes too. Its contents are `nativehaul.app` and the Applications link.
+- **Appcast:**
+  - one item: 1.0.0, build 2, minimum macOS 15.0;
+  - URL `releases/download/v1.0.0/nativehaul-1.0.0.dmg`, with the changelog notes embedded;
+  - its EdDSA signature verifies with `sign_update --verify`, and a tampered signature is rejected;
+  - J.R approved the Keychain access for the update key.
+- **Upgrade from the current build:** J.R's library was backed up first, read-only, to the session scratchpad.
+  His dev copy (Debug, Apple Development) was quit with no game running, and the notarized 1.0.0 was opened from
+  `build/release/1.0.0/export/`.
+  - It opened his existing library intact: 18 games, all with title IDs, art and Home showing.
+  - No errors were logged.
+  - It was then quit and his canonical copy relaunched. One instance is running.
+  - The nativehaul Keychain service is empty, so there was no Keychain prompt to see.
+- **Still open:**
+  - a true clean-machine install, on a Mac, fresh user or VM that never had nativehaul;
+  - the Sparkle end-to-end update, which needs a published 1.0.0 and then a 1.0.1;
+  - publishing itself (`./scripts/release.sh --publish`), which waits for J.R's go and for the stack to merge into
+    `production`.
+
 ## Name lock: state on J.R's Mac (2026-11-10)
 - **J.R's copy:** the working-name app was quit (no game running) and `nativehaul.app` opened from the new
   canonical path, `DerivedData/nativehaul-avvohnucushygrhktagpqdqkqjmt/Build/Products/Debug/nativehaul.app`.
