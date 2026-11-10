@@ -27,6 +27,9 @@ struct GameRecord: Codable, Equatable, Sendable {
     var heroImagePath: String?
     /// Optional; older archives omit these.
     var carouselImagePaths: [String]?
+    /// Optional; older archives omit these.
+    var trailerVideoURL: String?
+    var trailerPosterPath: String?
     var metadataSources: [String]?
     var romPath: String?
     var switchTitleID: String?

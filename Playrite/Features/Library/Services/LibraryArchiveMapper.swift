@@ -35,6 +35,8 @@ enum LibraryArchiveMapper {
             tags: game.tags,
             heroImagePath: game.heroImagePath,
             carouselImagePaths: game.carouselImagePaths,
+            trailerVideoURL: game.trailerVideoURL,
+            trailerPosterPath: game.trailerPosterPath,
             metadataSources: game.metadataSourcesRaw,
             romPath: game.romPath,
             switchTitleID: game.switchTitleID,

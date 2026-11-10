@@ -23,7 +23,9 @@ struct SteamStoreMetadataProviderTests {
         #expect(metadata.releaseDate == StoreReleaseDateParser.date(from: "2011-04-18T00:00:00Z"))
         #expect(metadata.coverCandidates.first?.lastPathComponent == "library_600x900_2x.jpg")
         #expect(metadata.heroCandidates.first?.lastPathComponent == "library_hero.jpg")
-        #expect(metadata.carouselImages.map(\.lastPathComponent) == ["s0.jpg", "s1.jpg", "m0.jpg"])
+        #expect(metadata.carouselImages.map(\.lastPathComponent) == ["s0.jpg", "s1.jpg"])
+        #expect(metadata.trailer?.videoURL.absoluteString == "https://video.example/m1/hls_264_master.m3u8")
+        #expect(metadata.trailer?.posterCandidates.map(\.lastPathComponent) == ["s0.jpg", "m1.jpg"])
         let requested = await http.requestedURLs
         #expect(requested.count == 1)
         #expect(requested.first?.host() == "store.steampowered.com")

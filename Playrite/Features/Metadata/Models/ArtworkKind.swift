@@ -8,4 +8,6 @@ enum ArtworkKind: String, Codable, CaseIterable, Sendable {
     case hero
     /// Extra slides for the hero carousel (screenshots, trailer thumbnails).
     case carousel
+    /// Poster still shown before a trailer plays (and instead of it under Reduce Motion).
+    case trailerPoster
 }

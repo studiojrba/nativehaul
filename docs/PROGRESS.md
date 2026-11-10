@@ -1118,6 +1118,33 @@ approved by J.R when he set the rule). 333 tests (+6).
   title, so 21/24. Fortune's Weave, Pokopia and Ocarina of Time are not in titledb.
 - Note: 23 of 24 ports already have an imported description, so titledb fills descriptions only where one is empty.
 
+## 41 · feature/steam-trailers — media pass 3/4: Steam trailers first in the media set
+- ✅ Steam store movies become the trailer:
+  - the highlighted movie, else the first, **streamed** from Steam's HLS playlist (the current payload has no mp4),
+    or from mp4 for older payloads;
+  - stored as `Game.trailerVideoURL` with a cached poster (the first full-size screenshot, then the 293×165
+    thumbnail);
+  - provenance field `trailer`.
+- ✅ Native AVPlayer (`TrailerSlideView`, `TrailerPlayerModel`, `TrailerPlayerLayer`):
+  - first in the media set;
+  - muted autoplay and loop while visible, pausing off screen or on another slide;
+  - pause/play and sound buttons;
+  - Reduce Motion means the poster and a play button, and no autoplay;
+  - a failed stream falls back to the poster.
+- ✅ Gap fill only:
+  - existing trailers and carousels are untouched;
+  - new carousels drop the trailer thumbnails, since the trailer itself is first;
+  - every fill is audit-logged;
+  - the fields round-trip through export, import and merge.
+- 🧪 `SteamTrailerTests`:
+  - stream choice (HLS, then mp4 max);
+  - trailer first in `MediaSlide.set`;
+  - the autoplay policy;
+  - the fetcher fills a gap, keeps an existing trailer, and writes an audit entry.
+- 🧪 Steam provider fixture updated to the real payload shape (highlight + `hls_h264` + `dash_h264`).
+- Checked outside the app: the same AVPlayer setup played Steam's live Hades HLS trailer at 1920×1080.
+- Not verified offscreen: on-screen playback inside the app. It needs J.R's eye.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1162,6 +1189,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 38 | `feature/meebits-energy-pass` (look; J.R's eyeball first) | ✅ | ✅ | 492 | ✅ |
 | 39 | `feature/media-slideshow-fit` (media pass 1/4) | ✅ | ✅ | 503 | ✅ |
 | 40 | `feature/titledb-media` (media pass 2/4) | ✅ | ✅ | 522 | ✅ |
+| 41 | `feature/steam-trailers` (media pass 3/4) | ✅ | ✅ | 526 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches

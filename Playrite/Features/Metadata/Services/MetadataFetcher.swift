@@ -167,6 +167,14 @@ final class MetadataFetcher: MetadataFetching {
             else { continue }
             update.setArtwork(field, paths: [path], source: metadata.source)
         }
+        if allowed.contains(.trailer), let trailer = metadata.trailer {
+            let poster = await downloader.firstImage(
+                from: trailer.posterCandidates,
+                gameID: gameID,
+                kind: .trailerPoster
+            )
+            update.setTrailer(videoURL: trailer.videoURL, posterPath: poster, source: metadata.source)
+        }
         if allowed.contains(.carousel), !metadata.carouselImages.isEmpty {
             let paths = await downloader.carousel(from: metadata.carouselImages, gameID: gameID)
             update.setArtwork(.carousel, paths: paths, source: metadata.source)

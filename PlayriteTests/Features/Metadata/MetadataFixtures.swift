@@ -22,7 +22,13 @@ enum MetadataFixtures {
         {"id": 0, "path_thumbnail": "https://cdn.example/s0t.jpg", "path_full": "https://cdn.example/s0.jpg"},
         {"id": 1, "path_thumbnail": "https://cdn.example/s1t.jpg", "path_full": "https://cdn.example/s1.jpg"}
       ],
-      "movies": [{"id": 5, "name": "Trailer", "thumbnail": "https://cdn.example/m0.jpg"}]
+      "movies": [
+        {"id": 5, "name": "Teaser", "thumbnail": "https://cdn.example/m0.jpg", "highlight": false,
+         "mp4": {"480": "https://cdn.example/m0-480.mp4", "max": "https://cdn.example/m0-max.mp4"}},
+        {"id": 6, "name": "Launch Trailer", "thumbnail": "https://cdn.example/m1.jpg", "highlight": true,
+         "hls_h264": "https://video.example/m1/hls_264_master.m3u8",
+         "dash_h264": "https://video.example/m1/dash_h264.mpd"}
+      ]
     }}}
     """
 

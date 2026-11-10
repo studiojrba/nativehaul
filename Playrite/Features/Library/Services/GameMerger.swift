@@ -97,6 +97,10 @@ enum GameMerger {
         survivor.hltbID = survivor.hltbID ?? duplicate.hltbID
         survivor.developer = survivor.developer ?? duplicate.developer
         survivor.heroImagePath = survivor.heroImagePath ?? duplicate.heroImagePath
+        if survivor.trailerVideoURL == nil {
+            survivor.trailerVideoURL = duplicate.trailerVideoURL
+            survivor.trailerPosterPath = duplicate.trailerPosterPath
+        }
         if survivor.carouselImagePaths.isEmpty {
             survivor.carouselImagePaths = duplicate.carouselImagePaths
         }

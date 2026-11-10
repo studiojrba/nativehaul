@@ -18,6 +18,7 @@ extension Game {
         case .cover: coverImagePath == nil
         case .hero: heroImagePath == nil
         case .carousel: carouselImagePaths.isEmpty
+        case .trailer: trailerVideoURL == nil
         }
     }
 

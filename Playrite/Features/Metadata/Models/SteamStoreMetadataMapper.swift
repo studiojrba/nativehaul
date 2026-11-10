@@ -4,8 +4,6 @@ import Foundation
 enum SteamStoreMetadataMapper {
     /// Most screenshots kept for the carousel.
     static let screenshotLimit = 8
-    /// Most trailer thumbnails kept for the carousel.
-    static let movieThumbnailLimit = 2
 
     /// Metadata for `appID` from its store details.
     static func metadata(from details: SteamStoreAppDetails, appID: Int) -> FetchedMetadata {
@@ -22,9 +20,19 @@ enum SteamStoreMetadataMapper {
         metadata.heroCandidates = SteamStoreEndpoint.libraryHero(appID: appID)
             + [details.backgroundRaw, details.headerImage].compactMap { $0.flatMap(URL.init(string:)) }
         let screenshots = (details.screenshots ?? []).compactMap { $0.pathFull.flatMap(URL.init(string:)) }
-        let thumbnails = (details.movies ?? []).compactMap { $0.thumbnail.flatMap(URL.init(string:)) }
         metadata.carouselImages = Array(screenshots.prefix(screenshotLimit))
-            + Array(thumbnails.prefix(movieThumbnailLimit))
+        metadata.trailer = trailer(from: details.movies ?? [], screenshots: screenshots)
         return metadata
+    }
+
+    /// The trailer (ADR 0038): Steam's highlighted movie, else its first, played from its stream. Its poster is the
+    /// first full-size screenshot, since Steam's own thumbnail is only 293×165, then that thumbnail.
+    private static func trailer(from movies: [SteamStoreMovie], screenshots: [URL]) -> TrailerCandidate? {
+        let playable = movies.filter { $0.streamURL != nil }
+        guard let movie = playable.first(where: { $0.highlight == true }) ?? playable.first,
+              let stream = movie.streamURL
+        else { return nil }
+        let thumbnail = [movie.thumbnail].compactMap { $0.flatMap(URL.init(string:)) }
+        return TrailerCandidate(videoURL: stream, posterCandidates: Array(screenshots.prefix(1)) + thumbnail)
     }
 }

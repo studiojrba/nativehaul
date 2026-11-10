@@ -50,6 +50,11 @@ final class Game {
     var heroImagePath: String?
     /// Cached carousel slides (screenshots, trailer thumbnails) shown after the hero image.
     var carouselImagePaths: [String] = []
+    /// Streamed trailer (a Steam HLS or mp4 URL, or a YouTube watch URL), first in the media set (ADR 0038). Never
+    /// downloaded.
+    var trailerVideoURL: String?
+    /// Cached poster still for the trailer.
+    var trailerPosterPath: String?
     /// Persisted ``metadataProvenance`` (`"field=source"` entries).
     var metadataSourcesRaw: [String] = []
     /// Absolute path to the ROM file, for emulated games.

@@ -20,6 +20,8 @@ struct FetchedMetadata: Equatable, Sendable {
     var heroCandidates: [URL] = []
     /// Carousel slides (screenshots, trailer thumbnails), in display order.
     var carouselImages: [URL] = []
+    /// Trailer to stream, with poster candidates.
+    var trailer: TrailerCandidate?
 
     /// Creates an empty result for `source`.
     init(source: MetadataSource) {
@@ -37,6 +39,7 @@ struct FetchedMetadata: Equatable, Sendable {
         case .cover: !coverCandidates.isEmpty
         case .hero: !heroCandidates.isEmpty
         case .carousel: !carouselImages.isEmpty
+        case .trailer: trailer != nil
         }
     }
 }

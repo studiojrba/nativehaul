@@ -52,7 +52,9 @@ struct GameDetailView: View {
                 HeroMediaView(
                     heroImagePath: viewModel.game.heroImagePath,
                     coverImagePath: viewModel.game.coverImagePath,
-                    carouselImagePaths: viewModel.game.carouselImagePaths
+                    carouselImagePaths: viewModel.game.carouselImagePaths,
+                    trailerVideoURL: viewModel.game.trailerVideoURL,
+                    trailerPosterPath: viewModel.game.trailerPosterPath
                 )
                 .background(alignment: .top) {
                     ArtGlowBackground(imagePath: viewModel.game.heroImagePath ?? viewModel.game.coverImagePath)

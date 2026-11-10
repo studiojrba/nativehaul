@@ -30,6 +30,10 @@ enum MetadataApplier {
         if let carouselPaths = update.carouselPaths {
             game.carouselImagePaths = carouselPaths
         }
+        if let trailerVideoURL = update.trailerVideoURL {
+            game.trailerVideoURL = trailerVideoURL
+            game.trailerPosterPath = update.trailerPosterPath
+        }
         var provenance = game.metadataProvenance
         for field in update.fields {
             provenance[field] = update.sources[field]

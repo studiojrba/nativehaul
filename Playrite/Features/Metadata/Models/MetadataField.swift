@@ -18,6 +18,8 @@ enum MetadataField: String, Codable, CaseIterable, Sendable {
     case hero
     /// Hero carousel slides.
     case carousel
+    /// Trailer video, streamed (ADR 0038); its poster is cached art.
+    case trailer
 
     /// The artwork kind for an art field, or `nil` for a text field.
     var artworkKind: ArtworkKind? {
@@ -25,6 +27,7 @@ enum MetadataField: String, Codable, CaseIterable, Sendable {
         case .cover: .cover
         case .hero: .hero
         case .carousel: .carousel
+        case .trailer: .trailerPoster
         case .description, .developer, .genres, .tags, .releaseDate: nil
         }
     }
@@ -45,6 +48,7 @@ enum MetadataField: String, Codable, CaseIterable, Sendable {
         case .cover: "Cover"
         case .hero: "Hero"
         case .carousel: "Carousel"
+        case .trailer: "Trailer"
         }
     }
 }

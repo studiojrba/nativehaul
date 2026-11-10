@@ -18,6 +18,10 @@ struct MetadataUpdate: Equatable, Sendable {
     var heroPath: String?
     /// Cached carousel paths.
     var carouselPaths: [String]?
+    /// Trailer stream URL.
+    var trailerVideoURL: String?
+    /// Cached trailer poster path.
+    var trailerPosterPath: String?
     /// Source per filled field.
     private(set) var sources: [MetadataField: MetadataSource] = [:]
 
@@ -62,6 +66,13 @@ struct MetadataUpdate: Equatable, Sendable {
         }
     }
 
+    /// Records a trailer (its poster may be missing; the media set then shows a plain play button).
+    mutating func setTrailer(videoURL: URL, posterPath: String?, source: MetadataSource) {
+        trailerVideoURL = videoURL.absoluteString
+        trailerPosterPath = posterPath
+        sources[.trailer] = source
+    }
+
     /// Records a cached image for an art field.
     mutating func setArtwork(_ field: MetadataField, paths: [String], source: MetadataSource) {
         guard let first = paths.first else { return }
@@ -69,7 +80,7 @@ struct MetadataUpdate: Equatable, Sendable {
         case .cover: coverPath = first
         case .hero: heroPath = first
         case .carousel: carouselPaths = paths
-        case .description, .developer, .genres, .tags, .releaseDate: return
+        case .description, .developer, .genres, .tags, .releaseDate, .trailer: return
         }
         sources[field] = source
     }

@@ -163,6 +163,7 @@ struct MetadataFetcherTests {
         game.coverImagePath = "/c"
         game.heroImagePath = "/h"
         game.carouselImagePaths = ["/s"]
+        game.trailerVideoURL = "https://v.example/t.m3u8"
         let harness = try await harness([game])
         let steam = MockMetadataProvider(source: .steamStore)
         let summary = try await fetcher(harness, steam: steam).fetchMissing()

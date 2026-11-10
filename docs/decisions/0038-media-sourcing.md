@@ -68,3 +68,36 @@ The research behind the plan:
   without a built app match by exact title. That makes 21 of 24 library ports. The misses are *Fire Emblem:
   Fortune's Weave*, *Pokémon Pokopia* and *The Legend of Zelda: Ocarina of Time*, whose IDs (`0400…`) are not in
   titledb at all.
+
+### 3. Steam trailers and screenshots
+- **The trailer** is Steam's highlighted store movie, else its first, from `appdetails`. Steam no longer lists mp4
+  files for current trailers: it serves an HLS playlist (`hls_h264`), plus DASH. AVPlayer plays HLS natively, so
+  the trailer is **streamed, never downloaded**. Older payloads that still list `mp4` are supported (largest
+  first). It is stored as `Game.trailerVideoURL`, with provenance field `trailer`. The poster
+  (`trailerPosterPath`) is the first full-size store screenshot, because Steam's own movie thumbnail is only
+  293×165, then that thumbnail. It is cached like other art.
+- **Playback** (`TrailerSlideView` + `TrailerPlayerModel`, native AVPlayer, `AVPlayerLayer` with no system
+  controls, aspect-fit):
+  - the trailer is the **first item** in the media set (`MediaSlide.set`);
+  - it plays **muted and loops** while on screen, and pauses when scrolled out of view or when another slide is
+    shown;
+  - it has pause/play and sound on/off buttons;
+  - under **Reduce Motion** it never starts by itself: the poster shows with a play button
+    (`TrailerAutoplayPolicy`);
+  - a stream that fails to load leaves the poster.
+- **Screenshots** join the slideshow as before (up to 8). New fills no longer add the two trailer thumbnails,
+  since the trailer itself is now first. Carousels a game already has are untouched.
+- **Fill gaps only:** a trailer is written only where the game has none, through the same `MetadataFillPolicy`
+  (refresh may replace a trailer a previous pass fetched, never one set any other way). Every fill writes a
+  `metadata.fill` audit entry.
+- **Archive and merge:** the two fields round-trip through library export and import (older archives omit them).
+  The duplicate merger keeps the survivor's trailer, else takes the duplicate's.
+- **Checked outside the app:** the same AVQueuePlayer + AVPlayerLooper setup reached `readyToPlay` and played
+  Steam's current Hades HLS trailer at 1920×1080.
+
+### Consequences (so far)
+- **Steam games without a trailer get asked again.** A Steam game whose store page has no trailer now counts as
+  missing a field. Like any game with an empty field, it is asked once per launch (games already tried this
+  session are skipped).
+- **Trailer URLs may age.** Steam's stream URLs carry a version path. If one stops loading, the slide falls back
+  to its poster. **Refresh Metadata** on that game fetches the current one.

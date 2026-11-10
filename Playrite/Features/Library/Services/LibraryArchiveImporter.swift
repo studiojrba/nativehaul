@@ -69,6 +69,8 @@ struct LibraryArchiveImporter {
         game.tags = record.tags ?? []
         game.heroImagePath = record.heroImagePath
         game.carouselImagePaths = record.carouselImagePaths ?? []
+        game.trailerVideoURL = record.trailerVideoURL
+        game.trailerPosterPath = record.trailerPosterPath
         game.metadataSourcesRaw = record.metadataSources ?? []
         game.romPath = record.romPath
         game.switchTitleID = record.switchTitleID

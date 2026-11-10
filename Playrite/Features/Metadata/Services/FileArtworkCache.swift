@@ -27,7 +27,7 @@ struct FileArtworkCache: ArtworkCaching {
     /// File name for an artwork slot.
     static func fileName(kind: ArtworkKind, index: Int, format: ImageFormat) -> String {
         switch kind {
-        case .cover, .hero: "\(kind.rawValue).\(format.fileExtension)"
+        case .cover, .hero, .trailerPoster: "\(kind.rawValue).\(format.fileExtension)"
         case .carousel: "\(kind.rawValue)-\(String(format: "%02d", index + 1)).\(format.fileExtension)"
         }
     }
