@@ -116,6 +116,11 @@ Figma designs will arrive later. Until then, **structure and function beat bespo
 - **One canonical build output (J.R, ADR 0029):** always build into Xcode's default DerivedData for the project
   (`~/Library/Developer/Xcode/DerivedData/nativehaul-<hash>/Build/Products/Debug/nativehaul.app`), never a
   `-derivedDataPath`. Quit any instance you launch to verify, and leave none running at the end of a session.
+- **J.R's working copy is the notarized release in `/Applications/nativehaul.app` (J.R, 2026-11-10).** It was
+  installed from the 1.0.0 DMG and replaces the dev copy for everyday use. Dev builds in DerivedData are for tests
+  and diagnostics only: never launch them as his copy, and never copy one over `/Applications/nativehaul.app`. To
+  relaunch his copy, quit it politely (no game running) and `open /Applications/nativehaul.app`. It changes only by
+  installing a newer notarized release build, until Sparkle updates take over after publishing.
 
 ## Name and identity (J.R, ADR 0045)
 - The app is **nativehaul**, as if it had always been: GitHub `studiojrba/nativehaul`; project, scheme, targets, source
