@@ -1300,6 +1300,16 @@ approved by J.R when he set the rule). 333 tests (+6).
 - **Tests:** 423, all green; lint clean. One UI line was reworded to fit 120 columns ("nativehaul keeps only the
   link and credits the author…").
 
+## 53 · feature/release-licensing — licence, notices, audit, privacy (release track 1/3)
+- **Built:** ADR 0049.
+  - `LICENSE` (MIT, © 2026 Studio Jrba inc.) and a new `THIRD_PARTY_NOTICES.md` both ship in the app's Resources;
+    the Info.plist copyright now reads "© 2026 Studio Jrba inc. MIT License."
+  - `docs/LICENSE_AUDIT.md`: nothing GPL is bundled. There is no third-party code in the app yet. nxnative (MIT) and
+    the emulators (GPL) are external only, and titledb (MIT) is runtime data.
+  - `docs/PRIVACY.md`: no telemetry, and every host the app contacts or links to, with when and what is sent.
+- **Tests:** `ReleasePolicyTests` (4): every source host is in the privacy policy; licence and notices ship; only
+  audited frameworks are bundled; each has a notice. 427 tests, all green; lint clean.
+
 ## Name lock: state on J.R's Mac (2026-11-10)
 - **J.R's copy:** the working-name app was quit (no game running) and `nativehaul.app` opened from the new
   canonical path, `DerivedData/nativehaul-avvohnucushygrhktagpqdqkqjmt/Build/Products/Debug/nativehaul.app`.
@@ -1387,6 +1397,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 50 | `feature/switch-emulators-scope` (1.0 scope surgery) | ✅ | ✅ | 415 | ✅ |
 | 51 | `feature/retroachievements` | ✅ | ✅ | 423 | ✅ |
 | 52 | `feature/nativehaul-name` (name locked) | ✅ | ✅ | 423 | ✅ |
+| 53 | `feature/release-licensing` (release 1/3) | ✅ | ✅ | 427 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1426,7 +1437,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0048)
+## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0049)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.
