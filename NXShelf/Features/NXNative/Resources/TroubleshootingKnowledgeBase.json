@@ -1,0 +1,88 @@
+[
+  {
+    "id": "profile-check-non-retail-title-id",
+    "title": "Profile check fails on a non-retail title ID",
+    "symptom": "The build stops during the engine's profile check with an error saying the title ID is unknown or not a retail ID, even though the title is 64-bit and the staged files are complete.",
+    "logSignatures": [
+      "profile check failed",
+      "non-retail title id",
+      "not a retail title id",
+      "unknown title id"
+    ],
+    "cause": "The engine script's profile check only accepts title IDs in the retail range (beginning with 01). Titles with other IDs — homebrew, development or region-variant builds — are rejected before conversion starts, although they are otherwise buildable.",
+    "steps": [
+      {
+        "id": 1,
+        "kind": "backupScript",
+        "title": "Back up the engine script",
+        "detail": "Copies the script to NX Shelf's backup folder and records its SHA-256, so it can be restored byte-for-byte. Nothing else changes."
+      },
+      {
+        "id": 2,
+        "kind": "patchScript",
+        "title": "Patch the profile check",
+        "detail": "Applies a reviewed text change that must match exactly once. Edit the search text to match your engine's actual check, preview the diff, then apply. Refused unless the backup is intact and the script is unchanged since it was taken."
+      },
+      {
+        "id": 3,
+        "kind": "rebuild",
+        "title": "Rebuild the title",
+        "detail": "Re-queues the failed job so it runs with the patched script."
+      },
+      {
+        "id": 4,
+        "kind": "restoreScript",
+        "title": "Restore the original script",
+        "detail": "Writes the backed-up bytes back over the patched script, in place, keeping its permissions."
+      },
+      {
+        "id": 5,
+        "kind": "verifyRestore",
+        "title": "Verify the restore",
+        "detail": "Confirms the script's bytes and SHA-256 match the backup exactly. The case is only closed when this passes."
+      }
+    ],
+    "suggestedPatch": {
+      "search": "check_retail_profile \"$TITLE_ID\" || exit 1",
+      "replacement": "check_retail_profile \"$TITLE_ID\" || echo \"[nxshelf] profile check skipped for $TITLE_ID\""
+    }
+  },
+  {
+    "id": "nxnative-game-black-screen",
+    "title": "A built game shows a black screen",
+    "symptom": "You pressed Play on a game you built and its window stays black. Sometimes the music plays over the black screen, sometimes there is no sound at all. The game keeps running and does not crash.",
+    "logSignatures": [
+      "window covered",
+      "oe focus state",
+      "a packet refused with"
+    ],
+    "cause": "A built game only draws while its window is in front and selected, just as a console game pauses when you leave it. If another window covers it, or another app takes the focus, the game pauses itself and the screen stays black. Its music can keep playing while it waits. The first time you open a game it can also take about 30 seconds to start, while the game shows its own progress screen. None of this means the build failed, and nothing needs to be rebuilt.",
+    "steps": [
+      {
+        "id": 1,
+        "kind": "checkGame",
+        "title": "Bring the game to the front",
+        "detail": "Click once inside the game's window so it is the window in front. Close or move anything that covers it. The picture usually appears within a second or two."
+      },
+      {
+        "id": 2,
+        "kind": "checkGame",
+        "title": "Keep it in front while it starts",
+        "detail": "Don't switch to other apps while the game is starting. If you chose full screen in the game's own launcher, stay in the game's full-screen space until the picture appears."
+      },
+      {
+        "id": 3,
+        "kind": "checkGame",
+        "title": "Give the first start about 30 seconds",
+        "detail": "The first time a game opens, it can spend about 30 seconds preparing its graphics, with its own progress screen showing. Later starts are quicker."
+      },
+      {
+        "id": 4,
+        "kind": "checkGame",
+        "title": "An intro movie can play black with sound",
+        "detail": "Some games open with a movie. If you hear its music but see black, bring the window to the front and wait for the title screen. The game's log, ~/Library/Logs/nxnative/<title ID>.log, may show lines like \"a packet refused with … pictures waiting\" while the movie plays. Those lines on their own are harmless."
+      }
+    ],
+    "suggestedPatch": null
+  }
+]

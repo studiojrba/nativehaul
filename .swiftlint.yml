@@ -1,6 +1,6 @@
 included:
-  - Playrite
-  - PlayriteTests
+  - NXShelf
+  - NXShelfTests
 excluded:
   - build
   - DerivedData
@@ -55,8 +55,8 @@ custom_rules:
   no_inline_padding_literal:
     name: "Use DesignTokens"
     regex: '\.(padding|frame|cornerRadius|spacing)\([^)]*\b[0-9]+(\.[0-9]+)?\b'
-    included: 'Playrite/.*\.swift'
-    excluded: 'Playrite/Shared/DesignSystem/.*\.swift'
+    included: 'NXShelf/.*\.swift'
+    excluded: 'NXShelf/Shared/DesignSystem/.*\.swift'
     message: "Inline styling literal — use DesignTokens instead."
     severity: error
 

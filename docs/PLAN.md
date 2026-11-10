@@ -10,8 +10,8 @@ optional, unbundled build pipeline UI for the upstream nxnative engine.
 Single app module, strict feature folders (see `README.md` for the full tree).
 
 ```
-Playrite/
-├── App/            PlayriteApp, RootView, AppEnvironment (dependency container)
+NXShelf/
+├── App/            NXShelfApp, RootView, AppEnvironment (dependency container)
 ├── Features/
 │   ├── Library/        SwiftData models (Game, PlaySession…), grid, sidebar, detail, JSON import/export
 │   ├── Steam/          SteamClientProtocol + URLSession client, DTOs, sync, settings

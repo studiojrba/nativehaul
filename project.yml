@@ -1,4 +1,4 @@
-name: Playrite
+name: NXShelf
 options:
   bundleIdPrefix: com.studiojrba
   deploymentTarget:
@@ -22,42 +22,42 @@ settings:
     ENABLE_HARDENED_RUNTIME: YES
     DEAD_CODE_STRIPPING: YES
 targets:
-  Playrite:
+  NXShelf:
     type: application
     platform: macOS
     sources:
-      - path: Playrite
+      - path: NXShelf
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.studiojrba.Playrite
+        PRODUCT_BUNDLE_IDENTIFIER: com.studiojrba.NXShelf
         PRODUCT_NAME: NX Shelf
-        PRODUCT_MODULE_NAME: Playrite
+        PRODUCT_MODULE_NAME: NXShelf
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: NX Shelf
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.games
         INFOPLIST_KEY_NSHumanReadableCopyright: "© studiojrba"
         ENABLE_APP_SANDBOX: NO
         ENABLE_TESTABILITY: YES
-  PlayriteTests:
+  NXShelfTests:
     type: bundle.unit-test
     platform: macOS
     sources:
-      - path: PlayriteTests
+      - path: NXShelfTests
     dependencies:
-      - target: Playrite
+      - target: NXShelf
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.studiojrba.PlayriteTests
+        PRODUCT_BUNDLE_IDENTIFIER: com.studiojrba.NXShelfTests
         GENERATE_INFOPLIST_FILE: YES
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/NX Shelf.app/Contents/MacOS/NX Shelf"
         BUNDLE_LOADER: "$(TEST_HOST)"
 schemes:
-  Playrite:
+  NXShelf:
     build:
       targets:
-        Playrite: all
-        PlayriteTests: [test]
+        NXShelf: all
+        NXShelfTests: [test]
     test:
       targets:
-        - PlayriteTests
+        - NXShelfTests
       gatherCoverageData: true

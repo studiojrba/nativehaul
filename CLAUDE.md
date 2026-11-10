@@ -1,6 +1,6 @@
 # NX Shelf — Project Rules
 
-NX Shelf (formerly Retriever, and before that Playrite) is a native macOS game library hub: a Playnite-style library combined with an on-by-default
+NX Shelf is a native macOS game library hub: a Playnite-style library combined with an on-by-default
 Switch build pipeline (driven by a **user-supplied, never-bundled** external engine).
 Start with `README.md` (quickstart + where things live), then `docs/PLAN.md` and `docs/decisions/`.
 
@@ -12,12 +12,12 @@ Start with `README.md` (quickstart + where things live), then `docs/PLAN.md` and
 
 ## Project structure (strict feature folders — no orphan files)
 - `project.yml` is the single source of truth for the Xcode project (XcodeGen, ADR 0003). The generated
-  `Playrite.xcodeproj` is **not** committed. Run `./scripts/bootstrap.sh` after cloning or adding files.
-- `Playrite/App/` — entry point, root view, dependency container (`AppEnvironment`).
-- `Playrite/Features/<FeatureName>/` — split into `Views/`, `ViewModels/`, `Models/`, `Services/`, `Resources/`
+  `NXShelf.xcodeproj` is **not** committed. Run `./scripts/bootstrap.sh` after cloning or adding files.
+- `NXShelf/App/` — entry point, root view, dependency container (`AppEnvironment`).
+- `NXShelf/Features/<FeatureName>/` — split into `Views/`, `ViewModels/`, `Models/`, `Services/`, `Resources/`
   (create only the subfolders a feature needs; never put files directly in the feature root).
-- `Playrite/Shared/` — cross-feature code only: `DesignSystem/`, `Networking/`, `Persistence/`, `Utilities/`.
-- `PlayriteTests/` mirrors the source tree (`PlayriteTests/Features/<FeatureName>/…`).
+- `NXShelf/Shared/` — cross-feature code only: `DesignSystem/`, `Networking/`, `Persistence/`, `Utilities/`.
+- `NXShelfTests/` mirrors the source tree (`NXShelfTests/Features/<FeatureName>/…`).
 - `docs/PLAN.md` (architecture & roadmap), `docs/PROGRESS.md` (status log), `docs/decisions/` (ADRs).
 - A file that does not fit this map is a smell: find or create its proper home before committing.
 
@@ -112,17 +112,15 @@ Figma designs will arrive later. Until then, **structure and function beat bespo
   before moving on.
 
 - **One canonical build output (J.R, ADR 0029):** always build into Xcode's default DerivedData for the project
-  (`~/Library/Developer/Xcode/DerivedData/Playrite-<hash>/Build/Products/Debug/NX Shelf.app`), never a
+  (`~/Library/Developer/Xcode/DerivedData/NXShelf-<hash>/Build/Products/Debug/NX Shelf.app`), never a
   `-derivedDataPath`. Quit any instance you launch to verify, and leave none running at the end of a session.
 
-## Name and frozen identifiers (J.R, ADR 0029, ADR 0043)
-- The app is **NX Shelf** everywhere user-facing (GitHub: `studiojrba/nx-shelf`). Project, scheme, folders and the
-  Swift module stay `Playrite`.
-- **Frozen, never change:** bundle ID `com.studiojrba.Playrite`, the `Application Support/Playrite` folder, the
-  SwiftData store (`default.store`), the Keychain service `com.studiojrba.Playrite` (see `AppInfo`). They are legacy
-  internal identifiers. If one ever truly has to change, stop and flag it; never migrate it silently.
-- Strings that name things already on disk under an old app name (CrossOver bottles `Retriever – …`,
-  `Retriever Steam`, `.retriever-backup`) are legacy identifiers too and keep the old name.
+## Name and identity (J.R, ADR 0045)
+- The app is **NX Shelf**, as if it had always been: GitHub `studiojrba/nx-shelf`; project, scheme, targets, source
+  folders and the Swift module are `NXShelf`.
+- Its identity is its own: bundle ID `com.studiojrba.NXShelf`, `~/Library/Application Support/NX Shelf` (everything
+  the app writes, via `AppInfo.supportDirectory`), the store `NXShelf.store` inside it, the Keychain service
+  `com.studiojrba.NXShelf`. Nothing reads, points at or migrates data from an earlier identity.
 
 ## Data integrity rules (product invariants)
 - **Playtime sources are never silently merged.** Every figure carries a `PlaytimeSource`

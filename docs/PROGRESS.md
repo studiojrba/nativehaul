@@ -1232,6 +1232,17 @@ approved by J.R when he set the rule). 333 tests (+6).
 - Note for J.R: a Keychain prompt is waiting on screen for the current build. "Always Allow" once more after the
   re-signed build; no further prompts after that.
 
+## 49 · feature/nx-shelf-identity — a full clean identity (J.R, Mon 22:48; redoes stage 1)
+- ✅ **Identity:**
+  - bundle ID `com.studiojrba.NXShelf`;
+  - `Application Support/NX Shelf`;
+  - store `NXShelf.store` inside it (explicit URL);
+  - Keychain service `com.studiojrba.NXShelf`;
+  - project, scheme, targets, folders and module `NXShelf`.
+- ✅ **Nothing reads or migrates the old identity's data.** `AppInfoTests` guards against any reference to it. The
+  legacy tracker repair and the old own-app names are removed.
+- 🧪 Suite green; lint clean.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1280,6 +1291,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 42 | `feature/igdb-media-seam` (media pass 4/4) | ✅ | ✅ | 531 | ✅ |
 | 47 | `feature/rename-nx-shelf` (stacked on `chore/revert-v2-pass`; 43–46 retained, unmerged) | ✅ | ✅ | 531 | ✅ |
 | 48 | `fix/launch-freezes` (crash pass) | ✅ | ✅ | 532 | ✅ |
+| 49 | `feature/nx-shelf-identity` (full clean identity) | ✅ | ✅ | 527 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1319,7 +1331,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0044)
+## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0045)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.

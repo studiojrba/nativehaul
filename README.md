@@ -1,10 +1,5 @@
 # NX Shelf
 
-> Formerly Retriever, and before that Playrite. The app is called **NX Shelf**; the Xcode project, scheme, source
-> folders and Swift module keep the name `Playrite`, and so do the identifiers your data lives under, as legacy
-> internal identifiers (bundle ID `com.studiojrba.Playrite`, the `~/Library/Application Support/Playrite` folder, the
-> SwiftData store, Keychain service). See ADR 0029 and ADR 0043.
-
 A native macOS game library hub — a Playnite-style library (Steam, Mac-native and Switch titles,
 series, stats, badges, guides) plus an **optional** Switch build pipeline UI that drives a
 **user-supplied external engine** (never bundled).
@@ -41,7 +36,7 @@ The project file is generated from `project.yml` and is not committed.
 ```
 
 ```bash
-open Playrite.xcodeproj
+open NXShelf.xcodeproj
 ```
 
 ### Build and test
@@ -51,7 +46,7 @@ open Playrite.xcodeproj
 ```
 
 It builds into Xcode's default DerivedData, the one canonical output on this Mac:
-`~/Library/Developer/Xcode/DerivedData/Playrite-<hash>/Build/Products/Debug/NX Shelf.app` (the script prints the
+`~/Library/Developer/Xcode/DerivedData/NXShelf-<hash>/Build/Products/Debug/NX Shelf.app` (the script prints the
 full path). In Xcode: ⌘B / ⌘U build into the same folder.
 
 ### Lint and format
@@ -93,7 +88,7 @@ nx-shelf/ (repo root)
 │   ├── PLAN.md                 Architecture & roadmap
 │   ├── PROGRESS.md             Build status log per branch
 │   └── decisions/              ADRs (0001-…)
-├── Playrite/                   App source
+├── NXShelf/                    App source
 │   ├── App/                    Entry point, RootView, AppEnvironment
 │   ├── Features/
 │   │   └── <FeatureName>/
@@ -107,7 +102,7 @@ nx-shelf/ (repo root)
 │       ├── Networking/         HTTP client protocol + implementations
 │       ├── Persistence/        SwiftData container & schema
 │       └── Utilities/          Formatters, Keychain, helpers
-└── PlayriteTests/              Unit tests mirroring the source tree
+└── NXShelfTests/               Unit tests mirroring the source tree
 ```
 
 ## Contributing
