@@ -176,6 +176,11 @@ extension AppEnvironment {
         ArtworkSettingsViewModel(store: steamGridDBKey)
     }
 
+    /// Builds the Settings → Artwork IGDB section's view model.
+    func makeIGDBSettingsViewModel() -> IGDBSettingsViewModel {
+        IGDBSettingsViewModel(store: igdbCredentials)
+    }
+
     /// Builds the Manage sheet metadata view model for a game.
     func makeGameMetadataViewModel(for game: Game) -> GameMetadataViewModel {
         GameMetadataViewModel(game: game, fetcher: metadataFetcher, onChanged: LibraryChangeNotification.post)

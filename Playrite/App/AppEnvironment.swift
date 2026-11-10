@@ -42,6 +42,8 @@ final class AppEnvironment {
     let metadataFetcher: any MetadataFetching
     /// Optional SteamGridDB key (Keychain).
     let steamGridDBKey: any SteamGridDBKeyStoring
+    /// Optional IGDB credentials (Keychain), ADR 0038.
+    let igdbCredentials: any IGDBCredentialStoring
     /// "Sign in through Steam" (identity only).
     let steamSignIn: any SteamSigningIn
     /// Downloads small images such as the Steam avatar (`nil` in previews).
@@ -79,6 +81,7 @@ final class AppEnvironment {
         launcher: any GameLaunching,
         metadataFetcher: any MetadataFetching,
         steamGridDBKey: any SteamGridDBKeyStoring,
+        igdbCredentials: any IGDBCredentialStoring = MockIGDBCredentialStore(),
         steamSignIn: any SteamSigningIn,
         imageHTTP: (any HTTPClient)?,
         bottleInstaller: any BottleInstalling,
@@ -106,6 +109,7 @@ final class AppEnvironment {
         self.launcher = launcher
         self.metadataFetcher = metadataFetcher
         self.steamGridDBKey = steamGridDBKey
+        self.igdbCredentials = igdbCredentials
         self.steamSignIn = steamSignIn
         self.imageHTTP = imageHTTP
         self.bottleInstaller = bottleInstaller

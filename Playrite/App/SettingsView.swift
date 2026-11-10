@@ -11,8 +11,11 @@ struct SettingsView: View {
                 .tabItem { Label("General", systemImage: "gearshape") }
             SteamSettingsView(viewModel: environment.makeSteamConnectionViewModel())
                 .tabItem { Label("Steam", systemImage: "cloud") }
-            ArtworkSettingsView(viewModel: environment.makeArtworkSettingsViewModel())
-                .tabItem { Label("Artwork", systemImage: "photo.on.rectangle") }
+            ArtworkSettingsView(
+                viewModel: environment.makeArtworkSettingsViewModel(),
+                igdbViewModel: environment.makeIGDBSettingsViewModel()
+            )
+            .tabItem { Label("Artwork", systemImage: "photo.on.rectangle") }
             GameFoldersSettingsView(viewModel: environment.makeGameFoldersViewModel())
                 .tabItem { Label("Game Folders", systemImage: "folder") }
             EmulatorSettingsView(viewModel: environment.makeEmulatorSettingsViewModel())

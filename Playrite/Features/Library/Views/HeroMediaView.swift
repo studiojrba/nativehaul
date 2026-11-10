@@ -25,6 +25,10 @@ struct HeroMediaView: View {
                 fitted(aspect: DesignTokens.Media.fallbackAspect) {
                     TrailerSlideView(url: url, posterPath: posterPath).id(url)
                 }
+            case let .trailer(.youTube(videoID), posterPath):
+                fitted(aspect: DesignTokens.Media.fallbackAspect) {
+                    YouTubeSlideView(videoID: videoID, posterPath: posterPath).id(videoID)
+                }
             case let .image(path):
                 if let image = NSImage(contentsOfFile: path) {
                     fitted(aspect: MediaFit.aspect(of: image.size) ?? DesignTokens.Media.fallbackAspect) {

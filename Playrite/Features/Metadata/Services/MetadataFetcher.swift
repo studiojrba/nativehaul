@@ -13,6 +13,7 @@ final class MetadataFetcher: MetadataFetching {
     private let steamStore: any MetadataProviding
     private let nintendo: any MetadataProviding
     private let steamGridDB: any MetadataProviding
+    private let igdb: (any MetadataProviding)?
     private let downloader: ArtworkDownloader
     private let audit: (any AuditLogging)?
     private let now: () -> Date
@@ -24,6 +25,7 @@ final class MetadataFetcher: MetadataFetching {
         steamStore: any MetadataProviding,
         nintendo: any MetadataProviding,
         steamGridDB: any MetadataProviding,
+        igdb: (any MetadataProviding)? = nil,
         downloader: ArtworkDownloader,
         audit: (any AuditLogging)? = nil,
         now: @escaping () -> Date = Date.init
@@ -32,6 +34,7 @@ final class MetadataFetcher: MetadataFetching {
         self.steamStore = steamStore
         self.nintendo = nintendo
         self.steamGridDB = steamGridDB
+        self.igdb = igdb
         self.downloader = downloader
         self.audit = audit
         self.now = now
@@ -84,6 +87,7 @@ final class MetadataFetcher: MetadataFetching {
             summary.record(eshop.outcome, for: nintendo.source)
             heroUpgrade = await upgradeHero(of: game, from: eshop.metadata, &update)
         }
+        await askIGDB(query, writable, &update, &summary)
         let missingArt = writable.intersection([.cover, .hero]).subtracting(update.fields)
         if missingArt.isEmpty {
             summary.record(.skipped, for: steamGridDB.source)
@@ -97,6 +101,23 @@ final class MetadataFetcher: MetadataFetching {
         MetadataApplier.apply(update, to: game)
         summary.gamesUpdated += 1
         report(update, for: game, heroUpgrade: heroUpgrade)
+    }
+
+    /// IGDB is the last media fallback (ADR 0038): a trailer when Steam had none, then screenshots and a summary that
+    /// Steam and titledb didn't supply.
+    private func askIGDB(
+        _ query: MetadataQuery,
+        _ writable: Set<MetadataField>,
+        _ update: inout MetadataUpdate,
+        _ summary: inout MetadataFetchSummary
+    ) async {
+        guard let igdb else { return }
+        let wanted = writable.intersection([.trailer, .carousel, .description]).subtracting(update.fields)
+        guard igdb.applies(to: query), !wanted.isEmpty else {
+            summary.record(.skipped, for: igdb.source)
+            return
+        }
+        await summary.record(collect(from: igdb, query, wanted, &update).outcome, for: igdb.source)
     }
 
     /// Official key art replaces a SteamGridDB hero only when ``HeroUpgradeRule`` says it is clearly better.

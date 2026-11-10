@@ -14,7 +14,7 @@ struct TrailerSlideView: View {
 
     var body: some View {
         ZStack {
-            Color.black
+            Theme.mediaBackdrop
             if let poster = posterPath.flatMap(NSImage.init(contentsOfFile:)) {
                 Image(nsImage: poster).resizable().scaledToFit()
             }

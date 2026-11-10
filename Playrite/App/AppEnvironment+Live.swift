@@ -10,11 +10,7 @@ extension AppEnvironment {
         let emulators = EmulatorRouter(preferences: UserDefaultsEmulatorPreferences(), files: LocalFileOperations())
         let steamAccount = SteamAccountStore(secrets: secrets)
         let trackingPreferences = UserDefaultsTrackingPreferencesStore()
-        let watcher = PlaytimeWatcher(
-            observer: WorkspaceRunningApplicationObserver(),
-            repository: repository,
-            preferences: trackingPreferences
-        )
+        let watcher = makeLiveWatcher(repository: repository, preferences: trackingPreferences)
         let hltb = CachedHLTBService(cache: FileHLTBCache())
         let deduplicator = LibraryDeduplicator(repository: repository, hltb: hltb)
         let gameFolders = UserDefaultsGameFolderStore()
@@ -44,6 +40,7 @@ extension AppEnvironment {
             launcher: WorkspaceGameLauncher(),
             metadataFetcher: makeLiveMetadataFetcher(repository: repository, secrets: secrets),
             steamGridDBKey: SteamGridDBKeyStore(secrets: secrets),
+            igdbCredentials: IGDBCredentialStore(secrets: secrets),
             steamSignIn: makeLiveSteamSignIn(account: steamAccount),
             imageHTTP: URLSessionHTTPClient(),
             bottleInstaller: makeLiveBottleInstaller(repository: repository, account: steamAccount),
@@ -62,6 +59,17 @@ extension AppEnvironment {
             audit: FileAuditLog(path: FileAuditLog.defaultPath(), files: LocalFileOperations()),
             defaults: .standard
         ).runOnce()
+    }
+
+    private static func makeLiveWatcher(
+        repository: any LibraryRepository,
+        preferences: any TrackingPreferencesStoring
+    ) -> PlaytimeWatcher {
+        PlaytimeWatcher(
+            observer: WorkspaceRunningApplicationObserver(),
+            repository: repository,
+            preferences: preferences
+        )
     }
 
     private static func makeLiveHandoff() -> GameSessionHandoff {
@@ -162,6 +170,10 @@ extension AppEnvironment {
             steamStore: SteamStoreMetadataProvider(http: http),
             nintendo: TitleDBMetadataProvider(store: TitleDBStore(http: URLSessionHTTPClient())),
             steamGridDB: SteamGridDBMetadataProvider(http: http, secrets: secrets),
+            igdb: IGDBMetadataProvider(client: IGDBClient(
+                http: http,
+                credentials: IGDBCredentialStore(secrets: secrets)
+            )),
             downloader: ArtworkDownloader(http: http, cache: FileArtworkCache()),
             audit: FileAuditLog(path: FileAuditLog.defaultPath(), files: LocalFileOperations())
         )

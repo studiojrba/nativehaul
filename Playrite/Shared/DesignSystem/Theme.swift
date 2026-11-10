@@ -26,6 +26,8 @@ enum Theme {
     /// Two steps up: hovered and raised surfaces.
     static let surfaceRaised = Color(nsColor: Palette.color(Palette.surfaceRaised))
     /// The floating sidebar's shadow, the one shadow in the app (ADR 0037, round 2).
+    /// Behind a trailer (the video's own letterbox colour), ADR 0038.
+    static let mediaBackdrop = Color.black
     static let panelShadow = Color.black.opacity(DesignTokens.FloatingRail.shadowOpacity)
     /// Hairline borders, used instead of shadows.
     static let hairline = Color(nsColor: Palette.color(Palette.hairline))

@@ -9,13 +9,15 @@ enum MetadataSource: String, Codable, CaseIterable, Sendable {
     case nintendoStore
     /// Nintendo eShop data from titledb (official descriptions, screenshots and key art), joined by title ID.
     case titleDB
+    /// IGDB (needs the user's Twitch credentials): YouTube trailers, screenshots and summaries for Switch ports.
+    case igdb
     /// SteamGridDB (fallback artwork, needs the user's key).
     case steamGridDB
     /// Set by hand in Retriever (Choose Cover…, Choose Hero Image…). Never overwritten.
     case user
 
     /// Sources a Fetch Missing Metadata pass queries, in priority order.
-    static let fetchOrder: [MetadataSource] = [.steamStore, .titleDB, .steamGridDB]
+    static let fetchOrder: [MetadataSource] = [.steamStore, .titleDB, .igdb, .steamGridDB]
 
     /// Whether the value was downloaded by a metadata pass (and so may be replaced by an explicit refresh).
     var isFetched: Bool {
@@ -28,6 +30,7 @@ enum MetadataSource: String, Codable, CaseIterable, Sendable {
         case .steamStore: "Steam store"
         case .nintendoStore: "Nintendo eShop"
         case .titleDB: "Nintendo eShop (titledb)"
+        case .igdb: "IGDB"
         case .steamGridDB: "SteamGridDB"
         case .user: "Set by you"
         }

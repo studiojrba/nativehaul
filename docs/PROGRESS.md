@@ -1145,6 +1145,36 @@ approved by J.R when he set the rule). 333 tests (+6).
 - Checked outside the app: the same AVPlayer setup played Steam's live Hades HLS trailer at 1920×1080.
 - Not verified offscreen: on-screen playback inside the app. It needs J.R's eye.
 
+## 42 · feature/igdb-media-seam — media pass 4/4: IGDB seam (active once credentials exist)
+- ✅ Twitch Client ID and secret in Settings → Artwork → IGDB, Keychain only (`IGDBCredentialStore`). With no
+  credentials, or with refused ones, IGDB is silently absent: no requests, no errors, no prompts.
+- ✅ `IGDBClient`: client-credentials token (secret in the POST body), cached and renewed once on a 401. It searches
+  Switch and Switch 2 games (platforms 130 and 508), spaced 0.3 s.
+- ✅ `IGDBMetadataProvider`, Switch ports only, exact normalised name:
+  - the first video becomes a YouTube trailer;
+  - 1080p screenshots;
+  - the summary.
+  - It is asked only for fields Steam and titledb left empty.
+- ✅ `YouTubeSlideView` / `YouTubeEmbedView`:
+  - YouTube's IFrame player in a WKWebView, muted, looping and autoplaying while visible;
+  - removed off screen;
+  - poster and play button under Reduce Motion.
+  - No yt-dlp, nothing downloaded.
+- ✅ Global priority recorded in ADR 0038:
+  - video: Steam, then IGDB YouTube, then none;
+  - screenshots: Steam or titledb, then IGDB;
+  - description: existing, then titledb, then IGDB.
+- 🧪 `IGDBClientTests`:
+  - no credentials means no requests;
+  - headers, body and platform filter;
+  - token reuse;
+  - refused credentials;
+  - renew once;
+  - mapping;
+  - unavailable.
+- 🧪 `MediaPriorityTests` (priority through the real fetcher, YouTube parsing, the player page, Settings).
+- Not verified live: there are no credentials yet.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1187,9 +1217,10 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 36 | `feature/home-page` (F4) | ✅ | ✅ | 472 | ✅ |
 | 37 | `feature/installed-filter` (F5) | ✅ | ✅ | 476 | ✅ |
 | 38 | `feature/meebits-energy-pass` (look; J.R's eyeball first) | ✅ | ✅ | 492 | ✅ |
-| 39 | `feature/media-slideshow-fit` (media pass 1/4) | ✅ | ✅ | 503 | ✅ |
-| 40 | `feature/titledb-media` (media pass 2/4) | ✅ | ✅ | 522 | ✅ |
-| 41 | `feature/steam-trailers` (media pass 3/4) | ✅ | ✅ | 526 | ✅ |
+| 39 | `feature/media-slideshow-fit` (media pass 1/4) | ✅ | ✅ | 499 | ✅ |
+| 40 | `feature/titledb-media` (media pass 2/4) | ✅ | ✅ | 515 | ✅ |
+| 41 | `feature/steam-trailers` (media pass 3/4) | ✅ | ✅ | 519 | ✅ |
+| 42 | `feature/igdb-media-seam` (media pass 4/4) | ✅ | ✅ | 531 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches

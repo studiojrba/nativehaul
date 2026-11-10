@@ -95,6 +95,44 @@ The research behind the plan:
 - **Checked outside the app:** the same AVQueuePlayer + AVPlayerLooper setup reached `readyToPlay` and played
   Steam's current Hades HLS trailer at 1920×1080.
 
+### 4. IGDB seam (built now, active once credentials exist)
+- **Credentials:** Twitch Client ID and secret, entered in Settings → Artwork → IGDB and stored only in the
+  Keychain (`twitch.client.id`, `twitch.client.secret`), like the Steam and SteamGridDB keys. They are never read
+  back into the UI. Retriever offers no walkthrough for getting them; that is Ollie's job, not the app's.
+- **Silently absent without them:** `IGDBClient` reads the Keychain on each search. With no credentials, or with
+  credentials Twitch refuses, it returns "unavailable" and makes no further requests. No error is shown, nothing
+  asks for them anywhere, and adding them later turns the feature on without a relaunch.
+- **Calls:**
+  - The app access token comes from Twitch's client-credentials grant, with the credentials in the POST body,
+    never the URL. It is kept until 5 minutes before expiry and renewed once if IGDB rejects it.
+  - The search is `POST api.igdb.com/v4/games` with `search "<title>"; where platforms = (130,508)` (Nintendo Switch
+    and Switch 2).
+  - The match is a single exact normalised name, never fuzzy.
+  - IGDB is spaced 0.3 s apart (its limit is 4 requests a second).
+- **What it supplies, Switch ports only:**
+  - the **first video** as a YouTube trailer (stored as a `youtube.com/watch` URL, poster from YouTube's stills);
+  - **1080p screenshots** (up to 8);
+  - the **summary**.
+
+  IGDB is asked only for fields still empty after Steam and titledb.
+- **Playback:** `YouTubeSlideView` shows YouTube's own IFrame player (`youtube-nocookie.com/embed`) in a
+  `WKWebView`, muted, looping and autoplaying while on screen. Muted autoplay is allowed without a click. Off
+  screen, or on another slide, the player is removed, which stops it, and the poster shows. Under Reduce Motion,
+  the poster and a play button show. YouTube's controls handle pause and sound. Nothing is downloaded. The yt-dlp
+  route is deliberately not used.
+- **Not verified live:** there are no credentials yet, so the IGDB calls and the embed are covered only by mocks
+  and fixtures. The first real run is when J.R adds credentials.
+
+### Global priority
+| Media | Order |
+|-------|-------|
+| Video | Steam stream → IGDB YouTube embed → none (screenshots lead, as normal) |
+| Screenshots | Steam set or titledb set → IGDB |
+| Description | existing → titledb official text → IGDB summary |
+
+All three only fill gaps (`MetadataFillPolicy`). The single exception is `HeroUpgradeRule` (§2), and every fill
+and swap is audit-logged.
+
 ### Consequences (so far)
 - **Steam games without a trailer get asked again.** A Steam game whose store page has no trailer now counts as
   missing a field. Like any game with an empty field, it is asked once per launch (games already tried this

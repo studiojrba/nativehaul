@@ -3,10 +3,12 @@ import SwiftUI
 /// Settings tab for metadata and artwork sources, including the optional SteamGridDB key.
 struct ArtworkSettingsView: View {
     @State private var viewModel: ArtworkSettingsViewModel
+    private let igdbViewModel: IGDBSettingsViewModel
 
     /// Creates the view.
-    init(viewModel: ArtworkSettingsViewModel) {
+    init(viewModel: ArtworkSettingsViewModel, igdbViewModel: IGDBSettingsViewModel) {
         _viewModel = State(initialValue: viewModel)
+        self.igdbViewModel = igdbViewModel
     }
 
     var body: some View {
@@ -36,11 +38,15 @@ struct ArtworkSettingsView: View {
             if let message = viewModel.statusMessage {
                 Text(message).foregroundStyle(viewModel.isError ? Theme.danger : Theme.secondaryText)
             }
+            IGDBSettingsSection(viewModel: igdbViewModel)
         }
         .formStyle(.grouped)
     }
 }
 
 #Preview {
-    ArtworkSettingsView(viewModel: ArtworkSettingsViewModel(store: MockSteamGridDBKeyStore()))
+    ArtworkSettingsView(
+        viewModel: ArtworkSettingsViewModel(store: MockSteamGridDBKeyStore()),
+        igdbViewModel: IGDBSettingsViewModel(store: MockIGDBCredentialStore())
+    )
 }
