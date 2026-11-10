@@ -16,10 +16,6 @@ extension DesignTokens {
         static let crossfadeSeconds: Double = 0.7
         /// Diameter of a navigation dot.
         static let dotSize: CGFloat = 8
-        /// How far down the page the wash reaches.
-        static let ambientHeight: CGFloat = 900
-        /// Blur on the wash.
-        static let ambientBlur: CGFloat = 90
         /// Space between Home's sections.
         static let sectionSpacing: CGFloat = 40
     }

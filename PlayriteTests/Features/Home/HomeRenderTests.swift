@@ -21,7 +21,6 @@ struct HomeRenderTests {
         )
         let size = CGSize(width: width, height: Self.height)
         #expect(OffscreenRenderer
-            .render(screen, size: size, name: "home-\(Int(width))-dark", appearance: .darkAqua) != nil)
-        OffscreenRenderer.render(screen, size: size, name: "home-\(Int(width))-light", appearance: .aqua)
+            .render(screen, size: size, name: "home-\(Int(width))-light", appearance: .aqua) != nil)
     }
 }

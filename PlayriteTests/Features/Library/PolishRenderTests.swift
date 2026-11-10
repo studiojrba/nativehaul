@@ -44,9 +44,8 @@ struct PolishRenderTests {
 
     private func renderBoth(_ view: some View, width: Double, name: String) {
         let size = CGSize(width: width, height: Self.height)
-        #expect(OffscreenRenderer.render(view, size: size, name: "\(name)-\(Int(width))-dark", appearance: .darkAqua)
+        #expect(OffscreenRenderer.render(view, size: size, name: "\(name)-\(Int(width))-light", appearance: .aqua)
             != nil)
-        OffscreenRenderer.render(view, size: size, name: "\(name)-\(Int(width))-light", appearance: .aqua)
     }
 
     @Test(arguments: [900.0, 1100.0, 1280.0])

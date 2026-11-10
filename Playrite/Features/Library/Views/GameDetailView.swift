@@ -28,6 +28,7 @@ struct GameDetailView: View {
                 .frame(minWidth: DesignTokens.Spacing.none, maxWidth: .infinity)
                 .clipped()
         }
+        .sceneTint(fromArtAt: viewModel.game.coverImagePath ?? viewModel.game.heroImagePath)
         .navigationTitle(viewModel.game.title)
         .toolbar {
             ToolbarItem {
@@ -48,14 +49,16 @@ struct GameDetailView: View {
                     .font(EnergyLevel.of(intensity).display)
                     .tracking(DesignTokens.Typography.displayTracking)
                     .fixedSize(horizontal: false, vertical: true)
+                    .riseIn(.first)
                 if let short = description.short {
                     Text(short)
                         .font(DesignTokens.DetailColumn.lead)
                         .foregroundStyle(Theme.secondaryText)
                         .textSelection(.enabled)
                         .fixedSize(horizontal: false, vertical: true)
+                        .riseIn(.second)
                 }
-                actions
+                actions.riseIn(.third)
                 if hasSlides {
                     HeroMediaView(
                         heroImagePath: game.heroImagePath,
@@ -65,14 +68,15 @@ struct GameDetailView: View {
                         trailerPosterPath: game.trailerPosterPath,
                         includesArt: false
                     )
+                    .riseIn(.fourth)
                 }
-                HLTBBarView(bar: viewModel.hltbBar, playtime: viewModel.playtime)
+                HLTBBarView(bar: viewModel.hltbBar, playtime: viewModel.playtime).riseIn(.fifth)
                 if let full = description.full {
                     Text(full)
                         .textSelection(.enabled)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                GameSpecsTable(rows: viewModel.specRows)
+                GameSpecsTable(rows: viewModel.specRows).riseIn(.sixth)
                 SessionListView(sessions: viewModel.sessions)
                 remainingSections
             }

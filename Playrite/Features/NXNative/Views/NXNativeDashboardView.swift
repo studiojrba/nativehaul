@@ -85,7 +85,7 @@ struct NXNativeDashboardView: View {
                 )
             }
         }
-        .background(Theme.canvas)
+        .modifier(CanvasFill())
     }
 
     @ToolbarContentBuilder private var toolbarContent: some ToolbarContent {

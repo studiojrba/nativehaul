@@ -75,7 +75,7 @@ struct FloatingRailHoverTests {
             window.toolbar = NSToolbar()
             window.titlebarAppearsTransparent = true
         }
-        window.appearance = NSAppearance(named: .darkAqua)
+        window.appearance = NSAppearance(named: .aqua)
         window.contentView = hosting
         window.setFrameOrigin(NSPoint(x: offscreen, y: offscreen))
         window.orderFrontRegardless()

@@ -44,24 +44,20 @@ struct PolishRulesTests {
         #expect(GameStatus.allCases.allSatisfy { $0.tint != Theme.accent })
     }
 
-    @Test(arguments: [NSAppearance.Name.darkAqua, .aqua])
-    func sidebarIsDimmerThanTheCanvasAndTheAccentIsTheSaturatedOne(appearance: NSAppearance.Name) {
-        let resolve: (Palette.Pair) -> NSColor = { pair in
-            var color = NSColor.clear
-            NSAppearance(named: appearance)?.performAsCurrentDrawingAppearance {
-                color = Palette.color(pair).usingColorSpace(.sRGB) ?? .clear
-            }
-            return color
-        }
+    /// ADR 0040: one warm light palette. Neutrals are cream (red above blue, never blue-grey), low in colour, and never
+    /// clinical white; the sidebar sits a step below the canvas; the accent is the one saturated colour.
+    @Test func neutralsAreWarmCreamAndTheAccentIsTheSaturatedOne() {
+        let resolve: (UInt32) -> NSColor = { Palette.color($0).usingColorSpace(.sRGB) ?? .clear }
         #expect(resolve(Palette.sidebar).brightnessComponent < resolve(Palette.canvas).brightnessComponent)
-        // Chroma (max − min channel) is what reads as colour; HSB saturation exaggerates near-black greys.
-        let chroma: (Palette.Pair) -> CGFloat = { pair in
-            let color = resolve(pair)
+        let chroma: (UInt32) -> CGFloat = { value in
+            let color = resolve(value)
             let channels = [color.redComponent, color.greenComponent, color.blueComponent]
             return (channels.max() ?? 0) - (channels.min() ?? 0)
         }
         let structural = [Palette.canvas, Palette.sidebar, Palette.surface, Palette.surfaceRaised, Palette.hairline]
-        #expect(structural.allSatisfy { chroma($0) < 0.05 })
+        #expect(structural.allSatisfy { chroma($0) < 0.12 })
+        #expect(structural.allSatisfy { resolve($0).redComponent > resolve($0).blueComponent })
+        #expect(structural.allSatisfy { $0 != 0xFFFFFF })
         let accent = chroma(Palette.accent)
         #expect(accent > 0.75)
         let muted = [Palette.success, Palette.warning, Palette.danger, Palette.muted]

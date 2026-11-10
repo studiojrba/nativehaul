@@ -28,8 +28,8 @@ struct InstalledFilterRenderTests {
         #expect(OffscreenRenderer.render(
             screen,
             size: size,
-            name: "installed-\(Int(width))-dark",
-            appearance: .darkAqua
+            name: "installed-\(Int(width))-light",
+            appearance: .aqua
         ) != nil)
         OffscreenRenderer.render(screen, size: size, name: "installed-\(Int(width))-light", appearance: .aqua)
     }

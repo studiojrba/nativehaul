@@ -13,6 +13,7 @@ struct RailShell<Content: View>: View {
     var railExpansion: Binding<Bool>?
     @ViewBuilder let content: Content
     @State private var isRailExpanded = false
+    @State private var tintArt: String?
 
     var body: some View {
         content
@@ -26,7 +27,9 @@ struct RailShell<Content: View>: View {
                     libraryViewModel: libraryViewModel
                 )
             }
-            .background(Theme.canvas)
+            .environment(\.isInsideShell, true)
+            .onPreferenceChange(SceneTintArtKey.self) { tintArt = $0 }
+            .background { SceneTintBackground(artPath: tintArt) }
     }
 }
 

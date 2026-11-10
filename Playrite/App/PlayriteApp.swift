@@ -13,6 +13,8 @@ struct PlayriteApp: App {
     }
 
     init() {
+        // One appearance, light, everywhere (J.R, ADR 0040), including menus, alerts and sheets.
+        NSApplication.shared.appearance = NSAppearance(named: .aqua)
         launch = Self.isHostingTests ? nil : Result { try AppEnvironment.live() }
     }
 
@@ -32,10 +34,12 @@ struct PlayriteApp: App {
             .frame(minWidth: DesignTokens.Layout.windowMinWidth, minHeight: DesignTokens.Layout.windowMinHeight)
             .background(Theme.canvas)
             .tint(Theme.accent)
+            .preferredColorScheme(.light)
         }
         Settings {
             if case let .success(environment) = launch {
                 SettingsView(environment: environment)
+                    .preferredColorScheme(.light)
             }
         }
     }

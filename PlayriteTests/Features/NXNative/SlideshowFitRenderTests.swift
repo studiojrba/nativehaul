@@ -35,7 +35,7 @@ struct SlideshowFitRenderTests {
             .frame(maxHeight: .infinity, alignment: .top)
             .background(Theme.canvas)
         let path = await OffscreenRenderer.renderAfterTasks(
-            view, size: Self.canvas, name: "slideshow-fit-builds-\(name)", appearance: .darkAqua, settle: Self.settle
+            view, size: Self.canvas, name: "slideshow-fit-builds-\(name)", appearance: .aqua, settle: Self.settle
         )
         try expectWholeImage(renderedAt: path, imageSize: size, label: "Builds \(name)")
     }
@@ -49,7 +49,7 @@ struct SlideshowFitRenderTests {
             .frame(maxHeight: .infinity, alignment: .top)
             .background(Theme.canvas)
         let path = await OffscreenRenderer.renderAfterTasks(
-            view, size: Self.canvas, name: "slideshow-fit-detail-\(name)", appearance: .darkAqua, settle: Self.settle
+            view, size: Self.canvas, name: "slideshow-fit-detail-\(name)", appearance: .aqua, settle: Self.settle
         )
         try expectWholeImage(renderedAt: path, imageSize: size, label: "Detail \(name)")
     }

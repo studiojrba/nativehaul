@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Semantic colours (ADR 0025). Views reference roles (`Theme.accent`), never concrete colours; both appearances
-/// come from ``Palette``.
+/// Semantic colours (ADR 0025, light only since ADR 0040). Views reference roles (`Theme.accent`), never concrete
+/// colours; the values come from ``Palette``.
 enum Theme {
     /// The one electric accent, spent only on Play, the active nav item, links and the wordmark (ADR 0037).
     static let accent = Color(nsColor: Palette.color(Palette.accent))
@@ -15,7 +15,7 @@ enum Theme {
     static let onAccent = Color(nsColor: Palette.color(Palette.onAccent))
     /// A faint accent wash for selected rows.
     static let accentSoft = accent.opacity(DesignTokens.Opacity.selection)
-    /// The window canvas (near-black in dark mode).
+    /// The window canvas: warm cream.
     static let canvas = Color(nsColor: Palette.color(Palette.canvas))
     /// Same as ``canvas``; kept for existing call sites.
     static let background = canvas
@@ -25,11 +25,14 @@ enum Theme {
     static let surface = Color(nsColor: Palette.color(Palette.surface))
     /// Two steps up: hovered and raised surfaces.
     static let surfaceRaised = Color(nsColor: Palette.color(Palette.surfaceRaised))
-    /// The floating sidebar's shadow, the one shadow in the app (ADR 0037, round 2).
     /// Behind a trailer (the video's own letterbox colour), ADR 0038.
     static let mediaBackdrop = Color.black
-    static let panelShadow = Color.black.opacity(DesignTokens.FloatingRail.shadowOpacity)
-    /// Hairline borders, used instead of shadows.
+    /// The floating sidebar's soft shadow (ADR 0040): warm, never grey-black.
+    static let panelShadow = Color(nsColor: Palette.color(Palette.shadow))
+        .opacity(DesignTokens.FloatingRail.shadowOpacity)
+    /// Soft card shadow, used instead of hard borders (ADR 0040).
+    static let softShadow = Color(nsColor: Palette.color(Palette.shadow)).opacity(DesignTokens.Light.cardShadowOpacity)
+    /// Hairline dividers (between rows; cards use ``softShadow``).
     static let hairline = Color(nsColor: Palette.color(Palette.hairline))
     /// A brighter hairline for hover rings.
     static let hairlineStrong = Color(nsColor: Palette.color(Palette.hairlineStrong))

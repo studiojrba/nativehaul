@@ -54,13 +54,11 @@ struct DetailRedesignRenderTests {
     func detailPageRenders(width: Double) async throws {
         let (environment, game) = try dressed()
         let size = CGSize(width: width, height: Self.height)
-        for (appearance, name) in [(NSAppearance.Name.darkAqua, "dark"), (.aqua, "light")] {
-            let path = await OffscreenRenderer.renderAfterTasks(
-                page(environment, game), size: size, name: "detail-case-\(Int(width))-\(name)",
-                appearance: appearance, settle: Self.settle
-            )
-            #expect(path != nil)
-        }
+        let path = await OffscreenRenderer.renderAfterTasks(
+            page(environment, game), size: size, name: "detail-case-\(Int(width))-light",
+            appearance: .aqua, settle: Self.settle
+        )
+        #expect(path != nil)
     }
 
     @Test func aGameWithoutCoverArtGetsThePlainPanel() async throws {
@@ -69,7 +67,7 @@ struct DetailRedesignRenderTests {
         #expect(environment.makeGameDetailViewModel(for: game).caseArtwork == nil)
         let path = await OffscreenRenderer.renderAfterTasks(
             page(environment, game), size: CGSize(width: 1100, height: Self.height),
-            name: "detail-case-1100-no-cover-dark", appearance: .darkAqua, settle: Self.settle
+            name: "detail-case-1100-no-cover-light", appearance: .aqua, settle: Self.settle
         )
         #expect(path != nil)
     }

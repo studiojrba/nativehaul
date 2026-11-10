@@ -48,7 +48,6 @@ struct DetailLayoutFitTests {
         let available = CGFloat(windowWidth) - DesignTokens.Rail.collapsedWidth
         let view = detail(environment, game: game, games: games)
         #expect(fittedWidth(view, width: available) <= available + 1)
-        render(view, width: available, name: "detail-\(Int(windowWidth))-dark", appearance: .darkAqua)
         render(view, width: available, name: "detail-\(Int(windowWidth))-light", appearance: .aqua)
     }
 

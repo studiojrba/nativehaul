@@ -113,13 +113,10 @@ struct BuildsPageTests {
             .background(Theme.canvas)
             .tint(Theme.accent)
         let size = CGSize(width: width, height: Self.height)
-        let dark = await OffscreenRenderer.renderAfterTasks(
-            page, size: size, name: "builds-job-\(Int(width))-dark", appearance: .darkAqua, settle: Self.imageSettle
-        )
-        #expect(dark != nil)
-        await OffscreenRenderer.renderAfterTasks(
+        let rendered = await OffscreenRenderer.renderAfterTasks(
             page, size: size, name: "builds-job-\(Int(width))-light", appearance: .aqua, settle: Self.imageSettle
         )
+        #expect(rendered != nil)
         queue.cancel()
     }
 }

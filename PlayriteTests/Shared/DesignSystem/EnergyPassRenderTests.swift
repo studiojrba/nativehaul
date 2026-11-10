@@ -41,8 +41,8 @@ struct EnergyPassRenderTests {
             #expect(OffscreenRenderer.render(
                 screen,
                 size: size,
-                name: "\(name)-\(Int(width))-dark",
-                appearance: .darkAqua
+                name: "\(name)-\(Int(width))-light",
+                appearance: .aqua
             ) != nil)
         }
         OffscreenRenderer.render(

@@ -18,12 +18,13 @@ enum DesignTokens {
     }
 
     /// Corner radii (points).
+    /// Corner radii: generously rounded in the light theme (ADR 0040).
     enum Radius {
-        static let sm: CGFloat = 4
-        static let md: CGFloat = 8
-        static let lg: CGFloat = 12
+        static let sm: CGFloat = 6
+        static let md: CGFloat = 12
+        static let lg: CGFloat = 18
         /// Cover tiles (Meebits' ~16 px cards, ADR 0037).
-        static let tile: CGFloat = 16
+        static let tile: CGFloat = 20
     }
 
     /// Stroke widths (points).

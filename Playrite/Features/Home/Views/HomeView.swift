@@ -17,7 +17,6 @@ struct HomeView: View {
     /// File check, injectable for previews and tests.
     var fileExists: (String) -> Bool = { FileManager.default.fileExists(atPath: $0) }
     @State private var carousel = HeroCarousel()
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         let feed = HomeFeed.make(from: libraryViewModel.games, now: now, fileExists: fileExists)
@@ -34,22 +33,18 @@ struct HomeView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: DesignTokens.Home.sectionSpacing) {
                         HomeHero(heroes: feed.heroes, carousel: carousel, makeLaunch: makeLaunch, now: now)
-                        JumpBackInShelf(games: feed.jumpBackIn, now: now)
-                        RecentlyAddedShelf(games: feed.recentlyAdded, now: now)
+                            .riseIn(.first)
+                        JumpBackInShelf(games: feed.jumpBackIn, now: now).riseIn(.second)
+                        RecentlyAddedShelf(games: feed.recentlyAdded, now: now).riseIn(.third)
                         Button("Browse All Games", systemImage: "square.grid.2x2", action: onBrowseLibrary)
                             .buttonStyle(.borderless)
+                            .riseIn(.fourth)
                     }
                     .padding(DesignTokens.Spacing.xl)
                 }
             }
         }
-        .background {
-            HomeAmbientBackground(imagePath: featuredImage(in: feed))
-                .animation(
-                    reduceMotion ? nil : .easeInOut(duration: DesignTokens.Home.crossfadeSeconds),
-                    value: featuredImage(in: feed)
-                )
-        }
+        .sceneTint(fromArtAt: featuredImage(in: feed))
         .scrollContentBackground(.hidden)
     }
 

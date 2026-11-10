@@ -41,14 +41,15 @@ struct IconRailView: View {
             )
             .clipShape(shape)
             .background {
-                shape.fill(Theme.surface)
+                // Frosted glass with warm cream over the blur (ADR 0040), and a soft shadow instead of a border.
+                shape.fill(.ultraThinMaterial)
+                    .overlay { shape.fill(Theme.surface.opacity(DesignTokens.Light.frostTintOpacity)) }
                     .shadow(
                         color: Theme.panelShadow,
                         radius: DesignTokens.FloatingRail.shadowRadius,
                         y: DesignTokens.FloatingRail.shadowOffset
                     )
             }
-            .overlay { shape.strokeBorder(Theme.hairline) }
             .animation(reduceMotion ? nil : .easeInOut(duration: DesignTokens.Motion.quick), value: isExpanded)
             .onHover { isExpanded = $0 }
     }

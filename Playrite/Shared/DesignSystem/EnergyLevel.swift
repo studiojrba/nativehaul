@@ -18,10 +18,12 @@ struct EnergyLevel: Sendable {
     let heroTitleSize: CGFloat
     /// Home hero height.
     let heroHeight: CGFloat
-    /// Home ambient wash at its strongest.
+    /// The scene tint's strength at the top of the window (ADR 0040; was Home's ambient wash).
     let ambientOpacity: Double
     /// Game detail hero height.
     let detailHeroHeight: CGFloat
+    /// Saturation of the per-scene pastel tint (ADR 0040): how much colour the light theme lets in.
+    let pastelSaturation: CGFloat
 
     /// Shelf and section header font.
     var sectionTitle: Font {
@@ -57,7 +59,8 @@ struct EnergyLevel: Sendable {
         heroTitleSize: Specced.heroTitleSize,
         heroHeight: Specced.heroHeight,
         ambientOpacity: Specced.ambientOpacity,
-        detailHeroHeight: Specced.detailHeroHeight
+        detailHeroHeight: Specced.detailHeroHeight,
+        pastelSaturation: Specced.pastelSaturation
     )
 
     private static let leanedIn = EnergyLevel(
@@ -70,7 +73,8 @@ struct EnergyLevel: Sendable {
         heroTitleSize: LeanedIn.heroTitleSize,
         heroHeight: LeanedIn.heroHeight,
         ambientOpacity: LeanedIn.ambientOpacity,
-        detailHeroHeight: LeanedIn.detailHeroHeight
+        detailHeroHeight: LeanedIn.detailHeroHeight,
+        pastelSaturation: LeanedIn.pastelSaturation
     )
 
     private static let fullSend = EnergyLevel(
@@ -83,7 +87,8 @@ struct EnergyLevel: Sendable {
         heroTitleSize: FullSend.heroTitleSize,
         heroHeight: FullSend.heroHeight,
         ambientOpacity: FullSend.ambientOpacity,
-        detailHeroHeight: FullSend.detailHeroHeight
+        detailHeroHeight: FullSend.detailHeroHeight,
+        pastelSaturation: FullSend.pastelSaturation
     )
 
     /// ``DesignIntensity`` values, one named constant each.
@@ -98,6 +103,7 @@ struct EnergyLevel: Sendable {
         static let heroHeight: CGFloat = 440
         static let ambientOpacity: Double = 0.45
         static let detailHeroHeight: CGFloat = 380
+        static let pastelSaturation: CGFloat = 0.22
     }
 
     /// ``DesignIntensity`` values, one named constant each.
@@ -112,6 +118,7 @@ struct EnergyLevel: Sendable {
         static let heroHeight: CGFloat = 520
         static let ambientOpacity: Double = 0.65
         static let detailHeroHeight: CGFloat = 460
+        static let pastelSaturation: CGFloat = 0.34
     }
 
     /// ``DesignIntensity`` values, one named constant each.
@@ -126,5 +133,6 @@ struct EnergyLevel: Sendable {
         static let heroHeight: CGFloat = 600
         static let ambientOpacity: Double = 0.9
         static let detailHeroHeight: CGFloat = 560
+        static let pastelSaturation: CGFloat = 0.5
     }
 }

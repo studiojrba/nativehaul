@@ -1218,6 +1218,28 @@ approved by J.R when he set the rule). 333 tests (+6).
 - Renders: `docs/design/detail-redesign/`. Not verified offscreen: the live drag and inertia feel. It needs J.R's
   hands.
 
+## 44 · feature/light-feel — light only + the Kriss feel (J.R 20:00; look first)
+- ✅ **Light only** (J.R's ruling): dark appearance support removed, not un-defaulted.
+  - One warm cream palette.
+  - App appearance forced to light, menus and sheets included.
+  - All renders are light.
+  - `LightOnlyTests` guards against dark code coming back.
+- ✅ **Kriss feel** (ADR 0040):
+  - soft warm shadows instead of borders;
+  - a frosted cream sidebar;
+  - generous radii;
+  - a per-scene pastel tint from the art, washed across the whole window, sidebar included (detail page = cover,
+    Home = featured hero, replacing Home's old ambient wash);
+  - gentle fade-and-rise entrances on Home and the detail column (sub-second; Reduce Motion means none).
+- ✅ **The dial** now also varies the pastel's saturation and strength. Positions unchanged; J.R stays at Leaned in.
+- 🧪 `LightOnlyTests`:
+  - no dark code;
+  - tokens identical under any appearance;
+  - the dial raises pastel saturation;
+  - entrances under a second.
+- 🧪 `PolishRulesTests` rewritten for warm neutrals (cream, never blue-grey, never pure white). Every render test
+  switched to light.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1265,6 +1287,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 41 | `feature/steam-trailers` (media pass 3/4) | ✅ | ✅ | 519 | ✅ |
 | 42 | `feature/igdb-media-seam` (media pass 4/4) | ✅ | ✅ | 531 | ✅ |
 | 43 | `feature/detail-case-redesign` (look; J.R's eyeball first) | ✅ | ✅ | 542 | ✅ |
+| 44 | `feature/light-feel` (look; J.R's eyeball first) | ✅ | ✅ | 546 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1304,7 +1327,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0039)
+## Key decisions (see `docs/decisions/` ADR 0001–0040)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.

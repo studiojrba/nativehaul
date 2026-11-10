@@ -22,8 +22,8 @@ struct JumpBackInRenderTests {
         #expect(OffscreenRenderer.render(
             screen,
             size: size,
-            name: "jump-back-in-\(Int(width))-dark",
-            appearance: .darkAqua
+            name: "jump-back-in-\(Int(width))-light",
+            appearance: .aqua
         ) != nil)
         OffscreenRenderer.render(screen, size: size, name: "jump-back-in-\(Int(width))-light", appearance: .aqua)
     }

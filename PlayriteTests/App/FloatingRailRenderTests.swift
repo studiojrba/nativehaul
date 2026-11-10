@@ -22,8 +22,8 @@ struct FloatingRailRenderTests {
             #expect(OffscreenRenderer.render(
                 screen,
                 size: CGSize(width: Self.width, height: height),
-                name: "floating-rail-home-\(Int(height))-dark",
-                appearance: .darkAqua
+                name: "floating-rail-home-\(Int(height))-light",
+                appearance: .aqua
             ) != nil)
         }
         OffscreenRenderer.render(
@@ -44,8 +44,8 @@ struct FloatingRailRenderTests {
         #expect(OffscreenRenderer.render(
             screen,
             size: CGSize(width: Self.width, height: Self.width),
-            name: "floating-rail-grid-1100-dark",
-            appearance: .darkAqua
+            name: "floating-rail-grid-1100-light",
+            appearance: .aqua
         ) != nil)
     }
 
@@ -67,8 +67,8 @@ struct FloatingRailRenderTests {
         #expect(OffscreenRenderer.render(
             screen,
             size: CGSize(width: Self.width, height: Self.width),
-            name: "floating-rail-home-1100-\(isHovered ? "hovered" : "resting")-dark",
-            appearance: .darkAqua
+            name: "floating-rail-home-1100-\(isHovered ? "hovered" : "resting")-light",
+            appearance: .aqua
         ) != nil)
     }
 }

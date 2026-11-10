@@ -11,9 +11,9 @@ extension DesignTokens {
         /// Width the page keeps clear for the collapsed panel and its margins. The expanded panel floats over the page.
         static let reservedWidth: CGFloat = margin + Rail.collapsedWidth + margin
         /// Strength of the panel's shadow.
-        static let shadowOpacity: Double = 0.35
+        static let shadowOpacity: Double = 0.16
         /// Blur of the panel's shadow.
-        static let shadowRadius: CGFloat = 18
+        static let shadowRadius: CGFloat = 26
         /// Downward offset of the panel's shadow.
         static let shadowOffset: CGFloat = 6
     }
