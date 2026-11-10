@@ -21,7 +21,7 @@ struct HLTBSection: View {
             }
             ForEach(viewModel.rows, id: \.category) { row in
                 LabeledValueRow(label: row.category.displayName) {
-                    Text(row.text).font(DesignTokens.Typography.monospaced)
+                    Text(row.text).font(DesignTokens.Typography.figures)
                 }
             }
             if let estimate = viewModel.estimate {

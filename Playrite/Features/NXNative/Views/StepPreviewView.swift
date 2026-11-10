@@ -10,7 +10,7 @@ struct StepPreviewView: View {
             Text(preview.summary).font(DesignTokens.Typography.caption)
             ForEach(Array(preview.diffLines.enumerated()), id: \.offset) { _, line in
                 Text(line)
-                    .font(DesignTokens.Typography.monospacedSmall)
+                    .font(DesignTokens.Typography.figuresSmall)
                     .foregroundStyle(line.hasPrefix("+") ? Theme.success : Theme.danger)
             }
             if let blocked = preview.blockedReason {

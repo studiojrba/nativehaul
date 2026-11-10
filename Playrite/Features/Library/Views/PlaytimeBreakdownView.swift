@@ -16,7 +16,7 @@ struct PlaytimeBreakdownView: View {
                     HStack(spacing: DesignTokens.Spacing.md) {
                         PlaytimeSourceTag(source: entry.source)
                         Text(DurationFormatting.compact(seconds: entry.seconds))
-                            .font(DesignTokens.Typography.monospaced)
+                            .font(DesignTokens.Typography.figures)
                         Spacer(minLength: DesignTokens.Spacing.none)
                     }
                 }

@@ -21,7 +21,7 @@ struct DetectedGameRow: View {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
                 Text(game.name).font(DesignTokens.Typography.headline)
                 if !game.titleID.isEmpty {
-                    Text(game.titleID).font(DesignTokens.Typography.monospacedSmall)
+                    Text(game.titleID).font(DesignTokens.Typography.figuresSmall)
                         .foregroundStyle(Theme.secondaryText)
                 }
                 Text(game.details).foregroundStyle(Theme.secondaryText)

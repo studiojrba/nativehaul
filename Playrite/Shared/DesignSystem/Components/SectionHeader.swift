@@ -61,9 +61,9 @@ struct SectionHeader: View {
     @ViewBuilder private var titleText: some View {
         switch style {
         case .display:
-            Text(title).font(EnergyLevel.of(intensity).display).tracking(DesignTokens.Typography.displayTracking)
+            Text(title).font(EnergyLevel.of(intensity).display).tracking(EnergyLevel.of(intensity).displayTracking)
         case .shelf:
-            Text(title).font(EnergyLevel.of(intensity).sectionTitle).tracking(DesignTokens.Typography.displayTracking)
+            Text(title).font(EnergyLevel.of(intensity).sectionTitle).tracking(EnergyLevel.of(intensity).sectionTracking)
         case .panel:
             Text(title).font(DesignTokens.Typography.title)
         }

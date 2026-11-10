@@ -39,7 +39,7 @@ struct HLTBBarView: View {
                         Text(marker.category.chipName).font(DesignTokens.Typography.caption)
                             .foregroundStyle(Theme.secondaryText)
                         Text(DurationFormatting.compact(seconds: marker.seconds))
-                            .font(DesignTokens.Typography.monospaced).fontWeight(.semibold).monospacedDigit()
+                            .font(DesignTokens.Typography.figures).fontWeight(.semibold).monospacedDigit()
                     }
                 }
             }
@@ -56,7 +56,7 @@ struct HLTBBarView: View {
                 ForEach(playtime.entries) { entry in
                     HStack(spacing: DesignTokens.Spacing.sm) {
                         Text(DurationFormatting.compact(seconds: entry.seconds))
-                            .font(DesignTokens.Typography.monospaced).fontWeight(.semibold).monospacedDigit()
+                            .font(DesignTokens.Typography.figures).fontWeight(.semibold).monospacedDigit()
                         PlaytimeSourceTag(source: entry.source)
                     }
                 }

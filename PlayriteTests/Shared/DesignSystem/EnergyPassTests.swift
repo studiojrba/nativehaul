@@ -20,7 +20,6 @@ struct EnergyPassTests {
     @Test func everyEnergyValueRisesWithTheDial() {
         let levels = DesignIntensity.allCases.map(EnergyLevel.of)
         for (lower, higher) in zip(levels, levels.dropFirst()) {
-            #expect(lower.tileFieldOpacity < higher.tileFieldOpacity)
             #expect(lower.hoverLift < higher.hoverLift)
             #expect(lower.hoverArtScale < higher.hoverArtScale)
             #expect(lower.sectionTitleSize < higher.sectionTitleSize)

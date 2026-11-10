@@ -26,10 +26,10 @@ struct BuildProgressBar: View {
         FlowLayout(spacing: DesignTokens.Spacing.md) {
             Text(stageTitle).font(DesignTokens.Typography.headline)
             Text("\(progress.displayedPercent)%")
-                .font(DesignTokens.Typography.monospaced)
+                .font(DesignTokens.Typography.figures)
                 .foregroundStyle(Theme.primaryText)
             if let times {
-                Text(times).font(DesignTokens.Typography.monospacedSmall).foregroundStyle(Theme.secondaryText)
+                Text(times).font(DesignTokens.Typography.figuresSmall).foregroundStyle(Theme.secondaryText)
             }
         }
     }

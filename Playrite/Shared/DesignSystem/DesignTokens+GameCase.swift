@@ -80,7 +80,10 @@ extension DesignTokens {
         /// Lead (short description) size.
         static let leadSize: CGFloat = 21
         /// Lead font: the large subheading style.
-        static let lead: Font = .system(size: leadSize, weight: .medium, design: .rounded)
+        static var lead: Font {
+            TypeFace.font(size: leadSize, weight: .medium)
+        }
+
         /// Longest short description shown at the top before it is cut at a sentence.
         static let shortLimit = 280
         /// Width of the specs table's label column.

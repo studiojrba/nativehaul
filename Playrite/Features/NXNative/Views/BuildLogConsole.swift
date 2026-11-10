@@ -13,7 +13,7 @@ struct BuildLogConsole: View {
                     LazyVStack(alignment: .leading, spacing: DesignTokens.Spacing.none) {
                         ForEach(lines) { line in
                             Text(line.text)
-                                .font(DesignTokens.Typography.monospacedSmall)
+                                .font(DesignTokens.Typography.figuresSmall)
                                 .foregroundStyle(color(for: line.stream))
                                 .textSelection(.enabled)
                                 .id(line.id)

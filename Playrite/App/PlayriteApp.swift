@@ -15,6 +15,7 @@ struct PlayriteApp: App {
     init() {
         // One appearance, light, everywhere (J.R, ADR 0040), including menus, alerts and sheets.
         NSApplication.shared.appearance = NSAppearance(named: .aqua)
+        TypeFace.registerBundledFonts()
         launch = Self.isHostingTests ? nil : Result { try AppEnvironment.live() }
     }
 

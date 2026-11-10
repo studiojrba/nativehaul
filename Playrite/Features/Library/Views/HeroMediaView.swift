@@ -76,7 +76,7 @@ struct HeroMediaView: View {
             HStack(spacing: DesignTokens.Spacing.sm) {
                 Button("Previous slide", systemImage: "chevron.left") { step(by: -1) }
                 Text("\(min(index, slides.count - 1) + 1) / \(slides.count)")
-                    .font(DesignTokens.Typography.monospacedSmall)
+                    .font(DesignTokens.Typography.figuresSmall)
                 Button("Next slide", systemImage: "chevron.right") { step(by: 1) }
             }
             .labelStyle(.iconOnly)

@@ -13,7 +13,7 @@ struct UnknownInstallHeader: View {
             SectionHeader(title: "Can't tell if installed", caption: "no install record from any source", style: .shelf)
             Spacer()
             Button(isShowing ? "Hide \(count)" : "Show \(count)") { isShowing.toggle() }
-                .font(DesignTokens.Typography.monospacedSmall)
+                .font(DesignTokens.Typography.figuresSmall)
         }
     }
 }

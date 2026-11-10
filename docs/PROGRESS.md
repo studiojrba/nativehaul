@@ -1271,6 +1271,21 @@ approved by J.R when he set the rule). 333 tests (+6).
 - Light renders for J.R's look (Home, library, detail, onboarding at 900/1100/1280) are in `docs/design/light-pass/`.
 - J.R finished the old sheet, so the tour won't auto-start for him: Settings → General → Run setup again.
 
+## 46 · feature/type-and-bare-covers — J.R's amendments to the light build (20:48; look first)
+- ✅ **Type:** one neutral grotesque for everything, with no rounded or mono variants anywhere (source guard).
+  - Headlines are semibold with −0.03 em tracking, sizes unchanged.
+  - Figures use the same sans with tabular numbers.
+  - Inter v4.1 is bundled (OFL) and is the default first pick. SF Pro (standard) is the switchable alternative.
+  - The family is **not locked**: Home renders in both at 900/1100/1280 are in `docs/design/type-choice/`.
+- ✅ **Bare covers:** the art-coloured tile frames are gone from Jump Back In, Recently Added and the library grids.
+  The artwork keeps its corner radius, and the caption is unchanged. No outline, mat or frame.
+- 🧪 `TypeAndCoverTests`:
+  - no rounded or mono fonts;
+  - Inter is bundled and loads;
+  - headline tracking tightens with size;
+  - a pixel test that a cover fills its card edge to edge.
+- 🧪 `TypeFamilyChoiceRenderTests` renders Home in both families.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1320,6 +1335,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 43 | `feature/detail-case-redesign` (look; J.R's eyeball first) | ✅ | ✅ | 542 | ✅ |
 | 44 | `feature/light-feel` (look; J.R's eyeball first) | ✅ | ✅ | 546 | ✅ |
 | 45 | `feature/guided-onboarding` (look; J.R's eyeball first) | ✅ | ✅ | 548 | ✅ |
+| 46 | `feature/type-and-bare-covers` (look; J.R picks the family) | ✅ | ✅ | 553 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1359,7 +1375,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0040)
+## Key decisions (see `docs/decisions/` ADR 0001–0041)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.

@@ -14,7 +14,7 @@ struct CleanupPlanView: View {
             SectionHeader(title: "Cleanup Preview", caption: "nothing is deleted · Trash is never emptied")
             ForEach(Array(plan.actions.enumerated()), id: \.offset) { _, action in
                 Label(action.summary, systemImage: symbol(for: action))
-                    .font(DesignTokens.Typography.monospacedSmall)
+                    .font(DesignTokens.Typography.figuresSmall)
             }
             HStack(spacing: DesignTokens.Spacing.md) {
                 Button("Apply Cleanup", action: onApprove).keyboardShortcut(.defaultAction)

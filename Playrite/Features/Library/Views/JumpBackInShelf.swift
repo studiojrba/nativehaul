@@ -26,7 +26,7 @@ struct JumpBackInShelf: View {
                                 ) {
                                     if let played = JumpBackIn.timePlayed(for: game) {
                                         Text(played)
-                                            .font(DesignTokens.Typography.monospacedSmall)
+                                            .font(DesignTokens.Typography.figuresSmall)
                                             .foregroundStyle(Theme.secondaryText)
                                             .lineLimit(DesignTokens.Lines.single)
                                     }

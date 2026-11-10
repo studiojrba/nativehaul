@@ -48,14 +48,14 @@ struct HomeHero: View {
             NavigationLink(value: game.id) {
                 Text(game.title)
                     .font(EnergyLevel.of(intensity).heroTitle)
-                    .tracking(DesignTokens.Home.heroTitleTracking)
+                    .tracking(EnergyLevel.of(intensity).heroTracking)
                     .lineLimit(DesignTokens.Lines.title)
                     .minimumScaleFactor(DesignTokens.Typography.minimumScale)
                     .multilineTextAlignment(.leading)
             }
             .buttonStyle(.plain)
             Text(JumpBackIn.line(for: game, now: now))
-                .font(DesignTokens.Typography.monospaced)
+                .font(DesignTokens.Typography.figures)
                 .lineLimit(DesignTokens.Lines.single)
             HeroPlayButton(game: game, makeLaunch: makeLaunch)
                 .id(game.id)

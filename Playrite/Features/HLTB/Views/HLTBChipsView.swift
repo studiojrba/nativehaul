@@ -15,7 +15,7 @@ struct HLTBChipsView: View {
                             .foregroundStyle(Theme.secondaryText)
                             .lineLimit(DesignTokens.Lines.single)
                             .minimumScaleFactor(DesignTokens.Typography.minimumScale)
-                        Text(chip.value).font(DesignTokens.Typography.monospaced).fontWeight(.semibold)
+                        Text(chip.value).font(DesignTokens.Typography.figures).fontWeight(.semibold)
                             .foregroundStyle(Theme.primaryText)
                             .monospacedDigit()
                             .lineLimit(DesignTokens.Lines.single)

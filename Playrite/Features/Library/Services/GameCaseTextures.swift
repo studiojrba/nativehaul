@@ -34,7 +34,7 @@ enum GameCaseTextures {
         return NSImage(size: size, flipped: false) { rect in
             color.setFill()
             rect.fill()
-            let font = NSFont.systemFont(ofSize: width * Tokens.spineTitleShare, weight: .heavy)
+            let font = TypeFace.nsFont(size: width * Tokens.spineTitleShare, weight: .semibold)
             let style = NSMutableParagraphStyle()
             style.lineBreakMode = .byTruncatingTail
             let attributes: [NSAttributedString.Key: Any] = [

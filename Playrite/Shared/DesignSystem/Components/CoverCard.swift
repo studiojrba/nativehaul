@@ -1,12 +1,10 @@
 import SwiftUI
 
-/// A grid cell (ADR 0025, ADR 0037): the cover sitting on a saturated field of its own art's colour, the title, and
-/// ONE quiet state line underneath in mono.
+/// A grid cell (ADR 0025, ADR 0037, ADR 0041): the bare cover (the artwork itself with its corner radius, no frame,
+/// mat or outline), the title, and ONE quiet state line underneath with tabular figures.
 ///
-/// - **Colour field:** the tile behind the cover is a gradient of the art's sampled colour, so a grid reads as a
-///   saturated mosaic. With no art, the tile is the neutral surface: no fake colour.
-/// - **The one hover gesture:** the card lifts and the art scales slightly inside its tile. Nothing else reacts.
-///   Under Reduce Motion, hover does nothing.
+/// - **The one hover gesture:** the card lifts and the cover grows slightly. Nothing else reacts. Under Reduce
+///   Motion, hover does nothing.
 /// - **Selection** is a strong ring in the primary text colour (the accent is spent only on Play, nav and links).
 ///
 /// Everything is drawn as backgrounds, overlays and transforms, so the grid never reflows.
@@ -30,17 +28,14 @@ struct CoverCard<Accessory: View>: View {
         let isLifted = isHovered && !reduceMotion
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
             CoverArtView(imagePath: imagePath, title: title)
-                .scaleEffect(isLifted ? level.hoverArtScale : 1)
-                .padding(level.tileInset)
-                .background { field(level) }
-                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.tile))
+                .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.tile, style: .continuous))
                 .overlay {
-                    RoundedRectangle(cornerRadius: DesignTokens.Radius.tile)
-                        .strokeBorder(
-                            isSelected ? Theme.primaryText : Theme.hairline,
-                            lineWidth: isSelected ? DesignTokens.Stroke.emphasis : DesignTokens.Stroke.hairline
-                        )
+                    if isSelected {
+                        RoundedRectangle(cornerRadius: DesignTokens.Radius.tile, style: .continuous)
+                            .strokeBorder(Theme.primaryText, lineWidth: DesignTokens.Stroke.emphasis)
+                    }
                 }
+                .scaleEffect(isLifted ? level.hoverArtScale : 1)
                 .offset(y: isLifted ? -level.hoverLift : 0)
             Text(title)
                 .font(DesignTokens.Typography.headline)
@@ -48,7 +43,7 @@ struct CoverCard<Accessory: View>: View {
                 .lineLimit(DesignTokens.Lines.single)
                 .padding(.top, DesignTokens.Spacing.xs)
             Text(subtitle)
-                .font(DesignTokens.Typography.monospacedSmall)
+                .font(DesignTokens.Typography.figuresSmall)
                 .foregroundStyle(Theme.secondaryText)
                 .lineLimit(DesignTokens.Lines.single)
             accessory()
@@ -56,22 +51,6 @@ struct CoverCard<Accessory: View>: View {
         .contentShape(Rectangle())
         .onHover { hovering in
             withAnimation(.easeOut(duration: DesignTokens.Motion.quick)) { isHovered = hovering }
-        }
-    }
-
-    @ViewBuilder
-    private func field(_ level: EnergyLevel) -> some View {
-        if let tint = ArtworkTint.color(forImageAt: imagePath) {
-            LinearGradient(
-                colors: [
-                    tint.opacity(level.tileFieldOpacity),
-                    tint.opacity(level.tileFieldOpacity * DesignTokens.ArtTint.fieldFalloff),
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        } else {
-            Theme.surfaceRaised
         }
     }
 }

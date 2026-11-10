@@ -102,26 +102,73 @@ enum DesignTokens {
     /// Typography roles (ADR 0025): small, precise UI text (13 pt) for data, and big, tight, confident display type
     /// — (Not Boring) style — for page headers, empty states and onboarding.
     enum Typography {
-        /// The onboarding welcome.
-        static let hero: Font = .system(size: TypeScale.hero, weight: .black, design: .rounded)
+        /// The largest headline.
+        static var hero: Font {
+            TypeFace.font(size: TypeScale.hero, weight: .semibold)
+        }
+
         /// Page and section headers, empty-state titles.
-        static let display: Font = .system(size: TypeScale.display, weight: .heavy, design: .rounded)
-        /// Tight tracking for display type.
-        static let displayTracking: CGFloat = -0.6
-        static let largeTitle: Font = .system(size: TypeScale.largeTitle, weight: .bold)
-        static let title: Font = .system(size: TypeScale.title, weight: .semibold)
-        static let headline: Font = .system(size: TypeScale.body, weight: .semibold)
-        static let body: Font = .system(size: TypeScale.body)
-        static let caption: Font = .system(size: TypeScale.caption)
-        static let captionEmphasis: Font = .system(size: TypeScale.caption, weight: .semibold)
+        static var display: Font {
+            TypeFace.font(size: TypeScale.display, weight: .semibold)
+        }
+
+        /// Tracking for ``display``.
+        static var displayTracking: CGFloat {
+            TypeFace.headlineTracking(for: TypeScale.display)
+        }
+
+        static var largeTitle: Font {
+            TypeFace.font(size: TypeScale.largeTitle, weight: .semibold)
+        }
+
+        static var title: Font {
+            TypeFace.font(size: TypeScale.title, weight: .semibold)
+        }
+
+        static var headline: Font {
+            TypeFace.font(size: TypeScale.body, weight: .semibold)
+        }
+
+        static var body: Font {
+            TypeFace.font(size: TypeScale.body)
+        }
+
+        static var caption: Font {
+            TypeFace.font(size: TypeScale.caption)
+        }
+
+        static var captionEmphasis: Font {
+            TypeFace.font(size: TypeScale.caption, weight: .semibold)
+        }
+
         /// Quiet section label inside dense panels (Linear-style small header).
-        static let sectionLabel: Font = .system(size: TypeScale.caption, weight: .semibold)
-        static let monospaced: Font = .system(size: TypeScale.body, design: .monospaced)
-        static let monospacedSmall: Font = .system(size: TypeScale.caption, design: .monospaced)
-        static let statValue: Font = .system(size: TypeScale.stat, weight: .bold, design: .monospaced)
+        static var sectionLabel: Font {
+            TypeFace.font(size: TypeScale.caption, weight: .semibold)
+        }
+
+        /// Figures (times, sizes, counts) in the same sans, with tabular numbers (ADR 0041).
+        static var figures: Font {
+            TypeFace.figures(size: TypeScale.body)
+        }
+
+        /// Small figures.
+        static var figuresSmall: Font {
+            TypeFace.figures(size: TypeScale.caption)
+        }
+
+        static var statValue: Font {
+            TypeFace.figures(size: TypeScale.stat, weight: .semibold)
+        }
+
         /// Rank numbers on the Stats story row.
-        static let rank: Font = .system(size: TypeScale.rank, weight: .black, design: .rounded)
-        static let launch: Font = .system(size: TypeScale.launch, weight: .bold)
+        static var rank: Font {
+            TypeFace.figures(size: TypeScale.rank, weight: .semibold)
+        }
+
+        static var launch: Font {
+            TypeFace.font(size: TypeScale.launch, weight: .semibold)
+        }
+
         /// Smallest scale a fixed-width label may shrink to before it would otherwise clip.
         static let minimumScale: CGFloat = 0.75
     }
@@ -144,8 +191,6 @@ enum DesignTokens {
 
     /// Colour sampled from a game's own artwork (ADR 0025): weak enough that text contrast never suffers.
     enum ArtTint {
-        /// A tile field's bottom strength, as a share of its top (the field deepens downward).
-        static let fieldFalloff: Double = 0.7
         /// Sampled colours are lifted to at least this saturation, so a muddy average still reads as colour.
         static let minimumSaturation: CGFloat = 0.45
         /// …and set to this brightness.

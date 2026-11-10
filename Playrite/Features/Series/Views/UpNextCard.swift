@@ -9,7 +9,7 @@ struct UpNextCard: View {
         VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
             CoverArtView(imagePath: nil, title: item.title, width: DesignTokens.Cover.stripWidth)
             Text("Part \(item.partLabel)")
-                .font(DesignTokens.Typography.monospacedSmall)
+                .font(DesignTokens.Typography.figuresSmall)
                 .fontWeight(item.isNext ? .bold : .regular)
                 .foregroundStyle(item.isNext ? Theme.primaryText : Theme.secondaryText)
             Text(item.title)

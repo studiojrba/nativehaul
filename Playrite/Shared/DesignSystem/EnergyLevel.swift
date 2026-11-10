@@ -2,13 +2,9 @@ import SwiftUI
 
 /// Every value the energy pass turns up, for one ``DesignIntensity`` (ADR 0037). Views read these, never literals.
 struct EnergyLevel: Sendable {
-    /// Strength of a cover tile's art-coloured field (0 = none).
-    let tileFieldOpacity: Double
-    /// Space between the field's edge and the cover art.
-    let tileInset: CGFloat
     /// How far a hovered card lifts.
     let hoverLift: CGFloat
-    /// How much the art scales inside its tile on hover.
+    /// How much a cover grows on hover.
     let hoverArtScale: CGFloat
     /// Shelf and section header size.
     let sectionTitleSize: CGFloat
@@ -25,19 +21,34 @@ struct EnergyLevel: Sendable {
     /// Saturation of the per-scene pastel tint (ADR 0040): how much colour the light theme lets in.
     let pastelSaturation: CGFloat
 
-    /// Shelf and section header font.
+    /// Shelf and section header font (semibold grotesque, ADR 0041).
     var sectionTitle: Font {
-        .system(size: sectionTitleSize, weight: .black, design: .rounded)
+        TypeFace.font(size: sectionTitleSize, weight: .semibold)
+    }
+
+    /// Tracking for ``sectionTitle``.
+    var sectionTracking: CGFloat {
+        TypeFace.headlineTracking(for: sectionTitleSize)
     }
 
     /// Page header font.
     var display: Font {
-        .system(size: displaySize, weight: .black, design: .rounded)
+        TypeFace.font(size: displaySize, weight: .semibold)
+    }
+
+    /// Tracking for ``display``.
+    var displayTracking: CGFloat {
+        TypeFace.headlineTracking(for: displaySize)
     }
 
     /// Home hero title font.
     var heroTitle: Font {
-        .system(size: heroTitleSize, weight: .black, design: .rounded)
+        TypeFace.font(size: heroTitleSize, weight: .semibold)
+    }
+
+    /// Tracking for ``heroTitle``.
+    var heroTracking: CGFloat {
+        TypeFace.headlineTracking(for: heroTitleSize)
     }
 
     /// The level for `intensity`.
@@ -50,8 +61,6 @@ struct EnergyLevel: Sendable {
     }
 
     private static let specced = EnergyLevel(
-        tileFieldOpacity: Specced.tileFieldOpacity,
-        tileInset: Specced.tileInset,
         hoverLift: Specced.hoverLift,
         hoverArtScale: Specced.hoverArtScale,
         sectionTitleSize: Specced.sectionTitleSize,
@@ -64,8 +73,6 @@ struct EnergyLevel: Sendable {
     )
 
     private static let leanedIn = EnergyLevel(
-        tileFieldOpacity: LeanedIn.tileFieldOpacity,
-        tileInset: LeanedIn.tileInset,
         hoverLift: LeanedIn.hoverLift,
         hoverArtScale: LeanedIn.hoverArtScale,
         sectionTitleSize: LeanedIn.sectionTitleSize,
@@ -78,8 +85,6 @@ struct EnergyLevel: Sendable {
     )
 
     private static let fullSend = EnergyLevel(
-        tileFieldOpacity: FullSend.tileFieldOpacity,
-        tileInset: FullSend.tileInset,
         hoverLift: FullSend.hoverLift,
         hoverArtScale: FullSend.hoverArtScale,
         sectionTitleSize: FullSend.sectionTitleSize,
@@ -93,8 +98,6 @@ struct EnergyLevel: Sendable {
 
     /// ``DesignIntensity`` values, one named constant each.
     private enum Specced {
-        static let tileFieldOpacity: Double = 0.5
-        static let tileInset: CGFloat = 10
         static let hoverLift: CGFloat = 3
         static let hoverArtScale: CGFloat = 1.03
         static let sectionTitleSize: CGFloat = 24
@@ -108,8 +111,6 @@ struct EnergyLevel: Sendable {
 
     /// ``DesignIntensity`` values, one named constant each.
     private enum LeanedIn {
-        static let tileFieldOpacity: Double = 0.85
-        static let tileInset: CGFloat = 14
         static let hoverLift: CGFloat = 5
         static let hoverArtScale: CGFloat = 1.05
         static let sectionTitleSize: CGFloat = 32
@@ -123,8 +124,6 @@ struct EnergyLevel: Sendable {
 
     /// ``DesignIntensity`` values, one named constant each.
     private enum FullSend {
-        static let tileFieldOpacity: Double = 1
-        static let tileInset: CGFloat = 18
         static let hoverLift: CGFloat = 8
         static let hoverArtScale: CGFloat = 1.08
         static let sectionTitleSize: CGFloat = 44

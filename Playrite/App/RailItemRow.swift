@@ -27,7 +27,7 @@ struct RailItemRow: View {
                     Spacer(minLength: DesignTokens.Spacing.sm)
                     if let count {
                         Text("\(count)")
-                            .font(DesignTokens.Typography.monospacedSmall)
+                            .font(DesignTokens.Typography.figuresSmall)
                             .foregroundStyle(Theme.tertiaryText)
                     }
                 }

@@ -12,7 +12,7 @@ struct DiscoveredAppRow: View {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.xxs) {
                 Text(app.name).font(DesignTokens.Typography.headline)
                 Text(app.path)
-                    .font(DesignTokens.Typography.monospacedSmall)
+                    .font(DesignTokens.Typography.figuresSmall)
                     .foregroundStyle(Theme.secondaryText)
                     .lineLimit(DesignTokens.Lines.single)
                     .truncationMode(.middle)

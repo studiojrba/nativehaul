@@ -10,7 +10,7 @@ struct BuildJobRow: View {
             Text(job.title.name).font(DesignTokens.Typography.headline)
             HStack(spacing: DesignTokens.Spacing.sm) {
                 TagLabel(text: job.status.displayName, tint: job.status.tint)
-                Text(job.title.titleID).font(DesignTokens.Typography.monospacedSmall)
+                Text(job.title.titleID).font(DesignTokens.Typography.figuresSmall)
                     .foregroundStyle(Theme.secondaryText)
             }
         }

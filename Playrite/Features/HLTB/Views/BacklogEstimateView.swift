@@ -13,7 +13,7 @@ struct BacklogEstimateView: View {
             )
             HStack(spacing: DesignTokens.Spacing.md) {
                 PlaytimeSourceTag(source: .hltbEstimate)
-                Text(DurationFormatting.compact(seconds: estimate.seconds)).font(DesignTokens.Typography.monospaced)
+                Text(DurationFormatting.compact(seconds: estimate.seconds)).font(DesignTokens.Typography.figures)
                 Text("main story · not added to your hours").foregroundStyle(Theme.secondaryText)
             }
         }

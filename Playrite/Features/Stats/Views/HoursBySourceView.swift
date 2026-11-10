@@ -14,7 +14,7 @@ struct HoursBySourceView: View {
             ForEach(entries) { entry in
                 HStack(spacing: DesignTokens.Spacing.md) {
                     PlaytimeSourceTag(source: entry.source)
-                    Text(DurationFormatting.compact(seconds: entry.seconds)).font(DesignTokens.Typography.monospaced)
+                    Text(DurationFormatting.compact(seconds: entry.seconds)).font(DesignTokens.Typography.figures)
                     Spacer(minLength: DesignTokens.Spacing.none)
                 }
             }

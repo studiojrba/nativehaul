@@ -4,8 +4,6 @@ extension DesignTokens {
     /// The Home page (ADR 0035): a big art-carried hero whose colour washes into the page behind it. Hero size, title
     /// size and wash strength come from the energy dial (``EnergyLevel``, ADR 0037).
     enum Home {
-        /// Tight tracking for the hero title.
-        static let heroTitleTracking: CGFloat = -1.2
         /// The hero's Play button width.
         static let playWidth: CGFloat = 220
         /// Darkest point of the scrim under the hero's text (bottom of the banner).

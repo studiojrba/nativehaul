@@ -60,7 +60,7 @@ struct NXNativeSettingsView: View {
 
     private func pathText(_ text: String) -> some View {
         Text(text)
-            .font(DesignTokens.Typography.monospacedSmall)
+            .font(DesignTokens.Typography.figuresSmall)
             .lineLimit(DesignTokens.Lines.single)
             .truncationMode(.middle)
     }

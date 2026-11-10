@@ -12,7 +12,7 @@ struct ActiveSessionRow: View {
             Image(systemName: "record.circle").foregroundStyle(Theme.danger)
             Text(title).font(DesignTokens.Typography.headline)
             Spacer(minLength: DesignTokens.Spacing.none)
-            Text(startedAt, style: .timer).font(DesignTokens.Typography.monospaced)
+            Text(startedAt, style: .timer).font(DesignTokens.Typography.figures)
             PlaytimeSourceTag(source: .macTracked)
         }
     }

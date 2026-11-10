@@ -14,7 +14,7 @@ struct LabeledValueRow<Value: View>: View {
                 .foregroundStyle(Theme.secondaryText)
                 .frame(width: DesignTokens.Layout.formLabelWidth, alignment: .leading)
             value()
-                .font(DesignTokens.Typography.monospaced)
+                .font(DesignTokens.Typography.figures)
             Spacer(minLength: DesignTokens.Spacing.none)
         }
     }

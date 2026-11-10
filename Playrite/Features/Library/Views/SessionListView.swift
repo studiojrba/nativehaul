@@ -15,7 +15,7 @@ struct SessionListView: View {
                 FlowLayout(spacing: DesignTokens.Spacing.md) {
                     Text(session.startedAt, format: .dateTime.year().month().day().hour().minute())
                     Text(DurationFormatting.compact(seconds: session.durationSeconds))
-                        .font(DesignTokens.Typography.monospaced)
+                        .font(DesignTokens.Typography.figures)
                     PlaytimeSourceTag(source: session.source)
                 }
             }

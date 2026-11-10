@@ -47,7 +47,7 @@ struct GameDetailView: View {
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.xl) {
                 Text(game.title)
                     .font(EnergyLevel.of(intensity).display)
-                    .tracking(DesignTokens.Typography.displayTracking)
+                    .tracking(EnergyLevel.of(intensity).displayTracking)
                     .fixedSize(horizontal: false, vertical: true)
                     .riseIn(.first)
                 if let short = description.short {

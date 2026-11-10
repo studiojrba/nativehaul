@@ -14,7 +14,7 @@ struct AuditLogView: View {
                         Text(entry.timestamp, format: .dateTime.hour().minute().second())
                         Text(entry.action).font(DesignTokens.Typography.captionEmphasis)
                     }
-                    Text(entry.details).font(DesignTokens.Typography.monospacedSmall)
+                    Text(entry.details).font(DesignTokens.Typography.figuresSmall)
                         .foregroundStyle(Theme.secondaryText)
                 }
             }

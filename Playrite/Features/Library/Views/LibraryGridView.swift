@@ -54,7 +54,7 @@ struct LibraryGridView: View {
                 JumpBackInShelf(games: viewModel.jumpBackIn())
                 if let split {
                     Text(split.summary)
-                        .font(DesignTokens.Typography.monospaced)
+                        .font(DesignTokens.Typography.figures)
                         .foregroundStyle(Theme.secondaryText)
                 }
                 gameGrid(viewModel.visibleGames)

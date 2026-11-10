@@ -22,7 +22,7 @@ struct PreflightReportView: View {
                         Text(file.name)
                         Spacer(minLength: DesignTokens.Spacing.none)
                         Text(ByteCountFormatter.string(fromByteCount: file.size, countStyle: .file))
-                            .font(DesignTokens.Typography.monospaced)
+                            .font(DesignTokens.Typography.figures)
                             .foregroundStyle(Theme.secondaryText)
                     }
                 }

@@ -16,7 +16,7 @@ struct TrackedAppSection: View {
             SectionHeader(title: "Tracking")
             LabeledValueRow(label: "Tracked app") {
                 Text(viewModel.bundlePath ?? "Not tracked")
-                    .font(DesignTokens.Typography.monospacedSmall)
+                    .font(DesignTokens.Typography.figuresSmall)
                     .lineLimit(DesignTokens.Lines.single)
                     .truncationMode(.middle)
             }

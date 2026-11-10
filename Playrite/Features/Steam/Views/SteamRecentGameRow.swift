@@ -12,7 +12,7 @@ struct SteamRecentGameRow: View {
             Spacer(minLength: DesignTokens.Spacing.none)
             if let recent = game.playtime2Weeks {
                 Text("\(DurationFormatting.compact(seconds: recent * Self.secondsPerMinute)) last 2 weeks")
-                    .font(DesignTokens.Typography.monospaced)
+                    .font(DesignTokens.Typography.figures)
                     .foregroundStyle(Theme.secondaryText)
             }
             PlaytimeSourceTag(source: .steamSynced)

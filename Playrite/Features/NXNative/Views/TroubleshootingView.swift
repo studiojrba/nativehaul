@@ -19,7 +19,7 @@ struct TroubleshootingView: View {
                 LabeledValueRow(label: "Cause") { Text(session.troubleshootingCase.cause) }
                 if session.troubleshootingCase.editsEngineScript {
                     LabeledValueRow(label: "Engine script") {
-                        Text(session.scriptPath).font(DesignTokens.Typography.monospacedSmall)
+                        Text(session.scriptPath).font(DesignTokens.Typography.figuresSmall)
                     }
                     patchEditor
                 }
@@ -53,9 +53,9 @@ struct TroubleshootingView: View {
         return VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
             SectionHeader(title: "Patch", caption: "edit to match your engine's script; must match exactly once")
             TextField("Search text", text: $session.patch.search, axis: .vertical)
-                .font(DesignTokens.Typography.monospacedSmall)
+                .font(DesignTokens.Typography.figuresSmall)
             TextField("Replacement", text: $session.patch.replacement, axis: .vertical)
-                .font(DesignTokens.Typography.monospacedSmall)
+                .font(DesignTokens.Typography.figuresSmall)
         }
     }
 }
