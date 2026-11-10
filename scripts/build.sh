@@ -14,4 +14,12 @@ xcodebuild -project Playrite.xcodeproj -scheme Playrite -configuration Debug -de
 grep -q "\*\* TEST SUCCEEDED \*\*" build/xcodebuild.log
 products=$(xcodebuild -project Playrite.xcodeproj -scheme Playrite -configuration Debug -showBuildSettings 2>/dev/null \
   | awk -F' = ' '/ BUILT_PRODUCTS_DIR /{print $2; exit}')
-echo "Canonical app: $products/NX Shelf.app"
+app="$products/NX Shelf.app"
+# A stable signature (crash pass, ADR 0044): ad-hoc signing gives the app a new identity on every build, so macOS
+# re-asks for Keychain access and the app waits on that prompt. When this Mac has an Apple Development certificate,
+# the canonical app is re-signed with it, so the identity (and the Keychain's "Always Allow") survives rebuilds.
+# Release builds are signed with Developer ID instead (release track).
+if security find-identity -v -p codesigning 2>/dev/null | grep -q "Apple Development"; then
+  codesign --force --deep --sign "Apple Development" "$app" >/dev/null 2>&1 && echo "Signed with the local Apple Development identity"
+fi
+echo "Canonical app: $app"

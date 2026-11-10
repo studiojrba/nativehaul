@@ -1214,6 +1214,24 @@ approved by J.R when he set the rule). 333 tests (+6).
 - 🧪 531 tests green; lint clean. `AppInfoTests` asserts the new product name and the frozen identifiers.
 - Base: `chore/revert-v2-pass` (the pre-v2 app J.R chose). Next: the crash pass, before any new surface.
 
+## 48 · fix/launch-freezes — crash pass (J.R: "feels unstable, keeps crashing"; stage 2 of 4)
+- 🔎 **Mined every crash, hang and CPU report under all three app names and sampled the live app.** Ranked list in
+  ADR 0044:
+  1. A launch freeze on a main-thread Keychain read (seen live tonight).
+  2. A launch hang, already fixed by `11daf02`.
+  3. Three CPU reports from the v2 build, gone with the revert.
+  4. A CrossOver polling loop, leaving with the scope surgery.
+  5. One old Steam web sign-in crash, in code since replaced.
+  6. Eight test-host fixture crashes that never affected real use.
+- ✅ **Fix 1:** launch upkeep and Steam credentials read the Keychain off the main thread
+  (`isConfiguredOffMain`, async `credentials()`).
+- ✅ **Fix 2:** `build.sh` re-signs the canonical app with the local Apple Development identity, so Keychain access
+  survives rebuilds.
+- 🧪 `LaunchNeverBlocksOnKeychainTests`: zero main-thread secret reads during launch upkeep. Steam account store
+  tests updated for async credentials.
+- Note for J.R: a Keychain prompt is waiting on screen for the current build. "Always Allow" once more after the
+  re-signed build; no further prompts after that.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1261,6 +1279,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 41 | `feature/steam-trailers` (media pass 3/4) | ✅ | ✅ | 519 | ✅ |
 | 42 | `feature/igdb-media-seam` (media pass 4/4) | ✅ | ✅ | 531 | ✅ |
 | 47 | `feature/rename-nx-shelf` (stacked on `chore/revert-v2-pass`; 43–46 retained, unmerged) | ✅ | ✅ | 531 | ✅ |
+| 48 | `fix/launch-freezes` (crash pass) | ✅ | ✅ | 532 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1300,7 +1319,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0043)
+## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0044)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.

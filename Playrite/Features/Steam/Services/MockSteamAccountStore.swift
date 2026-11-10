@@ -17,6 +17,10 @@ final class MockSteamAccountStore: SteamAccountStoring {
         apiKey != nil
     }
 
+    func hasAPIKeyOffMain() async -> Bool {
+        hasAPIKey
+    }
+
     func saveAPIKey(_ key: String) throws {
         apiKey = key.isEmpty ? nil : key
     }
@@ -29,7 +33,7 @@ final class MockSteamAccountStore: SteamAccountStoring {
         self.steamID = steamID
     }
 
-    func credentials() throws -> SteamCredentials {
+    func credentials() async throws -> SteamCredentials {
         guard let apiKey else { throw SteamError.missingAPIKey }
         guard let steamID else { throw SteamError.missingSteamID }
         return SteamCredentials(apiKey: apiKey, steamID: steamID)

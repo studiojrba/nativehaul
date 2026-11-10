@@ -19,6 +19,10 @@ final class StubSteamSync: SteamSyncing {
         account.hasAPIKey && account.steamID != nil
     }
 
+    func isConfiguredOffMain() async -> Bool {
+        isConfigured
+    }
+
     func loadProfile() async throws -> SteamProfileSummary? {
         try profileResult.get()
     }

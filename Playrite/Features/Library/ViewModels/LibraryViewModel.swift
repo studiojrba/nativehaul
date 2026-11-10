@@ -58,7 +58,7 @@ final class LibraryViewModel {
         if let folderImporter, !isScanningFolders {
             _ = try? await folderImporter.scanConfiguredFolders()
         }
-        if let steamSync, steamSync.isConfigured {
+        if let steamSync, await steamSync.isConfiguredOffMain() {
             _ = try? await steamSync.syncOwnedGames()
         }
         reload()

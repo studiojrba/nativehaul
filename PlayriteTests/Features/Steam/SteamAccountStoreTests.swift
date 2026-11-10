@@ -11,26 +11,26 @@ struct SteamAccountStoreTests {
         return (SteamAccountStore(secrets: secrets, defaults: defaults), secrets, defaults)
     }
 
-    @Test func unconfiguredThrowsMissingKey() {
+    @Test func unconfiguredThrowsMissingKey() async {
         let (store, _, _) = makeStore()
         #expect(!store.hasAPIKey)
-        #expect(throws: SteamError.missingAPIKey) { try store.credentials() }
+        await #expect(throws: SteamError.missingAPIKey) { try await store.credentials() }
     }
 
-    @Test func keyGoesOnlyToSecretStore() throws {
+    @Test func keyGoesOnlyToSecretStore() async throws {
         let (store, secrets, defaults) = makeStore()
         try store.saveAPIKey("  SECRET  ")
         store.saveSteamID(SteamID("76561197960287930"))
         #expect(try secrets.secret(for: .steamWebAPIKey) == "SECRET")
         let defaultsValues = defaults.dictionaryRepresentation().values.compactMap { $0 as? String }
         #expect(!defaultsValues.contains { $0.contains("SECRET") })
-        #expect(try store.credentials().apiKey == "SECRET")
+        #expect(try await store.credentials().apiKey == "SECRET")
     }
 
-    @Test func missingSteamIDThrows() throws {
+    @Test func missingSteamIDThrows() async throws {
         let (store, _, _) = makeStore()
         try store.saveAPIKey("K")
-        #expect(throws: SteamError.missingSteamID) { try store.credentials() }
+        await #expect(throws: SteamError.missingSteamID) { try await store.credentials() }
     }
 
     @Test func blankKeyRemoves() throws {

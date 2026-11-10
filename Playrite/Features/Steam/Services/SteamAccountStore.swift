@@ -18,6 +18,13 @@ final class SteamAccountStore: SteamAccountStoring {
         ((try? secrets.secret(for: .steamWebAPIKey)) ?? nil)?.isEmpty == false
     }
 
+    func hasAPIKeyOffMain() async -> Bool {
+        let secrets = secrets
+        return await Task.detached(priority: .utility) {
+            ((try? secrets.secret(for: .steamWebAPIKey)) ?? nil)?.isEmpty == false
+        }.value
+    }
+
     var steamID: SteamID? {
         defaults.string(forKey: Self.steamIDDefaultsKey).flatMap(SteamID.init)
     }
@@ -36,8 +43,13 @@ final class SteamAccountStore: SteamAccountStoring {
         defaults.set(steamID?.rawValue, forKey: Self.steamIDDefaultsKey)
     }
 
-    func credentials() throws -> SteamCredentials {
-        guard let key = try secrets.secret(for: .steamWebAPIKey), !key.isEmpty else { throw SteamError.missingAPIKey }
+    /// The key is read off the main thread (crash pass, ADR 0044): a Keychain read can wait on a permission prompt.
+    func credentials() async throws -> SteamCredentials {
+        let secrets = secrets
+        let key = try await Task.detached(priority: .utility) {
+            try secrets.secret(for: .steamWebAPIKey)
+        }.value
+        guard let key, !key.isEmpty else { throw SteamError.missingAPIKey }
         guard let steamID else { throw SteamError.missingSteamID }
         return SteamCredentials(apiKey: key, steamID: steamID)
     }

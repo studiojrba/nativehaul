@@ -7,6 +7,10 @@ final class MockSteamSyncService: SteamSyncing {
     /// Whether to pretend credentials exist.
     var isConfigured: Bool
 
+    func isConfiguredOffMain() async -> Bool {
+        isConfigured
+    }
+
     /// Creates the mock.
     init(isConfigured: Bool) {
         self.isConfigured = isConfigured
