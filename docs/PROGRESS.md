@@ -1386,6 +1386,21 @@ approved by J.R when he set the rule). 333 tests (+6).
   - publishing itself (`./scripts/release.sh --publish`), which waits for J.R's go and for the stack to merge into
     `production`.
 
+## 1.0.0 installed as J.R's working copy (2026-11-10)
+J.R: don't publish; install the notarized build as his working copy instead.
+- **Installed** from `build/release/1.0.0/nativehaul-1.0.0.dmg` into `/Applications/nativehaul.app` with `ditto`:
+  - the signature verifies;
+  - the notarization ticket validates;
+  - Gatekeeper says "accepted, source=Notarized Developer ID";
+  - the bundle reports 1.0.0 (2).
+- **Swapped:** the dev copy (DerivedData Debug) was quit with no game running, and `/Applications/nativehaul.app`
+  launched. One instance runs, from `/Applications`.
+- **Library intact:** 18 games, all with title IDs; Home shows them with their art.
+- **Rule:** CLAUDE.md now says his working copy is `/Applications/nativehaul.app`. Dev builds are for tests and
+  diagnostics only and never replace it.
+- **Pre-publish list (unchanged):** the clean-machine install test, the live Sparkle update check (1.0.0 → 1.0.1),
+  the changelog date, then `--publish` after the stack merges into `production`.
+
 ## Name lock: state on J.R's Mac (2026-11-10)
 - **J.R's copy:** the working-name app was quit (no game running) and `nativehaul.app` opened from the new
   canonical path, `DerivedData/nativehaul-avvohnucushygrhktagpqdqkqjmt/Build/Products/Debug/nativehaul.app`.

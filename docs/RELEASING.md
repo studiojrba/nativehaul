@@ -36,6 +36,13 @@ Output goes to `build/release/<version>/`, which git ignores.
 `./scripts/release.sh --skip-notarize` runs everything except notarization, for local checks. Its DMG must never be
 published.
 
+## Before publishing 1.0.0 (still open)
+- [ ] Clean-machine install (below), on a Mac, fresh user or VM that never had nativehaul.
+- [ ] Sparkle end to end (below): publish 1.0.0, then confirm a 1.0.1 offers itself and installs.
+- [ ] Date the 1.0.0 changelog entry; merge the stack into `production`; `./scripts/release.sh --publish`.
+
+J.R's Mac already runs the notarized 1.0.0 from `/Applications` (installed 2026-11-10, library intact).
+
 ## Release checks
 Run these on every release. A box is ticked only when it was actually done.
 
