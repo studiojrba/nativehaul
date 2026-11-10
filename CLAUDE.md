@@ -1,6 +1,6 @@
-# NX Shelf — Project Rules
+# nativehaul — Project Rules
 
-NX Shelf is a native macOS shelf for Switch ports and emulated games (1.0 scope, ADR 0046): it adopts what is already
+nativehaul is a native macOS shelf for Switch ports and emulated games (1.0 scope, ADR 0046): it adopts what is already
 on disk (existing nxnative builds, ROM folders) with zero rebuilding, launches through the owning app, and includes an
 on-by-default Switch build pipeline (driven by a **user-supplied, never-bundled** standalone nxnative).
 Start with `README.md` (quickstart + where things live), then `docs/PLAN.md` and `docs/decisions/`.
@@ -13,12 +13,12 @@ Start with `README.md` (quickstart + where things live), then `docs/PLAN.md` and
 
 ## Project structure (strict feature folders — no orphan files)
 - `project.yml` is the single source of truth for the Xcode project (XcodeGen, ADR 0003). The generated
-  `NXShelf.xcodeproj` is **not** committed. Run `./scripts/bootstrap.sh` after cloning or adding files.
-- `NXShelf/App/` — entry point, root view, dependency container (`AppEnvironment`).
-- `NXShelf/Features/<FeatureName>/` — split into `Views/`, `ViewModels/`, `Models/`, `Services/`, `Resources/`
+  `nativehaul.xcodeproj` is **not** committed. Run `./scripts/bootstrap.sh` after cloning or adding files.
+- `nativehaul/App/` — entry point, root view, dependency container (`AppEnvironment`).
+- `nativehaul/Features/<FeatureName>/` — split into `Views/`, `ViewModels/`, `Models/`, `Services/`, `Resources/`
   (create only the subfolders a feature needs; never put files directly in the feature root).
-- `NXShelf/Shared/` — cross-feature code only: `DesignSystem/`, `Networking/`, `Persistence/`, `Utilities/`.
-- `NXShelfTests/` mirrors the source tree (`NXShelfTests/Features/<FeatureName>/…`).
+- `nativehaul/Shared/` — cross-feature code only: `DesignSystem/`, `Networking/`, `Persistence/`, `Utilities/`.
+- `nativehaulTests/` mirrors the source tree (`nativehaulTests/Features/<FeatureName>/…`).
 - `docs/PLAN.md` (architecture & roadmap), `docs/PROGRESS.md` (status log), `docs/decisions/` (ADRs).
 - A file that does not fit this map is a smell: find or create its proper home before committing.
 
@@ -67,24 +67,24 @@ has are **detected, not re-demanded**.
 
 ## Shelf and router, never the engine (owner directive, ADR 0019)
 Like the Cocoon launcher on J.R's AYN Thor: one front end, and each kind of game is run by the specialist app that
-owns it. NX Shelf routes; it never emulates, translates or runs games itself.
+owns it. nativehaul routes; it never emulates, translates or runs games itself.
 - Native `.app` (including nxnative-built Switch ports) → direct launch. Emulated ROMs → the user's emulator app.
   Every route lives in the launch planning model. Steam and CrossOver are not part of 1.0 (ADR 0046).
-- Nothing that runs games is bundled: no emulators, no cores, no engines. NX Shelf detects them, routes to them,
+- Nothing that runs games is bundled: no emulators, no cores, no engines. nativehaul detects them, routes to them,
   and says honestly when one is missing (with its official page).
 - **The build engine is upstream nxnative (J.R, ADR 0027).** Auto-detection finds standalone nxnative only
   (`~/Switch`, then Homebrew); a Settings path is the user's own choice. Never source the engine, or its Python
   environment, from another app's bundle or Application Support folder, and never name other front ends in UI copy,
   preflight lines or docs.
 
-## Games launch from inside NX Shelf (J.R, 2026-11-07 19:18 EST)
+## Games launch from inside nativehaul (J.R, 2026-11-07 19:18 EST)
 That is the point of the app, and it applies to QA too.
-- User-flow testing launches games through NX Shelf's **Play** button, never by opening the game's `.app` directly.
+- User-flow testing launches games through nativehaul's **Play** button, never by opening the game's `.app` directly.
 - A direct `.app` launch (Finder, `open`, `--no-launcher`, environment overrides) is a **diagnostic method only**.
   Whenever one is used, label it as a diagnostic in the report and in PROGRESS. Tonight's Finding #6
   `--no-launcher` run was one.
 - A QA run that reaches a working game leaves it running for J.R; it is never quit as cleanup.
-- While J.R is playing, don't run the test suite on his Mac: its test host is a second NX Shelf that takes focus.
+- While J.R is playing, don't run the test suite on his Mac: its test host is a second nativehaul that takes focus.
 
 ## User-provided files (owner directive, ADR 0019)
 Anything that must come from the user's own sources — `prod.keys` for Switch builds, a console BIOS, a game's
@@ -92,7 +92,7 @@ Anything that must come from the user's own sources — `prod.keys` for Switch b
 file picker (`ProvideFilePrompt` / `UserFileRequest`). When the app knows where the file belongs (a BIOS folder), it
 copies the user's file there, never overwriting.
 - The app never sources, downloads, links to or hints at sources for these files. It asks; the user provides.
-- **Protected folders (J.R, ADR 0026):** NX Shelf never reads or watches a macOS-protected folder (Downloads,
+- **Protected folders (J.R, ADR 0026):** nativehaul never reads or watches a macOS-protected folder (Downloads,
   Desktop, Documents, …) by itself, and never asks for Full Disk Access. Access follows the user's pick (a picker
   may *open* in Downloads; the pick is the consent). Nothing on the launch path touches a protected folder.
 
@@ -114,15 +114,15 @@ Figma designs will arrive later. Until then, **structure and function beat bespo
   before moving on.
 
 - **One canonical build output (J.R, ADR 0029):** always build into Xcode's default DerivedData for the project
-  (`~/Library/Developer/Xcode/DerivedData/NXShelf-<hash>/Build/Products/Debug/NX Shelf.app`), never a
+  (`~/Library/Developer/Xcode/DerivedData/nativehaul-<hash>/Build/Products/Debug/nativehaul.app`), never a
   `-derivedDataPath`. Quit any instance you launch to verify, and leave none running at the end of a session.
 
 ## Name and identity (J.R, ADR 0045)
-- The app is **NX Shelf**, as if it had always been: GitHub `studiojrba/nx-shelf`; project, scheme, targets, source
-  folders and the Swift module are `NXShelf`.
-- Its identity is its own: bundle ID `com.studiojrba.NXShelf`, `~/Library/Application Support/NX Shelf` (everything
-  the app writes, via `AppInfo.supportDirectory`), the store `NXShelf.store` inside it, the Keychain service
-  `com.studiojrba.NXShelf`. Nothing reads, points at or migrates data from an earlier identity.
+- The app is **nativehaul**, as if it had always been: GitHub `studiojrba/nativehaul`; project, scheme, targets, source
+  folders and the Swift module are `nativehaul`.
+- Its identity is its own: bundle ID `com.studiojrba.nativehaul`, `~/Library/Application Support/nativehaul` (everything
+  the app writes, via `AppInfo.supportDirectory`), the store `nativehaul.store` inside it, the Keychain service
+  `com.studiojrba.nativehaul`. Nothing reads, points at or migrates data from an earlier identity.
 
 ## Data integrity rules (product invariants)
 - **Playtime sources are never silently merged.** Every figure carries a `PlaytimeSource`

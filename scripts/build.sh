@@ -2,19 +2,19 @@
 # Generates the project, builds the app, and runs unit tests.
 #
 # One canonical build output (ADR 0029): this builds into Xcode's default DerivedData for the project — the same
-# folder Xcode itself uses — so there is exactly one NX Shelf.app on this Mac to launch:
-#   ~/Library/Developer/Xcode/DerivedData/NXShelf-<hash>/Build/Products/Debug/NX Shelf.app
+# folder Xcode itself uses — so there is exactly one nativehaul.app on this Mac to launch:
+#   ~/Library/Developer/Xcode/DerivedData/nativehaul-<hash>/Build/Products/Debug/nativehaul.app
 # Never pass -derivedDataPath here; a second build folder means a second launchable copy.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 ./scripts/bootstrap.sh
 mkdir -p build
-xcodebuild -project NXShelf.xcodeproj -scheme NXShelf -configuration Debug -destination 'platform=macOS,arch=arm64' \
+xcodebuild -project nativehaul.xcodeproj -scheme nativehaul -configuration Debug -destination 'platform=macOS,arch=arm64' \
   build test 2>&1 | tee build/xcodebuild.log | grep -E "\.swift:[0-9]+:[0-9]+: (error|warning)|\*\* (BUILD|TEST)|Test run|✘" | awk '!seen[$0]++' || true
 grep -q "\*\* TEST SUCCEEDED \*\*" build/xcodebuild.log
-products=$(xcodebuild -project NXShelf.xcodeproj -scheme NXShelf -configuration Debug -showBuildSettings 2>/dev/null \
+products=$(xcodebuild -project nativehaul.xcodeproj -scheme nativehaul -configuration Debug -showBuildSettings 2>/dev/null \
   | awk -F' = ' '/ BUILT_PRODUCTS_DIR /{print $2; exit}')
-app="$products/NX Shelf.app"
+app="$products/nativehaul.app"
 # A stable signature (crash pass, ADR 0044): ad-hoc signing gives the app a new identity on every build, so macOS
 # re-asks for Keychain access and the app waits on that prompt. When this Mac has an Apple Development certificate,
 # the canonical app is re-signed with it, so the identity (and the Keychain's "Always Allow") survives rebuilds.

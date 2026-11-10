@@ -4,11 +4,11 @@
 
 ## What was found
 I mined `~/Library/Logs/DiagnosticReports` (and the system-level folder) for every report from this app under
-all three names (Playrite, Retriever, NX Shelf), and sampled the live app. Ranked by impact on J.R:
+all three names (Playrite, Retriever, nativehaul), and sampled the live app. Ranked by impact on J.R:
 
 | # | Signature | Reports | Real use or tests? | Status |
 |---|-----------|---------|--------------------|--------|
-| 1 | **Window frozen on a Keychain read at launch.** `RootView` launch task → `LibraryViewModel.runAutomaticUpkeep` → `SteamSyncService.isConfigured` → `SteamAccountStore.hasAPIKey` → `SecItemCopyMatching` on the **main thread**, waiting on a macOS Keychain permission prompt. Seen live tonight in both the old Retriever and the new NX Shelf copies: frozen for the whole session until the prompt is answered. | live sample ×2 | Real use | **Fixed** (below) |
+| 1 | **Window frozen on a Keychain read at launch.** `RootView` launch task → `LibraryViewModel.runAutomaticUpkeep` → `SteamSyncService.isConfigured` → `SteamAccountStore.hasAPIKey` → `SecItemCopyMatching` on the **main thread**, waiting on a macOS Keychain permission prompt. Seen live tonight in both the old Retriever and the new nativehaul copies: frozen for the whole session until the prompt is answered. | live sample ×2 | Real use | **Fixed** (below) |
 | 2 | **Launch hang (2026-11-07 00:24, `.hang`).** Main thread inside `NXNativeViewModel.init` → `NXNativeLocator.keysSearchPaths`. | 1 | Real use | Already fixed by `11daf02` nine minutes later (the Downloads watcher that hung launch was removed); the remaining search is a quick `~/Switch` listing |
 | 3 | **CPU overuse (2026-11-09 20:32, 20:41, 20:54, `cpu_resource`).** The v2 light build: the game case scene's 60 fps sway (`GameCaseScene`) and timelines. | 3 | Real use | Gone with the v2 revert (ADR 0042) |
 | 4 | **CPU overuse (2026-11-06 13:37).** `SteamBottleClient.installProgress` polling loop during a CrossOver Steam install. | 1 | Real use | Leaves with CrossOver in the 1.0 scope surgery |

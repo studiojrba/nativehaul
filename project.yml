@@ -1,4 +1,4 @@
-name: NXShelf
+name: nativehaul
 options:
   bundleIdPrefix: com.studiojrba
   deploymentTarget:
@@ -22,42 +22,42 @@ settings:
     ENABLE_HARDENED_RUNTIME: YES
     DEAD_CODE_STRIPPING: YES
 targets:
-  NXShelf:
+  nativehaul:
     type: application
     platform: macOS
     sources:
-      - path: NXShelf
+      - path: nativehaul
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.studiojrba.NXShelf
-        PRODUCT_NAME: NX Shelf
-        PRODUCT_MODULE_NAME: NXShelf
+        PRODUCT_BUNDLE_IDENTIFIER: com.studiojrba.nativehaul
+        PRODUCT_NAME: nativehaul
+        PRODUCT_MODULE_NAME: nativehaul
         GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: NX Shelf
+        INFOPLIST_KEY_CFBundleDisplayName: nativehaul
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.games
         INFOPLIST_KEY_NSHumanReadableCopyright: "© studiojrba"
         ENABLE_APP_SANDBOX: NO
         ENABLE_TESTABILITY: YES
-  NXShelfTests:
+  nativehaulTests:
     type: bundle.unit-test
     platform: macOS
     sources:
-      - path: NXShelfTests
+      - path: nativehaulTests
     dependencies:
-      - target: NXShelf
+      - target: nativehaul
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.studiojrba.NXShelfTests
+        PRODUCT_BUNDLE_IDENTIFIER: com.studiojrba.nativehaulTests
         GENERATE_INFOPLIST_FILE: YES
-        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/NX Shelf.app/Contents/MacOS/NX Shelf"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/nativehaul.app/Contents/MacOS/nativehaul"
         BUNDLE_LOADER: "$(TEST_HOST)"
 schemes:
-  NXShelf:
+  nativehaul:
     build:
       targets:
-        NXShelf: all
-        NXShelfTests: [test]
+        nativehaul: all
+        nativehaulTests: [test]
     test:
       targets:
-        - NXShelfTests
+        - nativehaulTests
       gatherCoverageData: true

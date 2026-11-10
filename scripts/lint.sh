@@ -3,8 +3,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 if [[ "${1:-}" == "--check" ]]; then
-  swiftformat NXShelf NXShelfTests --lint
+  swiftformat nativehaul nativehaulTests --lint
 else
-  swiftformat NXShelf NXShelfTests
+  swiftformat nativehaul nativehaulTests
 fi
 swiftlint lint --strict --quiet
