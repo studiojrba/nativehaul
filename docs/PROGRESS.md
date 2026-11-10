@@ -1285,6 +1285,26 @@ approved by J.R when he set the rule). 333 tests (+6).
   - settings.
 - Not verified live: there are no credentials yet.
 
+## Identity redo + surgery: state on J.R's Mac (2026-11-09 23:25)
+- **J.R's copy:** relaunched as the new identity (`com.studiojrba.NXShelf`). It started fresh and adopted all 18
+  built ports from `~/Switch/Games`, each with its stamped title ID, with no rebuilding. titledb media fills in the
+  background.
+- **Nothing to adopt yet for emulators:** RetroArch is detected at `~/Applications/RetroArch.app` but has no cores
+  installed, and there are no ROM folders on this Mac yet.
+- **Old-identity data orphaned on disk.** Not read, not migrated, not deleted; J.R decides the purge:
+  - `~/Library/Application Support/Playrite/` (1.4 GB: Artwork, Audit, Backups, HLTB, TitleDB);
+  - `~/Library/Application Support/default.store`, `default.store-shm`, `default.store-wal` (the old library);
+  - `~/Library/Preferences/com.studiojrba.Playrite.plist` (the old defaults domain);
+  - Keychain, service `com.studiojrba.Playrite`: `steam.webapi.key` and `steamgriddb.api.key` are present (the
+    Twitch items were never stored);
+  - `~/Library/Caches/com.studiojrba.Playrite`, `~/Library/HTTPStorages/com.studiojrba.Playrite` and
+    `com.studiojrba.Playrite.binarycookies`;
+  - the old build output, `~/Library/Developer/Xcode/DerivedData/Playrite-exinnpzvysdovkcwpocorbnjqrch` (517 MB);
+  - the old `Retriever.app` build, moved to the Trash earlier tonight.
+- **Local folder rename flagged, not done:** renaming `~/Projects/Retriever` to `NXShelf` would pull the running
+  session's working folder out from under it, and change Xcode's DerivedData folder (the canonical build path J.R's
+  copy runs from). Best done between sessions; then rebuild once with `scripts/build.sh`.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
