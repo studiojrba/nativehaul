@@ -1,9 +1,10 @@
 import AppKit
 import SwiftUI
 
-/// Official screenshots above a job's title (ADR 0028): a fixed 16:9 area that crossfades to the next image every
-/// 3 seconds and loops. It pauses while hovered; with Reduce Motion it shows the first image only, still. Images
-/// decode off the main thread behind a quiet placeholder, so nothing shifts and the build UI never waits. It has no
+/// Official screenshots above a job's title (ADR 0028): crossfades to the next image every 3 seconds and loops. The
+/// frame takes each slide's own shape (ADR 0038), so the whole image is always visible, never cropped. It pauses while
+/// hovered; with Reduce Motion it shows the first image only, still. Images
+/// decode off the main thread behind a quiet placeholder, so the build UI never waits. It has no
 /// gestures, so it never takes clicks meant for the build controls.
 struct BuildShowcaseView: View {
     /// What to show.
@@ -14,23 +15,29 @@ struct BuildShowcaseView: View {
     @State private var isHovered = false
 
     var body: some View {
-        Theme.surface
-            .frame(maxWidth: .infinity)
-            .aspectRatio(1 / DesignTokens.Builds.showcaseHeightRatio, contentMode: .fit)
-            .overlay {
-                if let image = loaded[index] {
-                    Image(nsImage: image)
-                        .resizable()
-                        .scaledToFill()
-                        .id(index)
-                        .transition(.opacity)
+        let shape = RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
+        FittedMediaFrame(aspect: currentAspect, maxHeight: DesignTokens.Media.showcaseMaxHeight) {
+            Theme.surface
+                .overlay {
+                    if let image = loaded[index] {
+                        Image(nsImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .id(index)
+                            .transition(.opacity)
+                    }
                 }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
-            .overlay(RoundedRectangle(cornerRadius: DesignTokens.Radius.lg).strokeBorder(Theme.hairline))
-            .onHover { isHovered = $0 }
-            .accessibilityHidden(true)
-            .task(id: showcase) { await run() }
+                .clipShape(shape)
+                .overlay(shape.strokeBorder(Theme.hairline))
+        }
+        .onHover { isHovered = $0 }
+        .accessibilityHidden(true)
+        .task(id: showcase) { await run() }
+    }
+
+    /// The showing slide's own shape (16:9 until it has loaded).
+    private var currentAspect: CGFloat {
+        loaded[index].flatMap { MediaFit.aspect(of: $0.size) } ?? DesignTokens.Media.fallbackAspect
     }
 
     private var rotates: Bool {

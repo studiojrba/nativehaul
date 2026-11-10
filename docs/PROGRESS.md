@@ -1085,6 +1085,15 @@ approved by J.R when he set the rule). 333 tests (+6).
     column never changes, at 1100 / 640 / 420 pt, all three dial positions, and borderless and titled windows. Resting
     vs hovered renders are in `round-2/`.
 
+## 39 · feature/media-slideshow-fit — media pass 1/4: slideshows never crop (J.R, Mon 18:48)
+- ✅ J.R's Kingdom Hearts II report: the Builds slideshow cropped every side. Both slideshows (Builds showcase and
+  game detail media) now take each slide's own shape through `MediaFit` + `FittedMediaFrame`, and images fit
+  rather than fill. The frame's width and height follow the current slide, up to a height cap (ADR 0038 §1).
+- 🧪 `MediaFitTests` (the frame always has the image's shape, within width and cap) and `SlideshowFitRenderTests`
+  (each view rendered with 4:3, 16:9, 21:9 and 9:16 test art that has a coloured band on every edge: all four bands
+  must survive, and the visible frame must have the image's shape).
+- Visible change: wide heroes on the detail page now show whole, so they are shorter than the old cropped hero.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1127,6 +1136,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 36 | `feature/home-page` (F4) | ✅ | ✅ | 472 | ✅ |
 | 37 | `feature/installed-filter` (F5) | ✅ | ✅ | 476 | ✅ |
 | 38 | `feature/meebits-energy-pass` (look; J.R's eyeball first) | ✅ | ✅ | 492 | ✅ |
+| 39 | `feature/media-slideshow-fit` (media pass 1/4) | ✅ | ✅ | 503 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1166,7 +1176,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0037)
+## Key decisions (see `docs/decisions/` ADR 0001–0038)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.

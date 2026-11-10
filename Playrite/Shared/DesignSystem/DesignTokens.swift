@@ -138,8 +138,6 @@ enum DesignTokens {
         static let slideSeconds: Double = 3
         /// Crossfade between screenshots (seconds).
         static let crossfadeSeconds: Double = 0.8
-        /// Showcase aspect ratio (16:9), height divided by width.
-        static let showcaseHeightRatio: CGFloat = 0.5625
         /// Longest edge showcase images are decoded at.
         static let showcaseDecodePixels: CGFloat = 1600
     }

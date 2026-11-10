@@ -2,8 +2,8 @@ import AppKit
 import SwiftUI
 
 /// Wide hero/background slot at the top of the details centre: the hero image followed by carousel slides
-/// (screenshots, trailer thumbnails), all rendered from the local artwork cache. Falls back to the cover, then a
-/// placeholder.
+/// (screenshots), all rendered from the local artwork cache. Falls back to the cover, then a placeholder. The frame
+/// takes each slide's own shape (ADR 0038), up to the dial's hero height, so a slide is never cropped.
 struct HeroMediaView: View {
     /// Hero image path.
     let heroImagePath: String?
@@ -15,27 +15,40 @@ struct HeroMediaView: View {
     @Environment(\.designIntensity) private var intensity
 
     var body: some View {
-        Theme.placeholder
-            .frame(maxWidth: .infinity)
-            .frame(height: EnergyLevel.of(intensity).detailHeroHeight)
-            .overlay {
-                // An overlay takes the placeholder's size, so a wide image fills it without widening the column.
-                if let image = currentImage {
-                    Image(nsImage: image).resizable().scaledToFill()
-                } else {
-                    Image(systemName: "photo.on.rectangle.angled")
-                        .font(DesignTokens.Typography.largeTitle)
-                        .foregroundStyle(Theme.secondaryText)
+        Group {
+            if let image = currentImage {
+                FittedMediaFrame(
+                    aspect: MediaFit.aspect(of: image.size) ?? DesignTokens.Media.fallbackAspect,
+                    maxHeight: heroHeight
+                ) {
+                    Image(nsImage: image).resizable().scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+                        .overlay(alignment: .bottomTrailing) { slideControls }
                 }
+            } else {
+                Theme.placeholder
+                    .frame(maxWidth: .infinity)
+                    .frame(height: heroHeight)
+                    .overlay {
+                        Image(systemName: "photo.on.rectangle.angled")
+                            .font(DesignTokens.Typography.largeTitle)
+                            .foregroundStyle(Theme.secondaryText)
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
+                    .overlay(alignment: .bottomTrailing) { slideControls }
             }
-            .clipped()
-            .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.lg))
-            .overlay(alignment: .bottomTrailing) {
-                if slides.count > 1 {
-                    controls
-                }
-            }
-            .accessibilityElement(children: .contain)
+        }
+        .accessibilityElement(children: .contain)
+    }
+
+    private var heroHeight: CGFloat {
+        EnergyLevel.of(intensity).detailHeroHeight
+    }
+
+    @ViewBuilder private var slideControls: some View {
+        if slides.count > 1 {
+            controls
+        }
     }
 
     private var controls: some View {
