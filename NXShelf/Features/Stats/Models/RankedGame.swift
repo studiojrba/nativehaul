@@ -1,6 +1,6 @@
 import Foundation
 
-/// A game on the Stats story row (ADR 0025, the Steam Replay pattern): ranked by its largest single real playtime
+/// A game on the Stats story row (ADR 0025, the year-in-review pattern): ranked by its largest single real playtime
 /// figure, shown with that figure's source label. Sources are never added together and HLTB estimates never count.
 struct RankedGame: Identifiable, Equatable, Sendable {
     /// How many games the row shows.
@@ -19,7 +19,7 @@ struct RankedGame: Identifiable, Equatable, Sendable {
     /// Where that figure comes from.
     let source: PlaytimeSource
 
-    /// The figure with its label, for example "66h 42m · SteamSynced".
+    /// The figure with its label, for example "66h 42m · MacTracked".
     var playtimeText: String {
         "\(DurationFormatting.compact(seconds: seconds)) · \(source.label)"
     }

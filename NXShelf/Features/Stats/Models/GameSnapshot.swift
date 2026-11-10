@@ -6,11 +6,8 @@ struct GameSnapshot: Equatable, Sendable, Identifiable {
     let title: String
     let platform: GamePlatform
     let status: GameStatus
-    let steamSyncedSeconds: Int?
     let selfReportedSeconds: Int?
     let sessions: [SessionSnapshot]
-    let steamAchievementsUnlocked: Int?
-    let steamAchievementsTotal: Int?
     /// Local cover art, for presentation only (the Stats story row).
     var coverImagePath: String?
 
@@ -19,9 +16,6 @@ struct GameSnapshot: Equatable, Sendable, Identifiable {
         var totals: [PlaytimeSource: Int] = [:]
         for session in sessions where !session.source.isEstimate {
             totals[session.source, default: 0] += session.durationSeconds
-        }
-        if let steamSyncedSeconds {
-            totals[.steamSynced, default: 0] += steamSyncedSeconds
         }
         if let selfReportedSeconds {
             totals[.selfReported, default: 0] += selfReportedSeconds

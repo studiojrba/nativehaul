@@ -35,7 +35,7 @@ struct IGDBSettingsSection: View {
                 Text(message).foregroundStyle(viewModel.isError ? Theme.danger : Theme.secondaryText)
             }
         } footer: {
-            Text("Optional. With these, Switch games Steam doesn't cover get a YouTube trailer, and IGDB fills "
+            Text("Optional. With these, Switch games get a YouTube trailer, and IGDB fills "
                 + "screenshots and descriptions nothing else had. Kept only in your macOS Keychain.")
                 .foregroundStyle(Theme.secondaryText)
         }

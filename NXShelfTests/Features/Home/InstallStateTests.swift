@@ -23,12 +23,8 @@ struct InstallStateTests {
         #expect(state { $0.romPath = "/roms/Gone.sfc" } == .notInstalled)
     }
 
-    @Test func aSteamCopyFoundAtTheLastScanIsInstalled() {
-        #expect(state { $0.steamInstalls = [.mac] } == .installed)
-    }
-
     @Test func nothingToGoOnIsUnknownNeverNotInstalled() {
         #expect(state { _ in } == .unknown)
-        #expect(state { $0.steamAppID = 620 } == .unknown)
+        #expect(state { $0.switchTitleID = "0100000000010000" } == .unknown)
     }
 }

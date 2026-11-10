@@ -27,7 +27,6 @@ extension Game {
         MetadataQuery(
             gameID: id,
             title: title,
-            steamAppID: steamAppID,
             platform: platform,
             switchTitleID: platform == .switchPort
                 ? switchTitleID ?? NXNativeAppTitleID.titleID(ofAppAt: appBundlePath)

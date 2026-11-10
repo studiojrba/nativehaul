@@ -10,5 +10,4 @@ enum BadgeID: String, CaseIterable, Sendable {
     case collectionComplete
     case nativeExplorer
     case weekStreak
-    case perfectAchievements
 }

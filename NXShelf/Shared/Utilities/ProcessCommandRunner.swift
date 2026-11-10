@@ -23,13 +23,4 @@ struct ProcessCommandRunner: CommandRunning {
             }
         }
     }
-
-    func start(executable: String, arguments: [String]) throws {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: executable)
-        process.arguments = arguments
-        process.standardOutput = FileHandle.nullDevice
-        process.standardError = FileHandle.nullDevice
-        try process.run()
-    }
 }

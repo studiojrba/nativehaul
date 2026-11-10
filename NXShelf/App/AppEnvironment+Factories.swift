@@ -8,7 +8,6 @@ extension AppEnvironment {
             transfer: transfer,
             folderImporter: folderImporter,
             metadataFetcher: metadataFetcher,
-            steamSync: steamSync,
             components: components
         )
         viewModel.reload()
@@ -18,28 +17,6 @@ extension AppEnvironment {
     /// Builds a game detail view model.
     func makeGameDetailViewModel(for game: Game) -> GameDetailViewModel {
         GameDetailViewModel(game: game, repository: repository, hltb: hltb)
-    }
-
-    /// Builds the Steam setup flow (Settings → Steam and the Steam screen's empty state).
-    func makeSteamConnectionViewModel() -> SteamConnectionViewModel {
-        SteamConnectionViewModel(
-            account: steamAccount,
-            signIn: steamSignIn,
-            sync: steamSync,
-            opener: urlOpener,
-            http: imageHTTP,
-            onChanged: LibraryChangeNotification.post
-        )
-    }
-
-    /// Builds the Steam dashboard view model.
-    func makeSteamDashboardViewModel(onLibraryChanged: @escaping @MainActor () -> Void) -> SteamDashboardViewModel {
-        SteamDashboardViewModel(sync: steamSync, onLibraryChanged: onLibraryChanged)
-    }
-
-    /// Builds the achievements view model for a Steam game.
-    func makeSteamAchievementsViewModel(for game: Game) -> SteamAchievementsViewModel {
-        SteamAchievementsViewModel(game: game, sync: steamSync)
     }
 
     /// Builds the tracking dashboard view model.
@@ -202,18 +179,11 @@ extension AppEnvironment {
             store: onboarding,
             status: LiveOnboardingStatus(
                 gameFolders: gameFolders,
-                steamAccount: steamAccount,
-                bottles: bottleInstaller,
                 tracking: trackingPreferences,
                 emulators: emulators
             ),
             onFinish: onFinish
         )
-    }
-
-    /// Builds the one-click Download panel view model for a game.
-    func makeBottleInstallViewModel(for game: Game) -> BottleInstallViewModel {
-        BottleInstallViewModel(game: game, installer: bottleInstaller, onChanged: LibraryChangeNotification.post)
     }
 
     /// Builds the launch view model for a game.

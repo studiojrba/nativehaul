@@ -26,7 +26,6 @@ final class LibraryViewModel {
     private let transfer: any LibraryTransferring
     private let folderImporter: (any GameFolderImporting)?
     private let metadataFetcher: (any MetadataFetching)?
-    private let steamSync: (any SteamSyncing)?
     private let components: (any ComponentUpdating)?
     private var isRunningUpkeep = false
 
@@ -37,19 +36,17 @@ final class LibraryViewModel {
         transfer: any LibraryTransferring,
         folderImporter: (any GameFolderImporting)? = nil,
         metadataFetcher: (any MetadataFetching)? = nil,
-        steamSync: (any SteamSyncing)? = nil,
         components: (any ComponentUpdating)? = nil
     ) {
         self.repository = repository
         self.transfer = transfer
         self.folderImporter = folderImporter
         self.metadataFetcher = metadataFetcher
-        self.steamSync = steamSync
         self.components = components
     }
 
-    /// Zero-tinker upkeep (ADR 0016), run quietly at launch: detect installed games (folders, CrossOver, Steam
-    /// installs — merging duplicates as it goes), sync Steam when it's set up, then fill missing metadata. Nothing
+    /// Zero-tinker upkeep (ADR 0016), run quietly at launch: adopt games already on disk (existing nxnative builds
+    /// and ROM folders, merging duplicates as it goes), then fill missing metadata. Nothing
     /// here needs configuring first, and failures never interrupt the user; manual menu items still report results.
     func runAutomaticUpkeep() async {
         guard !isRunningUpkeep else { return }
@@ -57,9 +54,6 @@ final class LibraryViewModel {
         defer { isRunningUpkeep = false }
         if let folderImporter, !isScanningFolders {
             _ = try? await folderImporter.scanConfiguredFolders()
-        }
-        if let steamSync, await steamSync.isConfiguredOffMain() {
-            _ = try? await steamSync.syncOwnedGames()
         }
         reload()
         await fetchMetadataQuietly()
@@ -168,7 +162,7 @@ final class LibraryViewModel {
         }
     }
 
-    /// Scans configured game folders and CrossOver, then reloads.
+    /// Scans the game folders (existing builds and ROMs), then reloads.
     func scanGameFolders() async {
         guard let folderImporter, !isScanningFolders else { return }
         isScanningFolders = true

@@ -69,14 +69,14 @@ struct JumpBackInTests {
     @Test func lineShowsLastPlayedAndTheLargestRealSourceNeverMerged() throws {
         let repository = try MockLibraryRepository()
         let mixed = game("Mixed", sessionEndedDaysAgo: 1, sessionHours: 2, in: repository)
-        mixed.steamSyncedSeconds = 10 * 3600
-        #expect(JumpBackIn.line(for: mixed, now: now, calendar: calendar) == "Yesterday · 10h 00m · SteamSynced")
+        mixed.selfReportedSeconds = 10 * 3600
+        #expect(JumpBackIn.line(for: mixed, now: now, calendar: calendar) == "Yesterday · 10h 00m · SelfReported")
         let tracked = game("Tracked", sessionEndedDaysAgo: 0.1, sessionHours: 2, in: repository)
         #expect(JumpBackIn.line(for: tracked, now: now, calendar: calendar) == "Today · 2h 00m · MacTracked")
         let idle = game("Idle", status: .playing, in: repository)
         #expect(JumpBackIn.line(for: idle, now: now, calendar: calendar) == "Playing")
         #expect(JumpBackIn.timePlayed(for: idle) == nil)
-        #expect(JumpBackIn.timePlayed(for: mixed) == "10h 00m · SteamSynced")
+        #expect(JumpBackIn.timePlayed(for: mixed) == "10h 00m · SelfReported")
     }
 
     @Test func relativeDays() {

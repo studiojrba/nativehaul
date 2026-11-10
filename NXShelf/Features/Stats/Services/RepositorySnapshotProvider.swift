@@ -14,14 +14,12 @@ final class RepositorySnapshotProvider: LibrarySnapshotProviding {
         let games = try repository.fetchGames().map { game in
             GameSnapshot(
                 id: game.id, title: game.title, platform: game.platform, status: game.status,
-                steamSyncedSeconds: game.steamSyncedSeconds, selfReportedSeconds: game.selfReportedSeconds,
+                selfReportedSeconds: game.selfReportedSeconds,
                 sessions: game.sessions.map { SessionSnapshot(
                     startedAt: $0.startedAt,
                     endedAt: $0.endedAt,
                     source: $0.source
                 ) },
-                steamAchievementsUnlocked: game.steamAchievementsUnlocked,
-                steamAchievementsTotal: game.steamAchievementsTotal,
                 coverImagePath: game.coverImagePath
             )
         }

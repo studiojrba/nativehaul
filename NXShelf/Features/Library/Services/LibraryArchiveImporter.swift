@@ -57,12 +57,8 @@ struct LibraryArchiveImporter {
         game.completedAt = record.completedAt
         game.lastPlayedAt = record.lastPlayedAt
         game.coverImagePath = record.coverImagePath
-        game.steamAppID = record.steamAppID
         game.appBundlePath = record.appBundlePath
-        game.steamSyncedSeconds = record.steamSyncedSeconds
         game.selfReportedSeconds = record.selfReportedSeconds
-        game.steamAchievementsUnlocked = record.steamAchievementsUnlocked
-        game.steamAchievementsTotal = record.steamAchievementsTotal
         game.hltbID = record.hltbID
         game.developer = record.developer
         game.genres = record.genres ?? []

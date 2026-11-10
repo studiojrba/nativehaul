@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Read-only breakdown of a ``FolderImportSummary``, with CrossOver reported separately.
+/// Read-only breakdown of a ``FolderImportSummary``.
 struct FolderImportSummaryView: View {
     /// Summary to show.
     let summary: FolderImportSummary
@@ -12,13 +12,7 @@ struct FolderImportSummaryView: View {
             LabeledValueRow(label: "Added") { Text("\(summary.added)") }
             LabeledValueRow(label: "Linked") { Text("\(summary.linked)") }
             LabeledValueRow(label: "Skipped") { Text("\(summary.skipped)") }
-            LabeledValueRow(label: "CrossOver bottles found") { Text("\(summary.bottlesFound)") }
-            LabeledValueRow(label: "CrossOver games added") { Text("\(summary.crossOverAdded)") }
-            if let steam = summary.steam {
-                LabeledValueRow(label: "Steam installs (Mac)") { Text("\(steam.macInstalls)") }
-                LabeledValueRow(label: "Steam installs (CrossOver)") { Text("\(steam.crossOverInstalls)") }
-                LabeledValueRow(label: "Steam games linked / added") { Text("\(steam.linked) / \(steam.added)") }
-            }
+            LabeledValueRow(label: "ROMs added") { Text("\(summary.romsAdded)") }
             if summary.duplicatesMerged > 0 {
                 LabeledValueRow(label: "Duplicates merged") { Text("\(summary.duplicatesMerged)") }
             }
@@ -33,7 +27,7 @@ struct FolderImportSummaryView: View {
 
 #Preview {
     FolderImportSummaryView(summary: FolderImportSummary(
-        found: 6, added: 3, linked: 2, skipped: 1, bottlesFound: 1, crossOverAdded: 2,
+        found: 6, added: 3, linked: 2, skipped: 1, romsAdded: 2,
         unreadableFolders: ["/Volumes/External/Games"]
     ))
     .padding(DesignTokens.Spacing.lg)

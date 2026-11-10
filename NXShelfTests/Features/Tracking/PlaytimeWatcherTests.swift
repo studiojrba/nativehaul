@@ -44,7 +44,6 @@ struct PlaytimeWatcherTests {
         #expect(game.sessions.first?.durationSeconds == 1800)
         #expect(game.lastPlayedAt == start.addingTimeInterval(1800))
         #expect(game.selfReportedSeconds == nil)
-        #expect(game.steamSyncedSeconds == nil)
     }
 
     @Test func alreadyRunningAppIsPickedUpAndStopFinalizes() throws {

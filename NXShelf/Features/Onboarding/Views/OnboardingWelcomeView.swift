@@ -9,7 +9,7 @@ struct OnboardingWelcomeView: View {
                 .tracking(DesignTokens.Typography.displayTracking)
             VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
                 Label("Your whole game library in one place.", systemImage: "square.grid.2x2")
-                Label("Install and play — Mac, Steam, Windows games and Switch ports.", systemImage: "play.circle")
+                Label("Your Switch ports and emulated games on one shelf. Click and play.", systemImage: "play.circle")
                 Label("Hours played, progress and guides for every game.", systemImage: "chart.bar")
             }
             .font(DesignTokens.Typography.title)

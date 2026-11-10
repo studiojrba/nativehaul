@@ -10,29 +10,29 @@ struct PolishRulesTests {
     private static let hour = 3600
 
     @Test func cardLineShowsTheLargestRealFigureWithItsSourceOrTheStatus() {
-        let played = Game(title: "Tideborn", platform: .steam)
-        played.steamSyncedSeconds = 66 * Self.hour
-        played.selfReportedSeconds = 10 * Self.hour
-        #expect(GameInfoBuilder.cardLine(for: played) == "66h 00m · SteamSynced")
-        let fresh = Game(title: "Ridgeback", platform: .steam, status: .backlog)
+        let played = Game(title: "Tideborn", platform: .switchPort)
+        played.selfReportedSeconds = 66 * Self.hour
+        #expect(GameInfoBuilder.cardLine(for: played) == "66h 00m · SelfReported")
+        let fresh = Game(title: "Ridgeback", platform: .switchPort, status: .backlog)
         #expect(GameInfoBuilder.cardLine(for: fresh) == "Backlog")
     }
 
     @Test func topGamesRankByOneSourceNeverASum() {
+        let tracked = SessionSnapshot(
+            startedAt: .distantPast, endedAt: .distantPast.addingTimeInterval(TimeInterval(6 * Self.hour)),
+            source: .macTracked
+        )
         let split = GameSnapshot(
-            id: UUID(), title: "Split", platform: .steam, status: .playing,
-            steamSyncedSeconds: 6 * Self.hour, selfReportedSeconds: 6 * Self.hour, sessions: [],
-            steamAchievementsUnlocked: nil, steamAchievementsTotal: nil
+            id: UUID(), title: "Split", platform: .switchPort, status: .playing,
+            selfReportedSeconds: 6 * Self.hour, sessions: [tracked]
         )
         let single = GameSnapshot(
-            id: UUID(), title: "Single", platform: .steam, status: .playing,
-            steamSyncedSeconds: 10 * Self.hour, selfReportedSeconds: nil, sessions: [],
-            steamAchievementsUnlocked: nil, steamAchievementsTotal: nil
+            id: UUID(), title: "Single", platform: .switchPort, status: .playing,
+            selfReportedSeconds: 10 * Self.hour, sessions: []
         )
         let unplayed = GameSnapshot(
-            id: UUID(), title: "Unplayed", platform: .steam, status: .backlog,
-            steamSyncedSeconds: nil, selfReportedSeconds: nil, sessions: [],
-            steamAchievementsUnlocked: nil, steamAchievementsTotal: nil
+            id: UUID(), title: "Unplayed", platform: .switchPort, status: .backlog,
+            selfReportedSeconds: nil, sessions: []
         )
         let ranked = RankedGame.top([split, single, unplayed])
         #expect(ranked.map(\.title) == ["Single", "Split"])

@@ -6,18 +6,22 @@ import Testing
 struct GameInfoBuilderTests {
     @Test func rowsCoverEveryRequestedFieldInOrder() {
         let game = Game(
-            title: "Portal 2",
-            platform: .steam,
+            title: "Super Mario Odyssey",
+            platform: .switchPort,
             status: .playing,
             releaseDate: Date(timeIntervalSince1970: 0)
         )
-        game.developer = "Valve"
+        game.developer = "Nintendo"
         game.tags = ["Puzzle", "Co-op"]
         game.installSizeBytes = 12_000_000_000
-        game.steamAppID = 620
-        game.steamInstalls = [.mac, .crossOver(bottle: "Gaming", steamRoot: "/b/Gaming/drive_c/Steam")]
-        game.steamSyncedSeconds = 36000
+        game.appBundlePath = "/Users/demo/Switch/Games/Super Mario Odyssey.app"
         game.selfReportedSeconds = 7200
+        let session = PlaySession(
+            startedAt: .distantPast,
+            endedAt: .distantPast.addingTimeInterval(36000),
+            source: .macTracked
+        )
+        game.sessions = [session]
 
         let rows = GameInfoBuilder.rows(for: game)
         #expect(rows.map(\.label) == [
@@ -26,13 +30,13 @@ struct GameInfoBuilderTests {
         ])
         let values = Dictionary(uniqueKeysWithValues: rows.map { ($0.label, $0.value) })
         #expect(values["Status"] == "Playing")
-        #expect(values["Developer"] == "Valve")
-        #expect(values["Source"] == "Steam (Mac), Steam (CrossOver — Gaming)")
+        #expect(values["Developer"] == "Nintendo")
+        #expect(values["Source"] == "Local app")
         #expect(values["Tags"] == "Puzzle, Co-op")
         #expect(values["Install Size"] != GameInfoBuilder.unknown)
         // Never a merged total: each source appears with its own label.
         let played = values["Time Played"] ?? ""
-        #expect(played.contains(PlaytimeSource.steamSynced.label))
+        #expect(played.contains(PlaytimeSource.macTracked.label))
         #expect(played.contains(PlaytimeSource.selfReported.label))
     }
 
@@ -58,11 +62,11 @@ struct GameInfoBuilderTests {
         let duplicate = Game(title: "Portal 2")
         duplicate.genres = ["puzzle", "Co-op"]
         duplicate.developer = "Valve"
-        duplicate.steamInstalls = [.mac]
+        duplicate.romPath = "/roms/Portal 2.iso"
         GameMerger.merge(duplicate, into: survivor)
         #expect(survivor.genres == ["Puzzle", "Co-op"])
         #expect(survivor.developer == "Valve")
-        #expect(survivor.steamInstalls == [.mac])
+        #expect(survivor.romPath == "/roms/Portal 2.iso")
     }
 
     @Test func archiveRoundTripsMetadata() throws {

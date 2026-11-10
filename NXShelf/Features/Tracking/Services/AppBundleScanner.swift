@@ -63,7 +63,8 @@ struct AppBundleScanner: AppBundleScanning {
             name: name,
             path: path,
             title: BundleTitleReader.title(ofBundleAt: url),
-            hasPortLibrarySibling: hasPortLibrarySibling
+            hasPortLibrarySibling: hasPortLibrarySibling,
+            switchTitleID: NXNativeAppTitleID.titleID(ofAppAt: url.path(percentEncoded: false))
         )
     }
 }

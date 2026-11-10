@@ -2,7 +2,8 @@ import Foundation
 
 /// Builds the details info list and the grid caption. All formatting lives here, not in views.
 ///
-/// "Time Played" lists each real source separately (e.g. "12h Steam · 3h Mac") — never a merged total (ADR 0006).
+/// "Time Played" lists each real source separately (e.g. "12h Mac · 3h self-reported") — never a merged total (ADR
+/// 0006).
 @MainActor
 enum GameInfoBuilder {
     /// Placeholder for unknown values.
@@ -30,26 +31,22 @@ enum GameInfoBuilder {
     }
 
     /// The poster's one secondary line (ADR 0025): the largest real playtime figure with its source label ("66h 42m ·
-    /// SteamSynced"), or the status when nothing has been played. Sources are never added together.
+    /// MacTracked"), or the status when nothing has been played. Sources are never added together.
     static func cardLine(for game: Game) -> String {
         let entries = game.playtimeBreakdown().entries.filter { !$0.source.isEstimate }
         guard let top = entries.max(by: { $0.seconds < $1.seconds }) else { return game.status.displayName }
         return "\(DurationFormatting.compact(seconds: top.seconds)) · \(top.source.label)"
     }
 
-    /// Where the game comes from: Steam locations, the tracked app, or the library.
+    /// Where the game comes from: the app on disk, the ROM, or only the library.
     static func source(_ game: Game) -> String {
-        var sources = game.steamInstalls.map(\.displayName)
-        if game.steamAppID != nil, sources.isEmpty {
-            sources.append("Steam")
-        }
         if game.appBundlePath != nil {
-            sources.append("Local app")
+            return "Local app"
         }
-        return sources.isEmpty ? "Library entry" : sources.joined(separator: ", ")
+        return game.romPath != nil ? "ROM file" : "Library entry"
     }
 
-    /// Per-source real playtime ("12h Steam · 3h Mac"), or `nil` when nothing is recorded.
+    /// Per-source real playtime ("12h Mac · 3h self-reported"), or `nil` when nothing is recorded.
     static func timePlayed(_ game: Game) -> String? {
         let entries = game.playtimeBreakdown().entries
         guard !entries.isEmpty else { return nil }

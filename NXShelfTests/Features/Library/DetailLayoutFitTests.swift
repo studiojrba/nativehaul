@@ -22,8 +22,7 @@ struct DetailLayoutFitTests {
         )
         game.genres = ["Action", "Adventure", "Role-playing", "Metroidvania", "Open World", "Co-op"]
         game.developer = "An Uncommonly Long Studio Name Interactive Entertainment Ltd."
-        game.steamAppID = 1_091_500
-        game.steamInstalls = [.crossOver(bottle: "NX Shelf – \(Self.longTitle)", steamRoot: "/b/drive_c/Steam")]
+        game.appBundlePath = "/Users/demo/Switch/Games/\(Self.longTitle).app"
         games.dropFirst().first?.title = Self.longTitle + " II"
         return (game, games)
     }
@@ -55,8 +54,7 @@ struct DetailLayoutFitTests {
     @Test func railPartsFitTheRail() {
         let inner = DesignTokens.Details.rightRailWidth - 2 * DesignTokens.Spacing.lg
         let game = Game(title: Self.longTitle)
-        game.steamAppID = 1
-        game.steamInstalls = [.crossOver(bottle: "NX Shelf – \(Self.longTitle)", steamRoot: "/b/drive_c/Steam")]
+        game.appBundlePath = "/Users/demo/Switch/Games/\(Self.longTitle).app"
         let launch = GameLaunchViewModel(game: game, launcher: RecordingGameLauncher(), watcher: MockPlaytimeWatcher())
         let unplayable = GameLaunchViewModel(
             game: Game(title: "Logbook only"), launcher: RecordingGameLauncher(), watcher: MockPlaytimeWatcher()

@@ -14,7 +14,7 @@ struct StatsCalculatorTests {
 
     @Test func countsHoursAndCompletion() {
         let snapshot = LibrarySnapshot(games: [
-            Fix.game("A", status: .completed, steam: 10 * Fix.hour, sessions: [Fix.session(dayOffset: 0, hours: 2)]),
+            Fix.game("A", status: .completed, sessions: [Fix.session(dayOffset: 0, hours: 2)]),
             Fix.game("B", status: .backlog, selfReported: Fix.hour),
             Fix.game("C", status: .backlog),
             Fix.game("D", status: .playing, sessions: [Fix.session(dayOffset: 1, hours: 1, source: .selfReported)]),
@@ -24,7 +24,6 @@ struct StatsCalculatorTests {
         #expect(stats.count(.backlog) == 2)
         #expect(stats.count(.abandoned) == 0)
         #expect(stats.completionFraction == 0.25)
-        #expect(stats.secondsBySource[.steamSynced] == 10 * Fix.hour)
         #expect(stats.secondsBySource[.macTracked] == 2 * Fix.hour)
         #expect(stats.secondsBySource[.selfReported] == 2 * Fix.hour)
         #expect(stats.secondsBySource[.hltbEstimate] == nil)

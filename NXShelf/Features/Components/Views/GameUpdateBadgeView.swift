@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Shows a game's update badge, if it has one. Display only — Steam and the user's own sources do the updating.
+/// Shows a game's update badge, if it has one. Display only — the user's own sources do the updating.
 struct GameUpdateBadgeView: View {
     /// The badge.
     let badge: GameUpdateBadge?
@@ -17,7 +17,7 @@ struct GameUpdateBadgeView: View {
 
 #Preview {
     VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
-        GameUpdateBadgeView(badge: .steamDownloading(fraction: 0.4))
+        GameUpdateBadgeView(badge: .switchUpdateAvailable(latest: "1.2.0"))
         GameUpdateBadgeView(badge: .switchUpdateAvailable(latest: "1.3.0"))
     }
     .frame(width: DesignTokens.Details.rightRailWidth)

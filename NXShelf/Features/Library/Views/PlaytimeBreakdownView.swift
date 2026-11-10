@@ -26,6 +26,6 @@ struct PlaytimeBreakdownView: View {
 }
 
 #Preview {
-    PlaytimeBreakdownView(breakdown: PlaytimeBreakdown(secondsBySource: [.steamSynced: 7200, .hltbEstimate: 36000]))
+    PlaytimeBreakdownView(breakdown: PlaytimeBreakdown(secondsBySource: [.macTracked: 7200, .hltbEstimate: 36000]))
         .padding(DesignTokens.Spacing.lg)
 }

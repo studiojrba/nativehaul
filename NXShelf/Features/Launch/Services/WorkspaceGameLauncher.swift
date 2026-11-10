@@ -1,7 +1,7 @@
 import AppKit
 import Foundation
 
-/// Live ``GameLaunching``: NSWorkspace for apps and URLs, `Process` for CrossOver.
+/// Live ``GameLaunching``: NSWorkspace for game apps and emulators.
 ///
 /// `.app` launches go through NSWorkspace so the playtime watcher sees them like any other launch.
 @MainActor
@@ -21,16 +21,6 @@ final class WorkspaceGameLauncher: GameLaunching {
                 at: URL(fileURLWithPath: path),
                 configuration: Self.openConfiguration(arguments: arguments)
             )
-        case let .url(url):
-            guard NSWorkspace.shared.open(url) else { throw LaunchError.noHandler(url.absoluteString) }
-        case let .process(executable, arguments):
-            guard FileManager.default.isExecutableFile(atPath: executable) else {
-                throw LaunchError.missingExecutable(executable)
-            }
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: executable)
-            process.arguments = arguments
-            try process.run()
         }
     }
 

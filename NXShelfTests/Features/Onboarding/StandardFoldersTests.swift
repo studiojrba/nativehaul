@@ -7,7 +7,7 @@ struct StandardFoldersTests {
     private func importer(configured: [String], exists: Bool) throws -> GameFolderImporter {
         try GameFolderImporter(
             folders: InMemoryGameFolderStore(configured),
-            discoverer: GameFolderDiscoverer(scanner: MockAppBundleScanner(), crossOver: MockCrossOverScanner()),
+            discoverer: GameFolderDiscoverer(scanner: MockAppBundleScanner()),
             repository: MockLibraryRepository(),
             trackingPreferences: InMemoryTrackingPreferencesStore()
         ) { _ in exists }

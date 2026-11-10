@@ -6,8 +6,6 @@ struct MetadataQuery: Equatable, Sendable {
     let gameID: UUID
     /// Display title (matched with ``TitleNormalizer`` only — never fuzzily).
     let title: String
-    /// Steam app ID, when known. Always tried before the title.
-    let steamAppID: Int?
     /// Library platform.
     let platform: GamePlatform
     /// Switch title ID of a port (stored, or read from its nxnative build), joined to titledb (ADR 0038).

@@ -2,7 +2,7 @@ import Foundation
 
 /// A game's trailer as the media set plays it (ADR 0038), parsed from ``Game/trailerVideoURL``.
 enum GameTrailer: Equatable, Sendable {
-    /// A stream AVPlayer plays natively (Steam's HLS playlist or an mp4).
+    /// A stream AVPlayer plays natively (an HLS playlist or an mp4).
     case stream(URL)
     /// A YouTube video, shown in YouTube's own embedded player (IGDB's trailers).
     case youTube(videoID: String)

@@ -24,7 +24,7 @@ struct HoursBySourceView: View {
 
 #Preview {
     HoursBySourceView(entries: [
-        PlaytimeEntry(source: .steamSynced, seconds: 360_000),
+        PlaytimeEntry(source: .selfReported, seconds: 360_000),
         PlaytimeEntry(source: .macTracked, seconds: 7200),
     ])
     .padding(DesignTokens.Spacing.lg)

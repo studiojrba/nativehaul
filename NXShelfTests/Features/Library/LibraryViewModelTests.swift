@@ -13,8 +13,8 @@ struct LibraryViewModelTests {
 
     @Test func addTrimsAndIgnoresBlank() throws {
         let (viewModel, repository) = try makeViewModel()
-        viewModel.addGame(title: "   ", platform: .steam, status: .backlog)
-        viewModel.addGame(title: "  Tideborn ", platform: .steam, status: .playing)
+        viewModel.addGame(title: "   ", platform: .switchPort, status: .backlog)
+        viewModel.addGame(title: "  Tideborn ", platform: .switchPort, status: .playing)
         #expect(viewModel.games.map(\.title) == ["Tideborn"])
         #expect(repository.saveCount == 1)
     }

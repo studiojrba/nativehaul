@@ -52,7 +52,7 @@ struct TopGamesRow: View {
 
 #Preview {
     TopGamesRow(games: [
-        RankedGame(id: UUID(), rank: 1, title: "Tideborn", coverImagePath: nil, seconds: 240_120, source: .steamSynced),
+        RankedGame(id: UUID(), rank: 1, title: "Tideborn", coverImagePath: nil, seconds: 240_120, source: .macTracked),
         RankedGame(id: UUID(), rank: 2, title: "Ridgeback", coverImagePath: nil, seconds: 36000, source: .macTracked),
     ])
     .padding(DesignTokens.Spacing.xl)

@@ -2,43 +2,25 @@ import Foundation
 @testable import NXShelf
 import Testing
 
+/// App-based games (Switch ports) launch their own `.app`, so playtime is recorded; there is no other route in 1.0.
 @MainActor
 struct LaunchPlannerTests {
-    private let bottle = SteamInstallLocation.crossOver(
-        bottle: "Gaming", steamRoot: "/b/Gaming/drive_c/Program Files (x86)/Steam"
-    )
-
-    @Test func trackedAppComesFirstThenSteamLocations() throws {
-        let game = Game(title: "Portal 2")
-        game.appBundlePath = "/Games/Portal 2.app"
-        game.steamAppID = 620
-        game.steamInstalls = [.mac, bottle]
+    @Test func theTrackedAppIsTheWayToPlay() {
+        let game = Game(title: "Tideborn", platform: .switchPort)
+        game.appBundlePath = "/Games/Tideborn.app"
         let options = LaunchPlanner.availability(for: game, fileExists: { _ in true }).options
-        #expect(options.map(\.title) == ["Play", "Steam (Mac)", "Steam (CrossOver — Gaming)"])
-        #expect(options[0].target == .application(path: "/Games/Portal 2.app"))
-        #expect(options[0].isTracked)
-        #expect(try options[1].target == .url(#require(URL(string: "steam://rungameid/620"))))
-        #expect(options[2].target == .process(
-            executable: "/Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine",
-            arguments: [
-                "--bottle", "Gaming", "--cx-app", "C:\\Program Files (x86)\\Steam\\steam.exe", "-applaunch", "620",
-            ]
-        ))
+        #expect(options.map(\.title) == ["Play"])
+        #expect(options.first?.target == .application(path: "/Games/Tideborn.app"))
+        #expect(options.first?.isTracked == true)
     }
 
-    @Test func steamAppWithoutDetectedInstallFallsBackToMacSteam() {
-        let game = Game(title: "Portal")
-        game.steamAppID = 400
-        #expect(LaunchPlanner.availability(for: game).options.map(\.title) == ["Steam (Mac)"])
-    }
-
-    @Test func noTargetIsHonestlyUnavailable() {
+    @Test func noAppIsHonestlyUnavailable() {
         let game = Game(title: "Logbook only")
         guard case let .unavailable(reason) = LaunchPlanner.availability(for: game) else {
             Issue.record("expected unavailable")
             return
         }
-        #expect(reason.contains("No tracked app and no Steam app ID"))
+        #expect(reason.contains("No app found"))
     }
 
     @Test func missingBundleIsExplained() {
@@ -64,12 +46,14 @@ struct LaunchPlannerTests {
     }
 
     @Test func viewModelSurfacesLaunchErrors() async {
-        let game = Game(title: "Portal")
-        game.steamAppID = 400
+        let game = Game(title: "Tideborn")
+        game.appBundlePath = "/Games/Tideborn.app"
         let launcher = RecordingGameLauncher()
-        launcher.error = LaunchError.noHandler("steam://rungameid/400")
-        let viewModel = GameLaunchViewModel(game: game, launcher: launcher, watcher: MockPlaytimeWatcher())
+        launcher.error = CocoaError(.fileReadNoPermission)
+        let viewModel = GameLaunchViewModel(
+            game: game, launcher: launcher, watcher: MockPlaytimeWatcher(), fileExists: { _ in true }
+        )
         await viewModel.launch()
-        #expect(viewModel.errorMessage?.contains("Is Steam installed?") == true)
+        #expect(viewModel.errorMessage != nil)
     }
 }

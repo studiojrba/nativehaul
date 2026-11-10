@@ -3,10 +3,6 @@ import Foundation
 /// Where a metadata field's current value came from. Values with no recorded source came from a library import
 /// (or predate this feature) and are treated as imported.
 enum MetadataSource: String, Codable, CaseIterable, Sendable {
-    /// Steam store `appdetails` (official).
-    case steamStore
-    /// Nintendo's official eShop listing.
-    case nintendoStore
     /// Nintendo eShop data from titledb (official descriptions, screenshots and key art), joined by title ID.
     case titleDB
     /// IGDB (needs the user's Twitch credentials): YouTube trailers, screenshots and summaries for Switch ports.
@@ -17,7 +13,7 @@ enum MetadataSource: String, Codable, CaseIterable, Sendable {
     case user
 
     /// Sources a Fetch Missing Metadata pass queries, in priority order.
-    static let fetchOrder: [MetadataSource] = [.steamStore, .titleDB, .igdb, .steamGridDB]
+    static let fetchOrder: [MetadataSource] = [.titleDB, .igdb, .steamGridDB]
 
     /// Whether the value was downloaded by a metadata pass (and so may be replaced by an explicit refresh).
     var isFetched: Bool {
@@ -27,8 +23,6 @@ enum MetadataSource: String, Codable, CaseIterable, Sendable {
     /// User-facing name.
     var displayName: String {
         switch self {
-        case .steamStore: "Steam store"
-        case .nintendoStore: "Nintendo eShop"
         case .titleDB: "Nintendo eShop (titledb)"
         case .igdb: "IGDB"
         case .steamGridDB: "SteamGridDB"

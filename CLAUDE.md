@@ -1,7 +1,8 @@
 # NX Shelf — Project Rules
 
-NX Shelf is a native macOS game library hub: a Playnite-style library combined with an on-by-default
-Switch build pipeline (driven by a **user-supplied, never-bundled** external engine).
+NX Shelf is a native macOS shelf for Switch ports and emulated games (1.0 scope, ADR 0046): it adopts what is already
+on disk (existing nxnative builds, ROM folders) with zero rebuilding, launches through the owning app, and includes an
+on-by-default Switch build pipeline (driven by a **user-supplied, never-bundled** standalone nxnative).
 Start with `README.md` (quickstart + where things live), then `docs/PLAN.md` and `docs/decisions/`.
 
 ## Platform & language
@@ -23,7 +24,7 @@ Start with `README.md` (quickstart + where things live), then `docs/PLAN.md` and
 
 ## Architecture
 - **MVVM**. Views are renderers of ViewModel state; ViewModels are `@MainActor @Observable`.
-- **Protocol-first services** (ADR 0002): every service is a protocol (`SteamClientProtocol`, `SecretStore`, …)
+- **Protocol-first services** (ADR 0002): every service is a protocol (`MetadataProviding`, `SecretStore`, …)
   with a live implementation **and a mock implementation** usable in SwiftUI previews and tests.
   Inject through initialisers / `AppEnvironment`; no singletons reached from views.
 - **Every view ships with a `#Preview`**, fed by mocks / in-memory SwiftData.
@@ -47,9 +48,10 @@ customizing or tinkering needed (the option is there for those who want it).
 - Every headline feature delivers its full value **on defaults alone**. Settings and overrides exist, but no
   configuration, key paste or manual step may be a prerequisite for the core loop: **install → play → hours,
   progress and guide**.
-- The only allowed prerequisites are credentials only the user can provide (Steam sign-in, a Steam API key), and
-  each is asked for once, inline, with plain guidance — never "go to Settings first".
-- Work that can run by itself does: dedupe, metadata, Steam sync, installed-game detection, recipes.
+- **No sign-in anywhere (J.R, ADR 0046).** No OAuth, no login windows, no identity phoning home. The only
+  account-shaped features are API keys the user pastes (RetroAchievements, SteamGridDB, IGDB), kept in the Keychain,
+  and the app is fully useful without any of them.
+- Work that can run by itself does: adoption of existing builds and ROMs, dedupe, metadata, installed-game detection.
 - When a design choice trades default convenience against configurability, **convenience wins** — say so in the
   branch's ADR.
 
@@ -66,8 +68,8 @@ has are **detected, not re-demanded**.
 ## Shelf and router, never the engine (owner directive, ADR 0019)
 Like the Cocoon launcher on J.R's AYN Thor: one front end, and each kind of game is run by the specialist app that
 owns it. NX Shelf routes; it never emulates, translates or runs games itself.
-- Native `.app` (including nxnative-built Switch ports) → direct launch. Mac Steam → `steam://`. Windows Steam →
-  a CrossOver bottle. Emulated ROMs → the system's emulator app. Every route lives in the launch planning model.
+- Native `.app` (including nxnative-built Switch ports) → direct launch. Emulated ROMs → the user's emulator app.
+  Every route lives in the launch planning model. Steam and CrossOver are not part of 1.0 (ADR 0046).
 - Nothing that runs games is bundled: no emulators, no cores, no engines. NX Shelf detects them, routes to them,
   and says honestly when one is missing (with its official page).
 - **The build engine is upstream nxnative (J.R, ADR 0027).** Auto-detection finds standalone nxnative only
@@ -124,14 +126,15 @@ Figma designs will arrive later. Until then, **structure and function beat bespo
 
 ## Data integrity rules (product invariants)
 - **Playtime sources are never silently merged.** Every figure carries a `PlaytimeSource`
-  (`steamSynced`, `macTracked`, `selfReported`, `hltbEstimate`). Totals are shown per source.
+  (`macTracked`, `selfReported`, `hltbEstimate`). Totals are shown per source.
 - Badges are computed **only from real recorded data** — never estimates, never fabricated.
 - HowLongToBeat figures are always labelled **"HLTB estimate"**.
 - Series part numbers are **never renumbered**; Up Next drops completed items but keeps original numbering.
 
 ## Secrets & legal
-- The Steam Web API key lives **only in the Keychain**. Never in code, config, UserDefaults, logs, or git.
-  The app must work gracefully with no key configured.
+- User-pasted API keys (RetroAchievements, SteamGridDB, IGDB) live **only in the Keychain**, and are read off the
+  main thread (ADR 0044). Never in code, config, UserDefaults, logs, or git. The app works fully with none of them.
+- **No telemetry** by default.
 - The nxnative build engine is an **external, user-supplied tool** and is **never bundled**. Neither are
   console keys, firmware, or game files. `.gitignore` blocks common key/game file extensions.
 - Troubleshooting actions must be **previewable, reversible, backup-first, and audit-logged**.
@@ -142,6 +145,6 @@ Figma designs will arrive later. Until then, **structure and function beat bespo
 - **Never commit or push to `main`/`master`.**
 - One branch per feature: `feature/<kebab-name>`; small clean commits; push to `origin`.
 - **Conventional Commits** for every message: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`
-  (optional scope, e.g. `feat(steam): add owned-games client`).
+  (optional scope, e.g. `feat(emulation): detect RetroArch cores`).
 - Unfinished work is still pushed, with a `WIP:` note in the commit body.
 - Update `docs/PROGRESS.md` on every branch (built / compiles / stubbed / blocked).

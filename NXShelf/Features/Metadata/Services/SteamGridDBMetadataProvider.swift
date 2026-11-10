@@ -32,15 +32,6 @@ struct SteamGridDBMetadataProvider: MetadataProviding {
     }
 
     private func resolveGameID(_ query: MetadataQuery, headers: [String: String]) async throws -> TitleMatch<Int> {
-        if let steamAppID = query.steamAppID {
-            let envelope: SteamGridDBEnvelope<SteamGridDBGame>? = try await http.get(
-                SteamGridDBEndpoint.game(steamAppID: steamAppID),
-                headers: headers
-            )
-            if let game = envelope?.data {
-                return .unique(game.id)
-            }
-        }
         let results: SteamGridDBEnvelope<[SteamGridDBGame]>? = try await http.get(
             SteamGridDBEndpoint.search(term: query.title),
             headers: headers

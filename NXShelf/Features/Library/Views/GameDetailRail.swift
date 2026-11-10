@@ -20,7 +20,6 @@ struct GameDetailRail: View {
                             RoundedRectangle(cornerRadius: DesignTokens.Radius.md).strokeBorder(Theme.hairline)
                         )
                 }
-                BottleInstallPanel(viewModel: environment.makeBottleInstallViewModel(for: viewModel.game))
                 LaunchButton(viewModel: launchViewModel)
                 GameUpdateBadgeView(badge: environment.gameBadges.badge(for: viewModel.game))
                 Button("Manage…", systemImage: "slider.horizontal.3", action: onManage)

@@ -2,7 +2,7 @@ import Foundation
 import Synchronization
 
 /// Mock ``CommandRunning``: records every call and returns canned exit codes. A side effect per tool lets tests
-/// simulate what the tool would leave on disk (a new bottle, an installed Steam).
+/// simulate what the tool would leave on disk.
 final class RecordingCommandRunner: CommandRunning {
     /// One recorded call.
     struct Call: Equatable, Sendable {
@@ -10,8 +10,6 @@ final class RecordingCommandRunner: CommandRunning {
         let executable: String
         /// Arguments.
         let arguments: [String]
-        /// `true` for ``CommandRunning/start(executable:arguments:)``.
-        let isDetached: Bool
     }
 
     /// Simulated effect of a call.
@@ -21,7 +19,7 @@ final class RecordingCommandRunner: CommandRunning {
     private let exitCodes: [String: Int32]
     private let effect: Effect
 
-    /// Creates the mock. `exitCodes` maps a tool's file name ("cxbottle", "wine") to its exit status (default 0).
+    /// Creates the mock. `exitCodes` maps a tool's file name ("codesign", "xattr") to its exit status (default 0).
     init(exitCodes: [String: Int32] = [:], effect: @escaping Effect = { _ in }) {
         self.exitCodes = exitCodes
         self.effect = effect
@@ -33,18 +31,12 @@ final class RecordingCommandRunner: CommandRunning {
     }
 
     func run(executable: String, arguments: [String]) async throws -> CommandResult {
-        let call = Call(executable: executable, arguments: arguments, isDetached: false)
+        let call = Call(executable: executable, arguments: arguments)
         calls.withLock { $0.append(call) }
         let code = exitCodes[(executable as NSString).lastPathComponent] ?? 0
         if code == 0 {
             effect(call)
         }
         return CommandResult(exitCode: code, output: "")
-    }
-
-    func start(executable: String, arguments: [String]) throws {
-        let call = Call(executable: executable, arguments: arguments, isDetached: true)
-        calls.withLock { $0.append(call) }
-        effect(call)
     }
 }

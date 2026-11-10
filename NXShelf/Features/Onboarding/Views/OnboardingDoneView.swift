@@ -34,7 +34,7 @@ struct OnboardingDoneView: View {
 #Preview {
     OnboardingDoneView(outcomes: [
         OnboardingOutcome(module: .findGames, isSetUp: true),
-        OnboardingOutcome(module: .steam, isSetUp: false),
+        OnboardingOutcome(module: .emulators, isSetUp: false),
     ])
     .padding(DesignTokens.Spacing.xl)
 }

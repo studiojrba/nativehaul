@@ -47,8 +47,7 @@ struct TitleDBMediaFetchTests {
         let audit = InMemoryAuditLog()
         let fetcher = MetadataFetcher(
             repository: repository,
-            steamStore: MockMetadataProvider(source: .steamStore),
-            nintendo: TitleDBMetadataProvider(store: MockTitleDBStore(entries: entries)),
+            titleDB: TitleDBMetadataProvider(store: MockTitleDBStore(entries: entries)),
             steamGridDB: MockMetadataProvider(source: .steamGridDB),
             downloader: ArtworkDownloader(http: http, cache: InMemoryArtworkCache()),
             audit: audit
@@ -107,6 +106,6 @@ struct TitleDBMediaFetchTests {
         #expect(game.metadataQuery.switchTitleID == nil)
         game.switchTitleID = "0100000000010000"
         #expect(game.metadataQuery.switchTitleID == "0100000000010000")
-        #expect(Game(title: "Portal", platform: .steam).metadataQuery.switchTitleID == nil)
+        #expect(Game(title: "Okami", platform: .emulated).metadataQuery.switchTitleID == nil)
     }
 }

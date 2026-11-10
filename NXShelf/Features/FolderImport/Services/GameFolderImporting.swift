@@ -1,9 +1,9 @@
 import Foundation
 
-/// Scans configured game folders and CrossOver, importing new games. Live: ``GameFolderImporter``;
+/// Scans the game folders, adopting existing builds and ROMs as new games. Live: ``GameFolderImporter``;
 /// mock: ``MockGameFolderImporter``.
 @MainActor
 protocol GameFolderImporting: AnyObject {
-    /// Scans every configured folder plus CrossOver and imports what is new. Idempotent.
+    /// Scans every game folder and imports what is new. Idempotent.
     func scanConfiguredFolders() async throws -> FolderImportSummary
 }

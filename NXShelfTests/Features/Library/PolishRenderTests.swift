@@ -26,7 +26,7 @@ struct PolishRenderTests {
             )
             game.heroImagePath = OffscreenRenderer.placeholderArt(name: "hero-\(index)", hue: hue, size: Self.heroSize)
             if index % 2 == 0 {
-                game.steamSyncedSeconds = (games.count - index) * 7 * Self.hour
+                game.selfReportedSeconds = (games.count - index) * 7 * Self.hour
             }
         }
         try environment.repository.save()

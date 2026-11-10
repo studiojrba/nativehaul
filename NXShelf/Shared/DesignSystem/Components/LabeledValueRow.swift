@@ -21,6 +21,6 @@ struct LabeledValueRow<Value: View>: View {
 }
 
 #Preview {
-    LabeledValueRow(label: "Platform") { Text("Steam") }
+    LabeledValueRow(label: "Platform") { Text("Switch (native port)") }
         .padding(DesignTokens.Spacing.lg)
 }

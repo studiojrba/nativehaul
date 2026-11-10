@@ -12,8 +12,6 @@ enum SidebarDestination: Hashable, Sendable {
     case collections
     /// Statistics and badges.
     case stats
-    /// Steam provider dashboard.
-    case steam
     /// Playtime tracking.
     case tracking
     /// Optional nxnative build module.

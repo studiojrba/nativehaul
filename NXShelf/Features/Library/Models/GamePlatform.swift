@@ -2,7 +2,6 @@ import Foundation
 
 /// The platform or source a library entry comes from.
 enum GamePlatform: String, Codable, CaseIterable, Identifiable, Sendable {
-    case steam
     case macNative
     case switchPort
     case emulated
@@ -16,7 +15,6 @@ enum GamePlatform: String, Codable, CaseIterable, Identifiable, Sendable {
     /// User-facing name.
     var displayName: String {
         switch self {
-        case .steam: "Steam"
         case .macNative: "Mac"
         case .switchPort: "Switch (native port)"
         case .emulated: "Emulated"

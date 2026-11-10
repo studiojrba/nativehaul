@@ -1,7 +1,7 @@
 import Foundation
 
-/// IGDB as the last media fallback for Switch ports (ADR 0038): a YouTube trailer when Steam had none, and
-/// screenshots and a summary for anything Steam and titledb missed. Matched by exact normalised name among Switch and
+/// IGDB as the last media fallback for Switch ports (ADR 0038): a YouTube trailer, and screenshots and a
+/// summary for anything titledb missed. Matched by exact normalised name among Switch and
 /// Switch 2 games. With no credentials it reports ``MetadataLookup/unavailable``, silently.
 struct IGDBMetadataProvider: MetadataProviding {
     let source = MetadataSource.igdb

@@ -6,8 +6,9 @@ import Foundation
 /// - A bundle whose path is already on any game is skipped, so re-scans add nothing.
 /// - A bundle whose normalised title matches a game with no bundle path links to that game instead of
 ///   creating a duplicate.
-/// - CrossOver launcher apps import with platform `other`; a bottle install whose name matches a launcher is
-///   skipped (the launcher wins). Installs are deduped by normalised title against the whole library.
+/// - Existing nxnative builds are adopted as they are, with zero rebuilding: they import as Switch ports with the
+///   title ID stamped in their bundle, wherever they sit in a scanned folder (ADR 0046).
+/// - Each ROM path becomes one emulated entry.
 @MainActor
 final class GameFolderImporter: GameFolderImporting {
     private let folders: any GameFolderStoring
@@ -15,7 +16,6 @@ final class GameFolderImporter: GameFolderImporting {
     private let repository: any LibraryRepository
     private let trackingPreferences: any TrackingPreferencesStoring
     private let watcher: (any PlaytimeWatching)?
-    private let locations: CrossOverLocations
     private let deduplicator: (any LibraryDeduplicating)?
     private let folderExists: (String) -> Bool
 
@@ -26,7 +26,6 @@ final class GameFolderImporter: GameFolderImporting {
         repository: any LibraryRepository,
         trackingPreferences: any TrackingPreferencesStoring,
         watcher: (any PlaytimeWatching)? = nil,
-        locations: CrossOverLocations = .standard,
         deduplicator: (any LibraryDeduplicating)? = nil,
         folderExists: @escaping (String) -> Bool = { FileManager.default.fileExists(atPath: $0) }
     ) {
@@ -35,7 +34,6 @@ final class GameFolderImporter: GameFolderImporting {
         self.repository = repository
         self.trackingPreferences = trackingPreferences
         self.watcher = watcher
-        self.locations = locations
         self.deduplicator = deduplicator
         self.folderExists = folderExists
     }
@@ -60,31 +58,15 @@ final class GameFolderImporter: GameFolderImporting {
     /// Applies a discovery to the library and saves. Exposed for tests.
     func apply(_ discovery: FolderDiscovery) throws -> FolderImportSummary {
         var state = try ImportState(games: repository.fetchGames())
-        var summary = FolderImportSummary(
-            bottlesFound: discovery.crossOver.bottles.count,
-            unreadableFolders: discovery.unreadableFolders
-        )
+        var summary = FolderImportSummary(unreadableFolders: discovery.unreadableFolders)
         let switchFolder = trackingPreferences.load().gamesFolder
-        for app in discovery.folderApps + discovery.launcherApps {
+        for app in discovery.folderApps {
             summary.found += 1
-            let platform = FolderImportPlatformResolver.platform(
-                for: app,
-                switchGamesFolder: switchFolder,
-                launchersFolder: locations.launchersFolder
-            )
+            let platform = FolderImportPlatformResolver.platform(for: app, switchGamesFolder: switchFolder)
             importApp(app, platform: platform, state: &state, summary: &summary)
         }
         applyBundleSizes(discovery.bundleSizes, to: state.games)
-        let launcherKeys = Set(discovery.launcherApps.flatMap { [$0.title, $0.name] }.map(TitleNormalizer.key(for:)))
-        let installs = discovery.crossOver.installs.filter { !launcherKeys.contains(TitleNormalizer.key(for: $0.name)) }
-        for install in installs {
-            summary.found += 1
-            importInstall(install, state: &state, summary: &summary)
-        }
         importRoms(discovery.roms, state: state, summary: &summary)
-        if let installs = discovery.steamInstalls {
-            summary.steam = SteamProvenanceApplier.apply(installs, to: state.games) { repository.insert($0) }
-        }
         try repository.save()
         summary.duplicatesMerged = try deduplicator?.mergeAll() ?? 0
         watcher?.refreshTrackedApps()
@@ -99,39 +81,31 @@ final class GameFolderImporter: GameFolderImporting {
     ) {
         let path = BundlePath.normalize(app.path)
         guard !state.bundlePaths.contains(path) else {
+            adoptTitleID(of: app, into: state.games.first { $0.appBundlePath.map(BundlePath.normalize) == path })
             summary.skipped += 1
             return
         }
         state.bundlePaths.insert(path)
         if let game = TrackedAppMatcher.match(app, in: state.games) {
             game.appBundlePath = path
+            adoptTitleID(of: app, into: game)
             summary.linked += 1
             return
         }
         let game = Game(title: app.title, platform: platform, status: .backlog)
         game.appBundlePath = path
+        adoptTitleID(of: app, into: game)
         repository.insert(game)
         state.games.append(game)
-        if platform == .other {
-            summary.crossOverAdded += 1
-        } else {
-            summary.added += 1
-        }
+        summary.added += 1
     }
 
-    private func importInstall(
-        _ install: CrossOverInstall,
-        state: inout ImportState,
-        summary: inout FolderImportSummary
-    ) {
-        guard !state.games.contains(where: { TitleNormalizer.matches($0.title, install.name) }) else {
-            summary.skipped += 1
-            return
-        }
-        let game = Game(title: install.name, platform: .other, status: .backlog, summary: install.librarySummary)
-        repository.insert(game)
-        state.games.append(game)
-        summary.crossOverAdded += 1
+    /// A port keeps the title ID its build stamped (for titledb media and update badges); a title ID set by a build
+    /// through NX Shelf is never overwritten.
+    private func adoptTitleID(of app: DiscoveredApp, into game: Game?) {
+        guard let game, let titleID = app.switchTitleID, game.switchTitleID == nil else { return }
+        game.switchTitleID = titleID
+        game.platform = .switchPort
     }
 
     /// Each ROM path becomes one emulated entry; re-scans add nothing.

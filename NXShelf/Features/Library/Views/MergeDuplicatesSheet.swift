@@ -42,7 +42,7 @@ struct MergeDuplicatesSheet: View {
         } else {
             Text(
                 "Each entry keeps its imported data (status, hours, description, series, guides, HLTB) and gains "
-                    + "the duplicate's tracked app, sessions and Steam data. The duplicate is then deleted."
+                    + "the duplicate's tracked app, ROM and sessions. The duplicate is then deleted."
             )
             .font(DesignTokens.Typography.caption)
             .foregroundStyle(Theme.secondaryText)

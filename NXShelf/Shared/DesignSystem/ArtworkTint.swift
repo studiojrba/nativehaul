@@ -2,7 +2,7 @@ import AppKit
 import CoreImage
 import SwiftUI
 
-/// Colour sampled from a game's own artwork (ADR 0025, the Apple TV / Steam pattern): the average of a small copy of
+/// Colour sampled from a game's own artwork (ADR 0025, the Apple TV pattern): the average of a small copy of
 /// the image, lifted to a minimum saturation and a fixed brightness so it reads as colour without fighting text.
 /// Results are cached per file.
 @MainActor

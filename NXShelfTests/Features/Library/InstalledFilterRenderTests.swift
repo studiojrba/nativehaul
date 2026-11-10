@@ -13,7 +13,7 @@ struct InstalledFilterRenderTests {
     func installedFilterRenders(width: Double) throws {
         let environment = try LibraryRenderFixture.environment()
         for game in try environment.repository.fetchGames().prefix(Self.installedCount) {
-            game.steamInstalls = [.mac]
+            game.appBundlePath = Bundle.main.bundlePath
         }
         try environment.repository.save()
         let viewModel = environment.makeLibraryViewModel()

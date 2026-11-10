@@ -25,8 +25,8 @@ struct GameFoldersSettingsView: View {
                 Text("Game Folders")
             } footer: {
                 Text(
-                    "Scans look up to four levels deep for .app bundles and also check CrossOver bottles "
-                        + "and launchers. Nothing on disk is changed."
+                    "Scans look up to four levels deep for game apps (existing Switch port builds are adopted as "
+                        + "they are) and ROM files. Nothing on disk is changed."
                 )
                 .font(DesignTokens.Typography.caption)
                 .foregroundStyle(Theme.secondaryText)

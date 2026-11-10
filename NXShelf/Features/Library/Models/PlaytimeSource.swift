@@ -2,8 +2,6 @@ import Foundation
 
 /// The provenance of a playtime figure. Figures from different sources are never merged (ADR 0006).
 enum PlaytimeSource: String, Codable, CaseIterable, Identifiable, Sendable {
-    /// Total reported by the Steam Web API.
-    case steamSynced
     /// Measured by NX Shelf's NSWorkspace session tracker.
     case macTracked
     /// Entered manually by the player.
@@ -19,7 +17,6 @@ enum PlaytimeSource: String, Codable, CaseIterable, Identifiable, Sendable {
     /// The label shown next to every figure from this source.
     var label: String {
         switch self {
-        case .steamSynced: "SteamSynced"
         case .macTracked: "MacTracked"
         case .selfReported: "SelfReported"
         case .hltbEstimate: "HLTB estimate"

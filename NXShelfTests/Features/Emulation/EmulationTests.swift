@@ -160,15 +160,15 @@ struct EmulationTests {
         #expect(watcher.isRunning)
     }
 
-    @Test func folderScanAddsEachRomOnceAndNeverMergesItWithASteamGame() throws {
+    @Test func folderScanAddsEachRomOnceAndNeverMergesItWithAnAppOfTheSameTitle() throws {
         let repository = try MockLibraryRepository()
-        let steamGame = Game(title: "Okami", platform: .steam)
-        steamGame.steamAppID = 587_620
-        repository.insert(steamGame)
+        let port = Game(title: "Okami", platform: .switchPort)
+        port.appBundlePath = "/Users/demo/Switch/Games/Okami.app"
+        repository.insert(port)
         try repository.save()
         let importer = GameFolderImporter(
             folders: InMemoryGameFolderStore([]),
-            discoverer: GameFolderDiscoverer(scanner: MockAppBundleScanner(), crossOver: MockCrossOverScanner()),
+            discoverer: GameFolderDiscoverer(scanner: MockAppBundleScanner()),
             repository: repository,
             trackingPreferences: InMemoryTrackingPreferencesStore(),
             deduplicator: LibraryDeduplicator(
@@ -185,11 +185,6 @@ struct EmulationTests {
         let games = try repository.fetchGames()
         #expect(games.count == 2)
         #expect(games.first { $0.platform == .emulated }?.emulatedSystem == .playStation2)
-    }
-
-    @Test func steamStoreIsNotAskedAboutRoms() {
-        let query = MetadataQuery(gameID: UUID(), title: "Okami", steamAppID: nil, platform: .emulated)
-        #expect(!SteamStoreMetadataProvider(http: MockHTTPClient()).applies(to: query))
     }
 
     @Test func platformNameShowsTheSystem() {

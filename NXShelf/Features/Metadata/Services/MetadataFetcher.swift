@@ -3,15 +3,15 @@ import Foundation
 /// Live ``MetadataFetching``.
 ///
 /// Games are processed one at a time, so store calls are serialised (the injected HTTP client also spaces them per
-/// host). For each game: official sources first — the Steam store, then Nintendo eShop data (titledb, ADR 0038) for
-/// Switch ports with no Steam twin — then SteamGridDB only for cover or hero art still missing. Which fields may be
+/// host). For each game: official Nintendo eShop data first (titledb, ADR 0038, keyless) for Switch ports, then IGDB
+/// for what is still missing (needs the user's pasted credentials), then SteamGridDB only for cover or hero art still
+/// missing (needs the user's pasted key). Which fields may be
 /// written is decided by ``MetadataFillPolicy``; the one exception is ``HeroUpgradeRule``. Every fill and hero swap is
 /// written to the audit log.
 @MainActor
 final class MetadataFetcher: MetadataFetching {
     private let repository: any LibraryRepository
-    private let steamStore: any MetadataProviding
-    private let nintendo: any MetadataProviding
+    private let titleDB: any MetadataProviding
     private let steamGridDB: any MetadataProviding
     private let igdb: (any MetadataProviding)?
     private let downloader: ArtworkDownloader
@@ -22,8 +22,7 @@ final class MetadataFetcher: MetadataFetching {
     /// Creates the fetcher.
     init(
         repository: any LibraryRepository,
-        steamStore: any MetadataProviding,
-        nintendo: any MetadataProviding,
+        titleDB: any MetadataProviding,
         steamGridDB: any MetadataProviding,
         igdb: (any MetadataProviding)? = nil,
         downloader: ArtworkDownloader,
@@ -31,8 +30,7 @@ final class MetadataFetcher: MetadataFetching {
         now: @escaping () -> Date = Date.init
     ) {
         self.repository = repository
-        self.steamStore = steamStore
-        self.nintendo = nintendo
+        self.titleDB = titleDB
         self.steamGridDB = steamGridDB
         self.igdb = igdb
         self.downloader = downloader
@@ -75,17 +73,13 @@ final class MetadataFetcher: MetadataFetching {
         }
         let query = game.metadataQuery
         var update = MetadataUpdate()
-        let steam = steamStore.applies(to: query)
-            ? await collect(from: steamStore, query, writable, &update)
-            : (outcome: MetadataOutcome.skipped, metadata: nil)
-        summary.record(steam.outcome, for: steamStore.source)
         var heroUpgrade = false
-        if steam.metadata != nil || !nintendo.applies(to: query) {
-            summary.record(.skipped, for: nintendo.source)
-        } else {
-            let eshop = await collect(from: nintendo, query, writable, &update)
-            summary.record(eshop.outcome, for: nintendo.source)
+        if titleDB.applies(to: query) {
+            let eshop = await collect(from: titleDB, query, writable, &update)
+            summary.record(eshop.outcome, for: titleDB.source)
             heroUpgrade = await upgradeHero(of: game, from: eshop.metadata, &update)
+        } else {
+            summary.record(.skipped, for: titleDB.source)
         }
         await askIGDB(query, writable, &update, &summary)
         let missingArt = writable.intersection([.cover, .hero]).subtracting(update.fields)
@@ -103,8 +97,8 @@ final class MetadataFetcher: MetadataFetching {
         report(update, for: game, heroUpgrade: heroUpgrade)
     }
 
-    /// IGDB is the last media fallback (ADR 0038): a trailer when Steam had none, then screenshots and a summary that
-    /// Steam and titledb didn't supply.
+    /// IGDB is the last media fallback (ADR 0038): a trailer, then screenshots and a summary that titledb didn't
+    /// supply.
     private func askIGDB(
         _ query: MetadataQuery,
         _ writable: Set<MetadataField>,

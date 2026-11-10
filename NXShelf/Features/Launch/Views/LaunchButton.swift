@@ -51,7 +51,7 @@ struct LaunchButton: View {
         }
     }
 
-    /// The other launch routes (Steam via a bottle, …) in a small menu beside Play.
+    /// The other launch routes (another emulator that runs the game, …) in a small menu beside Play.
     private var otherRoutes: some View {
         Menu {
             ForEach(viewModel.availability.options) { option in
@@ -77,9 +77,8 @@ struct LaunchButton: View {
 }
 
 #Preview {
-    let playable = Game(title: "Portal 2")
-    playable.steamAppID = 620
-    playable.steamInstalls = [.mac]
+    let playable = Game(title: "Tideborn", platform: .switchPort)
+    playable.appBundlePath = "/Applications/Calculator.app"
     let unplayable = Game(title: "Logbook only")
     return VStack(spacing: DesignTokens.Spacing.xl) {
         LaunchButton(viewModel: GameLaunchViewModel(

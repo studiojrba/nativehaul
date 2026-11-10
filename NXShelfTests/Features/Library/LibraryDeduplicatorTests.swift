@@ -79,11 +79,11 @@ struct LibraryDeduplicatorTests {
         first.appBundlePath = "/a/Moonwell.app"
         let second = Game(title: "moonwell")
         second.appBundlePath = "/b/Moonwell.app"
-        let steamA = Game(title: "Glimmer")
-        steamA.steamAppID = 1
-        let steamB = Game(title: "Glimmer")
-        steamB.steamAppID = 2
-        for game in [first, second, steamA, steamB] {
+        let romA = Game(title: "Glimmer", platform: .emulated)
+        romA.romPath = "/roms/Glimmer (USA).gba"
+        let romB = Game(title: "Glimmer", platform: .emulated)
+        romB.romPath = "/roms/Glimmer (Europe).gba"
+        for game in [first, second, romA, romB] {
             repository.insert(game)
         }
         try repository.save()

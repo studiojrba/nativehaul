@@ -31,7 +31,7 @@ struct OnboardingViewModelTests {
     @Test func onlyCheckedModulesGetAStepInChecklistOrder() {
         let viewModel = make()
         viewModel.toggle(.switchPorts)
-        viewModel.toggle(.steam)
+        viewModel.toggle(.emulators)
         viewModel.next()
         #expect(viewModel.step == .checklist)
         viewModel.next()
@@ -39,13 +39,13 @@ struct OnboardingViewModelTests {
         #expect(viewModel.moduleProgress?.index == 1)
         #expect(viewModel.moduleProgress?.count == 3)
         viewModel.next()
-        #expect(viewModel.step == .module(.steam))
-        viewModel.next()
         #expect(viewModel.step == .module(.switchPorts))
+        viewModel.next()
+        #expect(viewModel.step == .module(.emulators))
         viewModel.next()
         #expect(viewModel.step == .done)
         viewModel.back()
-        #expect(viewModel.step == .module(.switchPorts))
+        #expect(viewModel.step == .module(.emulators))
     }
 
     @Test func uncheckingEverythingGoesStraightToDone() {
@@ -60,8 +60,8 @@ struct OnboardingViewModelTests {
 
     @Test func doneListsSetUpFirstThenSkippedAndFinishingIsRemembered() {
         let store = InMemoryOnboardingStore()
-        let viewModel = make(store: store, status: FixedOnboardingStatus(setUp: [.steam]))
-        #expect(viewModel.outcomes.first == OnboardingOutcome(module: .steam, isSetUp: true))
+        let viewModel = make(store: store, status: FixedOnboardingStatus(setUp: [.switchPorts]))
+        #expect(viewModel.outcomes.first == OnboardingOutcome(module: .switchPorts, isSetUp: true))
         #expect(viewModel.outcomes.dropFirst().allSatisfy { !$0.isSetUp })
         viewModel.finish()
         #expect(store.hasCompletedOnboarding)
@@ -69,17 +69,9 @@ struct OnboardingViewModelTests {
 
     @Test func liveStatusReadsEachFeaturesOwnState() {
         let folders = InMemoryGameFolderStore(["/Games"])
-        let account = MockSteamAccountStore(configured: true)
         let tracking = InMemoryTrackingPreferencesStore()
-        let status = LiveOnboardingStatus(
-            gameFolders: folders,
-            steamAccount: account,
-            bottles: MockBottleInstaller(goldenStatus: .ready(bottleName: "NX Shelf Steam")),
-            tracking: tracking
-        ) { _ in false }
+        let status = LiveOnboardingStatus(gameFolders: folders, tracking: tracking) { _ in false }
         #expect(status.isSetUp(.findGames))
-        #expect(status.isSetUp(.steam))
-        #expect(status.isSetUp(.crossOver))
         #expect(!status.isSetUp(.switchPorts))
         #expect(!status.isSetUp(.emulators))
     }

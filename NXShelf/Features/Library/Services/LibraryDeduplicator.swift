@@ -3,7 +3,7 @@ import Foundation
 /// Live ``LibraryDeduplicating``.
 ///
 /// Games whose titles normalise to the same key (``TitleNormalizer``) and do not point at different bundles or
-/// Steam apps are one game. The richest entry survives (ties: earliest added), absorbs the others via
+/// ROMs are one game. The richest entry survives (ties: earliest added), absorbs the others via
 /// ``GameMerger``, takes over their series entries, collections and HLTB estimate, and the others are deleted.
 @MainActor
 final class LibraryDeduplicator: LibraryDeduplicating {
@@ -82,9 +82,6 @@ final class LibraryDeduplicator: LibraryDeduplicating {
         var gains: [String] = []
         if survivor.appBundlePath == nil, duplicates.contains(where: { $0.appBundlePath != nil }) {
             gains.append("tracked app")
-        }
-        if survivor.steamAppID == nil, duplicates.contains(where: { $0.steamAppID != nil }) {
-            gains.append("Steam app")
         }
         let sessions = duplicates.reduce(0) { $0 + $1.sessions.count }
         if sessions > 0 {

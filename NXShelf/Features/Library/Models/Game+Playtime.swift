@@ -7,9 +7,6 @@ extension Game {
         for session in sessions {
             totals[session.source, default: 0] += session.durationSeconds
         }
-        if let steamSyncedSeconds {
-            totals[.steamSynced, default: 0] += steamSyncedSeconds
-        }
         if let selfReportedSeconds {
             totals[.selfReported, default: 0] += selfReportedSeconds
         }

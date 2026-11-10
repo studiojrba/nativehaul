@@ -14,7 +14,6 @@ final class GameLaunchViewModel {
 
     private let launcher: any GameLaunching
     private let watcher: any PlaytimeWatching
-    private let crossOver: CrossOverLaunchConfiguration
     private let fileExists: (String) -> Bool
     private let emulators: EmulatorRouter?
     private let handoff: GameSessionHandoff?
@@ -27,7 +26,6 @@ final class GameLaunchViewModel {
         game: Game,
         launcher: any GameLaunching,
         watcher: any PlaytimeWatching,
-        crossOver: CrossOverLaunchConfiguration = .standard,
         fileExists: @escaping (String) -> Bool = { FileManager.default.fileExists(atPath: $0) },
         emulators: EmulatorRouter? = nil,
         handoff: GameSessionHandoff? = nil
@@ -35,7 +33,6 @@ final class GameLaunchViewModel {
         self.game = game
         self.launcher = launcher
         self.watcher = watcher
-        self.crossOver = crossOver
         self.fileExists = fileExists
         self.emulators = emulators
         self.handoff = handoff
@@ -47,7 +44,7 @@ final class GameLaunchViewModel {
         if game.platform == .emulated {
             return emulators?.availability(for: game) ?? .unavailable(reason: "Emulator support isn't available.")
         }
-        return LaunchPlanner.availability(for: game, crossOver: crossOver, fileExists: fileExists)
+        return LaunchPlanner.availability(for: game, fileExists: fileExists)
     }
 
     /// Official download page of a missing app (shown as a link).
@@ -93,11 +90,6 @@ final class GameLaunchViewModel {
         case let .unavailable(reason), let .needsApp(reason, _): reason
         case .available, .needsUserFile: nil
         }
-    }
-
-    /// Steam install locations, labelled ("Steam (Mac)", "Steam (CrossOver — Games)").
-    var steamProvenance: [String] {
-        game.steamInstalls.map(\.displayName)
     }
 
     /// Launches `option` (default: the primary option). Tracked launches make sure the watcher is running.

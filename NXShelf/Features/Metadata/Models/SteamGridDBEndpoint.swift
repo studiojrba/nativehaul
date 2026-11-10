@@ -11,11 +11,6 @@ enum SteamGridDBEndpoint {
         URLQueryItem(name: "epilepsy", value: "false"),
     ]
 
-    /// Game for a Steam app ID.
-    static func game(steamAppID: Int) -> URL? {
-        URL(string: "\(base)/games/steam/\(steamAppID)")
-    }
-
     /// Title autocomplete search.
     static func search(term: String) -> URL? {
         guard let encoded = term.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed.subtracting(["/"]))

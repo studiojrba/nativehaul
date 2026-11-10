@@ -71,7 +71,7 @@ struct IGDBClientTests {
         await http.stub(urlContaining: "api.igdb.com", json: Self.gamesJSON)
         let provider = IGDBMetadataProvider(client: client(http))
         let query = MetadataQuery(
-            gameID: UUID(), title: "The Legend of Zelda: Breath of the Wild", steamAppID: nil, platform: .switchPort
+            gameID: UUID(), title: "The Legend of Zelda: Breath of the Wild", platform: .switchPort
         )
         guard case let .found(metadata) = try await provider.lookup(query) else {
             Issue.record("Expected the exact name match")
@@ -83,12 +83,12 @@ struct IGDBClientTests {
             == "https://images.igdb.com/igdb/image/upload/t_1080p/sc6lk2.jpg")
         #expect(metadata.trailer?.videoURL.absoluteString == "https://www.youtube.com/watch?v=zw47_q9wbBE")
         #expect(metadata.trailer?.posterCandidates.first?.lastPathComponent == "maxresdefault.jpg")
-        #expect(!provider.applies(to: MetadataQuery(gameID: UUID(), title: "x", steamAppID: 1, platform: .steam)))
+        #expect(!provider.applies(to: MetadataQuery(gameID: UUID(), title: "x", platform: .emulated)))
     }
 
     @Test func withoutCredentialsTheProviderIsUnavailable() async throws {
         let provider = IGDBMetadataProvider(client: client(MockHTTPClient(), credentials: nil))
-        let query = MetadataQuery(gameID: UUID(), title: "Pikmin 4", steamAppID: nil, platform: .switchPort)
+        let query = MetadataQuery(gameID: UUID(), title: "Pikmin 4", platform: .switchPort)
         #expect(try await provider.lookup(query) == .unavailable)
     }
 }

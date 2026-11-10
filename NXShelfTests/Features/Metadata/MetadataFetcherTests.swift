@@ -2,6 +2,8 @@ import Foundation
 @testable import NXShelf
 import Testing
 
+/// The metadata pass over the 1.0 sources: official eShop data (titledb) for Switch ports first, SteamGridDB only for
+/// cover or hero art still missing (ADR 0014, ADR 0038, ADR 0046).
 @MainActor
 struct MetadataFetcherTests {
     private let officialCover = URL(string: "https://official.example/cover.jpg")
@@ -27,24 +29,29 @@ struct MetadataFetcherTests {
 
     private func fetcher(
         _ harness: Harness,
-        steam: MockMetadataProvider,
-        nintendo: MockMetadataProvider = MockMetadataProvider(source: .nintendoStore, switchOnly: true),
+        official: MockMetadataProvider,
         grid: MockMetadataProvider = MockMetadataProvider(source: .steamGridDB)
     ) -> MetadataFetcher {
         MetadataFetcher(
             repository: harness.repository,
-            steamStore: steam,
-            nintendo: nintendo,
+            titleDB: official,
             steamGridDB: grid,
             downloader: ArtworkDownloader(http: harness.http, cache: harness.cache)
         )
     }
 
-    private func steamResult() -> FetchedMetadata {
-        var metadata = FetchedMetadata(source: .steamStore)
+    private func official(
+        _ results: [String: MetadataLookup] = [:],
+        failing: Set<String> = []
+    ) -> MockMetadataProvider {
+        MockMetadataProvider(source: .titleDB, results: results, failing: failing, switchOnly: true)
+    }
+
+    private func officialResult() -> FetchedMetadata {
+        var metadata = FetchedMetadata(source: .titleDB)
         metadata.description = "Official blurb."
-        metadata.developer = "Valve"
-        metadata.genres = ["Puzzle"]
+        metadata.developer = "Nintendo"
+        metadata.genres = ["Platformer"]
         metadata.coverCandidates = [URL(string: "https://broken.example/c.jpg"), officialCover].compactMap(\.self)
         metadata.heroCandidates = [officialHero].compactMap(\.self)
         metadata.carouselImages = [officialHero, officialCover].compactMap(\.self)
@@ -59,81 +66,71 @@ struct MetadataFetcherTests {
     }
 
     @Test func officialArtWinsAndSteamGridDBIsNotAsked() async throws {
-        let game = Game(title: "Portal 2", platform: .steam)
-        game.steamSyncedSeconds = 3600
+        let game = Game(title: "Super Mario Odyssey", platform: .switchPort)
+        game.selfReportedSeconds = 3600
         let harness = try await harness([game])
-        let grid = MockMetadataProvider(source: .steamGridDB, results: ["Portal 2": .found(gridResult())])
-        let steam = MockMetadataProvider(source: .steamStore, results: ["Portal 2": .found(steamResult())])
-        let summary = try await fetcher(harness, steam: steam, grid: grid).fetchMissing()
+        let grid = MockMetadataProvider(source: .steamGridDB, results: ["Super Mario Odyssey": .found(gridResult())])
+        let summary = try await fetcher(
+            harness, official: official(["Super Mario Odyssey": .found(officialResult())]), grid: grid
+        ).fetchMissing()
 
         #expect(game.summary == "Official blurb.")
-        #expect(game.developer == "Valve")
+        #expect(game.developer == "Nintendo")
         #expect(game.coverImagePath?.hasSuffix("cover.jpg") == true)
         #expect(game.heroImagePath?.hasSuffix("hero.jpg") == true)
         #expect(game.carouselImagePaths.count == 2)
-        #expect(game.metadataProvenance[.cover] == .steamStore)
-        #expect(game.steamSyncedSeconds == 3600)
+        #expect(game.metadataProvenance[.cover] == .titleDB)
+        #expect(game.selfReportedSeconds == 3600)
         #expect(grid.lookedUpTitles.isEmpty)
-        #expect(summary.tally(for: .steamStore) == MetadataSourceTally(filled: 1))
+        #expect(summary.tally(for: .titleDB) == MetadataSourceTally(filled: 1))
         #expect(summary.tally(for: .steamGridDB) == MetadataSourceTally(skipped: 1))
         #expect(summary.gamesUpdated == 1)
     }
 
     @Test func steamGridDBFillsOnlyMissingArt() async throws {
-        let game = Game(title: "Portal 2", platform: .steam)
+        let game = Game(title: "Pikmin 4", platform: .switchPort)
         let harness = try await harness([game])
-        var official = steamResult()
-        official.coverCandidates = []
-        let steam = MockMetadataProvider(source: .steamStore, results: ["Portal 2": .found(official)])
-        let grid = MockMetadataProvider(source: .steamGridDB, results: ["Portal 2": .found(gridResult())])
-        _ = try await fetcher(harness, steam: steam, grid: grid).fetchMissing()
+        var result = officialResult()
+        result.coverCandidates = []
+        let grid = MockMetadataProvider(source: .steamGridDB, results: ["Pikmin 4": .found(gridResult())])
+        _ = try await fetcher(harness, official: official(["Pikmin 4": .found(result)]), grid: grid).fetchMissing()
 
         #expect(game.metadataProvenance[.cover] == .steamGridDB)
-        #expect(game.metadataProvenance[.hero] == .steamStore)
+        #expect(game.metadataProvenance[.hero] == .titleDB)
         #expect(game.coverImagePath?.hasSuffix("cover.png") == true)
     }
 
-    @Test func nintendoIsAskedOnlyForSwitchGamesWithoutASteamTwin() async throws {
+    @Test func titleDBIsAskedOnlyForSwitchPorts() async throws {
         let port = Game(title: "Tideborn", platform: .switchPort)
-        let twin = Game(title: "Celeste", platform: .switchPort)
-        let harness = try await harness([port, twin])
-        let steam = MockMetadataProvider(source: .steamStore, results: ["Celeste": .found(steamResult())])
-        var eshop = FetchedMetadata(source: .nintendoStore)
-        eshop.description = "From the eShop."
-        let nintendo = MockMetadataProvider(
-            source: .nintendoStore,
-            results: ["Tideborn": .found(eshop), "Celeste": .found(eshop)],
-            switchOnly: true
-        )
-        let summary = try await fetcher(harness, steam: steam, nintendo: nintendo).fetchMissing()
+        let rom = Game(title: "Lantern Coast", platform: .emulated)
+        let harness = try await harness([port, rom])
+        let titleDB = official(["Tideborn": .found(officialResult()), "Lantern Coast": .found(officialResult())])
+        let summary = try await fetcher(harness, official: titleDB).fetchMissing()
 
-        #expect(nintendo.lookedUpTitles == ["Tideborn"])
-        #expect(port.summary == "From the eShop.")
-        #expect(port.metadataProvenance[.description] == .nintendoStore)
-        #expect(twin.summary == "Official blurb.")
-        #expect(summary.tally(for: .nintendoStore) == MetadataSourceTally(filled: 1, skipped: 1))
+        #expect(titleDB.lookedUpTitles == ["Tideborn"])
+        #expect(port.summary == "Official blurb.")
+        #expect(rom.summary.isEmpty)
+        #expect(summary.tally(for: .titleDB) == MetadataSourceTally(filled: 1, skipped: 1))
     }
 
     @Test func manualArtAndImportedTextSurviveAFillPass() async throws {
-        let game = Game(title: "Portal 2", platform: .steam, summary: "J.R's note.")
-        game.coverImagePath = "/Users/jr/Pictures/portal.png"
+        let game = Game(title: "Pikmin 4", platform: .switchPort, summary: "J.R's note.")
+        game.coverImagePath = "/Users/jr/Pictures/pikmin.png"
         let harness = try await harness([game])
-        let steam = MockMetadataProvider(source: .steamStore, results: ["Portal 2": .found(steamResult())])
-        _ = try await fetcher(harness, steam: steam).fetchMissing()
+        _ = try await fetcher(harness, official: official(["Pikmin 4": .found(officialResult())])).fetchMissing()
 
         #expect(game.summary == "J.R's note.")
-        #expect(game.coverImagePath == "/Users/jr/Pictures/portal.png")
+        #expect(game.coverImagePath == "/Users/jr/Pictures/pikmin.png")
         #expect(game.metadataProvenance[.cover] == nil)
-        #expect(game.developer == "Valve")
+        #expect(game.developer == "Nintendo")
     }
 
     @Test func refreshReplacesImportedTextButNotUserArt() async throws {
-        let game = Game(title: "Portal 2", platform: .steam, summary: "Imported text.")
+        let game = Game(title: "Pikmin 4", platform: .switchPort, summary: "Imported text.")
         game.heroImagePath = "/Users/jr/hero.png"
         game.metadataProvenance = MetadataProvenance([.hero: .user])
         let harness = try await harness([game])
-        let steam = MockMetadataProvider(source: .steamStore, results: ["Portal 2": .found(steamResult())])
-        _ = try await fetcher(harness, steam: steam).refresh(game)
+        _ = try await fetcher(harness, official: official(["Pikmin 4": .found(officialResult())])).refresh(game)
 
         #expect(game.summary == "Official blurb.")
         #expect(game.heroImagePath == "/Users/jr/hero.png")
@@ -141,13 +138,12 @@ struct MetadataFetcherTests {
     }
 
     @Test func failuresAndNoMatchesAreCountedAndLeaveFieldsBlank() async throws {
-        let broken = Game(title: "Broken", platform: .steam)
-        let unknown = Game(title: "Unknown", platform: .steam)
+        let broken = Game(title: "Broken", platform: .switchPort)
+        let unknown = Game(title: "Unknown", platform: .switchPort)
         let harness = try await harness([broken, unknown])
-        let steam = MockMetadataProvider(source: .steamStore, failing: ["Broken"])
-        let summary = try await fetcher(harness, steam: steam).fetchMissing()
+        let summary = try await fetcher(harness, official: official(failing: ["Broken"])).fetchMissing()
 
-        #expect(summary.tally(for: .steamStore) == MetadataSourceTally(skipped: 1, failed: 1))
+        #expect(summary.tally(for: .titleDB) == MetadataSourceTally(skipped: 1, failed: 1))
         #expect(summary.tally(for: .steamGridDB) == MetadataSourceTally(skipped: 2))
         #expect(summary.gamesUpdated == 0)
         #expect(broken.coverImagePath == nil)
@@ -156,7 +152,7 @@ struct MetadataFetcherTests {
     }
 
     @Test func completeGamesAreNotLookedUp() async throws {
-        let game = Game(title: "Done", platform: .steam, summary: "x", releaseDate: .now)
+        let game = Game(title: "Done", platform: .switchPort, summary: "x", releaseDate: .now)
         game.developer = "d"
         game.genres = ["g"]
         game.tags = ["t"]
@@ -165,17 +161,17 @@ struct MetadataFetcherTests {
         game.carouselImagePaths = ["/s"]
         game.trailerVideoURL = "https://v.example/t.m3u8"
         let harness = try await harness([game])
-        let steam = MockMetadataProvider(source: .steamStore)
-        let summary = try await fetcher(harness, steam: steam).fetchMissing()
-        #expect(steam.lookedUpTitles.isEmpty)
+        let titleDB = official()
+        let summary = try await fetcher(harness, official: titleDB).fetchMissing()
+        #expect(titleDB.lookedUpTitles.isEmpty)
         #expect(summary.gamesComplete == 1)
     }
 
     @Test func summaryReadsPerSource() {
         var summary = MetadataFetchSummary(gamesUpdated: 2, finishedAt: .now)
-        summary.record(.filled, for: .steamStore)
+        summary.record(.filled, for: .titleDB)
         summary.record(.failed, for: .steamGridDB)
-        #expect(summary.description.contains("Steam store: 1 filled, 0 skipped, 0 failed."))
+        #expect(summary.description.contains("Nintendo eShop (titledb): 1 filled, 0 skipped, 0 failed."))
         #expect(summary.description.contains("SteamGridDB: 0 filled, 0 skipped, 1 failed."))
     }
 }

@@ -10,15 +10,12 @@ enum StatsFixtures {
         _ title: String,
         status: GameStatus = .backlog,
         platform: GamePlatform = .other,
-        steam: Int? = nil,
         selfReported: Int? = nil,
-        sessions: [SessionSnapshot] = [],
-        achievements: (Int, Int)? = nil
+        sessions: [SessionSnapshot] = []
     ) -> GameSnapshot {
         GameSnapshot(
             id: UUID(), title: title, platform: platform, status: status,
-            steamSyncedSeconds: steam, selfReportedSeconds: selfReported, sessions: sessions,
-            steamAchievementsUnlocked: achievements?.0, steamAchievementsTotal: achievements?.1
+            selfReportedSeconds: selfReported, sessions: sessions
         )
     }
 

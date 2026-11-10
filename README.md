@@ -1,20 +1,22 @@
 # NX Shelf
 
-A native macOS game library hub — a Playnite-style library (Steam, Mac-native and Switch titles,
-series, stats, badges, guides) plus an **optional** Switch build pipeline UI that drives a
-**user-supplied external engine** (never bundled).
+A native macOS shelf for your Switch ports and emulated games: it adopts what is already on your Mac (existing
+nxnative builds and ROM folders) with zero rebuilding, launches each game through the app that owns it, and has one
+big tool inside, native Switch building on a **user-supplied, standalone nxnative** (never bundled). No sign-in
+anywhere; the only accounts are API keys you paste (RetroAchievements, SteamGridDB, IGDB), kept in your Keychain.
 
 ## Features
 - **Library** — SwiftData cover grid; sidebar sections Playing / Backlog / Completed; game detail; JSON import/export.
-- **Steam** — owned games, recently played and achievements via the Steam Web API; key stored only in the Keychain.
 - **Playtime tracking** — NSWorkspace watcher logs sessions for tracked `.app` bundles (e.g. `~/Switch/Games`).
-  Every figure carries its source (SteamSynced, MacTracked, SelfReported, HLTB estimate); sources are never merged.
+  Every figure carries its source (MacTracked, SelfReported, HLTB estimate); sources are never merged.
 - **Series & collections** — recommended play order (release or chronological) and an Up Next strip that never renumbers.
 - **Stats & badges** — backlog counts, hours by source, completion %, badges computed only from real data.
 - **NXNative (on by default)** — build queue UI for a user-supplied external engine, found automatically: preflight checks, streamed logs,
   previewed cleanup (Trash only, never emptied), and a backup-first, audit-logged troubleshooting knowledge base.
-- **Game folder import** — scan configured folders for `.app` bundles plus CrossOver bottles and launchers;
-  strict dedupe, idempotent re-scans, and logbook entries linked to their real builds by title.
+- **Adoption** — first run and every rescan adopt existing nxnative builds (by folder, port library or the title ID
+  stamped in the bundle) and ROM files, with zero rebuilding; strict dedupe and idempotent re-scans.
+- **Emulator hub** — detects the emulators you installed (RetroArch and others), maps ROMs to systems, and launches
+  each through its emulator. Emulators, cores, BIOS and ROMs are always yours; nothing is bundled.
 - **Guides & HLTB** — GameFAQs link-out guides with attribution and chapters; cached, labelled HowLongToBeat estimates.
 
 ## Quickstart
@@ -58,10 +60,10 @@ full path). In Xcode: ⌘B / ⌘U build into the same folder.
 Use `./scripts/lint.sh --check` to verify without rewriting files.
 
 ### Optional configuration
-- **Steam**: Settings → Steam. Paste your Steam Web API key and SteamID64. The key is stored only in the
-  macOS Keychain. Without a key the app works fully offline.
-- **Game folders**: Settings → Game Folders. Add folders, then "Scan Game Folders" (also in the toolbar's
-  Library menu). CrossOver bottles and launchers are detected automatically.
+- **API keys** (all optional): Settings → Artwork for SteamGridDB and IGDB (Twitch client ID + secret), and
+  Settings → RetroAchievements (username + web API key). Stored only in the macOS Keychain; without them the app
+  works fully, using keyless titledb data for Switch media.
+- **Game folders**: Settings → Game Folders. `~/Switch/Games` is scanned even if you configure nothing.
 - **nxnative engine**: a standalone copy of upstream nxnative, found automatically in `~/Switch` or Homebrew
   (ADR 0021); `prod.keys` likewise. Settings → NXNative only overrides or switches the module off.
   NX Shelf never ships the engine, keys, firmware, or game files.
@@ -72,7 +74,7 @@ Use `./scripts/lint.sh --check` to verify without rewriting files.
   power SwiftUI previews and unit tests.
 - **SwiftData** persistence; JSON import/export for portability.
 - **Design tokens**: all visual values live in `Shared/DesignSystem` so screens can be re-skinned from Figma.
-- **Data integrity**: playtime is stored per source (Steam, Mac-tracked, self-reported, HLTB estimate) and
+- **Data integrity**: playtime is stored per source (Mac-tracked, self-reported, HLTB estimate) and
   never merged; badges only use real data.
 
 See `docs/PLAN.md` for the roadmap and `docs/decisions/` for architecture decision records.

@@ -31,12 +31,12 @@ struct InstalledFilterTests {
         let app = try Self.presentApp()
         let installed = Game(title: "Installed Port", platform: .switchPort, status: .playing)
         installed.appBundlePath = app
-        let steam = Game(title: "Steam Copy", platform: .steam)
-        steam.steamInstalls = [.mac]
+        let rom = Game(title: "ROM Copy", platform: .emulated)
+        rom.romPath = app
         let gone = Game(title: "Gone", platform: .macNative)
         gone.appBundlePath = "/nowhere/Gone.app"
-        let unknown = Game(title: "Unknown", platform: .steam, status: .playing)
-        for game in [installed, steam, gone, unknown] {
+        let unknown = Game(title: "Unknown", platform: .emulated, status: .playing)
+        for game in [installed, rom, gone, unknown] {
             repository.insert(game)
         }
         try repository.save()
@@ -44,7 +44,7 @@ struct InstalledFilterTests {
         viewModel.reload()
 
         viewModel.filter.installedOnly = true
-        #expect(viewModel.visibleGames.map(\.title) == ["Installed Port", "Steam Copy"])
+        #expect(viewModel.visibleGames.map(\.title) == ["Installed Port", "ROM Copy"])
         #expect(viewModel.installedSplit.unknown.map(\.title) == ["Unknown"])
         #expect(viewModel.installedSplit.notInstalledCount == 1)
         #expect(viewModel.jumpBackIn().map(\.title) == ["Installed Port"])

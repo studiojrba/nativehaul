@@ -135,20 +135,6 @@ struct GameSessionHandoffTests {
         await launchPort.launch()
         #expect(handoff.isGameRunning)
         #expect(visibility.calls == ["hide"])
-
-        let (urlHandoff, urlVisibility, _) = make()
-        let steam = Game(title: "Portal 2", platform: .steam)
-        steam.steamAppID = 620
-        steam.steamInstalls = [.mac]
-        let launchSteam = GameLaunchViewModel(
-            game: steam,
-            launcher: RecordingGameLauncher(),
-            watcher: MockPlaytimeWatcher(),
-            handoff: urlHandoff
-        )
-        await launchSteam.launch()
-        #expect(!urlHandoff.isGameRunning)
-        #expect(urlVisibility.calls.isEmpty)
     }
 
     @Test func aFailedLaunchDoesNotHide() async {
@@ -156,7 +142,7 @@ struct GameSessionHandoffTests {
         let port = Game(title: "Missing", platform: .switchPort)
         port.appBundlePath = gamePath
         let launcher = RecordingGameLauncher()
-        launcher.error = LaunchError.missingExecutable(gamePath)
+        launcher.error = CocoaError(.fileNoSuchFile)
         let viewModel = GameLaunchViewModel(
             game: port,
             launcher: launcher,

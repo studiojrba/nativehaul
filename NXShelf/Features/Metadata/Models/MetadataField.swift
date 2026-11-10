@@ -8,7 +8,7 @@ enum MetadataField: String, Codable, CaseIterable, Sendable {
     case developer
     /// Genres.
     case genres
-    /// Tags (Steam categories, for example).
+    /// Tags (features and categories).
     case tags
     /// Original release date.
     case releaseDate

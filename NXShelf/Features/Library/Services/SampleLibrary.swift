@@ -4,7 +4,6 @@ import Foundation
 @MainActor
 enum SampleLibrary {
     private static let hour = 3600
-    private static let sampleSteamHours = 42
     private static let sampleSessionHours = 2
     private static let sampleSelfReportedHours = 5
 
@@ -12,12 +11,12 @@ enum SampleLibrary {
     static func populate(_ repository: any LibraryRepository) {
         let skyward = Game(
             title: "Skyward Lanterns",
-            platform: .steam,
+            platform: .emulated,
             status: .playing,
-            summary: "Sample Steam title."
+            summary: "Sample emulated title."
         )
-        skyward.steamAppID = 1
-        skyward.steamSyncedSeconds = sampleSteamHours * hour
+        skyward.romPath = "/Users/demo/ROMs/Skyward Lanterns.gba"
+        skyward.emulatedSystem = .gameBoyAdvance
         let tideborn = Game(title: "Tideborn", platform: .switchPort, status: .backlog)
         let ember = Game(title: "Ember Protocol", platform: .macNative, status: .completed)
         ember.completedAt = .now

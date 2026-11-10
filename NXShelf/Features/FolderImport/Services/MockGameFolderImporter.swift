@@ -4,7 +4,7 @@ import Foundation
 @MainActor
 final class MockGameFolderImporter: GameFolderImporting {
     /// Summary to return.
-    var summary = FolderImportSummary(found: 1, added: 1, bottlesFound: 1, crossOverAdded: 1)
+    var summary = FolderImportSummary(found: 1, added: 1)
     /// Number of scans performed.
     private(set) var scanCount = 0
 

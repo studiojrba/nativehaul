@@ -39,10 +39,10 @@ struct BadgeEngineTests {
     }
 
     @Test func centurionPerSourceNotMerged() {
-        // 60h Steam + 50h self-reported = 110h combined, but no single source reaches 100h.
-        let split = Fix.game("A", steam: 60 * Fix.hour, selfReported: 50 * Fix.hour)
+        // 60h tracked + 50h self-reported = 110h combined, but no single source reaches 100h.
+        let split = Fix.game("A", selfReported: 50 * Fix.hour, sessions: [Fix.session(dayOffset: 0, hours: 60)])
         #expect(result(.centurion, snapshot([split]))?.isEarned == false)
-        #expect(result(.centurion, snapshot([Fix.game("B", steam: 100 * Fix.hour)]))?.isEarned == true)
+        #expect(result(.centurion, snapshot([Fix.game("B", selfReported: 100 * Fix.hour)]))?.isEarned == true)
     }
 
     @Test func seriesAndCollections() {
@@ -72,11 +72,5 @@ struct BadgeEngineTests {
         #expect(engine
             .longestDailyStreak([Fix.session(dayOffset: 0, hours: 1), Fix.session(dayOffset: 0, hours: 2)]) == 1)
         #expect(engine.longestDailyStreak([]) == 0)
-    }
-
-    @Test func perfectAchievements() {
-        #expect(result(.perfectAchievements, snapshot([Fix.game("A", achievements: (5, 5))]))?.isEarned == true)
-        #expect(result(.perfectAchievements, snapshot([Fix.game("A", achievements: (4, 5))]))?.isEarned == false)
-        #expect(result(.perfectAchievements, snapshot([Fix.game("A", achievements: (0, 0))]))?.isEarned == false)
     }
 }

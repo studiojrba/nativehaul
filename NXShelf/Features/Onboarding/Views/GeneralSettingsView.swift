@@ -7,7 +7,7 @@ struct GeneralSettingsView: View {
             Section {
                 Button("Run setup again", systemImage: "sparkles") { OnboardingRequest.post() }
             } footer: {
-                Text("Walks through finding games, Steam, CrossOver and Switch ports. Everything is optional, and "
+                Text("Walks through finding your Switch ports, ROM folders and emulators. Everything is optional, and "
                     + "NX Shelf works without it.")
                     .foregroundStyle(Theme.secondaryText)
             }

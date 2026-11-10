@@ -27,10 +27,6 @@ struct OnboardingModuleView: View {
         case .findGames:
             GameFoldersSettingsView(viewModel: environment.makeGameFoldersViewModel())
                 .frame(minHeight: DesignTokens.Layout.logMinHeight)
-        case .steam:
-            SteamConnectionView(viewModel: environment.makeSteamConnectionViewModel())
-        case .crossOver:
-            CrossOverSetupView(viewModel: GoldenBottleSetupViewModel(installer: environment.bottleInstaller))
         case .switchPorts:
             TrackingSettingsView(viewModel: environment.makeTrackingSettingsViewModel())
                 .frame(minHeight: DesignTokens.Layout.logMinHeight)
@@ -44,7 +40,7 @@ struct OnboardingModuleView: View {
 }
 
 #Preview {
-    OnboardingModuleView(module: .crossOver, progress: (2, 3))
+    OnboardingModuleView(module: .emulators, progress: (2, 3))
         .environment(AppEnvironment.preview)
         .padding(DesignTokens.Spacing.xl)
 }

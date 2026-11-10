@@ -3,8 +3,8 @@ import Foundation
 /// The art above a job's title on the Builds page (J.R's direction, ADR 0028): the game's official screenshots as a
 /// slideshow, else its hero/banner as one still, else nothing at all (no empty box).
 ///
-/// It reuses art the existing metadata pipeline already cached for the matching library game (Steam store
-/// screenshots for a Steam App ID, SteamGridDB when a key is set); it never fetches anything itself.
+/// It reuses art the existing metadata pipeline already cached for the matching library game (titledb
+/// screenshots by title ID, SteamGridDB when a key is set); it never fetches anything itself.
 struct BuildShowcase: Equatable, Sendable {
     /// One library game's cached art, as the resolver sees it.
     struct Artwork: Equatable, Sendable {

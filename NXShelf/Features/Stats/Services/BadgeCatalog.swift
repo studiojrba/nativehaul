@@ -61,9 +61,5 @@ enum BadgeCatalog {
             criteria: "Record real sessions on \(streakDays) consecutive days.", symbolName: "calendar",
             target: streakDays
         ),
-        BadgeDefinition(
-            id: .perfectAchievements, title: "Perfectionist",
-            criteria: "Unlock every Steam achievement in a game.", symbolName: "star.circle.fill", target: 1
-        ),
     ]
 }

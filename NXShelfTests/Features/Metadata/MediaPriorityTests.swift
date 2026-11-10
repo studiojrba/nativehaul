@@ -2,9 +2,8 @@ import Foundation
 @testable import NXShelf
 import Testing
 
-/// ADR 0038 global priority, through the real fetcher:
-/// video = Steam, then IGDB YouTube; screenshots = Steam or titledb, then IGDB; description = existing, then titledb,
-/// then IGDB.
+/// ADR 0038 / ADR 0046 priority, through the real fetcher: screenshots and description from titledb, then IGDB;
+/// video from IGDB; nothing a game already has is replaced.
 @MainActor
 struct MediaPriorityTests {
     private func url(_ string: String) throws -> URL {
@@ -31,7 +30,6 @@ struct MediaPriorityTests {
 
     private func run(
         _ games: [Game],
-        steam: [String: MetadataLookup] = [:],
         titleDB: [String: MetadataLookup] = [:],
         igdb: MockMetadataProvider,
         in repository: MockLibraryRepository
@@ -42,8 +40,7 @@ struct MediaPriorityTests {
         await http.stub(urlContaining: "official.example", data: MetadataFixtures.jpegBytes)
         return try await MetadataFetcher(
             repository: repository,
-            steamStore: MockMetadataProvider(source: .steamStore, results: steam),
-            nintendo: MockMetadataProvider(source: .titleDB, results: titleDB, switchOnly: true),
+            titleDB: MockMetadataProvider(source: .titleDB, results: titleDB, switchOnly: true),
             steamGridDB: MockMetadataProvider(source: .steamGridDB),
             igdb: igdb,
             downloader: ArtworkDownloader(http: http, cache: InMemoryArtworkCache())
@@ -78,23 +75,21 @@ struct MediaPriorityTests {
         #expect(port.metadataProvenance[.carousel] == .igdb)
     }
 
-    @Test func aSteamTrailerMeansIGDBIsNotAskedForVideo() async throws {
+    @Test func anExistingTrailerMeansIGDBIsNotAskedForVideo() async throws {
         let repository = try MockLibraryRepository()
         let port = Game(title: "Celeste", platform: .switchPort, summary: "Has text.")
         port.carouselImagePaths = ["/cache/s.jpg"]
-        var steam = FetchedMetadata(source: .steamStore)
-        steam.trailer = try TrailerCandidate(videoURL: url("https://v.example/c.m3u8"), posterCandidates: [])
+        port.trailerVideoURL = "https://v.example/c.m3u8"
         let igdb = try MockMetadataProvider(source: .igdb, results: ["Celeste": .found(igdbResult())], switchOnly: true)
-        let summary = try await run([port], steam: ["Celeste": .found(steam)], igdb: igdb, in: repository)
+        let summary = try await run([port], igdb: igdb, in: repository)
         #expect(port.trailerVideoURL == "https://v.example/c.m3u8")
-        #expect(igdb.lookedUpTitles.isEmpty)
         #expect(summary.tally(for: .igdb) == MetadataSourceTally(skipped: 1))
     }
 
-    @Test func steamGamesNeverAskIGDB() async throws {
+    @Test func emulatedGamesNeverAskIGDB() async throws {
         let repository = try MockLibraryRepository()
-        let game = Game(title: "Hades", platform: .steam)
-        let igdb = try MockMetadataProvider(source: .igdb, results: ["Hades": .found(igdbResult())], switchOnly: true)
+        let game = Game(title: "Okami", platform: .emulated)
+        let igdb = try MockMetadataProvider(source: .igdb, results: ["Okami": .found(igdbResult())], switchOnly: true)
         _ = try await run([game], igdb: igdb, in: repository)
         #expect(igdb.lookedUpTitles.isEmpty)
         #expect(game.trailerVideoURL == nil)

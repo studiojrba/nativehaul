@@ -1,9 +1,12 @@
 # NX Shelf — Architecture & Roadmap
 
 ## Vision
-A native macOS hub for your whole game library: Steam, Mac-native titles, and Switch titles you have
-legally dumped and converted with an external engine. Think Playnite's library and metadata, plus an
-optional, unbundled build pipeline UI for the upstream nxnative engine.
+**NX Shelf 1.0 (ADR 0046): Switch + emulators only.** A beautiful shelf that launches games: it adopts existing
+standalone nxnative builds and ROM folders with zero rebuilding; native Switch building on standalone nxnative is the
+one big tool inside; and an emulator hub detects the user's emulators, maps ROM folders by system and launches
+through the owning emulator. No sign-in anywhere: the only accounts are pasted API keys (RetroAchievements,
+SteamGridDB, IGDB). Keys, BIOS and ROMs stay user-provided, always. (The branch table below is history: Steam and
+CrossOver were built, then removed for 1.0.)
 
 ## High-level architecture
 
@@ -14,7 +17,9 @@ NXShelf/
 ├── App/            NXShelfApp, RootView, AppEnvironment (dependency container)
 ├── Features/
 │   ├── Library/        SwiftData models (Game, PlaySession…), grid, sidebar, detail, JSON import/export
-│   ├── Steam/          SteamClientProtocol + URLSession client, DTOs, sync, settings
+│   ├── FolderImport/   Adoption of existing builds and ROM folders (first run and rescan)
+│   ├── Emulation/      Emulator detection, ROM-to-system mapping, launch through the owning emulator
+│   ├── Metadata/       titledb (keyless), SteamGridDB and IGDB (pasted keys), artwork cache
 │   ├── Tracking/       PlaytimeWatching (NSWorkspace notifications), session logger
 │   ├── Series/         Series, Collection, SubGame, UpNextEngine (true order, never renumber)
 │   ├── Stats/          StatsCalculator, BadgeEngine (real data only), stats page

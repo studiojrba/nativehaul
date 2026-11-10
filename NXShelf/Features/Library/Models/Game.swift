@@ -24,21 +24,11 @@ final class Game {
     var lastPlayedAt: Date?
     /// Absolute path to a local cover image.
     var coverImagePath: String?
-    /// Steam application ID, when the game is a Steam title.
-    var steamAppID: Int?
     /// Absolute path to a tracked `.app` bundle on disk.
     var appBundlePath: String?
-    /// Lifetime playtime reported by Steam (seconds). Source: ``PlaytimeSource/steamSynced``.
-    var steamSyncedSeconds: Int?
     /// Playtime the player entered by hand (seconds). Source: ``PlaytimeSource/selfReported``.
     var selfReportedSeconds: Int?
-    /// Steam achievements unlocked, from the last achievements load.
-    var steamAchievementsUnlocked: Int?
-    /// Steam achievements available, from the last achievements load.
-    var steamAchievementsTotal: Int?
-    /// Where this game is installed in Steam (Mac Steam and/or CrossOver bottles). Recomputed on every scan.
-    var steamInstalls: [SteamInstallLocation] = []
-    /// Size on disk in bytes, when known (from Steam's manifest or the `.app` bundle).
+    /// Size on disk in bytes, when known (from the `.app` bundle or ROM file).
     var installSizeBytes: Int64?
     /// Developer studio, when known.
     var developer: String?
@@ -50,7 +40,7 @@ final class Game {
     var heroImagePath: String?
     /// Cached carousel slides (screenshots, trailer thumbnails) shown after the hero image.
     var carouselImagePaths: [String] = []
-    /// Streamed trailer (a Steam HLS or mp4 URL, or a YouTube watch URL), first in the media set (ADR 0038). Never
+    /// Trailer (a stream URL, or a YouTube watch URL), first in the media set (ADR 0038). Never
     /// downloaded.
     var trailerVideoURL: String?
     /// Cached poster still for the trailer.

@@ -12,10 +12,6 @@ final class AppEnvironment {
     let repository: any LibraryRepository
     /// JSON import/export.
     let transfer: any LibraryTransferring
-    /// Steam account configuration (key in Keychain).
-    let steamAccount: any SteamAccountStoring
-    /// Steam synchronisation.
-    let steamSync: any SteamSyncing
     /// Playtime watcher for tracked `.app` bundles.
     let watcher: any PlaytimeWatching
     /// Games-folder scanner.
@@ -32,11 +28,11 @@ final class AppEnvironment {
     let urlOpener: any URLOpening
     /// Configured game folders.
     let gameFolders: any GameFolderStoring
-    /// Game folder + CrossOver import.
+    /// Game folder import (existing builds and ROM folders).
     let folderImporter: any GameFolderImporting
     /// Same-title duplicate merging.
     let deduplicator: any LibraryDeduplicating
-    /// Starts games (apps, Steam, CrossOver).
+    /// Starts games (apps and emulators).
     let launcher: any GameLaunching
     /// Fills metadata and artwork.
     let metadataFetcher: any MetadataFetching
@@ -44,12 +40,6 @@ final class AppEnvironment {
     let steamGridDBKey: any SteamGridDBKeyStoring
     /// Optional IGDB credentials (Keychain), ADR 0038.
     let igdbCredentials: any IGDBCredentialStoring
-    /// "Sign in through Steam" (identity only).
-    let steamSignIn: any SteamSigningIn
-    /// Downloads small images such as the Steam avatar (`nil` in previews).
-    let imageHTTP: (any HTTPClient)?
-    /// One-click Windows installs through CrossOver.
-    let bottleInstaller: any BottleInstalling
     /// Whether first-run setup was finished or skipped.
     let onboarding: any OnboardingStoring
     /// Routes emulated games to their emulator app.
@@ -66,8 +56,6 @@ final class AppEnvironment {
         container: ModelContainer,
         repository: any LibraryRepository,
         transfer: any LibraryTransferring,
-        steamAccount: any SteamAccountStoring,
-        steamSync: any SteamSyncing,
         watcher: any PlaytimeWatching,
         scanner: any AppBundleScanning,
         trackingPreferences: any TrackingPreferencesStoring,
@@ -82,9 +70,6 @@ final class AppEnvironment {
         metadataFetcher: any MetadataFetching,
         steamGridDBKey: any SteamGridDBKeyStoring,
         igdbCredentials: any IGDBCredentialStoring = MockIGDBCredentialStore(),
-        steamSignIn: any SteamSigningIn,
-        imageHTTP: (any HTTPClient)?,
-        bottleInstaller: any BottleInstalling,
         onboarding: any OnboardingStoring,
         emulators: EmulatorRouter,
         components: any ComponentUpdating,
@@ -94,8 +79,6 @@ final class AppEnvironment {
         self.container = container
         self.repository = repository
         self.transfer = transfer
-        self.steamAccount = steamAccount
-        self.steamSync = steamSync
         self.watcher = watcher
         self.scanner = scanner
         self.trackingPreferences = trackingPreferences
@@ -110,9 +93,6 @@ final class AppEnvironment {
         self.metadataFetcher = metadataFetcher
         self.steamGridDBKey = steamGridDBKey
         self.igdbCredentials = igdbCredentials
-        self.steamSignIn = steamSignIn
-        self.imageHTTP = imageHTTP
-        self.bottleInstaller = bottleInstaller
         self.onboarding = onboarding
         self.emulators = emulators
         self.components = components
@@ -125,13 +105,10 @@ final class AppEnvironment {
     static var preview: AppEnvironment {
         do {
             let repository = try MockLibraryRepository(seeded: true)
-            let steamAccount = MockSteamAccountStore(configured: true)
             return AppEnvironment(
                 container: repository.container,
                 repository: repository,
                 transfer: LibraryTransferService(repository: repository),
-                steamAccount: steamAccount,
-                steamSync: SteamSyncService(client: MockSteamClient(), account: steamAccount, repository: repository),
                 watcher: MockPlaytimeWatcher(),
                 scanner: MockAppBundleScanner(),
                 trackingPreferences: InMemoryTrackingPreferencesStore(),
@@ -145,13 +122,10 @@ final class AppEnvironment {
                 launcher: RecordingGameLauncher(),
                 metadataFetcher: MockMetadataFetcher(),
                 steamGridDBKey: MockSteamGridDBKeyStore(),
-                steamSignIn: MockSteamSignInService(account: steamAccount),
-                imageHTTP: nil,
-                bottleInstaller: MockBottleInstaller(goldenStatus: .notSetUp),
                 onboarding: InMemoryOnboardingStore(hasCompletedOnboarding: true),
                 emulators: EmulatorRouter(preferences: InMemoryEmulatorPreferences(), files: InMemoryFileOperations()),
                 components: MockComponentUpdater(),
-                gameBadges: GameUpdateBadgeProvider(files: InMemoryFileOperations(), switchVersions: .bundled())
+                gameBadges: GameUpdateBadgeProvider(switchVersions: .bundled())
             )
         } catch {
             fatalError("Preview environment could not be created: \(error)")

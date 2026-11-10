@@ -1243,6 +1243,28 @@ approved by J.R when he set the rule). 333 tests (+6).
   legacy tracker repair and the old own-app names are removed.
 - 🧪 Suite green; lint clean.
 
+## 50 · feature/switch-emulators-scope — 1.0 scope surgery: Switch + emulators only (J.R 21:29, corrected 22:48)
+- ✅ **Steam removed completely (code deleted):**
+  - Web API, sync, achievements and the badge built on them;
+  - OpenID sign-in (loopback, browser);
+  - API key handling, settings, dashboard and sidebar item;
+  - install scanning;
+  - store metadata and trailers;
+  - app-state badges and the `steam://` route;
+  - Steam fields on `Game`, the `steamSynced` source and the `.steam` platform.
+- ✅ **CrossOver removed:** bottles, recipes, installer, bottle and launcher scanning, the launch route and the
+  onboarding module. The unused Nintendo eShop search seam is removed too.
+- ✅ **Adoption hardened (the headline fix):**
+  - the scanner reads the title ID nxnative stamps into each build's bundle ID;
+  - stamped builds import as Switch ports wherever they sit, with the title ID stored;
+  - rescans adopt it for known games and never overwrite an ID recorded by a build;
+  - ROM files import with their system;
+  - re-scans add nothing.
+- ✅ **No sign-in anywhere.** The only accounts are pasted keys (SteamGridDB, IGDB, RetroAchievements next) in the
+  new Keychain service. The Keychain-on-main-thread regression test is rebuilt on SteamGridDB and IGDB reads.
+- 🧪 Suite green; lint clean. `GameFolderImporterTests` now covers adoption: stamped builds anywhere, title-ID
+  adoption on rescan, no overwrite of an ID recorded by a build, ROMs with systems, idempotent rescans.
+
 ## Status by branch (stacked, merge in this order)
 | # | Branch | Built | Compiles | Tests | Pushed |
 |---|--------|-------|----------|-------|--------|
@@ -1292,6 +1314,7 @@ approved by J.R when he set the rule). 333 tests (+6).
 | 47 | `feature/rename-nx-shelf` (stacked on `chore/revert-v2-pass`; 43–46 retained, unmerged) | ✅ | ✅ | 531 | ✅ |
 | 48 | `fix/launch-freezes` (crash pass) | ✅ | ✅ | 532 | ✅ |
 | 49 | `feature/nx-shelf-identity` (full clean identity) | ✅ | ✅ | 527 | ✅ |
+| 50 | `feature/switch-emulators-scope` (1.0 scope surgery) | ✅ | ✅ | 415 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1331,7 +1354,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0045)
+## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0046)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.

@@ -61,17 +61,4 @@ enum MetadataFixtures {
     static let sgdbHeroes = """
     {"success": true, "data": [{"id": 9, "url": "https://sgdb.example/hero.png", "style": "alternate"}]}
     """
-
-    static func switchHit(id: String, title: String, platforms: [String]? = ["Nintendo Switch"]) -> NintendoStoreHit {
-        NintendoStoreHit(
-            listingID: id,
-            title: title,
-            description: "<p>Sail the <b>tides</b>.</p>",
-            developer: "Harbor Lights",
-            genres: ["Adventure"],
-            releaseDate: "2021-06-10T07:00:00.000Z",
-            keyArtURL: "https://assets.example/\(id)/key-art.jpg",
-            platforms: platforms
-        )
-    }
 }

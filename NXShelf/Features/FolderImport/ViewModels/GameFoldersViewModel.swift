@@ -48,7 +48,7 @@ final class GameFoldersViewModel {
         store.save(folders)
     }
 
-    /// Scans every configured folder plus CrossOver and records the summary.
+    /// Scans every game folder and records the summary.
     func scan() async {
         guard !isScanning else { return }
         isScanning = true

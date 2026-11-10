@@ -85,7 +85,7 @@ extension CoverCard where Accessory == EmptyView {
 
 #Preview {
     HStack(spacing: DesignTokens.Spacing.xl) {
-        CoverCard(title: "Tideborn", subtitle: "66h 42m · SteamSynced", imagePath: nil)
+        CoverCard(title: "Tideborn", subtitle: "66h 42m · MacTracked", imagePath: nil)
         CoverCard(title: "Ridgeback", subtitle: "Backlog", imagePath: nil, isSelected: true)
     }
     .frame(width: DesignTokens.Cover.minWidth * 2 + DesignTokens.Spacing.xl)

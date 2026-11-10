@@ -62,7 +62,7 @@ struct GuidesViewModelTests {
     @Test func archivesWithoutGuidesStillImport() throws {
         let json = """
         {"formatVersion":1,"exportedAt":"2026-01-01T00:00:00Z","series":[],"collections":[],"games":[{
-          "id":"6F9619FF-8B86-D011-B42D-00C04FC964FF","title":"Old","platform":"steam","status":"backlog",
+          "id":"6F9619FF-8B86-D011-B42D-00C04FC964FF","title":"Old","platform":"switchPort","status":"backlog",
           "summary":"","addedAt":"2026-01-01T00:00:00Z","sessions":[]}]}
         """
         let repository = try MockLibraryRepository()

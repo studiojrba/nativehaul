@@ -1,6 +1,6 @@
 import Foundation
 
-/// One user-visible way to launch a game, e.g. "Steam (Mac)".
+/// One user-visible way to launch a game, e.g. "Play" or "Play in RetroArch".
 struct LaunchOption: Equatable, Identifiable, Sendable {
     /// Button / menu label.
     let title: String

@@ -42,6 +42,6 @@ extension EmptyStateView where Actions == EmptyView {
 }
 
 #Preview {
-    EmptyStateView(title: "No games yet", symbolName: "square.grid.2x2", message: "Add a game or sync Steam.")
+    EmptyStateView(title: "No games yet", symbolName: "square.grid.2x2", message: "Add your game folders.")
         .background(Theme.canvas)
 }

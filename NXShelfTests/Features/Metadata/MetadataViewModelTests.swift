@@ -29,11 +29,11 @@ struct MetadataViewModelTests {
 
     @Test func refreshReportsAndListsSources() async {
         let game = Game(title: "Portal 2")
-        game.metadataProvenance = MetadataProvenance([.cover: .steamStore, .hero: .user])
+        game.metadataProvenance = MetadataProvenance([.cover: .titleDB, .hero: .user])
         let fetcher = MockMetadataFetcher()
         var changes = 0
         let viewModel = GameMetadataViewModel(game: game, fetcher: fetcher) { changes += 1 }
-        #expect(viewModel.sourceRows.map(\.source) == [.steamStore, .user])
+        #expect(viewModel.sourceRows.map(\.source) == [.titleDB, .user])
         await viewModel.refresh()
         #expect(fetcher.refreshedGameIDs == [game.id])
         #expect(changes == 1)

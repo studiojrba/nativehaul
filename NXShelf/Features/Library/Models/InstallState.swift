@@ -6,11 +6,9 @@ import Foundation
 /// |---|---|---|
 /// | Tracked `.app` (Mac games, built ports, emulator apps) | the bundle exists on disk | yes, checked live |
 /// | ROM (emulated) | the ROM file exists on disk | yes, checked live |
-/// | Steam | a copy was found in a detected Steam library folder at the last scan | as of the last scan |
 ///
-/// A recorded `.app` or ROM path that's gone is **not installed**. A game with none of these, including a Steam game
-/// with an app ID but no copy found, is **unknown**: NX Shelf can't tell "not installed" from "never scanned", so it
-/// never guesses.
+/// A recorded `.app` or ROM path that's gone is **not installed**. A game with neither is **unknown**: NX Shelf can't
+/// tell "not installed" from "never scanned", so it never guesses.
 enum InstallState: Equatable, Sendable {
     /// A launchable install is present.
     case installed
@@ -26,7 +24,7 @@ enum InstallState: Equatable, Sendable {
         fileExists: (String) -> Bool = { FileManager.default.fileExists(atPath: $0) }
     ) -> Self {
         let paths = [game.appBundlePath, game.romPath].compactMap(\.self)
-        if paths.contains(where: fileExists) || !game.steamInstalls.isEmpty {
+        if paths.contains(where: fileExists) {
             return .installed
         }
         return paths.isEmpty ? .unknown : .notInstalled

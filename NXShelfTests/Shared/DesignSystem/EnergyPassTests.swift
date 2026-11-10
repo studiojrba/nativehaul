@@ -38,7 +38,7 @@ struct EnergyPassTests {
     /// The accent is spent only on Play, the active nav item, links and the wordmark.
     @Test func theAccentStaysOnPlayNavAndLinks() throws {
         let allowed: Set = [
-            "Theme.swift", "NXShelfApp.swift", "RailItemRow.swift", "LaunchButton.swift", "BottleInstallPanel.swift",
+            "Theme.swift", "NXShelfApp.swift", "RailItemRow.swift", "LaunchButton.swift",
             "OnboardingWelcomeView.swift",
         ]
         let enumerator = FileManager.default.enumerator(at: sourceRoot, includingPropertiesForKeys: nil)

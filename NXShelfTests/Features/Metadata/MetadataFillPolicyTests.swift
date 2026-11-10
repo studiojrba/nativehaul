@@ -43,9 +43,9 @@ struct MetadataFillPolicyTests {
     }
 
     @Test func provenanceRoundTripsThroughItsStoredForm() {
-        let provenance = MetadataProvenance([.cover: .user, .genres: .steamStore])
+        let provenance = MetadataProvenance([.cover: .user, .genres: .titleDB])
         let decoded = MetadataProvenance(rawEntries: provenance.rawEntries + ["bogus=entry", "nonsense"])
         #expect(decoded == provenance)
-        #expect(provenance.rawEntries == ["genres=steamStore", "cover=user"])
+        #expect(provenance.rawEntries == ["genres=titleDB", "cover=user"])
     }
 }

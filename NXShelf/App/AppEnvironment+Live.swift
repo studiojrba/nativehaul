@@ -7,7 +7,6 @@ extension AppEnvironment {
         let repository = SwiftDataLibraryRepository(context: container.mainContext)
         let secrets = KeychainSecretStore()
         let emulators = EmulatorRouter(preferences: UserDefaultsEmulatorPreferences(), files: LocalFileOperations())
-        let steamAccount = SteamAccountStore(secrets: secrets)
         let trackingPreferences = UserDefaultsTrackingPreferencesStore()
         let watcher = makeLiveWatcher(repository: repository, preferences: trackingPreferences)
         let hltb = CachedHLTBService(cache: FileHLTBCache())
@@ -24,8 +23,6 @@ extension AppEnvironment {
             container: container,
             repository: repository,
             transfer: LibraryTransferService(repository: repository, deduplicator: deduplicator),
-            steamAccount: steamAccount,
-            steamSync: makeLiveSteamSync(account: steamAccount, repository: repository),
             watcher: watcher,
             scanner: AppBundleScanner(),
             trackingPreferences: trackingPreferences,
@@ -40,13 +37,10 @@ extension AppEnvironment {
             metadataFetcher: makeLiveMetadataFetcher(repository: repository, secrets: secrets),
             steamGridDBKey: SteamGridDBKeyStore(secrets: secrets),
             igdbCredentials: IGDBCredentialStore(secrets: secrets),
-            steamSignIn: makeLiveSteamSignIn(account: steamAccount),
-            imageHTTP: URLSessionHTTPClient(),
-            bottleInstaller: makeLiveBottleInstaller(repository: repository, account: steamAccount),
             onboarding: UserDefaultsOnboardingStore(),
             emulators: emulators,
             components: makeLiveComponents(emulators: emulators),
-            gameBadges: GameUpdateBadgeProvider(files: LocalFileOperations(), switchVersions: .bundled()),
+            gameBadges: GameUpdateBadgeProvider(switchVersions: .bundled()),
             handoff: makeLiveHandoff()
         )
     }
@@ -66,17 +60,6 @@ extension AppEnvironment {
         GameSessionHandoff(visibility: ApplicationVisibility(), observer: WorkspaceRunningApplicationObserver())
     }
 
-    private static func makeLiveSteamSync(
-        account: SteamAccountStore,
-        repository: any LibraryRepository
-    ) -> SteamSyncService {
-        SteamSyncService(
-            client: SteamWebAPIClient(http: URLSessionHTTPClient()),
-            account: account,
-            repository: repository
-        )
-    }
-
     private static var liveNXNativeServices: NXNativeServices {
         NXNativeServices(
             files: LocalFileOperations(),
@@ -86,14 +69,6 @@ extension AppEnvironment {
             knowledgeBase: BundledKnowledgeBase(),
             backupDirectory: ScriptBackupService.defaultDirectory(),
             appBundlePath: Bundle.main.bundlePath
-        )
-    }
-
-    private static func makeLiveSteamSignIn(account: any SteamAccountStoring) -> SteamOpenIDSignInService {
-        SteamOpenIDSignInService(
-            browser: LoopbackSteamBrowserSignIn(opener: WorkspaceURLOpener()),
-            verifier: SteamOpenIDVerifier(http: URLSessionHTTPClient()),
-            account: account
         )
     }
 
@@ -118,38 +93,6 @@ extension AppEnvironment {
         }
     }
 
-    private static func makeLiveBottleInstaller(
-        repository: any LibraryRepository,
-        account: any SteamAccountStoring
-    ) -> BottleInstallService {
-        let files = LocalFileOperations()
-        let runner = ProcessCommandRunner()
-        let detector = CrossOverDetector(files: files)
-        let client = SteamBottleClient(http: URLSessionHTTPClient(), files: files, runner: runner)
-        let golden = GoldenBottleManager(
-            detector: detector,
-            account: account,
-            store: UserDefaultsGoldenBottleStore(),
-            locator: GoldenBottleLocator(files: files),
-            files: files,
-            runner: runner,
-            client: client,
-            timing: .live,
-            sleeper: { try await Task.sleep(for: $0) }
-        )
-        return BottleInstallService(
-            golden: golden,
-            detector: detector,
-            recipes: BundledRecipeDatabase.load(),
-            disk: VolumeDiskSpaceProvider(),
-            files: files,
-            runner: runner,
-            planner: PerGameBottlePlanner(files: files),
-            client: client,
-            repository: repository
-        )
-    }
-
     private static func makeLiveMetadataFetcher(
         repository: any LibraryRepository,
         secrets: any SecretStore
@@ -157,8 +100,7 @@ extension AppEnvironment {
         let http = ThrottledHTTPClient(base: URLSessionHTTPClient(), policy: .metadata)
         return MetadataFetcher(
             repository: repository,
-            steamStore: SteamStoreMetadataProvider(http: http),
-            nintendo: TitleDBMetadataProvider(store: TitleDBStore(http: URLSessionHTTPClient())),
+            titleDB: TitleDBMetadataProvider(store: TitleDBStore(http: URLSessionHTTPClient())),
             steamGridDB: SteamGridDBMetadataProvider(http: http, secrets: secrets),
             igdb: IGDBMetadataProvider(client: IGDBClient(
                 http: http,
@@ -180,8 +122,6 @@ extension AppEnvironment {
             folders: folders,
             discoverer: GameFolderDiscoverer(
                 scanner: AppBundleScanner(),
-                crossOver: CrossOverBottleScanner(),
-                steamScanner: SteamInstallScanner(),
                 measuresBundles: true,
                 romScanner: FileSystemRomScanner()
             ),

@@ -7,16 +7,11 @@ enum LaunchTarget: Equatable, Sendable {
     /// Open a `.app` bundle with launch arguments (an emulator with a core and ROM). Always a new instance, so the
     /// arguments reach it even when the app is already open.
     case applicationWithArguments(path: String, arguments: [String])
-    /// Open a URL such as `steam://rungameid/620` with the host's handler.
-    case url(URL)
-    /// Run an executable with arguments (e.g. CrossOver's wine starting a bottle's Steam).
-    case process(executable: String, arguments: [String])
 
-    /// The `.app` this target opens, if it opens one (used by the launch handoff, ADR 0030).
+    /// The `.app` this target opens (used by the launch handoff, ADR 0030).
     var appPath: String? {
         switch self {
         case let .application(path), let .applicationWithArguments(path, _): path
-        case .url, .process: nil
         }
     }
 }

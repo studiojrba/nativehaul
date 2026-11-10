@@ -3,25 +3,28 @@ import Foundation
 import Testing
 
 struct SteamGridDBMetadataProviderTests {
-    private func query(_ title: String, appID: Int? = nil) -> MetadataQuery {
-        MetadataQuery(gameID: UUID(), title: title, steamAppID: appID, platform: .steam)
+    private func query(_ title: String) -> MetadataQuery {
+        MetadataQuery(gameID: UUID(), title: title, platform: .switchPort)
     }
 
     @Test func withoutAKeyItIsUnavailableAndSilent() async throws {
         let http = MockHTTPClient()
         let provider = SteamGridDBMetadataProvider(http: http, secrets: InMemorySecretStore())
-        #expect(try await provider.lookup(query("Portal 2", appID: 620)) == .unavailable)
+        #expect(try await provider.lookup(query("Portal 2")) == .unavailable)
         #expect(await http.requestedURLs.isEmpty)
     }
 
     @Test func filtersUnsafeArtAndSendsTheKeyOnlyAsAHeader() async throws {
         let http = MockHTTPClient()
-        await http.stub(urlContaining: "games/steam/620", json: MetadataFixtures.sgdbGame)
+        await http.stub(
+            urlContaining: "search/autocomplete",
+            json: #"{"success": true, "data": [{"id": 777, "name": "Portal 2"}]}"#
+        )
         await http.stub(urlContaining: "grids/game/777", json: MetadataFixtures.sgdbGrids)
         await http.stub(urlContaining: "heroes/game/777", json: MetadataFixtures.sgdbHeroes)
         let secrets = InMemorySecretStore([.steamGridDBAPIKey: "sgdb-secret"])
         let lookup = try await SteamGridDBMetadataProvider(http: http, secrets: secrets)
-            .lookup(query("Portal 2", appID: 620))
+            .lookup(query("Portal 2"))
         guard case let .found(metadata) = lookup else {
             Issue.record("Expected a match")
             return

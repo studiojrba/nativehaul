@@ -47,12 +47,6 @@ struct BadgeEngine: Sendable {
             return (game == nil ? 0 : 1, game?.title)
         case .weekStreak:
             return (longestDailyStreak(games.flatMap(\.sessions)), nil)
-        case .perfectAchievements:
-            let game = games.first { game in
-                guard let total = game.steamAchievementsTotal, total > 0 else { return false }
-                return game.steamAchievementsUnlocked == total
-            }
-            return (game == nil ? 0 : 1, game?.title)
         }
     }
 

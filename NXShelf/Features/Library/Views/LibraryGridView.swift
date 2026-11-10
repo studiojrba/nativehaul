@@ -30,7 +30,7 @@ struct LibraryGridView: View {
                 EmptyStateView(
                     title: "No games here yet",
                     symbolName: viewModel.filter.section.symbolName,
-                    message: "Add a game, import a library file, or sync Steam."
+                    message: "Add your game folders, or import a library file."
                 )
             } else {
                 grid(split: split)

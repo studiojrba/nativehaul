@@ -53,7 +53,7 @@ struct RailItemRow: View {
             count: nil, isExpanded: true, isSelected: true
         ) {}
         RailItemRow(
-            item: RailItem(destination: .steam, title: "Steam", symbolName: "cloud"),
+            item: RailItem(destination: .stats, title: "Stats", symbolName: "chart.bar"),
             count: 12, isExpanded: false, isSelected: false
         ) {}
     }

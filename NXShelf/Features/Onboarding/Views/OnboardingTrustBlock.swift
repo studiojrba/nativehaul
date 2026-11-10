@@ -14,7 +14,7 @@ struct OnboardingTrustBlock: View {
             )
             Label(
                 "It only looks in folders you point it at, plus the standard places games install to "
-                    + "(Steam, CrossOver, ~/Switch/Games).",
+                    + "(~/Switch/Games, and your emulators' own folders).",
                 systemImage: "folder"
             )
         }

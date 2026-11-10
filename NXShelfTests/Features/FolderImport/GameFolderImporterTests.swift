@@ -2,12 +2,12 @@ import Foundation
 @testable import NXShelf
 import Testing
 
+/// The 1.0 headline (ADR 0046): first run and every rescan adopt what is already on disk, with zero rebuilding:
+/// existing nxnative builds (by folder, port library or the title ID stamped in their bundle) and ROM folders.
 @MainActor
 struct GameFolderImporterTests {
     private static let switchFolder = "/Users/demo/Switch/Games"
     private static let macFolder = "/Users/demo/Games"
-    private static let launchers = "/Users/demo/Applications/CrossOver"
-    private static let bottles = "/Users/demo/Bottles"
 
     private static let tideborn = DiscoveredApp(name: "Tideborn", path: "\(switchFolder)/Tideborn.app")
     private static let moonwell = DiscoveredApp(
@@ -19,49 +19,39 @@ struct GameFolderImporterTests {
     private static let ported = DiscoveredApp(
         name: "Ported", path: "\(macFolder)/Ports/Ported.app", hasPortLibrarySibling: true
     )
-    private static let lanternLauncher = DiscoveredApp(name: "Lanternfall", path: "\(launchers)/Lanternfall.app")
-
-    private static func install(_ name: String) -> CrossOverInstall {
-        CrossOverInstall(
-            name: name,
-            bottle: "Games",
-            folderPath: "\(bottles)/Games/drive_c/Program Files/\(name)",
-            executablePath: "\(bottles)/Games/drive_c/Program Files/\(name)/\(name).exe"
-        )
-    }
+    private static let stamped = DiscoveredApp(
+        name: "Super Mario Odyssey",
+        path: "\(macFolder)/Elsewhere/Super Mario Odyssey.app",
+        switchTitleID: "0100000000010000"
+    )
+    private static let rom = DiscoveredRom(
+        path: "\(macFolder)/ROMs/Lantern Coast.gba", title: "Lantern Coast", system: .gameBoyAdvance
+    )
 
     private func makeImporter(
         repository: MockLibraryRepository,
         folders: [String] = [switchFolder, macFolder],
-        installs: [CrossOverInstall] = [install("Lanternfall"), install("Ashen Road")],
+        roms: [DiscoveredRom] = [rom],
         watcher: MockPlaytimeWatcher = MockPlaytimeWatcher()
     ) -> GameFolderImporter {
         let scanner = MockAppBundleScanner(apps: [], appsByFolder: [
             Self.switchFolder: [Self.tideborn, Self.moonwell],
-            Self.macFolder: [Self.glimmer, Self.ported],
-            Self.launchers: [Self.lanternLauncher],
+            Self.macFolder: [Self.glimmer, Self.ported, Self.stamped],
         ])
-        let locations = CrossOverLocations(bottlesRoot: Self.bottles, launchersFolder: Self.launchers)
-        let crossOver = MockCrossOverScanner(result: CrossOverScanResult(
-            bottles: ["Games", "Tools"],
-            installs: installs
-        ))
         return GameFolderImporter(
             folders: InMemoryGameFolderStore(folders),
             discoverer: GameFolderDiscoverer(
                 scanner: scanner,
-                crossOver: crossOver,
-                locations: locations,
-                folderExists: { $0 != "/missing" }
+                folderExists: { $0 != "/missing" },
+                romScanner: MockRomScanner(romsByFolder: [Self.macFolder: roms])
             ),
             repository: repository,
             trackingPreferences: InMemoryTrackingPreferencesStore(TrackingPreferences(gamesFolder: Self.switchFolder)),
-            watcher: watcher,
-            locations: locations
+            watcher: watcher
         )
     }
 
-    @Test func importsWithPlatformsAndTitles() async throws {
+    @Test func existingBuildsAndROMsAreAdoptedWithTheirPlatforms() async throws {
         let repository = try MockLibraryRepository()
         let watcher = MockPlaytimeWatcher()
         let summary = try await makeImporter(repository: repository, watcher: watcher).scanConfiguredFolders()
@@ -73,22 +63,13 @@ struct GameFolderImporterTests {
         #expect(byTitle["Moonwell"]?.appBundlePath == BundlePath.normalize(Self.moonwell.path))
         #expect(byTitle["Glimmer"]?.platform == .macNative)
         #expect(byTitle["Ported"]?.platform == .switchPort)
-        #expect(byTitle["Lanternfall"]?.platform == .other)
-        #expect(byTitle["Lanternfall"]?.appBundlePath != nil)
-        #expect(byTitle["Ashen Road"]?.platform == .other)
-        #expect(byTitle["Ashen Road"]?.appBundlePath == nil)
-        #expect(byTitle["Ashen Road"]?.summary == "CrossOver bottle: Games")
+        #expect(byTitle["Super Mario Odyssey"]?.platform == .switchPort)
+        #expect(byTitle["Super Mario Odyssey"]?.switchTitleID == "0100000000010000")
+        #expect(byTitle["Lantern Coast"]?.platform == .emulated)
+        #expect(byTitle["Lantern Coast"]?.emulatedSystem == .gameBoyAdvance)
         #expect(games.allSatisfy { $0.status == .backlog })
-        #expect(summary == FolderImportSummary(found: 6, added: 4, bottlesFound: 2, crossOverAdded: 2))
+        #expect(summary == FolderImportSummary(found: 6, added: 5, romsAdded: 1))
         #expect(watcher.refreshCount == 1)
-    }
-
-    @Test func launcherWinsOverMatchingBottleInstall() async throws {
-        let repository = try MockLibraryRepository()
-        _ = try await makeImporter(repository: repository).scanConfiguredFolders()
-        let lanternfall = try repository.fetchGames().filter { TitleNormalizer.matches($0.title, "Lanternfall") }
-        #expect(lanternfall.count == 1)
-        #expect(lanternfall.first?.appBundlePath == BundlePath.normalize(Self.lanternLauncher.path))
     }
 
     @Test func rescanIsIdempotent() async throws {
@@ -98,10 +79,31 @@ struct GameFolderImporterTests {
         let countAfterFirst = try repository.fetchGames().count
         let second = try await importer.scanConfiguredFolders()
         #expect(second.added == 0)
-        #expect(second.crossOverAdded == 0)
+        #expect(second.romsAdded == 0)
         #expect(second.linked == 0)
-        #expect(second.skipped == second.found)
         #expect(try repository.fetchGames().count == countAfterFirst)
+    }
+
+    @Test func aRescanAdoptsTheStampedTitleIDOfAnAlreadyKnownApp() async throws {
+        let repository = try MockLibraryRepository()
+        let known = Game(title: "Super Mario Odyssey", platform: .macNative)
+        known.appBundlePath = BundlePath.normalize(Self.stamped.path)
+        repository.insert(known)
+        try repository.save()
+        _ = try await makeImporter(repository: repository, roms: []).scanConfiguredFolders()
+        #expect(known.switchTitleID == "0100000000010000")
+        #expect(known.platform == .switchPort)
+    }
+
+    @Test func aTitleIDFromABuildThroughNXShelfIsNeverOverwritten() async throws {
+        let repository = try MockLibraryRepository()
+        let built = Game(title: "Super Mario Odyssey", platform: .switchPort)
+        built.appBundlePath = BundlePath.normalize(Self.stamped.path)
+        built.switchTitleID = "0100000000010800"
+        repository.insert(built)
+        try repository.save()
+        _ = try await makeImporter(repository: repository, roms: []).scanConfiguredFolders()
+        #expect(built.switchTitleID == "0100000000010800")
     }
 
     @Test func linksExistingGameWithoutBundlePathByNormalizedTitle() async throws {
@@ -113,7 +115,7 @@ struct GameFolderImporterTests {
         repository.insert(alreadyTracked)
         try repository.save()
 
-        let summary = try await makeImporter(repository: repository, installs: []).scanConfiguredFolders()
+        let summary = try await makeImporter(repository: repository, roms: []).scanConfiguredFolders()
 
         #expect(logbookEntry.appBundlePath == BundlePath.normalize(Self.tideborn.path))
         #expect(logbookEntry.status == .playing)
@@ -124,32 +126,11 @@ struct GameFolderImporterTests {
         #expect(games.count { $0.title == "Glimmer" } == 2)
     }
 
-    @Test func bottleInstallMatchingExistingTitleIsSkipped() async throws {
-        let repository = try MockLibraryRepository()
-        repository.insert(Game(title: "Ashen Road", platform: .other))
-        try repository.save()
-        let summary = try await makeImporter(repository: repository, folders: []).scanConfiguredFolders()
-        #expect(try repository.fetchGames().count { $0.title == "Ashen Road" } == 1)
-        #expect(summary.crossOverAdded == 1)
-        #expect(summary.skipped == 1)
-    }
-
     @Test func reportsUnreadableFolders() async throws {
         let repository = try MockLibraryRepository()
-        let summary = try await makeImporter(repository: repository, folders: ["/missing"], installs: [])
+        let summary = try await makeImporter(repository: repository, folders: ["/missing"], roms: [])
             .scanConfiguredFolders()
         #expect(summary.unreadableFolders == ["/missing"])
         #expect(summary.description.contains("Could not read: /missing"))
-    }
-
-    @Test func scanRecordsSteamProvenance() throws {
-        let repository = try MockLibraryRepository()
-        var discovery = FolderDiscovery()
-        discovery.steamInstalls = MockSteamInstallScanner().installs
-        let summary = try makeImporter(repository: repository, folders: []).apply(discovery)
-        let portal = try #require(try repository.fetchGames().first { $0.steamAppID == 620 })
-        #expect(portal.steamInstalls.map(\.kind) == [.mac, .crossOver])
-        #expect(summary.steam?.added == 1)
-        #expect(summary.description.contains("Steam installs: 1 Mac, 1 CrossOver"))
     }
 }

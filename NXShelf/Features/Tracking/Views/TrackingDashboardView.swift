@@ -17,7 +17,7 @@ struct TrackingDashboardView: View {
                     get: { viewModel.isWatching },
                     set: { viewModel.setWatching($0) }
                 ))
-                Text("Sessions are recorded as MacTracked and never merged with Steam or self-reported time.")
+                Text("Sessions are recorded as MacTracked and never merged with self-reported time.")
                     .font(DesignTokens.Typography.caption)
                     .foregroundStyle(Theme.secondaryText)
                 if let error = viewModel.errorMessage {

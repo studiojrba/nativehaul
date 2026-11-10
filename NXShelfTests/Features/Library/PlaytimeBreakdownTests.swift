@@ -5,15 +5,14 @@ import Testing
 @MainActor
 struct PlaytimeBreakdownTests {
     @Test func dropsEmptySourcesAndKeepsOrder() {
-        let breakdown = PlaytimeBreakdown(secondsBySource: [.hltbEstimate: 10, .steamSynced: 5, .macTracked: 0])
-        #expect(breakdown.entries.map(\.source) == [.steamSynced, .hltbEstimate])
+        let breakdown = PlaytimeBreakdown(secondsBySource: [.hltbEstimate: 10, .selfReported: 5, .macTracked: 0])
+        #expect(breakdown.entries.map(\.source) == [.selfReported, .hltbEstimate])
     }
 
     @Test func gameKeepsSourcesSeparate() throws {
         let repository = try MockLibraryRepository()
         let game = Game(title: "A")
         repository.insert(game)
-        game.steamSyncedSeconds = 100
         game.selfReportedSeconds = 50
         let tracked = PlaySession(
             startedAt: .distantPast,
@@ -23,11 +22,10 @@ struct PlaytimeBreakdownTests {
         repository.insert(tracked)
         tracked.game = game
         let breakdown = game.playtimeBreakdown(hltbEstimateSeconds: 1000)
-        #expect(breakdown.seconds(for: .steamSynced) == 100)
         #expect(breakdown.seconds(for: .selfReported) == 50)
         #expect(breakdown.seconds(for: .macTracked) == 30)
         #expect(breakdown.seconds(for: .hltbEstimate) == 1000)
-        #expect(breakdown.entries.count == 4)
+        #expect(breakdown.entries.count == 3)
     }
 
     @Test func estimateFlag() {

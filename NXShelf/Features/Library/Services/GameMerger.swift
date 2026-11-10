@@ -3,7 +3,7 @@ import Foundation
 /// Pure rules for folding a duplicate ``Game`` into the entry that survives.
 ///
 /// The survivor keeps its identity, title and every value it already has; the duplicate only fills gaps
-/// (tracked bundle path, Steam data, dates, …). Sessions and guides move over, so nothing recorded is lost and
+/// (tracked bundle path, ROM, dates, …). Sessions and guides move over, so nothing recorded is lost and
 /// playtime sources are never summed. Callers repoint series/collections and delete the duplicate afterwards.
 @MainActor
 enum GameMerger {
@@ -38,21 +38,20 @@ enum GameMerger {
         return signals.count { $0 }
     }
 
-    /// Whether two entries can be the same game: they must not point at two different bundles or Steam apps.
+    /// Whether two entries can be the same game: they must not point at two different bundles or ROMs.
     static func areCompatible(_ lhs: Game, _ rhs: Game) -> Bool {
         let bundlesClash = lhs.appBundlePath.map(BundlePath.normalize) != rhs.appBundlePath.map(BundlePath.normalize)
             && lhs.appBundlePath != nil && rhs.appBundlePath != nil
-        let steamClash = lhs.steamAppID != rhs.steamAppID && lhs.steamAppID != nil && rhs.steamAppID != nil
         let romClash = lhs.romPath != rhs.romPath && lhs.romPath != nil && rhs.romPath != nil
-        return !bundlesClash && !steamClash && !romClash && !romMeetsOtherRoute(lhs, rhs) && !romMeetsOtherRoute(
+        return !bundlesClash && !romClash && !romMeetsOtherRoute(lhs, rhs) && !romMeetsOtherRoute(
             rhs,
             lhs
         )
     }
 
-    /// A ROM entry never merges with a Mac app or Steam game of the same title (a remake isn't the original).
+    /// A ROM entry never merges with an app of the same title (a port or remake isn't the original).
     private static func romMeetsOtherRoute(_ rom: Game, _ other: Game) -> Bool {
-        rom.romPath != nil && (other.appBundlePath != nil || other.steamAppID != nil)
+        rom.romPath != nil && other.appBundlePath != nil
     }
 
     /// Fields the duplicate filled carry the duplicate's provenance, so manual art stays protected after a merge.
@@ -86,14 +85,10 @@ enum GameMerger {
         survivor.completedAt = survivor.completedAt ?? duplicate.completedAt
         survivor.lastPlayedAt = [survivor.lastPlayedAt, duplicate.lastPlayedAt].compactMap(\.self).max()
         survivor.coverImagePath = survivor.coverImagePath ?? duplicate.coverImagePath
-        survivor.steamAppID = survivor.steamAppID ?? duplicate.steamAppID
         survivor.appBundlePath = survivor.appBundlePath ?? duplicate.appBundlePath
         survivor.romPath = survivor.romPath ?? duplicate.romPath
         survivor.emulatedSystemRaw = survivor.emulatedSystemRaw ?? duplicate.emulatedSystemRaw
-        survivor.steamSyncedSeconds = survivor.steamSyncedSeconds ?? duplicate.steamSyncedSeconds
         survivor.selfReportedSeconds = survivor.selfReportedSeconds ?? duplicate.selfReportedSeconds
-        survivor.steamAchievementsUnlocked = survivor.steamAchievementsUnlocked ?? duplicate.steamAchievementsUnlocked
-        survivor.steamAchievementsTotal = survivor.steamAchievementsTotal ?? duplicate.steamAchievementsTotal
         survivor.hltbID = survivor.hltbID ?? duplicate.hltbID
         survivor.developer = survivor.developer ?? duplicate.developer
         survivor.heroImagePath = survivor.heroImagePath ?? duplicate.heroImagePath
@@ -107,8 +102,5 @@ enum GameMerger {
         survivor.installSizeBytes = survivor.installSizeBytes ?? duplicate.installSizeBytes
         survivor.genres = union(survivor.genres, duplicate.genres)
         survivor.tags = union(survivor.tags, duplicate.tags)
-        var seenInstalls = Set<SteamInstallLocation>()
-        survivor.steamInstalls = (survivor.steamInstalls + duplicate.steamInstalls)
-            .filter { seenInstalls.insert($0).inserted }
     }
 }

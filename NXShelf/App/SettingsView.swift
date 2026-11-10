@@ -9,8 +9,6 @@ struct SettingsView: View {
         TabView {
             GeneralSettingsView()
                 .tabItem { Label("General", systemImage: "gearshape") }
-            SteamSettingsView(viewModel: environment.makeSteamConnectionViewModel())
-                .tabItem { Label("Steam", systemImage: "cloud") }
             ArtworkSettingsView(
                 viewModel: environment.makeArtworkSettingsViewModel(),
                 igdbViewModel: environment.makeIGDBSettingsViewModel()

@@ -12,8 +12,8 @@ struct MetadataMergeTests {
         duplicate.summary = "Fetched."
         duplicate.metadataProvenance = MetadataProvenance([
             .cover: .user,
-            .carousel: .steamStore,
-            .description: .steamStore,
+            .carousel: .titleDB,
+            .description: .titleDB,
         ])
         GameMerger.merge(duplicate, into: survivor)
         #expect(survivor.coverImagePath == "/Users/jr/cover.png")

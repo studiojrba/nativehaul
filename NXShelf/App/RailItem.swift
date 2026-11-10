@@ -28,7 +28,6 @@ struct RailItem: Identifiable, Hashable, Sendable {
             RailItem(destination: .stats, title: "Stats & Badges", symbolName: "chart.bar"),
         ],
         [
-            RailItem(destination: .steam, title: "Steam", symbolName: "cloud"),
             RailItem(destination: .tracking, title: "Playtime Tracking", symbolName: "timer"),
             RailItem(destination: .nxnative, title: "NXNative Builds", symbolName: "hammer"),
         ],
