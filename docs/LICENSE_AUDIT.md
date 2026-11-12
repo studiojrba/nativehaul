@@ -19,7 +19,8 @@ network host changes.
 | `ComponentCatalog.json` | Data | Ours (MIT) | Yes | Written by us: emulator names, official URLs, version pins. |
 | `SwitchTitleVersions.json` | Data | Ours (MIT) | Yes | Ships empty (schema only). |
 | `TroubleshootingKnowledgeBase.json` | Data | Ours (MIT) | Yes | Written by us. |
-| Fonts, images, icons | Assets | n/a | No | No custom fonts or images ship; the UI uses SF Symbols and system fonts (Apple terms). |
+| App icon (`Assets.xcassets/AppIcon`) | Asset | Ours (supplied by J.R for nativehaul) | Yes | The only image that ships. |
+| Fonts, other images | Assets | n/a | No | No custom fonts or other images ship; the UI uses SF Symbols and system fonts (Apple terms). |
 | nxnative (`seedds/nxnative`) | Tool | MIT | **No** | User-installed, found on disk, run as a separate process. |
 | RetroArch | App | GPL-3.0 | **No** | External launch / optional official download. |
 | Dolphin | App | GPL-2.0-or-later | **No** | External launch / optional official download. |

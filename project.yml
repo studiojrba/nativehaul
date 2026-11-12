@@ -45,6 +45,7 @@ targets:
         PRODUCT_MODULE_NAME: nativehaul
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: nativehaul
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.games
         INFOPLIST_KEY_NSHumanReadableCopyright: "© 2026 Studio Jrba inc. MIT License."
         ENABLE_APP_SANDBOX: NO
