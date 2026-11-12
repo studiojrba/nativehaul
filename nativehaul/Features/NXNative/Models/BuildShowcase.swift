@@ -33,9 +33,14 @@ struct BuildShowcase: Equatable, Sendable {
             $0.name.compare(title.name, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
         }
         guard let art = byID ?? byName else { return nil }
-        if !art.screenshots.isEmpty {
-            return BuildShowcase(images: art.screenshots, isSlideshow: art.screenshots.count > 1)
+        return make(screenshots: art.screenshots, hero: art.hero)
+    }
+
+    /// Screenshots as a slideshow, else the hero as one still, else nothing (also used by TV mode, ADR 0052).
+    static func make(screenshots: [String], hero: String?) -> BuildShowcase? {
+        if !screenshots.isEmpty {
+            return BuildShowcase(images: screenshots, isSlideshow: screenshots.count > 1)
         }
-        return art.hero.map { BuildShowcase(images: [$0], isSlideshow: false) }
+        return hero.map { BuildShowcase(images: [$0], isSlideshow: false) }
     }
 }

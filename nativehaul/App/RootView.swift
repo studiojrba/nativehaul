@@ -28,6 +28,7 @@ struct RootView: View {
     var body: some View {
         RailShell(selection: $selection, libraryViewModel: libraryViewModel) { navigation }
             .environment(environment)
+            .modifier(TVModeHost(environment: environment) { libraryViewModel.reload() })
             .onChange(of: selection) { path.removeAll() }
             .task {
                 isOnboarding = !environment.onboarding.hasCompletedOnboarding

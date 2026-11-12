@@ -22,6 +22,8 @@ struct SettingsView: View {
                 .tabItem { Label("Emulators", systemImage: "arcade.stick") }
             UpdatesSettingsView(viewModel: environment.makeUpdatesSettingsViewModel())
                 .tabItem { Label("Updates", systemImage: "arrow.down.circle") }
+            TVModeSettingsView(viewModel: environment.makeTVModeSettingsViewModel())
+                .tabItem { Label("TV Mode", systemImage: "tv") }
             TrackingSettingsView(viewModel: environment.makeTrackingSettingsViewModel())
                 .tabItem { Label("Tracking", systemImage: "timer") }
             NXNativeSettingsView(viewModel: environment.makeNXNativeSettingsViewModel())

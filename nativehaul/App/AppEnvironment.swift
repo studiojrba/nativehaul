@@ -56,6 +56,14 @@ final class AppEnvironment {
     let handoff: GameSessionHandoff
     /// nativehaul's own updates (Sparkle, ADR 0050).
     let appUpdater: any AppUpdating
+    /// TV mode settings (ADR 0052).
+    let tvModePreferences: any TVModePreferencesStoring
+    /// Sleep, Restart and Shut Down from the TV menu.
+    let power: any PowerActing
+    /// The current audio output, shown in the TV menu.
+    let audioOutput: any AudioOutputReading
+    /// Makes the controller input source for a TV mode session.
+    let makeTVInput: @MainActor () -> any TVInputProviding
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -83,7 +91,11 @@ final class AppEnvironment {
         components: any ComponentUpdating,
         gameBadges: GameUpdateBadgeProvider,
         handoff: GameSessionHandoff? = nil,
-        appUpdater: any AppUpdating = MockAppUpdater()
+        appUpdater: any AppUpdating = MockAppUpdater(),
+        tvModePreferences: any TVModePreferencesStoring = InMemoryTVModePreferences(),
+        power: any PowerActing = RecordingPowerActions(),
+        audioOutput: any AudioOutputReading = FixedAudioOutputReader(),
+        makeTVInput: @escaping @MainActor () -> any TVInputProviding = { MockTVInputSource() }
     ) {
         self.container = container
         self.repository = repository
@@ -111,6 +123,10 @@ final class AppEnvironment {
         self.handoff = handoff
             ?? GameSessionHandoff(visibility: MockAppVisibility(), observer: MockRunningApplicationObserver())
         self.appUpdater = appUpdater
+        self.tvModePreferences = tvModePreferences
+        self.power = power
+        self.audioOutput = audioOutput
+        self.makeTVInput = makeTVInput
     }
 
     /// Seeded in-memory environment with mock services for SwiftUI previews.

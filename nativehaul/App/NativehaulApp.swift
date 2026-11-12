@@ -46,6 +46,9 @@ struct NativehaulApp: App {
                 SettingsView(environment: environment)
             }
         }
-        .commands { CheckForUpdatesCommands(updater: appUpdater) }
+        .commands {
+            CheckForUpdatesCommands(updater: appUpdater)
+            TVModeCommands()
+        }
     }
 }

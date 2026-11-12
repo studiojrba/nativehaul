@@ -49,6 +49,15 @@ final class GameDetailViewModel {
         }
     }
 
+    /// "Open windowed in TV mode" (ADR 0052): off means TV mode opens the game full screen.
+    var launchesWindowedInTVMode: Bool {
+        get { game.launchesWindowedInTVMode }
+        set {
+            game.launchesWindowedInTVMode = newValue
+            persist()
+        }
+    }
+
     /// Details info list (Status, Install Size, Time Played, …).
     var infoRows: [GameInfoRow] {
         GameInfoBuilder.rows(for: game)

@@ -47,7 +47,11 @@ extension AppEnvironment {
             components: makeLiveComponents(emulators: emulators),
             gameBadges: GameUpdateBadgeProvider(switchVersions: .bundled()),
             handoff: makeLiveHandoff(),
-            appUpdater: SparkleAppUpdater()
+            appUpdater: SparkleAppUpdater(),
+            tvModePreferences: UserDefaultsTVModePreferences(),
+            power: SystemPowerActions(),
+            audioOutput: CoreAudioOutputReader(),
+            makeTVInput: { GameControllerInputSource() }
         )
     }
 

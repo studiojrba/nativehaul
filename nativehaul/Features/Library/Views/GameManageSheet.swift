@@ -25,6 +25,10 @@ struct GameManageSheet: View {
                         .fixedSize()
                     PlaytimeSourceTag(source: .selfReported)
                 }
+                LabeledValueRow(label: "TV mode") {
+                    Toggle("Open windowed", isOn: $viewModel.launchesWindowedInTVMode)
+                        .help("TV mode opens games full screen. Turn this on for a game that misbehaves full screen.")
+                }
                 HStack(spacing: DesignTokens.Spacing.md) {
                     Button("Choose Cover…", systemImage: "photo") { pickingArtwork = .cover }
                     Button("Choose Hero Image…", systemImage: "photo.on.rectangle") { pickingArtwork = .hero }

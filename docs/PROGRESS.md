@@ -1381,6 +1381,38 @@ approved by J.R when he set the rule). 333 tests (+6).
   (18 games, all with title IDs, Home with art) and no errors were logged. It was quit politely and nothing is left
   running.
 
+## 57 · feature/tv-mode-shell — TV mode M1: the TV shell (overnight brief, Job 2, 2026-11-12)
+- **Built:** ADR 0052, following J.R's TV mode plan and his nine decisions. M1 only.
+  - **TV mode in the main window:** View → Enter TV Mode (⌃⌘T) or Settings → TV Mode. The window goes full screen
+    and TV mode covers the desktop layout; Exit TV Mode restores it. Desktop launches are unchanged
+    (`LaunchStyle.standard`).
+  - **Library:** shelves (Recently Played, Switch, Emulated, Other) by default, or a grid. The backdrop is the
+    focused game's art. 10-foot sizing from the screen height: titles 4.5%, body 2.6%, 5% safe area. Focus grows
+    the tile 9% on a soft shadow with its title underneath, never a border; other tiles dim.
+  - **Controller** (GameController): D-pad/stick with repeat; Select = the button labelled A (Cross), Back = B
+    (Circle); top button = Details; shoulders switch shelves; triggers jump by letter; +/Options opens the menu.
+    Nintendo positions are handled, and prompts follow the controller. A keyboard fallback is included.
+  - **Detail screen:** reuses the Builds media (trailer first, else the showcase slideshow).
+  - **Launch hook:** full screen in TV mode through each nxnative build's declared `DM_FULLSCREEN` switch (all 17 of
+    J.R's builds declare it) and documented emulator flags. A per-game "Open windowed" override sits in the desktop
+    Manage sheet (`Game.launchesWindowedInTVMode`, an additive schema field).
+  - **Start/Options menu:** layout, the current audio output (read-only, with a note), Sleep / Restart / Shut Down
+    (each confirmed), and Exit TV Mode.
+- **Branch base:** stacked on `feature/app-icon` (see section 56 for why it isn't on `production`).
+- **Tests:** 465, all green (32 new across 9 suites: shelves, navigation, mapping and glyphs, metrics, full-screen
+  launch, view model, settings, renders); lint clean.
+- **Renders:** offscreen renders of the sample library (`$TMPDIR/nativehaulPolish/tv-*.png`) cover shelves at 1080p
+  and 4K, the grid, the detail screen, the menu, and Nintendo prompts.
+- **Not verified, needs real hardware:**
+  - the Switch Pro Controller's face-button positions, stick repeat and triggers;
+  - whether `DM_FULLSCREEN` reaches each build through the launch environment;
+  - each emulator's full-screen flag;
+  - full-screen enter and exit on the TV;
+  - Restart / Shut Down permissions (they may need the Apple-events entitlement).
+  TV mode was not run live: it isn't in J.R's installed 1.0.0, and nothing was launched against his library.
+- **Held back:** the plan's accent-coloured focus title, because the accent stays on Play, nav and links per
+  `EnergyPassTests`. J.R's call.
+
 ## 1.0.0 release candidate: verification on J.R's Mac (2026-11-10)
 `./scripts/release.sh` (full, not published) built `build/release/1.0.0/nativehaul-1.0.0.dmg` (SHA-256
 `2f25e6aad1ca5d61d0fd092ecb2e7dd1840974cf700c15a99e34d40dfd86958e`). Nothing is tagged or published yet.
@@ -1515,6 +1547,7 @@ J.R: don't publish; install the notarized build as his working copy instead.
 | 54 | `feature/sparkle-updates` (release 2/3) | ✅ | ✅ | 432 | ✅ |
 | 55 | `feature/release-pipeline` (release 3/3) | ✅ | ✅ | 433 | ✅ |
 | 56 | `feature/app-icon` (overnight Job 1) | ✅ | ✅ | 433 | ✅ |
+| 57 | `feature/tv-mode-shell` (TV mode M1) | ✅ | ✅ | 465 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
@@ -1554,7 +1587,7 @@ and none should be.
 - Open PRs into `production`, in stack order 0 → 11. Don't commit to `production` directly; it changes only through
   merged feature branches.
 
-## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0051)
+## Key decisions (see `docs/decisions/` ADR 0001–0038, 0042–0052)
 - Empty upstream repo, so the feature branches are **stacked**. The default branch is `production`; there is no `main`.
 - XcodeGen (`project.yml`). The `.xcodeproj` is git-ignored; generate it with `./scripts/bootstrap.sh`.
 - One app module with strict feature folders. Every service is protocol-first, with a mock for previews and tests.

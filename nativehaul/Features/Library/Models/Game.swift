@@ -59,6 +59,9 @@ final class Game {
     var retroAchievementsGameID: Int?
     /// HowLongToBeat game identifier, when known (used for a direct link-out; never fetched).
     var hltbID: Int?
+    /// Open this game in a window, not full screen, in TV mode (ADR 0052). Set from desktop mode for builds that
+    /// misbehave full screen.
+    var launchesWindowedInTVMode = false
     /// Recorded play sessions.
     @Relationship(deleteRule: .cascade, inverse: \PlaySession.game) var sessions: [PlaySession] = []
     /// External guide links (link-out only).

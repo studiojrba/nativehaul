@@ -92,8 +92,9 @@ final class GameLaunchViewModel {
         }
     }
 
-    /// Launches `option` (default: the primary option). Tracked launches make sure the watcher is running.
-    func launch(_ option: LaunchOption? = nil) async {
+    /// Launches `option` (default: the primary option). Tracked launches make sure the watcher is running. TV mode
+    /// passes a window `style` (ADR 0052); desktop mode keeps ``LaunchStyle/standard``.
+    func launch(_ option: LaunchOption? = nil, style: LaunchStyle = .standard) async {
         guard let option = option ?? primaryOption else { return }
         if option.isTracked {
             watcher.start()
@@ -102,7 +103,7 @@ final class GameLaunchViewModel {
             watcher.attributeNextLaunch(ofAppAt: appPath, to: game.id)
         }
         do {
-            try await launcher.launch(option.target)
+            try await launcher.launch(option.target, style: style)
             lastLaunched = option.title
             errorMessage = nil
             if option.isTracked, let appPath = option.target.appPath {

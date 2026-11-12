@@ -129,6 +129,14 @@ Figma designs will arrive later. Until then, **structure and function beat bespo
   the app writes, via `AppInfo.supportDirectory`), the store `nativehaul.store` inside it, the Keychain service
   `com.studiojrba.nativehaul`. Nothing reads, points at or migrates data from an earlier identity.
 
+## TV mode (J.R, ADR 0052)
+- TV (couch) mode lives inside the main window: it goes full screen over the desktop layout and hands the window
+  back on exit. With TV mode off, desktop behaviour must not change; desktop launches use `LaunchStyle.standard`.
+- Games launch full screen in TV mode (nxnative `DM_FULLSCREEN`, documented emulator flags) unless the game's
+  Manage sheet says "Open windowed". Select is the button labelled A (Cross); prompts follow the connected controller.
+- Milestones: M1 shell (done, unverified on hardware), M2 play loop, M3 boot and onboarding, M4 external drive,
+  M5 polish. Controller behaviour is verified only on real hardware; say so in reports.
+
 ## Data integrity rules (product invariants)
 - **Playtime sources are never silently merged.** Every figure carries a `PlaytimeSource`
   (`macTracked`, `selfReported`, `hltbEstimate`). Totals are shown per source.

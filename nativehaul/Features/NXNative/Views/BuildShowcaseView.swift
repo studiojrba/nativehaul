@@ -9,6 +9,8 @@ import SwiftUI
 struct BuildShowcaseView: View {
     /// What to show.
     let showcase: BuildShowcase
+    /// Tallest the media may be (TV mode sizes it from the screen, ADR 0052).
+    var maxHeight: CGFloat = DesignTokens.Media.showcaseMaxHeight
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var index = 0
     @State private var loaded: [Int: NSImage] = [:]
@@ -16,7 +18,7 @@ struct BuildShowcaseView: View {
 
     var body: some View {
         let shape = RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
-        FittedMediaFrame(aspect: currentAspect, maxHeight: DesignTokens.Media.showcaseMaxHeight) {
+        FittedMediaFrame(aspect: currentAspect, maxHeight: maxHeight) {
             Theme.surface
                 .overlay {
                     if let image = loaded[index] {
