@@ -1358,6 +1358,29 @@ approved by J.R when he set the rule). 333 tests (+6).
 - **J.R's live copy:** after setup it adopted all 18 ports with their title IDs under the nativehaul identity
   (checked read-only in `nativehaul.store`).
 
+## 56 · feature/app-icon — the nativehaul app icon (overnight brief, Job 1, 2026-11-12)
+- **Built:** `nativehaul/Assets.xcassets/AppIcon.appiconset` (all ten macOS sizes) and
+  `ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon`; before this the app had no icon. The licence audit lists the icon
+  as our own asset.
+- **Branch base:** stacked on `feature/release-pipeline`, not cut from `production` as the brief said, because
+  `production` doesn't have the 1.0 stack yet (PRs #1–#4 are unmerged). A branch from `production` would build the
+  old pre-1.0 app and has no `scripts/release.sh`.
+- **Debug build:** BUILD SUCCEEDED; **433 tests**, all green; lint clean. The bundle has `Assets.car` with `AppIcon`
+  renditions from 16 to 1024 px, plus `AppIcon.icns` and `CFBundleIconName = AppIcon`.
+- **Release build** (`./scripts/release.sh`, no `--publish`; still 1.0.0, build 2; nothing tagged or published):
+  - Apple's notary service accepted the app and the DMG, and both are stapled;
+  - Gatekeeper says "accepted, source=Notarized Developer ID" for both;
+  - appcast written. DMG SHA-256 `db090dae…c2cb`.
+- **Installed:** no game was running; the `/Applications` copy was already quit. The old bundle went to the Trash,
+  and the notarized export was copied to `/Applications/nativehaul.app`. Checks:
+  - `Contents/Resources` has `Assets.car` and `AppIcon.icns`;
+  - signature, staple and Gatekeeper all pass;
+  - macOS's own icon rendering (`NSWorkspace.icon(forFile:)`) shows the cream cartridge on charcoal, in the
+    system's rounded icon shape.
+- **Launch check:** the installed app ran from `/Applications` (version 1.0.0, build 2). The library opened intact
+  (18 games, all with title IDs, Home with art) and no errors were logged. It was quit politely and nothing is left
+  running.
+
 ## 1.0.0 release candidate: verification on J.R's Mac (2026-11-10)
 `./scripts/release.sh` (full, not published) built `build/release/1.0.0/nativehaul-1.0.0.dmg` (SHA-256
 `2f25e6aad1ca5d61d0fd092ecb2e7dd1840974cf700c15a99e34d40dfd86958e`). Nothing is tagged or published yet.
@@ -1491,6 +1514,7 @@ J.R: don't publish; install the notarized build as his working copy instead.
 | 53 | `feature/release-licensing` (release 1/3) | ✅ | ✅ | 427 | ✅ |
 | 54 | `feature/sparkle-updates` (release 2/3) | ✅ | ✅ | 432 | ✅ |
 | 55 | `feature/release-pipeline` (release 3/3) | ✅ | ✅ | 433 | ✅ |
+| 56 | `feature/app-icon` (overnight Job 1) | ✅ | ✅ | 433 | ✅ |
 
 Test counts are cumulative. On every branch, `./scripts/build.sh` gives BUILD SUCCEEDED and TEST SUCCEEDED,
 `swiftlint lint --strict` reports 0 violations, and SwiftFormat is clean. The app was launch-checked on branches
