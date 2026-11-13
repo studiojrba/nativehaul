@@ -88,12 +88,6 @@ enum Theme {
     static let estimate = inkSoft
     /// A faint accent wash for selected rows.
     static let accentSoft = accent.opacity(DesignTokens.Opacity.selection)
-    /// Play's daylight gradient: ember into a deeper ember (the dark treatment is ``EmberFill``).
-    static let playGradient = LinearGradient(
-        colors: [accent, AccentTokens.emberDeep.color],
-        startPoint: .leading,
-        endPoint: .trailing
-    )
     /// Behind a trailer: the evening bezel, never pure black.
     static let mediaBackdrop = Palette.mediaBackdrop.color
     /// Text drawn over artwork behind a dark scrim: warm near-white in both appearances.

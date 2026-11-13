@@ -60,10 +60,8 @@ enum DesignTokens {
 
     /// Three-column game details layout.
     enum Details {
-        static let quickListWidth: CGFloat = 220
         static let rightRailWidth: CGFloat = 280
         static let heroHeight: CGFloat = 280
-        static let launchButtonHeight: CGFloat = 48
         static let infoLabelWidth: CGFloat = 104
     }
 
@@ -121,16 +119,6 @@ enum DesignTokens {
 
     /// The Builds page (ADR 0028).
     enum Builds {
-        /// The job detail's share of the page width; the queue keeps the rest.
-        static let detailShare: CGFloat = 0.666_666_7
-        /// Height of the segmented progress bar.
-        static let progressHeight: CGFloat = 10
-        /// Gap between progress segments.
-        static let segmentGap: CGFloat = 3
-        /// Seconds each showcase screenshot stays up.
-        static let slideSeconds: Double = 3
-        /// Crossfade between screenshots (seconds).
-        static let crossfadeSeconds: Double = 0.8
         /// Longest edge showcase images are decoded at.
         static let showcaseDecodePixels: CGFloat = 1600
     }
