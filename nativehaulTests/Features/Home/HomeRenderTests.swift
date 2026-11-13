@@ -3,7 +3,8 @@ import AppKit
 import SwiftUI
 import Testing
 
-/// Offscreen renders of Home at the guarded widths: hero with ambient wash, Jump Back In, Recently Added.
+/// Offscreen renders of the 0.1.0 Home in the desktop shell at the guarded widths (hero carousel over the game wash,
+/// Continue playing, the whole-shelf card), dark and light.
 @MainActor
 struct HomeRenderTests {
     private static let height: CGFloat = 1100
@@ -12,12 +13,13 @@ struct HomeRenderTests {
     func homeRenders(width: Double) throws {
         let environment = try LibraryRenderFixture.environment()
         try LibraryRenderFixture.addHeroes(to: environment)
-        let games = try environment.repository.fetchGames()
-        #expect(!HomeFeed.make(from: games, now: .now, fileExists: LibraryRenderFixture.fileExists).heroes.isEmpty)
+        let library = environment.makeLibraryViewModel()
+        let home = HomeViewModel(library: library, paletteExtractor: MockGamePaletteExtractor())
+        #expect(!home.slides.isEmpty)
         let screen = LibraryRenderFixture.shell(
-            LibraryRenderFixture.home(environment),
+            LibraryRenderFixture.home(environment, library: library),
             environment: environment,
-            selection: .home
+            screen: .home
         )
         let size = CGSize(width: width, height: Self.height)
         #expect(OffscreenRenderer
