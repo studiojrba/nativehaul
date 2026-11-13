@@ -1,8 +1,9 @@
 import Foundation
 
 /// Button glyphs per controller family (spec §3.7, ADR 0058). The design set is Nintendo's (A right, B bottom, X top,
-/// Y left; L/R, ZL/ZR, +/−, Home). Xbox shows its letters and PlayStation its shapes for the same **positions**, since
-/// couch acts by position (``ControllerMapping``). Every symbol name is checked against SF Symbols by a test.
+/// Y left; L/R, ZL/ZR, +/−, Home). Select is the button labelled A everywhere (``ControllerMapping``), so prompts read
+/// "A Play" on Nintendo and Xbox and "✕ Play" on PlayStation. Every symbol name is checked against SF Symbols by a
+/// test.
 enum ControllerGlyphs {
     /// Home, on every controller.
     static let homeSymbol = "house.fill"
@@ -33,8 +34,8 @@ enum ControllerGlyphs {
 
     private static func xbox(_ button: CouchButton) -> CouchGlyph {
         switch button {
-        case .select: .label("B")
-        case .back: .label("A")
+        case .select: .label("A")
+        case .back: .label("B")
         case .details: .label("Y")
         case .previousGame: .label("LB", wide: true)
         case .nextGame: .label("RB", wide: true)
@@ -48,8 +49,8 @@ enum ControllerGlyphs {
 
     private static func playStation(_ button: CouchButton) -> CouchGlyph {
         switch button {
-        case .select: .shape("circle")
-        case .back: .shape("xmark")
+        case .select: .shape("xmark")
+        case .back: .shape("circle")
         case .details: .shape("triangle")
         case .previousGame: .label("L1", wide: true)
         case .nextGame: .label("R1", wide: true)

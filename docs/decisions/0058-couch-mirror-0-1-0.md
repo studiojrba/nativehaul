@@ -40,12 +40,16 @@ rule (Nov 12) is that couch **mirrors the desktop** with controller navigation w
   Menu → Settings, reading-order grid, overlays). `CouchViewModel` carries the effects out (sounds through
   `AudioController`, rumble when on and supported). **No auto-advance while navigating:** the 7s timer runs only
   while focus rests on the hero with nothing over it; every input restarts the cycle (`CouchAutoAdvanceKey`).
-- **Controller:** GameController (`GameControllerInputSource`, salvaged). Buttons act **by physical position for
-  every controller**: east selects, south goes back, north opens details (on a Switch Pro Controller: A, B, X as
-  printed). Shoulders switch the hero game, triggers jump letters, − (View/Options) leaves couch, + (Menu) opens
+- **Controller:** GameController (`GameControllerInputSource`, salvaged). **Select is the button labelled A on every
+  controller** (CLAUDE.md couch rule): on Nintendo (Switch Pro, Joy-Con) that is the east button and back is south
+  (B); on Xbox, PlayStation (Cross / Circle) and generic gamepads select is south and back east. The top button opens
+  details everywhere (Nintendo X, Xbox Y, PlayStation △). The family comes from `productCategory`. Assumption to
+  verify on hardware: GameController reports Nintendo face buttons by position (`buttonA` = the bottom button,
+  printed B). Shoulders switch the hero game, triggers jump letters, − (View/Options) leaves couch, + (Menu) opens
   couch Settings, Home is couch's own while it shows (`preferredSystemGestureState = .disabled`). Repeat 280ms then
   110ms, stick threshold 0.6. Prompts follow `productCategory` (Nintendo, Xbox letters, PlayStation shapes,
-  generic as Xbox) and default to Nintendo. Rumble via GameController haptics; a Switch Pro Controller's HD Rumble
+  generic as Xbox), so they read "A Play" on Nintendo and Xbox and "✕ Play" on PlayStation, and default to
+  Nintendo. Rumble via GameController haptics; a Switch Pro Controller's HD Rumble
   isn't exposed by Apple's framework, so it is silent there. Development keys exist and are never advertised.
 - **Launch:** A shows the launch phase in the game's wash ("Here we go…", "Starting {short}" — the app that runs it
   is never named), then the real handoff takes over. `CouchLaunchPolicy`: couch → `.fullScreen` unless the game is
@@ -66,7 +70,10 @@ rule (Nov 12) is that couch **mirrors the desktop** with controller navigation w
   auto-advance rule, prompts, launch style, windowed store, close timing, handoff, view model) and offscreen renders
   at 1080p (`/Users/jrbaprz/Projects/nativehaul/.recovery/home/nativehaul-0.1.0-work/screens/phase5-*`). The window-snapshot renders draw the 3D hero case at the
   window's origin (a snapshot artifact; `phase5-home-imagerenderer-*` shows it in place).
-- **Not verified on hardware:** no controller was available. Face-button positions on a Switch Pro Controller,
+- **Call corrected (2026-11-13):** the first cut acted by position for every controller (east selects), which made
+  Xbox read "B Play". CLAUDE.md's rule wins: select is the button labelled A.
+- **Not verified on hardware:** no controller was available. How GameController reports a Switch Pro Controller's
+  face buttons (by position is assumed),
   stick repeat, Home gesture suppression, haptics, entering/leaving full screen on a TV, `DM_FULLSCREEN` reaching
   each build, emulator full-screen flags, Resume re-activating the game, and whether macOS honours the in-front
   restore after a game exits.

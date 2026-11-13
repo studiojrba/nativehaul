@@ -5,11 +5,11 @@ import Foundation
 enum CouchInput: Equatable, Sendable {
     /// Move the focus.
     case move(CouchDirection)
-    /// Select / Play: the right face button (A on a Switch Pro Controller).
+    /// Select / Play: the button labelled A (Cross on PlayStation).
     case select
-    /// Back: the bottom face button (B on a Switch Pro Controller).
+    /// Back: the button labelled B (Circle on PlayStation).
     case back
-    /// About the game: the top face button (X on a Switch Pro Controller).
+    /// About the game: the top face button (X on Nintendo, Y on Xbox, Triangle on PlayStation).
     case details
     /// The previous hero game (L / LB).
     case previousGame

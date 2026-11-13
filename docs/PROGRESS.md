@@ -1594,8 +1594,10 @@ Cut from Phase 4's tip (bc66f0c). ADR 0058; ADR 0052 amended ("couch mirrors des
 - ✅ 🧪 **`CouchNavigator`**: the whole §3.7 focus model as a pure reducer (rows −2/−1/0…n, remembered columns and
   starts, arrow focus stops, paging by V, settling, LB/RB, LT/RT letter jumps + 1100ms toast, A/X/B/Home/View/Menu,
   reading-order grid, overlays). Auto-advance only while focus rests on the hero; any input restarts it.
-- ✅ 🧪 **Controller**: acts by physical position (right selects, bottom back, top details) for every controller;
-  Nintendo glyphs by default, Xbox/PlayStation/generic by `productCategory`; repeat 280/110ms, stick 0.6; rumble via
+- ✅ 🧪 **Controller**: select is the button labelled A on every controller (Nintendo east, Xbox/PlayStation/generic
+  south; back is B / Circle), the top button opens details; family from `productCategory`, assuming GameController
+  reports Nintendo face buttons by position (unverified). Prompts "A Play" (Nintendo, Xbox), "✕ Play" (PlayStation),
+  Nintendo glyphs by default; repeat 280/110ms, stick 0.6; rumble via
   GameController haptics when on (silent on Switch Pro: no HD Rumble through Apple's framework). Dev keys unadvertised.
 - ✅ 🧪 **Launch**: launch phase ("Here we go…", "Starting {short}") then the real handoff; full screen in couch unless
   the desktop Manage sheet's new **"Open windowed"** is on (per-game `UserDefaults` set, no schema change). Desktop
@@ -1604,13 +1606,13 @@ Cut from Phase 4's tip (bc66f0c). ADR 0058; ADR 0052 amended ("couch mirrors des
   game; Close is graceful, then offers Force quit (unsaved-progress warning) after ~10s; Keep waiting asks again.
   Couch restores nativehaul in front after a game exits (ADR 0030 amended for couch).
 - 🟡 *Needs J.R's eyes*: every 10-foot layout except Home (undesigned, derived); the nav-column drawer; + opening
-  Settings; position-based mapping on Xbox/PlayStation; the in-front restore after a game; safe area kept at the
+  Settings; the in-front restore after a game; safe area kept at the
   spec's 64/40/32 gutters (not 5%).
 - 🟡 Not built: Share+Options background-events fallback (would take the focus during a game), couch search
   (jump-by-letter only, TV plan Q9), idle dim, power actions.
 - Renders: `/Users/jrbaprz/Projects/nativehaul/.recovery/home/nativehaul-0.1.0-work/screens/phase5-*` (the window-snapshot renders draw the 3D hero case at the
   origin — a snapshot artifact; `phase5-home-imagerenderer-*` shows it in place).
-- Build: `** TEST SUCCEEDED **` (690 tests). Lint: clean.
+- Build: `** TEST SUCCEEDED **` (692 tests). Lint: clean.
 
 ## 0.1.0 · Phase 4 · feature/v010-settings-onboarding (2026-11-13, overnight run)
 Cut from Phase 3's tip (2bab0d1). ADR 0057.

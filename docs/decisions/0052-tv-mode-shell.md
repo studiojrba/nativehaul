@@ -5,8 +5,7 @@
 > folder) were superseded and not brought back. Salvaged from M1 into `Features/Couch` and `Features/Launch`: the
 > GameController input source, controller families and glyphs, the full-screen launch (`LaunchStyle`,
 > `FullScreenLaunch`, `DM_FULLSCREEN`, documented emulator flags), the full-screen window handling and their tests.
-> Changed on the way: buttons act by **physical position** for every controller (right selects, bottom goes back), the
-> design glyph set is Nintendo's, the per-game "Open windowed" override is a per-game `UserDefaults` set (no
+> Changed on the way: the design glyph set is Nintendo's (select stays the button labelled A, as in M1), the per-game "Open windowed" override is a per-game `UserDefaults` set (no
 > `Game` schema field), and "TV mode" is called couch mode. See ADR 0058 for the 0.1.0 design.
 
 **Status:** Accepted · 2026-11-12 (amended 2026-11-13). This follows J.R's TV mode plan (`~/nativehaul-tv-mode-plan.md`), his nine

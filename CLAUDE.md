@@ -135,8 +135,8 @@ Figma designs will arrive later. Until then, **structure and function beat bespo
   the main window: it goes full screen over the desktop layout and hands the window back on exit. With couch off,
   desktop behaviour must not change; desktop launches use `LaunchStyle.standard`.
 - Games launch full screen in couch (nxnative `DM_FULLSCREEN`, documented emulator flags) unless the game's Manage
-  sheet says "Open windowed". Buttons act by physical position: the right face button selects, the bottom one goes
-  back; prompts follow the connected controller, Nintendo glyphs by default.
+  sheet says "Open windowed". Select is the button labelled A (Cross); back is B (Circle). Prompts follow the
+  connected controller, Nintendo glyphs by default.
 - Controller behaviour is verified only on real hardware; say so in reports.
 
 ## Data integrity rules (product invariants)

@@ -3,9 +3,9 @@ import Foundation
 /// A button named by what it does, for prompts (spec §3.7). ``ControllerGlyphs`` draws it for the connected
 /// controller.
 enum CouchButton: Equatable, Sendable, CaseIterable {
-    /// The right face button.
+    /// The button labelled A (Cross).
     case select
-    /// The bottom face button.
+    /// The button labelled B (Circle).
     case back
     /// The top face button.
     case details

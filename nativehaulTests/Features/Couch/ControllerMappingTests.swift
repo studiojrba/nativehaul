@@ -2,8 +2,9 @@ import AppKit
 @testable import nativehaul
 import Testing
 
-/// ADR 0058, TV plan Q5: couch acts by physical position (right selects, bottom goes back, top opens details) whatever
-/// letter GameController reports; prompts follow the connected controller, Nintendo by default, and every glyph exists.
+/// CLAUDE.md couch rule, ADR 0058, TV plan Q5: select is the button labelled A on every controller (east on Nintendo,
+/// south on Xbox and PlayStation), the top button opens details; prompts follow the connected controller, Nintendo by
+/// default, and every glyph exists.
 struct ControllerMappingTests {
     @Test func familiesComeFromGameControllerProductCategories() {
         #expect(ControllerFamily(productCategory: "Switch Pro Controller") == .nintendo)
@@ -14,11 +15,23 @@ struct ControllerMappingTests {
         #expect(ControllerFamily(productCategory: "8BitDo Pro 2") == .generic)
     }
 
-    @Test func theRightButtonSelectsAndTheBottomButtonGoesBack() {
-        #expect(ControllerMapping.input(for: .east) == .select)
-        #expect(ControllerMapping.input(for: .south) == .back)
-        #expect(ControllerMapping.input(for: .north) == .details)
-        #expect(ControllerMapping.input(for: .west) == nil)
+    @Test func nintendoSelectsWithTheRightButtonLabelledA() {
+        #expect(ControllerMapping.input(for: .east, family: .nintendo) == .select)
+        #expect(ControllerMapping.input(for: .south, family: .nintendo) == .back)
+    }
+
+    @Test func xboxPlayStationAndOthersSelectWithTheBottomButton() {
+        for family in [ControllerFamily.xbox, .playStation, .generic] {
+            #expect(ControllerMapping.input(for: .south, family: family) == .select)
+            #expect(ControllerMapping.input(for: .east, family: family) == .back)
+        }
+    }
+
+    @Test func theTopButtonOpensDetailsEverywhereAndTheLeftIsUnused() {
+        for family in ControllerFamily.allCases {
+            #expect(ControllerMapping.input(for: .north, family: family) == .details)
+            #expect(ControllerMapping.input(for: .west, family: family) == nil)
+        }
     }
 
     @Test func nintendoGlyphsAreTheDesignSet() {
@@ -31,11 +44,13 @@ struct ControllerMappingTests {
         #expect(ControllerGlyphs.glyph(for: .menu, family: .nintendo) == .label("+"))
     }
 
-    @Test func otherControllersShowTheirOwnButtonAtTheSamePosition() {
-        #expect(ControllerGlyphs.glyph(for: .select, family: .xbox) == .label("B"))
-        #expect(ControllerGlyphs.glyph(for: .back, family: .xbox) == .label("A"))
-        #expect(ControllerGlyphs.glyph(for: .select, family: .playStation) == .shape("circle"))
-        #expect(ControllerGlyphs.glyph(for: .back, family: .playStation) == .shape("xmark"))
+    @Test func promptsReadAPlayOnXboxAndCrossPlayOnPlayStation() {
+        #expect(ControllerGlyphs.glyph(for: .select, family: .xbox) == .label("A"))
+        #expect(ControllerGlyphs.glyph(for: .back, family: .xbox) == .label("B"))
+        #expect(ControllerGlyphs.glyph(for: .details, family: .xbox) == .label("Y"))
+        #expect(ControllerGlyphs.glyph(for: .select, family: .playStation) == .shape("xmark"))
+        #expect(ControllerGlyphs.glyph(for: .back, family: .playStation) == .shape("circle"))
+        #expect(ControllerGlyphs.glyph(for: .details, family: .playStation) == .shape("triangle"))
         #expect(ControllerGlyphs.glyph(for: .nextGame, family: .generic) == .label("RB", wide: true))
     }
 

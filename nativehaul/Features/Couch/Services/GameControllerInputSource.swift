@@ -4,7 +4,7 @@ import GameController
 
 /// Live ``CouchInputProviding`` on Apple's GameController framework (ADR 0052, ADR 0058): Switch Pro, DualSense, Xbox
 /// and other extended gamepads, over Bluetooth or USB. The D-pad and left stick move (a held direction repeats after
-/// 280ms, then every 110ms; the stick counts past 0.6), face buttons act by position (``ControllerMapping``),
+/// 280ms, then every 110ms; the stick counts past 0.6), select is the button labelled A (``ControllerMapping``),
 /// shoulders switch the hero game, triggers jump by letter, − (View) leaves couch, + (Menu) opens couch Settings and
 /// Home is nativehaul's own while couch shows (its system gesture is turned off).
 ///
@@ -72,7 +72,8 @@ final class GameControllerInputSource: CouchInputProviding {
             haptics = nil
             return
         }
-        setFamily(ControllerFamily(productCategory: controller.productCategory))
+        let family = ControllerFamily(productCategory: controller.productCategory)
+        setFamily(family)
         haptics = Self.makeHaptics(for: controller)
         pad.dpad.valueChangedHandler = { [weak self] _, xValue, yValue in
             MainActor.assumeIsolated { self?.direction(x: xValue, y: yValue) }
@@ -80,10 +81,10 @@ final class GameControllerInputSource: CouchInputProviding {
         pad.leftThumbstick.valueChangedHandler = { [weak self] _, xValue, yValue in
             MainActor.assumeIsolated { self?.direction(x: xValue, y: yValue) }
         }
-        bind(pad.buttonA, to: ControllerMapping.input(for: .south))
-        bind(pad.buttonB, to: ControllerMapping.input(for: .east))
-        bind(pad.buttonX, to: ControllerMapping.input(for: .west))
-        bind(pad.buttonY, to: ControllerMapping.input(for: .north))
+        bind(pad.buttonA, to: ControllerMapping.input(for: .south, family: family))
+        bind(pad.buttonB, to: ControllerMapping.input(for: .east, family: family))
+        bind(pad.buttonX, to: ControllerMapping.input(for: .west, family: family))
+        bind(pad.buttonY, to: ControllerMapping.input(for: .north, family: family))
         bind(pad.leftShoulder, to: .previousGame)
         bind(pad.rightShoulder, to: .nextGame)
         bind(pad.leftTrigger, to: .previousLetter)
