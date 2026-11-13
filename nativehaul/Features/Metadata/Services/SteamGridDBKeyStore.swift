@@ -14,6 +14,11 @@ final class SteamGridDBKeyStore: SteamGridDBKeyStoring {
         ((try? secrets.secret(for: .steamGridDBAPIKey)) ?? nil)?.isEmpty == false
     }
 
+    func hasKeyOffMain() async -> Bool {
+        let secrets = secrets
+        return await Task.detached { ((try? secrets.secret(for: .steamGridDBAPIKey)) ?? nil)?.isEmpty == false }.value
+    }
+
     func saveKey(_ key: String) throws {
         let trimmed = key.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return try removeKey() }

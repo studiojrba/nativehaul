@@ -8,6 +8,12 @@ struct ShellCommands: Commands {
     @FocusedValue(\.libraryViewModel) private var library
 
     var body: some Commands {
+        // ⌘, opens the in-window Settings page; there is no separate Settings window (ADR 0057).
+        CommandGroup(replacing: .appSettings) {
+            Button("Settings…") { shell?.go(to: .settings) }
+                .keyboardShortcut(",")
+                .disabled(shell == nil)
+        }
         CommandGroup(replacing: .newItem) {
             Button("Add Game…") { shell?.isAddingGame = true }
                 .keyboardShortcut("n")
@@ -35,7 +41,8 @@ struct ShellCommands: Commands {
             }
         }
         .disabled(library?.canScanFolders != true)
-        SettingsLink { Text("Configure Game Folders…") }
+        Button("Configure Game Folders…") { shell?.go(to: .settings) }
+            .disabled(shell == nil)
         Divider()
         Button("Merge Duplicate Games…") { shell?.isMergingDuplicates = true }
             .disabled(shell == nil)

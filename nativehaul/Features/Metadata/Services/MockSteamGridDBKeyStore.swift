@@ -14,6 +14,10 @@ final class MockSteamGridDBKeyStore: SteamGridDBKeyStoring {
         key != nil
     }
 
+    func hasKeyOffMain() async -> Bool {
+        hasKey
+    }
+
     func saveKey(_ key: String) throws {
         self.key = key.isEmpty ? nil : key
     }

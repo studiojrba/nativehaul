@@ -42,6 +42,25 @@ final class GameFoldersViewModel {
         store.save(folders)
     }
 
+    /// Adds folders and scans straight away, so their games are adopted without another click (ADR 0057).
+    func addAndScan(_ urls: [URL]) async {
+        add(urls)
+        await scan()
+    }
+
+    /// Swaps `folder` for the one the user picked (same position in the list), then scans.
+    func replace(_ folder: String, with url: URL) async {
+        let path = BundlePath.normalize(url.path(percentEncoded: false))
+        guard let index = folders.firstIndex(of: folder) else { return await addAndScan([url]) }
+        if folders.contains(where: { BundlePath.normalize($0) == path }) {
+            folders.remove(at: index)
+        } else {
+            folders[index] = path
+        }
+        store.save(folders)
+        await scan()
+    }
+
     /// Removes a folder from the list. Nothing on disk is touched.
     func remove(_ folder: String) {
         folders.removeAll { $0 == folder }

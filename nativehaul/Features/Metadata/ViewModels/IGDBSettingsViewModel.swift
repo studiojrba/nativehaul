@@ -1,7 +1,7 @@
 import Foundation
 import Observation
 
-/// Settings → Artwork → IGDB (ADR 0038): the optional Twitch Client ID and secret. Stored values are never read back
+/// Settings → API keys → IGDB (ADR 0038): the optional Twitch Client ID and secret. Stored values are never read back
 /// into the UI. Without them IGDB is simply not used; nothing asks for them anywhere else.
 @MainActor
 @Observable
@@ -10,8 +10,8 @@ final class IGDBSettingsViewModel {
     var clientIDInput = ""
     /// Client secret being typed.
     var clientSecretInput = ""
-    /// Whether both credentials are in the Keychain.
-    private(set) var hasCredentials: Bool
+    /// Whether both credentials are in the Keychain (``refresh()`` reads it off the main thread, ADR 0044).
+    private(set) var hasCredentials = false
     /// Result of the last action.
     private(set) var statusMessage: String?
     /// `true` when the last action failed.
@@ -22,7 +22,12 @@ final class IGDBSettingsViewModel {
     /// Creates the view model.
     init(store: any IGDBCredentialStoring) {
         self.store = store
-        hasCredentials = store.credentials() != nil
+    }
+
+    /// Reads whether credentials are stored, off the main thread.
+    func refresh() async {
+        let store = store
+        hasCredentials = await Task.detached { store.credentials() != nil }.value
     }
 
     /// Whether both fields have something to save.
@@ -34,7 +39,7 @@ final class IGDBSettingsViewModel {
     /// Saves both credentials to the Keychain and clears the fields.
     func save() {
         guard canSave else { return }
-        perform("Saved. IGDB credentials are stored only in your Keychain.") {
+        perform("Saved. IGDB credentials are stored only in your Keychain.", isStored: true) {
             try store.save(clientID: clientIDInput, clientSecret: clientSecretInput)
             clientIDInput = ""
             clientSecretInput = ""
@@ -43,13 +48,13 @@ final class IGDBSettingsViewModel {
 
     /// Removes both credentials.
     func remove() {
-        perform("IGDB credentials removed from Keychain.") { try store.remove() }
+        perform("IGDB credentials removed from Keychain.", isStored: false) { try store.remove() }
     }
 
-    private func perform(_ success: String, _ work: () throws -> Void) {
+    private func perform(_ success: String, isStored: Bool, _ work: () throws -> Void) {
         do {
             try work()
-            hasCredentials = store.credentials() != nil
+            hasCredentials = isStored
             statusMessage = success
             isError = false
         } catch {

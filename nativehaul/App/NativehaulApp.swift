@@ -53,15 +53,9 @@ struct NativehaulApp: App {
             .preferredColorScheme(appearance?.colorScheme)
         }
         .windowStyle(.hiddenTitleBar)
-        .commands { ShellCommands() }
-        Settings {
-            if case let .success(environment) = launch {
-                SettingsView(environment: environment)
-                    .tint(Theme.accent)
-                    .font(DesignTokens.Typography.body)
-                    .preferredColorScheme(environment.appearance.colorScheme)
-            }
+        .commands {
+            ShellCommands()
+            CheckForUpdatesCommands(updater: appUpdater)
         }
-        .commands { CheckForUpdatesCommands(updater: appUpdater) }
     }
 }

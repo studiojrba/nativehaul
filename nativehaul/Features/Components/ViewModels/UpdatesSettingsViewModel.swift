@@ -48,8 +48,14 @@ final class UpdatesSettingsViewModel {
 
     /// "Check for nativehaul updates automatically" (on by default; Sparkle keeps the setting).
     var checksForAppUpdates: Bool {
-        get { appUpdater.automaticallyChecksForUpdates }
-        set { appUpdater.automaticallyChecksForUpdates = newValue }
+        get {
+            _ = revision
+            return appUpdater.automaticallyChecksForUpdates
+        }
+        set {
+            appUpdater.automaticallyChecksForUpdates = newValue
+            revision += 1
+        }
     }
 
     /// Checks now, ignoring the daily throttle.
