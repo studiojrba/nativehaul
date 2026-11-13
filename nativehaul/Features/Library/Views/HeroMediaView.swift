@@ -80,7 +80,7 @@ struct HeroMediaView: View {
             .labelStyle(.iconOnly)
             .buttonStyle(.borderless)
             .padding(DesignTokens.Spacing.sm)
-            .background(.ultraThinMaterial, in: Capsule())
+            .smokedGlass(in: Capsule())
             .padding(DesignTokens.Spacing.md)
         }
     }

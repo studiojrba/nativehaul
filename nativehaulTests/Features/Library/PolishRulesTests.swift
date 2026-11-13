@@ -44,28 +44,17 @@ struct PolishRulesTests {
         #expect(GameStatus.allCases.allSatisfy { $0.tint != Theme.accent })
     }
 
-    @Test(arguments: [NSAppearance.Name.darkAqua, .aqua])
-    func sidebarIsDimmerThanTheCanvasAndTheAccentIsTheSaturatedOne(appearance: NSAppearance.Name) {
-        let resolve: (Palette.Pair) -> NSColor = { pair in
-            var color = NSColor.clear
-            NSAppearance(named: appearance)?.performAsCurrentDrawingAppearance {
-                color = Palette.color(pair).usingColorSpace(.sRGB) ?? .clear
-            }
-            return color
-        }
-        #expect(resolve(Palette.sidebar).brightnessComponent < resolve(Palette.canvas).brightnessComponent)
-        // Chroma (max − min channel) is what reads as colour; HSB saturation exaggerates near-black greys.
-        let chroma: (Palette.Pair) -> CGFloat = { pair in
-            let color = resolve(pair)
-            let channels = [color.redComponent, color.greenComponent, color.blueComponent]
-            return (channels.max() ?? 0) - (channels.min() ?? 0)
-        }
-        let structural = [Palette.canvas, Palette.sidebar, Palette.surface, Palette.surfaceRaised, Palette.hairline]
-        #expect(structural.allSatisfy { chroma($0) < 0.05 })
-        let accent = chroma(Palette.accent)
+    /// ADR 0054 (spec §1.7): one ember accent; structure is warm (never cold, never pure black); the sidebar sits a
+    /// step below the canvas.
+    @Test(arguments: [ThemeTokens.light, ThemeTokens.dark])
+    func structureIsWarmAndTheAccentIsTheSaturatedOne(tokens: ThemeTokens) {
+        let structural = [tokens.paper, tokens.paper2, tokens.surface, tokens.cream, tokens.cream2]
+        #expect(structural.allSatisfy { $0.red >= $0.blue }, "Cold structural tone")
+        #expect(structural.allSatisfy { $0.hex != 0x000000 }, "Pure black")
+        let accent = tokens.accent.chroma
         #expect(accent > 0.75)
-        let muted = [Palette.success, Palette.warning, Palette.danger, Palette.muted]
-        #expect(muted.allSatisfy { chroma($0) < accent })
+        let muted = [tokens.ok, tokens.warning, tokens.danger, tokens.inkMute] + structural
+        #expect(muted.allSatisfy { $0.chroma < accent })
     }
 
     @Test func artTintIsReadFromTheArtworkAndCached() throws {

@@ -38,7 +38,7 @@ struct TrailerSlideView: View {
                 .font(DesignTokens.Typography.largeTitle)
                 .buttonStyle(.borderless)
                 .padding(DesignTokens.Spacing.lg)
-                .background(.ultraThinMaterial, in: Circle())
+                .smokedGlass(in: Circle())
         }
     }
 
@@ -59,7 +59,7 @@ struct TrailerSlideView: View {
             .labelStyle(.iconOnly)
             .buttonStyle(.borderless)
             .padding(DesignTokens.Spacing.sm)
-            .background(.ultraThinMaterial, in: Capsule())
+            .smokedGlass(in: Capsule())
             .padding(DesignTokens.Spacing.md)
         }
     }

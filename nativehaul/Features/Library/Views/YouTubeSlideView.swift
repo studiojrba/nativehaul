@@ -26,7 +26,7 @@ struct YouTubeSlideView: View {
                     .font(DesignTokens.Typography.largeTitle)
                     .buttonStyle(.borderless)
                     .padding(DesignTokens.Spacing.lg)
-                    .background(.ultraThinMaterial, in: Circle())
+                    .smokedGlass(in: Circle())
             }
         }
         .onAppear { follow(isVisible: true) }

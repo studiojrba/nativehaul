@@ -1,15 +1,15 @@
 import SwiftUI
 
 extension View {
-    /// Puts a screen on the app canvas (ADR 0025): hides a list's or form's own background so every page shares one
-    /// near-black (or near-white) canvas.
+    /// Puts a screen on the app canvas (ADR 0025, ADR 0054): hides a list's or form's own background so every page
+    /// shares one warm paper canvas.
     func canvasBackground() -> some View {
         scrollContentBackground(.hidden).background(Theme.canvas)
     }
 
-    /// A hairline-bordered surface, used instead of a shadow.
+    /// A raised surface: warm `elev-sm` under a hairline edge (spec §2.4).
     func surfaceCard(cornerRadius: CGFloat = DesignTokens.Radius.lg, fill: Color = Theme.surface) -> some View {
-        background(RoundedRectangle(cornerRadius: cornerRadius).fill(fill))
-            .overlay(RoundedRectangle(cornerRadius: cornerRadius).strokeBorder(Theme.hairline))
+        background(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous).fill(fill).elevation(.small))
+            .overlay(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous).strokeBorder(Theme.hairline))
     }
 }

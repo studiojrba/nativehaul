@@ -4,7 +4,8 @@ import SwiftUI
 
 /// Colour sampled from a game's own artwork (ADR 0025, the Apple TV pattern): the average of a small copy of
 /// the image, lifted to a minimum saturation and a fixed brightness so it reads as colour without fighting text.
-/// Results are cached per file.
+/// At night the tint is warmed toward amber and settled toward the evening tone (``GameTones``, ADR 0054), so artwork
+/// colour never turns neon or cold. Results are cached per file.
 @MainActor
 enum ArtworkTint {
     private static let cache = NSCache<NSString, NSColor>()
@@ -49,11 +50,23 @@ enum ArtworkTint {
         var brightness: CGFloat = 0
         var alpha: CGFloat = 0
         average.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
-        return NSColor(
+        let lifted = NSColor(
             hue: hue,
             saturation: max(saturation, DesignTokens.ArtTint.minimumSaturation),
             brightness: DesignTokens.ArtTint.brightness,
             alpha: 1
         )
+        return eveningAware(lifted)
+    }
+
+    /// The daylight tint by day; at night the same tint through the dark ``GameTones/glow(_:)`` formula.
+    private static func eveningAware(_ tint: NSColor) -> NSColor {
+        let srgb = tint.usingColorSpace(.sRGB) ?? tint
+        let day = RGBA(red: srgb.redComponent, green: srgb.greenComponent, blue: srgb.blueComponent)
+        let palette = GamePalette(deep: day, mid: day, light: day, wash: day, ink: day)
+        let night = GameTones(scheme: .dark).glow(palette)
+        return NSColor(name: nil) { appearance in
+            appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua ? night.nsColor : day.nsColor
+        }
     }
 }

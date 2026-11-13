@@ -48,8 +48,14 @@ extension AppEnvironment {
             gameBadges: GameUpdateBadgeProvider(switchVersions: .bundled()),
             handoff: makeLiveHandoff(),
             appUpdater: SparkleAppUpdater(),
-            audio: makeLiveAudio()
+            audio: makeLiveAudio(),
+            appearance: makeLiveAppearance(),
+            paletteExtractor: ArtworkPaletteExtractor()
         )
+    }
+
+    private static func makeLiveAppearance() -> AppearanceController {
+        AppearanceController(store: UserDefaultsAppearanceStore(), applier: ApplicationAppearanceApplier())
     }
 
     private static func makeLiveAudio() -> AudioController {

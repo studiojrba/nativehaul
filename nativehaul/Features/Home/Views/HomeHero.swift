@@ -79,7 +79,7 @@ struct HomeHero: View {
         .buttonStyle(.borderless)
         .foregroundStyle(Theme.onArtwork)
         .padding(DesignTokens.Spacing.sm)
-        .background(.ultraThinMaterial, in: Capsule())
+        .smokedGlass(in: Capsule())
         .padding(DesignTokens.Spacing.lg)
     }
 

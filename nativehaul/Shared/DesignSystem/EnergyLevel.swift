@@ -25,17 +25,17 @@ struct EnergyLevel: Sendable {
 
     /// Shelf and section header font.
     var sectionTitle: Font {
-        .system(size: sectionTitleSize, weight: .black, design: .rounded)
+        Typeface.display(sectionTitleSize)
     }
 
     /// Page header font.
     var display: Font {
-        .system(size: displaySize, weight: .black, design: .rounded)
+        Typeface.display(displaySize)
     }
 
     /// Home hero title font.
     var heroTitle: Font {
-        .system(size: heroTitleSize, weight: .black, design: .rounded)
+        Typeface.display(heroTitleSize)
     }
 
     /// The level for `intensity`.

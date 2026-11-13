@@ -41,12 +41,7 @@ struct IconRailView: View {
             )
             .clipShape(shape)
             .background {
-                shape.fill(Theme.surface)
-                    .shadow(
-                        color: Theme.panelShadow,
-                        radius: DesignTokens.FloatingRail.shadowRadius,
-                        y: DesignTokens.FloatingRail.shadowOffset
-                    )
+                shape.fill(Theme.surface).elevation(.regular)
             }
             .overlay { shape.strokeBorder(Theme.hairline) }
             .animation(reduceMotion ? nil : .easeInOut(duration: DesignTokens.Motion.quick), value: isExpanded)

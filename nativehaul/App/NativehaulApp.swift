@@ -4,6 +4,7 @@ import SwiftUI
 /// Application entry point.
 @main
 struct NativehaulApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     private let launch: Result<AppEnvironment, Error>?
 
     /// `true` when the app is only hosting unit tests: it then starts nothing live, so tests never touch the user's
@@ -15,6 +16,14 @@ struct NativehaulApp: App {
     private var appUpdater: (any AppUpdating)? {
         if case let .success(environment) = launch {
             environment.appUpdater
+        } else {
+            nil
+        }
+    }
+
+    private var appearance: AppearanceController? {
+        if case let .success(environment) = launch {
+            environment.appearance
         } else {
             nil
         }
@@ -40,10 +49,15 @@ struct NativehaulApp: App {
             .frame(minWidth: DesignTokens.Layout.windowMinWidth, minHeight: DesignTokens.Layout.windowMinHeight)
             .background(Theme.canvas)
             .tint(Theme.accent)
+            .font(DesignTokens.Typography.body)
+            .preferredColorScheme(appearance?.colorScheme)
         }
         Settings {
             if case let .success(environment) = launch {
                 SettingsView(environment: environment)
+                    .tint(Theme.accent)
+                    .font(DesignTokens.Typography.body)
+                    .preferredColorScheme(environment.appearance.colorScheme)
             }
         }
         .commands { CheckForUpdatesCommands(updater: appUpdater) }

@@ -58,6 +58,10 @@ final class AppEnvironment {
     let appUpdater: any AppUpdating
     /// Background music and interface sounds (audio brief).
     let audio: AudioController
+    /// Light/Dark appearance (ADR 0054).
+    let appearance: AppearanceController
+    /// Derives colour palettes from cover art (ADR 0054).
+    let paletteExtractor: any GamePaletteExtracting
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -86,7 +90,9 @@ final class AppEnvironment {
         gameBadges: GameUpdateBadgeProvider,
         handoff: GameSessionHandoff? = nil,
         appUpdater: any AppUpdating = MockAppUpdater(),
-        audio: AudioController? = nil
+        audio: AudioController? = nil,
+        appearance: AppearanceController? = nil,
+        paletteExtractor: any GamePaletteExtracting = MockGamePaletteExtractor()
     ) {
         self.container = container
         self.repository = repository
@@ -115,6 +121,8 @@ final class AppEnvironment {
             ?? GameSessionHandoff(visibility: MockAppVisibility(), observer: MockRunningApplicationObserver())
         self.appUpdater = appUpdater
         self.audio = audio ?? .preview
+        self.appearance = appearance ?? .preview
+        self.paletteExtractor = paletteExtractor
     }
 
     /// Seeded in-memory environment with mock services for SwiftUI previews.

@@ -1576,3 +1576,31 @@ Cut from `feature/release-pipeline` (fd6d321).
 - ✅ Licence audit + notices list the icon and the four audio files. ⚠ `nav.wav` (Qvantor) licence still unverified.
 - Build: `** BUILD SUCCEEDED **`, `** TEST SUCCEEDED **` (441 tests). Lint: clean.
 - Library data backed up to `/Users/jrbaprz/Projects/nativehaul/.recovery/home/nativehaul-backup-20261113-002944/` before any new build ran.
+
+## 0.1.0 · Phase 1 · feature/v010-design-system (2026-11-13, overnight run)
+Cut from Phase 0's tip (e0457b0). ADR 0054.
+- ✅ 🧪 **One token set** (`Shared/DesignSystem/Tokens`): `ThemeTokens.light/.dark` (spec §2.1–2.3, all core
+  tokens, seven washes, frost fill/edge), `Palette` (locked palette, EVENING/AMBER, traffic lights, ready dot),
+  `RGBA` (hex, `mix()`), `Elevation` (warm two-layer `elev-sm/elev/elev-lg`), `AccentTokens` (ember, glow, focus,
+  night artwork). `Theme.*` colours follow the view's `colorScheme`; `@Environment(\.themeTokens)` /
+  `\.gameTones` for maths.
+- ✅ 🧪 **Per-game tones and palette from artwork**: `GamePalette`, `GameTones` (`wash/glow/lift`),
+  `GamePaletteExtracting` → `ArtworkPaletteExtractor` (ImageIO 32 px thumbnail, off main) + mock, `PaletteAnalysis`
+  (dominant hue, deep, light, wash, ink; neutral fallback).
+- ✅ 🧪 **Fonts bundled and registered** before the first window: Geist (variable; 400/500/600 on the `wght` axis,
+  verified by test) and Instrument Serif regular/italic; fallbacks New York / SF Pro. OFL texts ship in the app;
+  `THIRD_PARTY_NOTICES.md` (shipped section, full OFL 1.1 once) and `docs/LICENSE_AUDIT.md` updated.
+- ✅ 🧪 **Appearance** (`Features/Appearance`): `AppearancePreference`, `UserDefaultsAppearanceStore` + in-memory,
+  `AppearanceController` in `AppEnvironment`; Dark on first launch, saved choice wins, applied in
+  `AppDelegate.applicationWillFinishLaunching` (no flash) + `.preferredColorScheme`. Settings → Appearance tab.
+- ✅ **Motion and layout constants**: `Motion` (ease-settle at 300/380/500/700/1000/1100ms, rise, fade, float,
+  Reduce Motion fades), `HeroTiming` (§4.1), `ShelfPhysics` (§4.2), `TypingTiming` (§4.4), `ShellLayout` (§3, §3.0),
+  `KitMetrics`, `TypeStyle`.
+- ✅ **Components** (each with a light+dark `#Preview`): `Eyebrow`, `DisplayHeadline`, `FrostPill`, `.frostedGlass`
+  / `.smokedGlass`, `EmberFill` / `EmberButtonStyle`, `SurfacePillButtonStyle`, `PressButtonStyle` +
+  `.pressFeedback` (hand cursor), `ToggleSwitchStyle` / `ToggleSwitchTrack`, `SegmentedPill`, `WashBackground`,
+  `ChevronButton`, `PillProgressBar`, `.accentGlow`, `.focusRing`, `.nightArtwork`, `.riseIn`.
+- ✅ **Existing screens re-pointed** (not redesigned): paper canvas, ink text, ember Play, warm elevation on the rail
+  and cards, serif display + Geist UI text; pure black and cold materials removed.
+- 🟡 Sidebar Light/Dark toggle: arrives with the Phase 2 shell (Settings → Appearance works now).
+- Build: `** TEST SUCCEEDED **` (475 tests). Lint: clean.

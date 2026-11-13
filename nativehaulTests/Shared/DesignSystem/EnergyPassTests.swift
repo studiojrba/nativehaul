@@ -35,7 +35,8 @@ struct EnergyPassTests {
         #expect(DesignTokens.Motion.standard < 1)
     }
 
-    /// The accent is spent only on Play, the active nav item, links and the wordmark.
+    /// The accent is spent only on Play, the active nav item, links and the wordmark — and, since 0.1.0 (ADR 0054),
+    /// inside the shared design-system components that own its treatments (ember buttons, switches, progress, focus).
     @Test func theAccentStaysOnPlayNavAndLinks() throws {
         let allowed: Set = [
             "Theme.swift", "NativehaulApp.swift", "RailItemRow.swift", "LaunchButton.swift",
@@ -44,7 +45,9 @@ struct EnergyPassTests {
         let enumerator = FileManager.default.enumerator(at: sourceRoot, includingPropertiesForKeys: nil)
         var offenders: [String] = []
         while let url = enumerator?.nextObject() as? URL {
-            guard url.pathExtension == "swift", !allowed.contains(url.lastPathComponent) else { continue }
+            guard url.pathExtension == "swift", !allowed.contains(url.lastPathComponent),
+                  !url.path.contains("/Shared/DesignSystem/")
+            else { continue }
             if try String(contentsOf: url, encoding: .utf8).contains("Theme.accent") {
                 offenders.append(url.lastPathComponent)
             }

@@ -86,42 +86,43 @@ enum DesignTokens {
         static let full: Double = 1
     }
 
-    /// Point sizes behind ``Typography`` (ADR 0025): 13 pt UI text, big confident display sizes.
+    /// Point sizes behind ``Typography`` (ADR 0025): 13 pt UI text, big confident display sizes (serif display type
+    /// runs a little larger than the old heavy rounded type to carry the same presence, ADR 0054).
     enum TypeScale {
         static let caption: CGFloat = 11
         static let body: CGFloat = 13
         static let launch: CGFloat = 15
         static let title: CGFloat = 17
         static let stat: CGFloat = 22
-        static let largeTitle: CGFloat = 26
-        static let display: CGFloat = 28
+        static let largeTitle: CGFloat = 30
+        static let display: CGFloat = 34
         static let rank: CGFloat = 34
-        static let hero: CGFloat = 44
+        static let hero: CGFloat = 56
     }
 
-    /// Typography roles (ADR 0025): small, precise UI text (13 pt) for data, and big, tight, confident display type
-    /// — (Not Boring) style — for page headers, empty states and onboarding.
+    /// Typography roles (ADR 0025, re-pointed at the 0.1.0 faces in ADR 0054): Geist for UI text, Instrument Serif for
+    /// display type (page headers, empty states, onboarding). Never rounded, never black-weight.
     enum Typography {
         /// The onboarding welcome.
-        static let hero: Font = .system(size: TypeScale.hero, weight: .black, design: .rounded)
+        static let hero: Font = Typeface.display(TypeScale.hero)
         /// Page and section headers, empty-state titles.
-        static let display: Font = .system(size: TypeScale.display, weight: .heavy, design: .rounded)
-        /// Tight tracking for display type.
-        static let displayTracking: CGFloat = -0.6
-        static let largeTitle: Font = .system(size: TypeScale.largeTitle, weight: .bold)
-        static let title: Font = .system(size: TypeScale.title, weight: .semibold)
-        static let headline: Font = .system(size: TypeScale.body, weight: .semibold)
-        static let body: Font = .system(size: TypeScale.body)
-        static let caption: Font = .system(size: TypeScale.caption)
-        static let captionEmphasis: Font = .system(size: TypeScale.caption, weight: .semibold)
-        /// Quiet section label inside dense panels (Linear-style small header).
-        static let sectionLabel: Font = .system(size: TypeScale.caption, weight: .semibold)
+        static let display: Font = Typeface.display(TypeScale.display)
+        /// Display tracking: the serif sets well at its natural spacing, with a hair of tightening.
+        static let displayTracking: CGFloat = -0.2
+        static let largeTitle: Font = Typeface.display(TypeScale.largeTitle)
+        static let title: Font = Typeface.sans(TypeScale.title, weight: .semibold)
+        static let headline: Font = Typeface.sans(TypeScale.body, weight: .medium)
+        static let body: Font = Typeface.sans(TypeScale.body)
+        static let caption: Font = Typeface.sans(TypeScale.caption)
+        static let captionEmphasis: Font = Typeface.sans(TypeScale.caption, weight: .semibold)
+        /// Quiet section label inside dense panels.
+        static let sectionLabel: Font = Typeface.sans(TypeScale.caption, weight: .medium)
         static let monospaced: Font = .system(size: TypeScale.body, design: .monospaced)
         static let monospacedSmall: Font = .system(size: TypeScale.caption, design: .monospaced)
-        static let statValue: Font = .system(size: TypeScale.stat, weight: .bold, design: .monospaced)
+        static let statValue: Font = Typeface.sans(TypeScale.stat, weight: .semibold).monospacedDigit()
         /// Rank numbers on the Stats story row.
-        static let rank: Font = .system(size: TypeScale.rank, weight: .black, design: .rounded)
-        static let launch: Font = .system(size: TypeScale.launch, weight: .bold)
+        static let rank: Font = Typeface.display(TypeScale.rank)
+        static let launch: Font = Typeface.sans(TypeScale.launch, weight: .medium)
         /// Smallest scale a fixed-width label may shrink to before it would otherwise clip.
         static let minimumScale: CGFloat = 0.75
     }

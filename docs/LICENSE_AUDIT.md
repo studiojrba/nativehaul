@@ -1,7 +1,7 @@
 # Licence audit
 
-**Last run:** 2026-11-13, for 0.1.0 (ADR 0049, ADR 0053). Re-run it whenever a dependency, bundled resource or
-network host changes.
+**Last run:** 2026-11-13, for 0.1.0 (ADR 0049, ADR 0053; fonts added in ADR 0054). Re-run it whenever a
+dependency, bundled resource or network host changes.
 
 ## Result
 - nativehaul is MIT-licensed, © 2026 Studio Jrba inc. (`LICENSE`).
@@ -24,7 +24,9 @@ network host changes.
 | `confirm.wav` — "mechanical key hard" by bigmonmulgrew (Freesound #378085) | Audio | CC0 1.0 | Yes | Trimmed and level-matched. |
 | `back.wav` — "Keyboard_Tactile_8" by StavSounds (Freesound #766639) | Audio | CC0 1.0 | Yes | Trimmed and level-matched. |
 | `nav.wav` — "UI Click Crisp" by Qvantor (Freesound #878236) | Audio | **Unverified** | Yes | The licence badge was not visible when it was picked. **Verify before publishing**; if it is not CC0 or CC BY, swap it for a CC0 click (spec §7.9). |
-| Other images | Assets | n/a | No | The UI uses SF Symbols (Apple terms). |
+| Geist (`Geist-Variable.ttf`, © 2024 The Geist Project Authors) | Font | SIL OFL 1.1 | Yes | Source github.com/google/fonts (`ofl/geist`), unmodified. `Geist-OFL.txt` ships beside it; full text in the notices (ADR 0054). |
+| Instrument Serif (`InstrumentSerif-Regular.ttf`, `-Italic.ttf`, © 2022 The Instrument Serif Project Authors) | Font | SIL OFL 1.1 | Yes | Source github.com/google/fonts (`ofl/instrumentserif`), unmodified. `InstrumentSerif-OFL.txt` ships beside it. |
+| Other images and icons | Assets | Apple terms | No (system) | No other images ship; interface icons are SF Symbols, drawn by the system. |
 | nxnative (`seedds/nxnative`) | Tool | MIT | **No** | User-installed, found on disk, run as a separate process. |
 | RetroArch | App | GPL-3.0 | **No** | External launch / optional official download. |
 | Dolphin | App | GPL-2.0-or-later | **No** | External launch / optional official download. |

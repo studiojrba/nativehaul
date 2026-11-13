@@ -1,13 +1,13 @@
 import SwiftUI
 
-/// Play, the signature surface (ADR 0037): the app's one saturated gradient, in a capsule. Pressing dims it slightly;
-/// nothing else about it moves.
+/// Play, the signature surface (ADR 0037, ADR 0054): the ember fill in a capsule — a soft accent shadow by day, the
+/// ember glow at night — with the house press feedback.
 struct PlayButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .background(Capsule().fill(Theme.playGradient))
-            .opacity(configuration.isPressed ? DesignTokens.Opacity.overlay : DesignTokens.Opacity.full)
+            .background(EmberFill(shape: Capsule()))
             .contentShape(Capsule())
+            .pressFeedback(isPressed: configuration.isPressed)
     }
 }
 
