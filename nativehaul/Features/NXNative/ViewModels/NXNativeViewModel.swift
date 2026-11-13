@@ -237,5 +237,6 @@ final class NXNativeViewModel {
     private func update(_ id: UUID, _ change: (inout BuildJob) -> Void) {
         guard let index = jobs.firstIndex(where: { $0.id == id }) else { return }
         change(&jobs[index])
+        jobs[index].pipeline = PipelineStageMapper.advance(jobs[index].pipeline, for: jobs[index])
     }
 }

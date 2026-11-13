@@ -1,23 +1,27 @@
 import SwiftUI
 
-/// Builds until its 0.1.0 redesign lands (a later phase): the existing build dashboard, clear of the nav island and the
-/// top bar.
+/// Builds inside the shell (spec §3.4): the page, focused on the title Detail's build link asked for.
 struct BuildsPage: View {
-    /// The build queue.
-    let viewModel: NXNativeViewModel
+    /// The page state.
+    let viewModel: BuildsViewModel
+    /// The shell (the focus request).
+    let shell: ShellViewModel
 
     var body: some View {
-        NXNativeDashboardView(viewModel: viewModel)
-            .clipShape(RoundedRectangle(cornerRadius: KitMetrics.Radius.cover, style: .continuous))
-            .padding(.leading, ShellLayout.Chrome.islandClearance)
-            .padding(.top, ShellLayout.Chrome.topBarClearance)
-            .padding([.trailing, .bottom], DesignTokens.Spacing.lg)
+        BuildsScreen(viewModel: viewModel, focusTitleID: shell.buildsFocusTitleID) { shell.buildsFocusTaken() }
     }
 }
 
 #Preview {
     let environment = AppEnvironment.preview
-    BuildsPage(viewModel: environment.makeNXNativeViewModel {})
-        .environment(environment)
-        .frame(width: DesignTokens.Layout.windowMinWidth, height: DesignTokens.Layout.windowMinHeight)
+    BuildsPage(
+        viewModel: BuildsViewModel(
+            queue: environment.makeNXNativeViewModel {},
+            library: { [] },
+            paletteExtractor: MockGamePaletteExtractor()
+        ),
+        shell: ShellViewModel(makeLaunch: environment.makeGameLaunchViewModel(for:))
+    )
+    .environment(environment)
+    .frame(width: DesignTokens.Layout.windowMinWidth, height: DesignTokens.Layout.windowMinHeight)
 }

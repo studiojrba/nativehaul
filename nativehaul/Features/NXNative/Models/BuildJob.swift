@@ -18,6 +18,8 @@ struct BuildJob: Identifiable, Equatable, Sendable {
     var log: [BuildLogLine] = []
     /// Stage progress parsed from the streamed output (ADR 0028).
     var progress = BuildProgress()
+    /// Where the build is among the Builds page's six stages; kept by the queue so it never runs backwards (ADR 0056).
+    var pipeline = PipelinePosition.found
     /// Cleanup plan awaiting approval.
     var cleanupPlan: CleanupPlan?
     /// Failure description.

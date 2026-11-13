@@ -95,23 +95,15 @@ struct BuildsPageTests {
     // MARK: Layout and renders
 
     @Test(arguments: [900.0, 1100.0, 1280.0])
-    func builderPaneFitsItsTwoThirdsAndRenders(width: Double) async throws {
+    func buildsPageRendersMidBuild(width: Double) async {
         let shots = (0 ..< 3).map {
             OffscreenRenderer.placeholderArt(name: "shot-\($0)", hue: 0.55 + CGFloat($0) * 0.1, size: Self.screenSize)
         }
         let queue = await midBuildQueue(title: Self.longTitle, art: shots)
-        let job = try #require(queue.selectedJob)
-        let available = CGFloat(width) - ShellLayout.Chrome.islandClearance
-        let detailWidth = (available * DesignTokens.Builds.detailShare).rounded(.down)
-        let detail = BuildJobDetailView(job: job, viewModel: queue) { _ in }
-        let fitted = NSHostingController(rootView: detail)
-            .sizeThatFits(in: CGSize(width: detailWidth, height: Self.height)).width
-        #expect(fitted <= detailWidth + 1)
-        let page = NXNativeDashboardView(viewModel: queue)
+        let builds = BuildsViewModel(queue: queue, library: { [] }, paletteExtractor: MockGamePaletteExtractor())
+        let page = BuildsScreen(viewModel: builds)
             .environment(AppEnvironment.preview)
-            .padding(.leading, ShellLayout.Chrome.islandClearance)
             .background(Theme.canvas)
-            .tint(Theme.accent)
         let size = CGSize(width: width, height: Self.height)
         let dark = await OffscreenRenderer.renderAfterTasks(
             page, size: size, name: "builds-job-\(Int(width))-dark", appearance: .darkAqua, settle: Self.imageSettle

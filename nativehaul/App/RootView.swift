@@ -11,6 +11,7 @@ struct RootView: View {
     let environment: AppEnvironment
     @State private var libraryViewModel: LibraryViewModel
     @State private var nxnativeViewModel: NXNativeViewModel
+    @State private var buildsViewModel: BuildsViewModel
     @State private var homeViewModel: HomeViewModel
     @State private var shell: ShellViewModel
     @State private var isOnboarding = false
@@ -20,7 +21,13 @@ struct RootView: View {
         self.environment = environment
         let libraryViewModel = environment.makeLibraryViewModel()
         _libraryViewModel = State(initialValue: libraryViewModel)
-        _nxnativeViewModel = State(initialValue: environment.makeNXNativeViewModel { libraryViewModel.reload() })
+        let nxnativeViewModel = environment.makeNXNativeViewModel { libraryViewModel.reload() }
+        _nxnativeViewModel = State(initialValue: nxnativeViewModel)
+        _buildsViewModel = State(initialValue: BuildsViewModel(
+            queue: nxnativeViewModel,
+            library: { libraryViewModel.games },
+            paletteExtractor: environment.paletteExtractor
+        ))
         _homeViewModel = State(initialValue: HomeViewModel(
             library: libraryViewModel,
             paletteExtractor: environment.paletteExtractor
@@ -77,16 +84,20 @@ struct RootView: View {
         case .detail:
             if let id = shell.detailGameID, let game = libraryViewModel.game(withID: id) {
                 DetailPage(
+                    environment: environment,
                     game: game,
-                    quickListGames: libraryViewModel.visibleGames,
+                    library: { libraryViewModel.visibleGames },
+                    badge: badge(for:),
                     back: { shell.back() },
-                    open: { shell.open(gameID: $0) }
+                    play: { option in Task { await shell.play(game, option: option) } },
+                    open: { shell.open(gameID: $0) },
+                    openBuilds: { shell.openBuilds(focusing: game.switchTitleID) }
                 )
             } else {
                 Color.clear.onAppear { shell.detailGameDisappeared() }
             }
         case .builds:
-            BuildsPage(viewModel: nxnativeViewModel)
+            BuildsPage(viewModel: buildsViewModel, shell: shell)
         case .settings:
             SettingsPage(environment: environment)
         }

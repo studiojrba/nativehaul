@@ -1,43 +1,62 @@
 import AppKit
 import SwiftUI
 
-/// Official screenshots above a job's title (ADR 0028): crossfades to the next image every 3 seconds and loops. The
-/// frame takes each slide's own shape (ADR 0038), so the whole image is always visible, never cropped. It pauses while
-/// hovered; with Reduce Motion it shows the first image only, still. Images
-/// decode off the main thread behind a quiet placeholder, so the build UI never waits. It has no
-/// gestures, so it never takes clicks meant for the build controls.
+/// The screenshot slideshow on the Builds page (spec §3.4, ADR 0028/0038): each shot fitted to its own shape — never
+/// cropped — and centred in a `surface` frame (6pt padding, radius 22, `elev-lg`). Shots crossfade over 1200ms, scaling
+/// from 97%, every 3.6s, with dots underneath that jump to a shot. It pauses while hovered; under Reduce Motion it
+/// shows the first shot, still. Images decode off the main thread, so the build UI never waits.
 struct BuildShowcaseView: View {
     /// What to show.
     let showcase: BuildShowcase
+    /// The stage's height (the shots fit inside it).
+    var stageHeight: CGFloat = ShellLayout.Builds.stageMax
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var index = 0
     @State private var loaded: [Int: NSImage] = [:]
     @State private var isHovered = false
+    @State private var stageWidth: CGFloat = 0
+
+    private typealias Metrics = ShellLayout.Builds
 
     var body: some View {
-        let shape = RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
-        FittedMediaFrame(aspect: currentAspect, maxHeight: DesignTokens.Media.showcaseMaxHeight) {
-            Theme.surface
-                .overlay {
-                    if let image = loaded[index] {
-                        Image(nsImage: image)
-                            .resizable()
-                            .scaledToFit()
-                            .id(index)
-                            .transition(.opacity)
+        VStack(spacing: Metrics.dotsTop) {
+            ZStack {
+                ForEach(Array(loaded.keys.sorted()), id: \.self) { slide in
+                    if let image = loaded[slide] {
+                        shot(image, isShowing: slide == index)
                     }
                 }
-                .clipShape(shape)
-                .overlay(shape.strokeBorder(Theme.hairline))
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: stageHeight)
+            .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { stageWidth = $0 }
+            if rotates, loaded.count > 1 {
+                SlideDots(count: showcase.images.count, index: index) { slide in
+                    withAnimation(Motion.settle(Metrics.crossfade)) { index = slide }
+                }
+            }
         }
         .onHover { isHovered = $0 }
-        .accessibilityHidden(true)
         .task(id: showcase) { await run() }
     }
 
-    /// The showing slide's own shape (16:9 until it has loaded).
-    private var currentAspect: CGFloat {
-        loaded[index].flatMap { MediaFit.aspect(of: $0.size) } ?? DesignTokens.Media.fallbackAspect
+    private func shot(_ image: NSImage, isShowing: Bool) -> some View {
+        let aspect = MediaFit.aspect(of: image.size) ?? DesignTokens.Media.fallbackAspect
+        let size = MediaFit.size(aspect: aspect, availableWidth: stageWidth, maxHeight: stageHeight)
+        return Image(nsImage: image)
+            .resizable()
+            .scaledToFit()
+            .clipShape(RoundedRectangle(cornerRadius: Metrics.shotRadius, style: .continuous))
+            .padding(Metrics.shotFramePadding)
+            .frame(width: size.width, height: size.height)
+            .background(
+                RoundedRectangle(cornerRadius: Metrics.shotFrameRadius, style: .continuous).fill(Theme.surface)
+            )
+            .elevation(.large)
+            .opacity(isShowing ? 1 : 0)
+            .scaleEffect(isShowing ? 1 : Metrics.shotRestScale)
+            .accessibilityHidden(true)
     }
 
     private var rotates: Bool {
@@ -55,14 +74,13 @@ struct BuildShowcaseView: View {
         }
         guard rotates, loaded.count > 1 else { return }
         while !Task.isCancelled {
-            try? await Task.sleep(for: .seconds(DesignTokens.Builds.slideSeconds))
+            try? await Task.sleep(for: .seconds(Metrics.advance))
             guard !Task.isCancelled, !isHovered else { continue }
-            let next = (index + 1) % paths.count
-            guard loaded[next] != nil else {
-                index = next
-                continue
+            var next = (index + 1) % paths.count
+            while loaded[next] == nil {
+                next = (next + 1) % paths.count
             }
-            withAnimation(.easeInOut(duration: DesignTokens.Builds.crossfadeSeconds)) { index = next }
+            withAnimation(Motion.settle(Metrics.crossfade)) { index = next }
         }
     }
 
@@ -83,7 +101,7 @@ struct BuildShowcaseView: View {
 }
 
 #Preview {
-    BuildShowcaseView(showcase: BuildShowcase(images: [], isSlideshow: false))
+    BuildShowcaseView(showcase: BuildShowcase(images: [], isSlideshow: false), stageHeight: ShellLayout.Builds.stageMin)
         .frame(width: DesignTokens.Layout.detailMinWidth)
         .padding(DesignTokens.Spacing.xl)
 }
