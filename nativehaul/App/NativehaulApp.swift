@@ -30,6 +30,12 @@ struct NativehaulApp: App {
     }
 
     init() {
+        #if DEBUG
+            if let request = ScreenshotRequest.current, !Self.isHostingTests {
+                launch = Result { try ScreenshotHarness.environment(for: request) }
+                return
+            }
+        #endif
         launch = Self.isHostingTests ? nil : Result { try AppEnvironment.live() }
     }
 

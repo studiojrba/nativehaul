@@ -43,6 +43,10 @@ final class OnboardingChatViewModel {
     private(set) var isFinished = false
     /// Reveal everything at once (Reduce Motion).
     var revealsInstantly = false
+    #if DEBUG
+        /// Screenshot harness: the beat to drive to once the welcome is up.
+        @ObservationIgnored var harnessTarget: OnboardingBeat?
+    #endif
 
     @ObservationIgnored private let setup: any OnboardingSetupPerforming
     @ObservationIgnored private let panel: any FilePanelPresenting

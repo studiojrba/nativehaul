@@ -87,6 +87,14 @@ struct RootView: View {
             isOnboarding: $isOnboarding
         ))
         .modifier(RootPresentations(environment: environment, libraryViewModel: libraryViewModel, shell: shell))
+        #if DEBUG
+            .modifier(ScreenshotHarnessModifier(
+                request: ScreenshotRequest.current,
+                shell: shell,
+                queue: nxnativeViewModel,
+                library: libraryViewModel
+            ))
+        #endif
     }
 
     @ViewBuilder private var screen: some View {
@@ -133,7 +141,12 @@ struct RootView: View {
 
     /// A fresh conversation (onboarding never resets prefs or the appearance; finishing returns to the shell).
     private func makeOnboarding() -> OnboardingChatViewModel {
-        environment.makeOnboardingChatViewModel {
+        #if DEBUG
+            if let request = ScreenshotRequest.current, case let .onboarding(beat) = request.screen {
+                return ScreenshotHarness.onboarding(at: beat) { isOnboarding = false }
+            }
+        #endif
+        return environment.makeOnboardingChatViewModel {
             isOnboarding = false
             Task { await libraryViewModel.runAutomaticUpkeep() }
         }

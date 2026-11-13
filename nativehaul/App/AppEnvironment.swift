@@ -154,37 +154,46 @@ final class AppEnvironment {
     /// Seeded in-memory environment with mock services for SwiftUI previews.
     static var preview: AppEnvironment {
         do {
-            let repository = try MockLibraryRepository(seeded: true)
-            return AppEnvironment(
-                container: repository.container,
-                repository: repository,
-                transfer: LibraryTransferService(repository: repository),
-                watcher: MockPlaytimeWatcher(),
-                scanner: MockAppBundleScanner(),
-                trackingPreferences: InMemoryTrackingPreferencesStore(),
-                nxnativeServices: previewNXNativeServices,
-                engineConfiguration: InMemoryEngineConfigurationStore(),
-                hltb: CachedHLTBService(cache: InMemoryHLTBCache()),
-                urlOpener: RecordingURLOpener(),
-                gameFolders: InMemoryGameFolderStore(["/Users/demo/Switch/Games"]),
-                folderImporter: MockGameFolderImporter(),
-                deduplicator: MockLibraryDeduplicator(),
-                launcher: RecordingGameLauncher(),
-                metadataFetcher: MockMetadataFetcher(),
-                steamGridDBKey: MockSteamGridDBKeyStore(),
-                onboarding: InMemoryOnboardingStore(hasCompletedOnboarding: true),
-                emulators: EmulatorRouter(preferences: InMemoryEmulatorPreferences(), files: InMemoryFileOperations()),
-                components: MockComponentUpdater(),
-                gameBadges: GameUpdateBadgeProvider(switchVersions: .bundled())
-            )
+            return try preview(repository: MockLibraryRepository(seeded: true))
         } catch {
             fatalError("Preview environment could not be created: \(error)")
         }
     }
 
+    /// An in-memory environment over `repository`, with mock services; `runner` drives the build queue and
+    /// `hasCompletedOnboarding` decides whether onboarding opens.
+    static func preview(
+        repository: MockLibraryRepository,
+        runner: any BuildEngineRunning = MockBuildEngineRunner(),
+        hasCompletedOnboarding: Bool = true
+    ) -> AppEnvironment {
+        AppEnvironment(
+            container: repository.container,
+            repository: repository,
+            transfer: LibraryTransferService(repository: repository),
+            watcher: MockPlaytimeWatcher(),
+            scanner: MockAppBundleScanner(),
+            trackingPreferences: InMemoryTrackingPreferencesStore(),
+            nxnativeServices: previewNXNativeServices(runner: runner),
+            engineConfiguration: InMemoryEngineConfigurationStore(),
+            hltb: CachedHLTBService(cache: InMemoryHLTBCache()),
+            urlOpener: RecordingURLOpener(),
+            gameFolders: InMemoryGameFolderStore(["/Users/demo/Switch/Games"]),
+            folderImporter: MockGameFolderImporter(),
+            deduplicator: MockLibraryDeduplicator(),
+            launcher: RecordingGameLauncher(),
+            metadataFetcher: MockMetadataFetcher(),
+            steamGridDBKey: MockSteamGridDBKeyStore(),
+            onboarding: InMemoryOnboardingStore(hasCompletedOnboarding: hasCompletedOnboarding),
+            emulators: EmulatorRouter(preferences: InMemoryEmulatorPreferences(), files: InMemoryFileOperations()),
+            components: MockComponentUpdater(),
+            gameBadges: GameUpdateBadgeProvider(switchVersions: .bundled())
+        )
+    }
+
     private static let previewTitleBytes = 1024
 
-    private static var previewNXNativeServices: NXNativeServices {
+    private static func previewNXNativeServices(runner: any BuildEngineRunning) -> NXNativeServices {
         let files = InMemoryFileOperations()
         files.addFile("/Users/demo/Switch/nxnative", executable: true)
         files.addFile("/Users/demo/Switch/ProdKeys/prod.keys", contents: Data("preview keys".utf8))
@@ -192,7 +201,7 @@ final class AppEnvironment {
         return NXNativeServices(
             files: files,
             disk: FixedDiskSpaceProvider(bytes: Int64.max),
-            runner: MockBuildEngineRunner(),
+            runner: runner,
             audit: InMemoryAuditLog(),
             knowledgeBase: BundledKnowledgeBase(),
             backupDirectory: "/backups",

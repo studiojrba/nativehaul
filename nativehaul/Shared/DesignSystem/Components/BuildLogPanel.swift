@@ -18,6 +18,7 @@ struct BuildLogPanel: View {
     @AppStorage private var isExpanded: Bool
     @State private var position = ScrollPosition(edge: .bottom)
     @State private var isFollowing = true
+    @State private var isReaderScrolling = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// Creates the log.
@@ -93,8 +94,15 @@ struct BuildLogPanel: View {
             geometry.contentSize.height - geometry.contentOffset.y - geometry.containerSize.height
                 < ShellLayout.BuildLog.followSlack
         } action: { _, isNearBottom in
-            isFollowing = isNearBottom
+            // Only the reader's own scrolling stops (or resumes) following; layout changes never do.
+            if isReaderScrolling {
+                isFollowing = isNearBottom
+            }
         }
+        .onScrollPhaseChange { _, phase in
+            isReaderScrolling = phase == .interacting || phase == .decelerating || phase == .tracking
+        }
+        .onAppear { position.scrollTo(edge: .bottom) }
         .onChange(of: lines.count) {
             if isFollowing {
                 position.scrollTo(edge: .bottom)

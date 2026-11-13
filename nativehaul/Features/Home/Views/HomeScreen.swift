@@ -60,9 +60,12 @@ struct HomeScreen: View {
             .padding(.bottom, ShellLayout.Content.bottomPadding)
         }
         .scrollIndicators(.automatic)
-        .onAppear { viewModel.carousel.update(count: slides.count) }
-        .onChange(of: slides.map(\.id)) { _, ids in viewModel.carousel.update(count: ids.count) }
-        .task(id: slides.map(\.id)) { await viewModel.loadPalettes() }
+        #if DEBUG
+            .defaultScrollAnchor(ScreenshotRequest.current?.scrollsToEnd == true ? .bottom : .top)
+        #endif
+            .onAppear { viewModel.carousel.update(count: slides.count) }
+            .onChange(of: slides.map(\.id)) { _, ids in viewModel.carousel.update(count: ids.count) }
+            .task(id: slides.map(\.id)) { await viewModel.loadPalettes() }
     }
 }
 

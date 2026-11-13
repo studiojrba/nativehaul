@@ -46,8 +46,13 @@ struct OnboardingScreen: View {
         .ignoresSafeArea()
         .onGeometryChange(for: CGSize.self, of: \.size) { size = $0 }
         .task {
-            viewModel.revealsInstantly = reduceMotion
+            viewModel.revealsInstantly = viewModel.revealsInstantly || reduceMotion
             await viewModel.start()
+            #if DEBUG
+                if let target = viewModel.harnessTarget {
+                    await ScreenshotHarness.drive(viewModel, to: target)
+                }
+            #endif
         }
     }
 
