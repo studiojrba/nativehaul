@@ -1577,6 +1577,41 @@ Cut from `feature/release-pipeline` (fd6d321).
 - Build: `** BUILD SUCCEEDED **`, `** TEST SUCCEEDED **` (441 tests). Lint: clean.
 - Library data backed up to `/Users/jrbaprz/Projects/nativehaul/.recovery/home/nativehaul-backup-20261113-002944/` before any new build ran.
 
+## 0.1.0 · Phase 5 · feature/v010-couch (2026-11-13, overnight run)
+Cut from Phase 4's tip (bc66f0c). ADR 0058; ADR 0052 amended ("couch mirrors desktop").
+- ⚠ **Controller behaviour is NOT hardware-verified**: no controller was connected tonight. Everything below is
+  tested with mocks and offscreen renders only.
+- ✅ 🧪 **Salvaged from M1** (`feature/tv-mode-shell` 05c15a7): GameController input source, controller families and
+  glyphs, `LaunchStyle` + `FullScreenLaunch` (`DM_FULLSCREEN`, documented emulator flags), the full-screen window and
+  their tests. Not brought back: the standalone TV screens, Start/power menu, `Game.launchesWindowedInTVMode`, icon
+  commits.
+- ✅ 🧪 **Couch mirrors desktop** (`Features/Couch`): the Couch mode pill, Go ▸ Couch Mode (⇧⌘F) or a saved
+  "Open in: Couch" (after onboarding) take the main window full screen; − (View), M, ⇧⌘F or Settings ▸ Exit to
+  desktop hand it back. Home (§3.7: header + status pill with real controller state and 15s clock, shared hero
+  carousel, arrows row, faded shelves viewport, Continue playing + Everything A–Z; Bring a friend hidden — no data),
+  Library grid A–Z, Detail (case, specs, Play, Favourite), Builds (list + segmented progress), Settings (Appearance,
+  Audio, Open in, rumble, Exit to desktop; keys/folders stay at the desk), nav column sliding in from the left.
+- ✅ 🧪 **`CouchNavigator`**: the whole §3.7 focus model as a pure reducer (rows −2/−1/0…n, remembered columns and
+  starts, arrow focus stops, paging by V, settling, LB/RB, LT/RT letter jumps + 1100ms toast, A/X/B/Home/View/Menu,
+  reading-order grid, overlays). Auto-advance only while focus rests on the hero; any input restarts it.
+- ✅ 🧪 **Controller**: acts by physical position (right selects, bottom back, top details) for every controller;
+  Nintendo glyphs by default, Xbox/PlayStation/generic by `productCategory`; repeat 280/110ms, stick 0.6; rumble via
+  GameController haptics when on (silent on Switch Pro: no HD Rumble through Apple's framework). Dev keys unadvertised.
+- ✅ 🧪 **Launch**: launch phase ("Here we go…", "Starting {short}") then the real handoff; full screen in couch unless
+  the desktop Manage sheet's new **"Open windowed"** is on (per-game `UserDefaults` set, no schema change). Desktop
+  launches stay `.standard`.
+- ✅ 🧪 **Resume/Close**: shown when nativehaul comes forward over a running game in couch; Resume re-activates the
+  game; Close is graceful, then offers Force quit (unsaved-progress warning) after ~10s; Keep waiting asks again.
+  Couch restores nativehaul in front after a game exits (ADR 0030 amended for couch).
+- 🟡 *Needs J.R's eyes*: every 10-foot layout except Home (undesigned, derived); the nav-column drawer; + opening
+  Settings; position-based mapping on Xbox/PlayStation; the in-front restore after a game; safe area kept at the
+  spec's 64/40/32 gutters (not 5%).
+- 🟡 Not built: Share+Options background-events fallback (would take the focus during a game), couch search
+  (jump-by-letter only, TV plan Q9), idle dim, power actions.
+- Renders: `/Users/jrbaprz/Projects/nativehaul/.recovery/home/nativehaul-0.1.0-work/screens/phase5-*` (the window-snapshot renders draw the 3D hero case at the
+  origin — a snapshot artifact; `phase5-home-imagerenderer-*` shows it in place).
+- Build: `** TEST SUCCEEDED **` (690 tests). Lint: clean.
+
 ## 0.1.0 · Phase 4 · feature/v010-settings-onboarding (2026-11-13, overnight run)
 Cut from Phase 3's tip (2bab0d1). ADR 0057.
 - ✅ 🧪 **Settings** (`Features/Settings`, `Features/Players`): one in-window page, opened from the nav island and ⌘,
