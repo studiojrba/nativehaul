@@ -24,13 +24,16 @@ struct ShelfSummary: Equatable, Sendable {
         hours == 1 ? "1 hour" : "\(hours) hours"
     }
 
-    /// Home's whole-shelf line: "18 games, 64 hours well spent."
+    /// Home's whole-shelf line: "18 games, 64 hours well spent.", or "18 games, ready when you are." before any
+    /// playtime is recorded (note 14).
     var wholeShelfLine: String {
-        "\(gamesPhrase), \(hoursPhrase) well spent."
+        hours > 0 ? "\(gamesPhrase), \(hoursPhrase) well spent." : "\(gamesPhrase), ready when you are."
     }
 
     /// The Library subtitle (widened past Switch-only copy, spec §7.4; wording pending J.R's approval).
     var librarySubtitle: String {
-        "\(gamesPhrase) — Switch ports and emulator classics — and \(hoursPhrase) of good times. Nicely dusted."
+        hours > 0
+            ? "\(gamesPhrase) — Switch ports and emulator classics — and \(hoursPhrase) of good times. Nicely dusted."
+            : "\(gamesPhrase) — Switch ports and emulator classics — ready when you are. Nicely dusted."
     }
 }

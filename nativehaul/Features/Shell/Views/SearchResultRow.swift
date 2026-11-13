@@ -12,12 +12,17 @@ struct SearchResultRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: ShellLayout.Chrome.innerGap) {
-                ArtworkFill(path: game.coverImagePath, title: game.title, placeholderSize: TypeStyle.Size.micro)
-                    .frame(width: ShellLayout.TopBar.resultThumb.width, height: ShellLayout.TopBar.resultThumb.height)
-                    .clipShape(RoundedRectangle(
-                        cornerRadius: ShellLayout.TopBar.resultThumbRadius,
-                        style: .continuous
-                    ))
+                ArtworkFill(
+                    path: game.coverImagePath,
+                    title: game.title,
+                    placeholderSize: TypeStyle.Size.micro,
+                    showsTitle: false
+                )
+                .frame(width: ShellLayout.TopBar.resultThumb.width, height: ShellLayout.TopBar.resultThumb.height)
+                .clipShape(RoundedRectangle(
+                    cornerRadius: ShellLayout.TopBar.resultThumbRadius,
+                    style: .continuous
+                ))
                 VStack(alignment: .leading, spacing: 0) {
                     Text(game.title)
                         .font(Typeface.sans(TypeStyle.Size.body, weight: .medium))

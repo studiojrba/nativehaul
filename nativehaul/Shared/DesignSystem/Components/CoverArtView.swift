@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-/// Portrait cover art loaded from a local file, with a token-driven placeholder.
+/// Portrait cover art loaded from a local file, else the game's drawn cover (``ProceduralCover``).
 struct CoverArtView: View {
     /// Absolute path to an image on disk.
     let imagePath: String?
@@ -27,20 +27,7 @@ struct CoverArtView: View {
     }
 
     private var placeholder: some View {
-        ZStack {
-            Theme.surface
-            VStack(spacing: DesignTokens.Spacing.sm) {
-                Image(systemName: "gamecontroller")
-                    .font(DesignTokens.Typography.title)
-                    .foregroundStyle(Theme.secondaryText)
-                Text(title)
-                    .font(DesignTokens.Typography.caption)
-                    .foregroundStyle(Theme.secondaryText)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(DesignTokens.Lines.title)
-                    .padding(.horizontal, DesignTokens.Spacing.sm)
-            }
-        }
+        ProceduralCover(title: title, baseSize: TypeStyle.Size.small)
     }
 }
 

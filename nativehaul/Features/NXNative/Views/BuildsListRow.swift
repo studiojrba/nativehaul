@@ -22,7 +22,7 @@ struct BuildsListRow: View {
     var body: some View {
         Button(action: select) {
             HStack(spacing: Metrics.rowGapInside) {
-                ArtworkFill(path: coverPath, title: title, placeholderSize: TypeStyle.Size.micro)
+                ArtworkFill(path: coverPath, title: title, placeholderSize: TypeStyle.Size.micro, showsTitle: false)
                     .frame(width: Metrics.thumb.width, height: Metrics.thumb.height)
                     .clipShape(RoundedRectangle(cornerRadius: KitMetrics.Radius.thumb, style: .continuous))
                 VStack(alignment: .leading, spacing: 0) {

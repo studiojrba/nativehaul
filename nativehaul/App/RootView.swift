@@ -97,7 +97,8 @@ struct RootView: View {
                 play: play,
                 open: { shell.open(gameID: $0.id) },
                 seeAll: { shell.go(to: .library) },
-                addGame: { shell.isAddingGame = true }
+                addGame: { shell.isAddingGame = true },
+                openBuilds: { shell.go(to: .builds) }
             )
         case .library:
             LibraryScreen(

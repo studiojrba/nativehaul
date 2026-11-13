@@ -70,6 +70,11 @@ final class HomeViewModel {
         Array(jumpBackIn.dropFirst().prefix(Self.continueCount))
     }
 
+    /// The curated shelves (note 14), from the user's own library; each needs at least three games.
+    var shelves: [HomeShelf] {
+        HomeShelfCurator.shelves(from: library.games, jumpBackIn: jumpBackIn, now: now())
+    }
+
     /// The whole shelf in two numbers.
     var shelfSummary: ShelfSummary {
         ShelfSummary(games: library.games)

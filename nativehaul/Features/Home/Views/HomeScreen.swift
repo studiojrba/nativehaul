@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// Home (spec §3.1), from the real library: the hero carousel, Continue playing and the whole-shelf card. The curated
-/// shelves ("Cosy for tonight", "Bring a friend") are not shown: nothing in the library says which games belong on
-/// them, and membership is never faked. An empty library offers Add Game instead.
+/// Home (spec §3.1, note 14), from the real library: the hero carousel, Continue playing, the curated shelves (each
+/// from real data, hidden below three games — ``HomeShelfCurator``) and the whole-shelf card. With nothing on the
+/// shelf yet it says so kindly and offers the way in: build a first game, or add one (note 17).
 struct HomeScreen: View {
     /// Home's state.
     let viewModel: HomeViewModel
@@ -14,6 +14,8 @@ struct HomeScreen: View {
     let seeAll: () -> Void
     /// Opens Add Game.
     let addGame: () -> Void
+    /// Opens Builds (to build a first game).
+    var openBuilds: () -> Void = {}
 
     @State private var pageSize = CGSize.zero
 
@@ -21,11 +23,16 @@ struct HomeScreen: View {
         Group {
             if viewModel.isLibraryEmpty {
                 EmptyStateView(
-                    title: "Your shelf is empty",
+                    title: "Nothing built yet",
                     symbolName: "house",
-                    message: "Add a game, or let nativehaul find the ones already on your Mac."
+                    message: "Let’s get your first game going so you can start playing. Build one of your Switch "
+                        + "games, or add a game you already have."
                 ) {
-                    Button("Add Game", systemImage: "plus", action: addGame)
+                    HStack(spacing: DesignTokens.Spacing.md) {
+                        Button(BuildsCopy.emptyAction, systemImage: "sparkles", action: openBuilds)
+                            .buttonStyle(EmberButtonStyle())
+                        Button("Add Game", systemImage: "plus", action: addGame)
+                    }
                 }
             } else {
                 page
@@ -42,6 +49,9 @@ struct HomeScreen: View {
                     HeroSection(viewModel: viewModel, slides: slides, pageSize: pageSize, play: play, open: open)
                 }
                 ContinueSection(viewModel: viewModel, pageWidth: pageSize.width, play: play, open: open)
+                ForEach(viewModel.shelves) { shelf in
+                    HomeShelfRow(shelf: shelf, open: open)
+                }
                 WholeShelfCard(summary: viewModel.shelfSummary, action: seeAll)
                     .padding(.leading, ContentColumn(width: pageSize.width).leading)
                     .padding(.trailing, ContentColumn(width: pageSize.width).trailing)

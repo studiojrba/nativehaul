@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// Continue playing (spec §3.1): Jump Back In ranks 2–4 on a full-bleed shelf whose first card lines up with the
-/// content column; three cards fill the column at rest. Hidden when there is nothing to continue.
+/// content column. Like Make, the cards always fill the row: one card spans the column (up to 760pt), two share it,
+/// three split it (note 14). Hidden when there is nothing to continue.
 struct ContinueSection: View {
     /// Home's state.
     let viewModel: HomeViewModel
@@ -16,11 +17,7 @@ struct ContinueSection: View {
         let games = viewModel.continuing
         if !games.isEmpty {
             let column = ContentColumn(width: pageWidth)
-            let cardWidth = column.cardWidth(
-                in: pageWidth,
-                count: ShellLayout.Continue.cardsAcross,
-                gap: ShellLayout.Continue.gap
-            )
+            let cardWidth = width(for: games.count, column: column)
             VStack(alignment: .leading, spacing: ShellLayout.Continue.shelfTop) {
                 SectionHead(eyebrow: "Continue playing", title: "Still on the go")
                     .padding(.leading, column.leading)
@@ -46,6 +43,12 @@ struct ContinueSection: View {
             }
             .padding(.top, ShellLayout.Continue.sectionTop)
         }
+    }
+
+    private func width(for count: Int, column: ContentColumn) -> CGFloat {
+        let across = min(max(count, 1), ShellLayout.Continue.cardsAcross)
+        let width = column.cardWidth(in: pageWidth, count: across, gap: ShellLayout.Continue.gap)
+        return across == 1 ? min(width, ShellLayout.HomeShelves.singleContinueMax) : width
     }
 }
 
