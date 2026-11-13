@@ -36,6 +36,8 @@ enum TypingTiming {
     static let caretDropShare: CGFloat = 0.18
     /// Caret blink period (`steps(2)`).
     static let caretBlink: Double = 1
+    /// The caret's on (or off) phase: half the blink period.
+    static let caretPhase: Double = 0.5
 
     /// Following resumes within this distance of the bottom.
     static let followThreshold: CGFloat = 64
