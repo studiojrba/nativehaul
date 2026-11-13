@@ -135,6 +135,8 @@ extension ShellLayout {
             color: RGBA(red8: 10, green8: 6, blue8: 3, alpha: 0.50)
         )
         /// Bar to the stat cards.
+        /// Stage bar to the build log (Make `mt-7`).
+        static let logTop: CGFloat = 28
         static let statsTop: CGFloat = 32
         /// Gap between stat cards.
         static let statsGap: CGFloat = 16

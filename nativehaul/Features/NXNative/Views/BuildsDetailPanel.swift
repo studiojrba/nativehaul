@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// The selected build on its wash panel (spec §3.4): the screenshot slideshow, the header, the six-stage bar with the
-/// current stage's explanation, the stat cards, then the build's tools. The panel takes the game's wash with lifts;
+/// current stage's explanation, the build log in plain words (notes 11, 15), the stat cards, then the build's tools.
+/// The panel takes the game's wash with lifts;
 /// its content fades in when the selection changes.
 struct BuildsDetailPanel: View {
     /// The page state.
@@ -27,6 +28,13 @@ struct BuildsDetailPanel: View {
                 explanation: job.pipeline.stage == .ready ? nil : job.pipeline.stage.explanation
             )
             .padding(.top, Metrics.progressTop)
+            BuildLogPanel(
+                lines: viewModel.logLines(for: job),
+                screen: .builds,
+                isLive: BuildLogNarrator.isLive(job),
+                windowHeight: pageSize.height
+            )
+            .padding(.top, Metrics.logTop)
             HStack(spacing: Metrics.statsGap) {
                 ForEach(viewModel.stats(for: job), id: \.label) { stat in
                     StatCard(label: stat.label, value: stat.value)

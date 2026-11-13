@@ -46,6 +46,20 @@ final class BuildsViewModel {
         queue.selectedJob ?? queue.jobs.first
     }
 
+    /// The build log's plain-language lines for `job` (notes 11, 15), from its real engine output.
+    func logLines(for job: BuildJob) -> [String] {
+        let ahead = queue.jobs.first { $0.id != job.id && BuildLogNarrator.isLive($0) }
+        return BuildLogNarrator.lines(for: job, waitingBehind: ahead.map(shortTitle(for:)))
+    }
+
+    /// The log for the newest unfinished build of `titleID` (Detail shows it while a build is on the way), or `nil`.
+    func logSnapshot(forTitleID titleID: String?) -> BuildLogSnapshot? {
+        guard let titleID, let job = queue.jobs.last(where: {
+            $0.title.titleID.caseInsensitiveCompare(titleID) == .orderedSame
+        }), job.status != .succeeded else { return nil }
+        return BuildLogSnapshot(lines: logLines(for: job), isLive: BuildLogNarrator.isLive(job))
+    }
+
     /// Selects a build.
     func select(_ job: BuildJob) {
         queue.selectedJobID = job.id

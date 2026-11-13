@@ -117,7 +117,8 @@ struct RootView: View {
                     back: { shell.back() },
                     play: { option in Task { await shell.play(game, option: option) } },
                     open: { shell.open(gameID: $0) },
-                    openBuilds: { shell.openBuilds(focusing: game.switchTitleID) }
+                    openBuilds: { shell.openBuilds(focusing: game.switchTitleID) },
+                    buildLog: { buildsViewModel.logSnapshot(forTitleID: game.switchTitleID) }
                 )
             } else {
                 Color.clear.onAppear { shell.detailGameDisappeared() }

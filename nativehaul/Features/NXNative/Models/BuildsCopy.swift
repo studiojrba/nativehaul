@@ -3,6 +3,12 @@ import Foundation
 /// The Builds page's words (spec §3.4), from real queue state only: the subtitle, each row's status line, the job
 /// note, the eyebrow and the time left. Nothing is made up to look busy.
 enum BuildsCopy {
+    /// The empty state's line (note 17).
+    static let emptyLine = "Point me at one of your Switch games and I’ll build it for this Mac, so you can start "
+        + "playing."
+    /// The empty state's button into the build flow.
+    static let emptyAction = "Build your first game"
+
     /// "{n} on the go. Grab a tea." while builds are under way, else "Everything's baked."
     static func subtitle(activeCount: Int) -> String {
         activeCount > 0 ? "\(activeCount) on the go. Grab a tea." : "Everything’s baked."

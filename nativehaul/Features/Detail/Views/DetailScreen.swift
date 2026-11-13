@@ -14,6 +14,10 @@ struct DetailScreen: View {
     let open: (Game) -> Void
     /// Opens Builds focused on this game.
     let openBuilds: () -> Void
+    /// This game's build log while a build is on the way (notes 11, 15).
+    var buildLog: BuildLogSnapshot?
+
+    @State private var windowHeight: CGFloat?
 
     var body: some View {
         GeometryReader { proxy in
@@ -29,6 +33,8 @@ struct DetailScreen: View {
                 }
                 .scrollIndicators(.automatic)
             }
+            .onAppear { windowHeight = proxy.size.height }
+            .onChange(of: proxy.size.height) { _, height in windowHeight = height }
         }
     }
 
@@ -47,6 +53,14 @@ struct DetailScreen: View {
                 VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
                     if let link = viewModel.buildState?.linkText {
                         UnderlinedLinkButton(title: link, action: openBuilds)
+                    }
+                    if let buildLog {
+                        BuildLogPanel(
+                            lines: buildLog.lines,
+                            screen: .detail,
+                            isLive: buildLog.isLive,
+                            windowHeight: windowHeight
+                        )
                     }
                     DetailLaunchNotes(launch: viewModel.launch)
                 }

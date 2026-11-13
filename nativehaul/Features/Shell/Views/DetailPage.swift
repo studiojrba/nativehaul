@@ -12,6 +12,8 @@ struct DetailPage: View {
     let open: (UUID) -> Void
     /// Opens Builds focused on this game.
     let openBuilds: () -> Void
+    /// This game's build log while a build is on the way.
+    let buildLog: @MainActor () -> BuildLogSnapshot?
 
     /// Creates the page. `library` lists the shelf ("Also on your shelf"); `badge` reports a game's real build badge.
     init(
@@ -22,7 +24,8 @@ struct DetailPage: View {
         back: @escaping () -> Void,
         play: @escaping (LaunchOption?) -> Void,
         open: @escaping (UUID) -> Void,
-        openBuilds: @escaping () -> Void
+        openBuilds: @escaping () -> Void,
+        buildLog: @escaping @MainActor () -> BuildLogSnapshot? = { nil }
     ) {
         _viewModel = State(initialValue: environment.makeDetailViewModel(
             for: game,
@@ -33,6 +36,7 @@ struct DetailPage: View {
         self.play = play
         self.open = open
         self.openBuilds = openBuilds
+        self.buildLog = buildLog
     }
 
     var body: some View {
@@ -41,7 +45,8 @@ struct DetailPage: View {
             back: back,
             play: play,
             open: { open($0.id) },
-            openBuilds: openBuilds
+            openBuilds: openBuilds,
+            buildLog: buildLog()
         )
     }
 }
