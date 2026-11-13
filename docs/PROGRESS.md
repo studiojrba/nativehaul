@@ -1559,3 +1559,20 @@ and none should be.
    on a macOS runner.
 3. Manually smoke-test the Steam flow with a real key, and the NXNative flow with the real engine.
 4. Re-skin from Figma by changing tokens and components only.
+
+## 0.1.0 · Phase 0 · feature/v010-foundation (2026-11-13, overnight run)
+Cut from `feature/release-pipeline` (fd6d321).
+- ✅ Version **0.1.0, build 3** (ADR 0053: the alpha line; build numbers keep climbing, never reuse 2).
+- ✅ Icon v2, the **n. mark**: 10 AppIcon PNGs generated with `sips` from `/Users/jrbaprz/Projects/nativehaul/.recovery/home/nativehaul-icon-v2-1024.png`
+  (sha256 `dd423e7a…65cd` verified, 1024×1024); every slot's pixel size checked. Supersedes the Shelf icon
+  (`feature/app-icon`); `ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon` in `project.yml`.
+- ✅ 🧪 Audio (`Features/Audio`): `AudioController` (music + UI sounds behind prefs), `AVMusicPlayer` (loops
+  `charm-loop.m4a`, fades in/out), `AVUISoundPlayer` (preloaded 3-voice pools at one shared gain, same-sound repeats
+  under 35ms dropped), `UserDefaultsAudioPreferencesStore`; mocks for each. Music starts at the main shell, never over
+  onboarding, fades out while a game runs and resumes after. Settings → Audio: Music toggle, volume slider (default
+  0.6), Interface sounds toggle. Hooks: nav on sidebar change, confirm on Play, back on leaving a game page. WAV levels
+  untouched. Typing sound out of scope.
+- ✅ `docs/RELEASING.md` re-cut to the alpha plan; CHANGELOG is `## [0.1.0] - 2026-11-13`; ADR 0053.
+- ✅ Licence audit + notices list the icon and the four audio files. ⚠ `nav.wav` (Qvantor) licence still unverified.
+- Build: `** BUILD SUCCEEDED **`, `** TEST SUCCEEDED **` (441 tests). Lint: clean.
+- Library data backed up to `/Users/jrbaprz/Projects/nativehaul/.recovery/home/nativehaul-backup-20261113-002944/` before any new build ran.

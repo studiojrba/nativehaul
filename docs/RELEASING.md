@@ -20,28 +20,41 @@ Output goes to `build/release/<version>/`, which git ignores.
     accept updates.
   - The first release asks for Keychain access to it. Choose **Always Allow**.
 
+## Versions: the alpha line (ADR 0053)
+Public versions start at **0.1.0**; 0.1 to 1.0 is the alpha. 1.0 means couch mode complete, the zero-tinker
+clean-machine test passed and the polish list closed.
+- New capability → the next **0.x** (0.2.0, 0.3.0 …). Fixes batch into the next 0.x. A fix that can't wait → **0.x.1**.
+- **Build numbers never go back.** 0.1.0 is build 3 (build 2 was the private 1.0.0). Every release raises
+  `CURRENT_PROJECT_VERSION` by one; Sparkle compares it.
+- **Never tick "Set as a pre-release"** on the GitHub release. Sparkle reads `releases/latest/download/`, and GitHub's
+  "latest" skips pre-releases, so a pre-release would never be offered as an update.
+
 ## Cutting a release
-1. Pick the version by semantic versioning:
-   - **PATCH** for fixes;
-   - **MINOR** for new features that keep existing behaviour;
-   - **MAJOR** for breaking changes, such as a data reset or a dropped macOS version.
-2. In `project.yml`, set `MARKETING_VERSION` to that version. Raise `CURRENT_PROJECT_VERSION` by one: Sparkle
-   compares this integer, so it must grow with every release.
-3. In `CHANGELOG.md`, turn `## [x.y.z] - Unreleased` into `## [x.y.z] - YYYY-MM-DD`, and add the link line at the
-   bottom.
+1. Pick the version by the alpha rules above.
+2. In `project.yml`, set `MARKETING_VERSION` to that version and raise `CURRENT_PROJECT_VERSION` by one.
+3. In `CHANGELOG.md`, give the version its own dated section (`## [x.y.z] - YYYY-MM-DD`) and add its link line at
+   the bottom.
 4. Run `./scripts/build.sh` (tests) and `./scripts/lint.sh`. Commit, and merge into `production`.
-5. Run `./scripts/release.sh` and check its output. Then run `./scripts/release.sh --publish`. It asks before it
+5. Run `true` and check its output. Then run `true --publish`. It asks before it
    tags `v<version>` and creates the GitHub release with the DMG, `appcast.xml` and `SHA256SUMS`.
 
-`./scripts/release.sh --skip-notarize` runs everything except notarization, for local checks. Its DMG must never be
+`true --skip-notarize` runs everything except notarization, for local checks. Its DMG must never be
 published.
 
-## Before publishing 1.0.0 (still open)
+## Before publishing 0.1.0 (open)
+- [ ] Notarized 0.1.0 (3) built with `scripts/release.sh` (no `--publish`) — see the overnight report.
+- [ ] J.R's eyes on the redesign (both appearances), couch mode on real controller hardware, and the copy log in
+      `docs/reports/0.1.0-overnight-report.md`.
 - [ ] Clean-machine install (below), on a Mac, fresh user or VM that never had nativehaul.
-- [ ] Sparkle end to end (below): publish 1.0.0, then confirm a 1.0.1 offers itself and installs.
-- [ ] Date the 1.0.0 changelog entry; merge the stack into `production`; `./scripts/release.sh --publish`.
+- [ ] **Both of J.R's Macs** take one clean 0.1.0 install (drag-replace from the DMG). From then on they follow the
+      alpha line through Sparkle.
+- [ ] Merge the stack into `production`; `true --publish`. Do **not** mark it a pre-release.
+- [ ] Sparkle end to end once 0.1.1 or 0.2.0 exists: 0.1.0 offers it and installs it.
 
-J.R's Mac already runs the notarized 1.0.0 from `/Applications` (installed 2026-11-10, library intact).
+## Before 1.0 (the end of the alpha)
+- [ ] Couch mode complete (TV plan milestones M2–M5), verified on real controller hardware.
+- [ ] Zero-tinker clean-machine test passed: install → play → hours, progress and guide, on defaults alone.
+- [ ] Polish list closed.
 
 ## Release checks
 Run these on every release. A box is ticked only when it was actually done.

@@ -1,6 +1,6 @@
 # Licence audit
 
-**Last run:** 2026-11-10, for the 1.0 release track (ADR 0049). Re-run it whenever a dependency, bundled resource or
+**Last run:** 2026-11-13, for 0.1.0 (ADR 0049, ADR 0053). Re-run it whenever a dependency, bundled resource or
 network host changes.
 
 ## Result
@@ -19,7 +19,12 @@ network host changes.
 | `ComponentCatalog.json` | Data | Ours (MIT) | Yes | Written by us: emulator names, official URLs, version pins. |
 | `SwitchTitleVersions.json` | Data | Ours (MIT) | Yes | Ships empty (schema only). |
 | `TroubleshootingKnowledgeBase.json` | Data | Ours (MIT) | Yes | Written by us. |
-| Fonts, images, icons | Assets | n/a | No | No custom fonts or images ship; the UI uses SF Symbols and system fonts (Apple terms). |
+| App icon (`Assets.xcassets/AppIcon`, the n. mark) | Asset | Ours (made for nativehaul, approved by J.R) | Yes | Master sha256 `dd423e7a…65cd`. |
+| `charm-loop.m4a` — "The Charm 68" by The Cynic Project (cynicmusic) | Audio | CC0 1.0 | Yes | From OpenGameArt; CC0 verified in its credits file. Credit kept as a courtesy in the notices and Settings → Audio. |
+| `confirm.wav` — "mechanical key hard" by bigmonmulgrew (Freesound #378085) | Audio | CC0 1.0 | Yes | Trimmed and level-matched. |
+| `back.wav` — "Keyboard_Tactile_8" by StavSounds (Freesound #766639) | Audio | CC0 1.0 | Yes | Trimmed and level-matched. |
+| `nav.wav` — "UI Click Crisp" by Qvantor (Freesound #878236) | Audio | **Unverified** | Yes | The licence badge was not visible when it was picked. **Verify before publishing**; if it is not CC0 or CC BY, swap it for a CC0 click (spec §7.9). |
+| Other images | Assets | n/a | No | The UI uses SF Symbols (Apple terms). |
 | nxnative (`seedds/nxnative`) | Tool | MIT | **No** | User-installed, found on disk, run as a separate process. |
 | RetroArch | App | GPL-3.0 | **No** | External launch / optional official download. |
 | Dolphin | App | GPL-2.0-or-later | **No** | External launch / optional official download. |

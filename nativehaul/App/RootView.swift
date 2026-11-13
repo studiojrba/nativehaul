@@ -28,9 +28,28 @@ struct RootView: View {
     var body: some View {
         RailShell(selection: $selection, libraryViewModel: libraryViewModel) { navigation }
             .environment(environment)
-            .onChange(of: selection) { path.removeAll() }
+            .onChange(of: selection) {
+                path.removeAll()
+                environment.audio.play(.navigate)
+            }
+            .onChange(of: path.count) { old, new in
+                if new < old {
+                    environment.audio.play(.back)
+                }
+            }
+            .onChange(of: environment.handoff.isGameRunning) { environment.audio.gameRunningDidChange($1) }
+            .onChange(of: isOnboarding) { _, onboarding in
+                if onboarding {
+                    environment.audio.shellDidDisappear()
+                } else {
+                    environment.audio.shellDidAppear()
+                }
+            }
             .task {
                 isOnboarding = !environment.onboarding.hasCompletedOnboarding
+                if !isOnboarding {
+                    environment.audio.shellDidAppear()
+                }
                 environment.watcher.start()
                 await libraryViewModel.runAutomaticUpkeep()
             }

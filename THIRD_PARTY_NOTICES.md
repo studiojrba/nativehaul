@@ -10,6 +10,15 @@ data and services nativehaul works with but does not ship. The licence audit beh
 
 nativehaul ships no third-party code other than what is listed in this section.
 
+### Audio
+- **"The Charm 68"** by The Cynic Project (cynicmusic) — <https://opengameart.org/> — **CC0 1.0** (public domain
+  dedication). Credit as a courtesy: The Cynic Project / cynicmusic.com / pixelsphere.org. Ships as
+  `charm-loop.m4a` (looped edit).
+- **"mechanical key hard"** by bigmonmulgrew — Freesound #378085 — **CC0 1.0**. Ships as `confirm.wav` (trimmed).
+- **"Keyboard_Tactile_8"** by StavSounds — Freesound #766639 — **CC0 1.0**. Ships as `back.wav` (trimmed).
+- **"UI Click Crisp"** by Qvantor — Freesound #878236. Ships as `nav.wav` (trimmed). Licence to be confirmed before
+  public release (see `docs/LICENSE_AUDIT.md`).
+
 ### Sparkle 2.10.1 (MIT, with BSD-2-Clause, zlib and MIT components)
 - Source: <https://github.com/sparkle-project/Sparkle>
 - What it does: checks for, downloads and installs nativehaul updates (see `docs/PRIVACY.md`).

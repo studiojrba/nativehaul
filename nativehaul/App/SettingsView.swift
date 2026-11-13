@@ -9,6 +9,8 @@ struct SettingsView: View {
         TabView {
             GeneralSettingsView()
                 .tabItem { Label("General", systemImage: "gearshape") }
+            AudioSettingsView(controller: environment.audio)
+                .tabItem { Label("Audio", systemImage: "speaker.wave.2") }
             RetroAchievementsSettingsView(viewModel: environment.makeRetroAchievementsSettingsViewModel())
                 .tabItem { Label("RetroAchievements", systemImage: "trophy") }
             ArtworkSettingsView(

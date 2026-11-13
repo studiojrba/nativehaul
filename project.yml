@@ -20,8 +20,8 @@ settings:
     CODE_SIGN_IDENTITY: "-"
     CODE_SIGN_STYLE: Manual
     DEVELOPMENT_TEAM: ""
-    MARKETING_VERSION: "1.0.0"
-    CURRENT_PROJECT_VERSION: "2"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "3"
     GCC_TREAT_WARNINGS_AS_ERRORS: YES
     ENABLE_HARDENED_RUNTIME: YES
     DEAD_CODE_STRIPPING: YES
@@ -45,6 +45,7 @@ targets:
         PRODUCT_MODULE_NAME: nativehaul
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: nativehaul
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.games
         INFOPLIST_KEY_NSHumanReadableCopyright: "© 2026 Studio Jrba inc. MIT License."
         ENABLE_APP_SANDBOX: NO

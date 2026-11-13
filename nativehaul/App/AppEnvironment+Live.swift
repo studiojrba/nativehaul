@@ -47,8 +47,13 @@ extension AppEnvironment {
             components: makeLiveComponents(emulators: emulators),
             gameBadges: GameUpdateBadgeProvider(switchVersions: .bundled()),
             handoff: makeLiveHandoff(),
-            appUpdater: SparkleAppUpdater()
+            appUpdater: SparkleAppUpdater(),
+            audio: makeLiveAudio()
         )
+    }
+
+    private static func makeLiveAudio() -> AudioController {
+        AudioController(store: UserDefaultsAudioPreferencesStore(), music: AVMusicPlayer(), sounds: AVUISoundPlayer())
     }
 
     private static func makeLiveWatcher(

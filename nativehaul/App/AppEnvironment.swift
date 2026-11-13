@@ -56,6 +56,8 @@ final class AppEnvironment {
     let handoff: GameSessionHandoff
     /// nativehaul's own updates (Sparkle, ADR 0050).
     let appUpdater: any AppUpdating
+    /// Background music and interface sounds (audio brief).
+    let audio: AudioController
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -83,7 +85,8 @@ final class AppEnvironment {
         components: any ComponentUpdating,
         gameBadges: GameUpdateBadgeProvider,
         handoff: GameSessionHandoff? = nil,
-        appUpdater: any AppUpdating = MockAppUpdater()
+        appUpdater: any AppUpdating = MockAppUpdater(),
+        audio: AudioController? = nil
     ) {
         self.container = container
         self.repository = repository
@@ -111,6 +114,7 @@ final class AppEnvironment {
         self.handoff = handoff
             ?? GameSessionHandoff(visibility: MockAppVisibility(), observer: MockRunningApplicationObserver())
         self.appUpdater = appUpdater
+        self.audio = audio ?? .preview
     }
 
     /// Seeded in-memory environment with mock services for SwiftUI previews.
