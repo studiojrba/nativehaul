@@ -14,6 +14,10 @@ final class GameSessionHandoff {
     /// The game app nativehaul is out of the way for, if any.
     private(set) var gamePath: String?
 
+    /// Couch mode: when the game exits, bring nativehaul back in front (the controller only reaches the frontmost app)
+    /// instead of restoring it quietly behind the next app (ADR 0058). Off on the desktop.
+    @ObservationIgnored var restoresInFront = false
+
     /// `true` while nativehaul is hidden for a running game.
     var isGameRunning: Bool {
         gamePath != nil
@@ -109,7 +113,17 @@ final class GameSessionHandoff {
         guard gamePath != nil else { return }
         stopWatching()
         gamePath = nil
-        visibility.unhideWithoutActivation()
+        if restoresInFront {
+            visibility.unhide()
+        } else {
+            visibility.unhideWithoutActivation()
+        }
+    }
+
+    /// Couch Resume: the game is back in front, so nativehaul steps aside again.
+    func stepAside() {
+        guard isGameRunning else { return }
+        visibility.hide()
     }
 
     private func stopWatching() {
