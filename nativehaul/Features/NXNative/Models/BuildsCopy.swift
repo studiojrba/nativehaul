@@ -25,7 +25,7 @@ enum BuildsCopy {
     static func note(for job: BuildJob, isQueueRunning: Bool) -> String {
         switch job.status {
         case .queued:
-            return isQueueRunning ? "Waiting its turn." : "Queued. Start building when you’re ready."
+            return isQueueRunning ? "Waiting its turn." : "Queued. Press Begin build when you’re ready."
         case .preflight:
             return "Checking everything’s in place before it starts."
         case .building:

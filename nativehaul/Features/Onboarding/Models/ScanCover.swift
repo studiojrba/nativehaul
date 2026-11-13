@@ -8,4 +8,6 @@ struct ScanCover: Identifiable, Equatable, Sendable {
     let title: String
     /// Its cover art on disk, if any yet.
     let imagePath: String?
+    /// What sits together in its folder ("Base + update + 2 DLC"), when the folder scan sorted it.
+    var contents: ScanContents?
 }

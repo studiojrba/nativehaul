@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// One answer pill (spec §3.6): the primary in ember, the rest frosted; hovering tells the scene to preview its effect.
+/// One answer pill (spec §3.6): the primary in ember, the rest frosted; hovering or focusing it (keyboard or
+/// controller) tells the scene to preview its effect, and leaving clears the preview (note 2).
 struct OnboardingActionButton: View {
     /// The action.
     let action: OnboardingAction
@@ -11,6 +12,8 @@ struct OnboardingActionButton: View {
     /// Chosen.
     let choose: () -> Void
 
+    @FocusState private var isFocused: Bool
+
     var body: some View {
         Group {
             if action.isPrimary {
@@ -19,7 +22,9 @@ struct OnboardingActionButton: View {
                 Button(action: choose) { label }.buttonStyle(SurfacePillButtonStyle(isCompact: true))
             }
         }
+        .focused($isFocused)
         .onHover(perform: onHover)
+        .onChange(of: isFocused) { _, focused in onHover(focused) }
     }
 
     private var label: some View {

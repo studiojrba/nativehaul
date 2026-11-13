@@ -14,14 +14,18 @@ enum OnboardingEffect: Equatable, Sendable {
     case keepInstallLocation
     /// Puts Switch builds on this external drive.
     case useExternal(VolumeInfo)
-    /// Opens the native file picker for the keys file.
+    /// Opens the native file picker for the library key.
     case pickKeys
-    /// Places the user's keys file (from the picker or a drop).
+    /// Places the user's library key (from the picker or a drop).
     case placeKeys(String)
-    /// Explains the keys file.
+    /// Explains the library key.
     case showKeysHelp
-    /// Goes on without a keys file.
+    /// Goes on without a library key.
     case skipKeys
-    /// Saves the mode nativehaul opens in, and finishes.
+    /// Starts setting up the ticked emulators from their official sources.
+    case installEmulators
+    /// Saves the mode nativehaul opens in, then says goodbye.
     case chooseMode(AppMode)
+    /// "Let's play": finishes the tour.
+    case finish
 }

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Page 1 (spec §3.6): one centred column up to ~680pt — the logo cluster, then the intro as centred bubbles at ~28pt,
+/// Page 1 (spec §3.6): one centred column up to 560pt — the logo cluster, then the intro as centred bubbles at 16pt (note 1),
 /// then "Sure, let's go". A hidden copy of the finished conversation (plus the button's slot) reserves the final height
 /// from the first frame, so the logo never moves as bubbles arrive.
 struct WelcomeColumn: View {

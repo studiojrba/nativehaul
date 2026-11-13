@@ -7,6 +7,17 @@ All notable changes to nativehaul are recorded here. The format follows
 `scripts/release.sh` publishes the section for the version it releases as that release's notes, both on GitHub and
 in the update window.
 
+## [0.1.1] - 2026-11-13
+
+Polish round 1: onboarding, the build log, Home's shelves and drawn covers.
+
+### Changed
+- **Onboarding:** the intro is the same friendly size as the rest of the chat, music and interface sounds play from
+  the first screen, and the tour now runs games folder → quick scan → how Switch builds work → emulators → couch or
+  desk → a short goodbye with a "Let's play" button.
+- **Wording:** your Switch library file is called your library key everywhere.
+- **Builds:** the last stage before Ready is called Finishing.
+
 ## [0.1.0] - 2026-11-13
 
 The first public alpha: a shelf for Switch ports and emulator classics on Apple Silicon Macs. 0.1 to 1.0 is the

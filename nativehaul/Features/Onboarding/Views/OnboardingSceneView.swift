@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The preview scene for the current beat (spec §3.6), reacting to the hovered action.
+/// The preview scene for the current beat (spec §3.6), reacting to the hovered or focused action.
 struct OnboardingSceneView: View {
     /// The conversation.
     let viewModel: OnboardingChatViewModel
@@ -11,10 +11,13 @@ struct OnboardingSceneView: View {
             EmptyView()
         case .shelf:
             ShelfScene(
-                folderLabel: viewModel.beat == .found ? viewModel.facts.scannedFolderLabel : nil,
+                folderLabel: viewModel.previewFolderLabel,
+                isChosen: viewModel.beat == .found,
                 isScanning: viewModel.isScanning,
                 scan: viewModel.beat == .found ? viewModel.facts.scan : nil
             )
+        case .build:
+            BuildTutorialScene(beat: viewModel.beat, facts: viewModel.facts)
         case .disk:
             DiskScene(facts: viewModel.facts, hovered: viewModel.hoveredAction)
         case .keys:
@@ -22,9 +25,11 @@ struct OnboardingSceneView: View {
                 Task { await viewModel.dropped(url) }
             }
         case .player:
-            PlayerScene(facts: viewModel.facts)
+            PlayerScene(viewModel: viewModel)
         case .couch:
             CouchScene(facts: viewModel.facts, hovered: viewModel.hoveredAction)
+        case .closing:
+            ClosingScene(mode: viewModel.facts.chosenMode)
         }
     }
 }

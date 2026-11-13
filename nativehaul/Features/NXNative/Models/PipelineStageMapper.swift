@@ -12,13 +12,13 @@ enum PipelineStageMapper {
 
     /// Name fragments for each stage, checked in this order (shaders before patching: "shaders · translate").
     private static let keywords: [(PipelineStage, [String])] = [
-        (.shaders, ["shader", "package", "pack", "sign", "bundle", "finish", "finaliz"]),
+        (.finishing, ["shader", "package", "pack", "sign", "bundle", "finish", "finaliz"]),
         (.verify, ["verify", "check", "hash", "validat", "integrity"]),
         (.patch, ["rewrite", "patch", "heap", "nso", "update", "dlc", "recompil", "convert"]),
         (.prepare, ["extract", "unpack", "prepar", "setup", "decrypt", "copy", "import"]),
     ]
     private static let firstWorking = PipelineStage.prepare.rawValue
-    private static let workingCount = PipelineStage.shaders.rawValue - PipelineStage.prepare.rawValue + 1
+    private static let workingCount = PipelineStage.finishing.rawValue - PipelineStage.prepare.rawValue + 1
 
     /// The stage an engine step belongs to by its name, or `nil` for a name nativehaul doesn't know.
     static func stage(forEngineStep name: String) -> PipelineStage? {
@@ -26,7 +26,7 @@ enum PipelineStageMapper {
         return keywords.first { _, fragments in fragments.contains { lowered.contains($0) } }?.0
     }
 
-    /// The stage for engine step `index` (1-based) of `total`, spread evenly over Prepare…Shaders.
+    /// The stage for engine step `index` (1-based) of `total`, spread evenly over Prepare…Finishing.
     static func stage(forStep index: Int, of total: Int) -> PipelineStage {
         guard total > 0, index > 0 else { return .prepare }
         let slot = min((index - 1) * workingCount / total, workingCount - 1)
@@ -43,7 +43,7 @@ enum PipelineStageMapper {
         case .building:
             return engineStep(job.progress)
         case .awaitingCleanup:
-            return PipelinePosition(stage: .shaders, inStage: runningCeiling)
+            return PipelinePosition(stage: .finishing, inStage: runningCeiling)
         case .succeeded:
             return .ready
         case .failed:

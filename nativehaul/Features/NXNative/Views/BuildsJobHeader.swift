@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// The selected build's header (spec §3.4): "{version} · {size}", the title, the real job note, and on the right
-/// "Ready to play" once built, or the queue's real control — Start building when it is idle, Stop when it runs. The
+/// "Ready to play" once built, or the queue's real control — Begin build when it is idle, Stop when it runs. The
 /// engine has no pause, so there is no Pause (ADR 0056).
 struct BuildsJobHeader: View {
     /// The page state.
@@ -52,7 +52,7 @@ struct BuildsJobHeader: View {
         } else if viewModel.canStop {
             pill("Stop building", icon: "stop.fill") { viewModel.queue.cancel() }
         } else if viewModel.canStart {
-            pill("Start building", icon: "play.fill") { viewModel.queue.startQueue() }
+            pill("Begin build", icon: "play.fill") { viewModel.queue.startQueue() }
         }
     }
 

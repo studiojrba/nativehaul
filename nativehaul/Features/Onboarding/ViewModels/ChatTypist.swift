@@ -19,6 +19,7 @@ final class ChatTypist {
 
     @ObservationIgnored private var nextID = 0
     @ObservationIgnored private var isStopped = false
+    @ObservationIgnored private var waitingID: Int?
     @ObservationIgnored private let sleep: Sleep
 
     /// Creates the typist.
@@ -60,7 +61,32 @@ final class ChatTypist {
         return true
     }
 
-    /// Adds the user's answer as a sent bubble.
+    /// Shows a typing-dots bubble with no text to reveal (the scan wait, note 7); `placeholder` is for assistive tech
+    /// and sizes the bubble. ``endWaiting()`` takes it away.
+    func beginWaiting(_ placeholder: String) {
+        guard !isStopped, waitingID == nil else { return }
+        let id = append(placeholder, from: .app)
+        waitingID = id
+        activeID = id
+        revealedCount = nil
+    }
+
+    /// Removes the waiting bubble.
+    func endWaiting() {
+        guard let waitingID else { return }
+        messages.removeAll { $0.id == waitingID }
+        if activeID == waitingID {
+            activeID = nil
+        }
+        self.waitingID = nil
+    }
+
+    /// Whether the typing-dots wait is showing.
+    var isWaiting: Bool {
+        waitingID != nil
+    }
+
+    /// Adds the user’s answer as a sent bubble.
     func appendReply(_ text: String) {
         append(text, from: .user)
     }

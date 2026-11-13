@@ -156,8 +156,8 @@ final class NXNativeViewModel {
     func provideKeys(at path: String, for jobID: UUID) {
         do {
             switch try UserFilePlacer.place(path, for: configuration.keysRequest, files: services.files) {
-            case .placed: providedFileMessage = "Thanks — your prod.keys is in place."
-            case .alreadyPresent: providedFileMessage = "A prod.keys was already there, so it was kept."
+            case .placed: providedFileMessage = "Thanks, your library key is in place."
+            case .alreadyPresent: providedFileMessage = "A library key was already there, so it was kept."
             }
             runPreflight(jobID)
         } catch {

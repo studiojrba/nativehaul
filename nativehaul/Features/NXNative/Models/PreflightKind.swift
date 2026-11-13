@@ -17,8 +17,8 @@ enum PreflightKind: String, CaseIterable, Sendable {
         switch self {
         case .engine: "Engine available"
         case .notBundled: "Engine is external"
-        case .keys: "prod.keys"
-        case .titleID: "Title ID"
+        case .keys: "Library key"
+        case .titleID: "Game ID"
         case .architecture: "64-bit title"
         case .stagedFiles: "Staged files"
         case .diskSpace: "Free disk space"

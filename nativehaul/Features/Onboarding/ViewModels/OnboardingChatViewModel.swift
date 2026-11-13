@@ -1,13 +1,17 @@
 import Foundation
 import Observation
 
-/// Drives onboarding (spec §3.6, §4.4): a friendly conversation, one question at a time, each answer doing the real
-/// thing — adding and scanning the games folder, keeping or moving the install location, placing the user's keys file,
-/// and saving the mode nativehaul opens in. "Skip the tour" finishes at once and the defaults fill the rest. It never
-/// touches the appearance, so a replay keeps it; finishing (or skipping) marks onboarding done.
+/// Drives onboarding (spec §3.6, §4.4, 0.1.1 order in ADR 0059): a friendly conversation, one question at a time, each
+/// answer doing the real thing — adding and scanning the games folder, keeping or moving the install location, placing
+/// the user's library key, setting up the emulators the user ticks, and saving the mode nativehaul opens in. Music and
+/// the interface sounds play from the first screen. "Skip the tour" finishes at once and the defaults fill the rest;
+/// finishing (or skipping) marks onboarding done.
 @MainActor
 @Observable
 final class OnboardingChatViewModel {
+    /// The scan's typing dots show at least this long, so a fast scan still reads naturally (note 7).
+    static let minimumScanWait: Double = 0.6
+
     /// The current beat.
     private(set) var beat = OnboardingBeat.welcome
     /// The conversation.
@@ -20,10 +24,19 @@ final class OnboardingChatViewModel {
     private(set) var facts = OnboardingFacts()
     /// Whether a scan is running.
     private(set) var isScanning = false
-    /// The action under the pointer (the scene previews its effect).
-    var hoveredActionID: String?
-    /// The open panel showing, if any.
-    var picker: OnboardingPicker?
+    /// The action under the pointer or with keyboard/controller focus (the scene previews its effect).
+    var hoveredActionID: String? {
+        didSet {
+            if hoveredActionID != nil, hoveredActionID != oldValue {
+                playSound(.navigate)
+            }
+        }
+    }
+
+    /// The emulators ticked in the player scene.
+    private(set) var selectedOfferIDs: Set<String> = []
+    /// The installs started from the player beat, one per ticked emulator.
+    private(set) var installs: [ComponentInstallViewModel] = []
     /// Counts answers, so the chat can resume following the newest bubble.
     private(set) var answerCount = 0
     /// Whether the tour is over.
@@ -32,19 +45,24 @@ final class OnboardingChatViewModel {
     var revealsInstantly = false
 
     @ObservationIgnored private let setup: any OnboardingSetupPerforming
+    @ObservationIgnored private let panel: any FilePanelPresenting
     @ObservationIgnored private let sleep: ChatTypist.Sleep
+    @ObservationIgnored private let playSound: @MainActor (UISound) -> Void
     @ObservationIgnored private let onFinish: @MainActor () -> Void
     @ObservationIgnored private var hasStarted = false
-    @ObservationIgnored private var pendingPicker: OnboardingPicker?
 
     /// Creates the conversation. `onFinish` returns to the shell.
     init(
         setup: any OnboardingSetupPerforming,
+        panel: any FilePanelPresenting = MockFilePanel(),
         sleep: @escaping ChatTypist.Sleep = ChatTypist.realSleep,
+        playSound: @escaping @MainActor (UISound) -> Void = { _ in },
         onFinish: @escaping @MainActor () -> Void = {}
     ) {
         self.setup = setup
+        self.panel = panel
         self.sleep = sleep
+        self.playSound = playSound
         self.onFinish = onFinish
         typist = ChatTypist(sleep: sleep)
     }
@@ -54,6 +72,7 @@ final class OnboardingChatViewModel {
         guard !hasStarted else { return }
         hasStarted = true
         facts = await setup.loadFacts()
+        selectedOfferIDs = Set(facts.emulatorOffers.filter(\.isRecommended).map(\.id))
         await present(.welcome)
     }
 
@@ -65,46 +84,54 @@ final class OnboardingChatViewModel {
     /// Answers with `action`.
     func choose(_ action: OnboardingAction) async {
         guard isReady, !isFinished else { return }
+        playSound(.confirm)
         switch action.effect {
         case .pickFolder:
-            pendingPicker = .folder
-            picker = .folder
+            let url = await panel.chooseFolder()
+            await pickedFolder(url)
         case .pickKeys:
-            pendingPicker = .keys
-            picker = .keys
+            let url = await panel.chooseFile(allowedExtensions: setup.keysExtensions)
+            await pickedKeys(url)
         default:
             answer(action.replyText)
             await perform(action.effect)
         }
     }
 
-    /// The open panel closed: `url` is the pick, `nil` a cancel (the question stays open).
-    func picked(_ url: URL?) async {
-        let current = pendingPicker
-        pendingPicker = nil
-        picker = nil
-        guard let url, let current, isReady, !isFinished else { return }
-        let path = url.path(percentEncoded: false)
-        switch current {
-        case .folder:
-            answer("This one: \(OnboardingScript.abbreviate(path))")
-            await perform(.useFolder(path))
-        case .keys:
-            answer("Here it is.")
-            await perform(.placeKeys(path))
-        }
+    /// A file dropped on the library key scene counts as picking it.
+    func dropped(_ url: URL) async {
+        guard beat == .keys || beat == .keysHelp, facts.detectedKeys == nil, isReady else { return }
+        await pickedKeys(url)
     }
 
-    /// A file dropped on the keys scene counts as picking it.
-    func dropped(_ url: URL) async {
-        guard beat == .keys || beat == .keysHelp, facts.detectedKeys == nil else { return }
-        pendingPicker = .keys
-        await picked(url)
+    /// Ticks or unticks an emulator on offer.
+    func toggleOffer(_ id: String) {
+        guard beat == .player else { return }
+        playSound(.navigate)
+        if selectedOfferIDs.contains(id) {
+            selectedOfferIDs.remove(id)
+        } else {
+            selectedOfferIDs.insert(id)
+        }
     }
 
     /// "Skip the tour": finish now; the defaults fill the rest.
     func skipTour() {
+        playSound(.back)
         finish()
+    }
+
+    private func pickedFolder(_ url: URL?) async {
+        guard let url, isReady, !isFinished else { return }
+        let path = url.path(percentEncoded: false)
+        answer("This one: \(OnboardingScript.abbreviate(path))")
+        await perform(.useFolder(path))
+    }
+
+    private func pickedKeys(_ url: URL?) async {
+        guard let url, isReady, !isFinished else { return }
+        answer("Here it is.")
+        await perform(.placeKeys(url.path(percentEncoded: false)))
     }
 
     private func answer(_ text: String) {
@@ -130,28 +157,27 @@ final class OnboardingChatViewModel {
         case let .advance(next):
             await present(next)
         case let .useFolder(path):
-            await scan(label: OnboardingScript.abbreviate(path)) { await setup.addFolderAndScan(path) }
+            await scan(label: OnboardingScript.abbreviate(path)) { await self.setup.addFolderAndScan(path) }
         case .keepFolders:
             await scan(label: OnboardingScript.folderList(facts.configuredFolders)) {
-                await setup.scanConfiguredFolders()
+                await self.setup.scanConfiguredFolders()
             }
         case .keepInstallLocation:
-            await present(.keys)
+            await present(.buildLaunch)
         case let .useExternal(volume):
             setup.setInstallLocation(volume.installFolder)
             facts.installLocation = volume.installFolder
             facts.usesExternal = true
-            await present(.keys)
-        case let .placeKeys(path):
-            facts.keysOutcome = setup.provideKeys(at: path)
-            await present(.player)
-        case .showKeysHelp:
-            await present(.keysHelp)
-        case .skipKeys:
-            facts.keysOutcome = .skipped
-            await present(.player)
+            await present(.buildLaunch)
+        case .placeKeys, .showKeysHelp, .skipKeys:
+            await performKeys(effect)
+        case .installEmulators:
+            await installSelected()
         case let .chooseMode(mode):
+            facts.chosenMode = mode
             setup.setDefaultMode(mode)
+            await present(.closing)
+        case .finish:
             await sleep(TypingTiming.finishPause)
             finish()
         case .pickFolder, .pickKeys:
@@ -159,14 +185,49 @@ final class OnboardingChatViewModel {
         }
     }
 
-    private func scan(label: String, _ run: () async -> OnboardingScan) async {
+    private func performKeys(_ effect: OnboardingEffect) async {
+        switch effect {
+        case let .placeKeys(path):
+            facts.keysOutcome = setup.provideKeys(at: path)
+            await present(.player)
+        case .showKeysHelp:
+            await present(.keysHelp)
+        default:
+            facts.keysOutcome = .skipped
+            await present(.player)
+        }
+    }
+
+    /// Says the scan is starting, holds the typing dots for at least ``minimumScanWait`` while it runs, then reports.
+    private func scan(label: String, _ run: @MainActor () async -> OnboardingScan) async {
         facts.scannedFolderLabel = label
         facts.scan = nil
         beat = .found
         isScanning = true
-        facts.scan = await run()
+        _ = await typist.type([OnboardingScript.scanning], instantly: revealsInstantly)
+        typist.beginWaiting(OnboardingScript.scanningPlaceholder)
+        let clock = ContinuousClock()
+        let started = clock.now
+        let result = await run()
+        let waited = started.duration(to: clock.now) / .seconds(1)
+        if waited < Self.minimumScanWait, !revealsInstantly {
+            await sleep(Self.minimumScanWait - waited)
+        }
+        typist.endWaiting()
+        facts.scan = result
         isScanning = false
         await present(.found)
+    }
+
+    private func installSelected() async {
+        let chosen = facts.emulatorOffers.filter { selectedOfferIDs.contains($0.id) }
+        guard !chosen.isEmpty else {
+            await present(.final)
+            return
+        }
+        installs = chosen.map { ComponentInstallViewModel(entry: $0.entry, updater: setup.components) }
+        installs.forEach { $0.start() }
+        await present(.playerInstall)
     }
 
     private func finish() {

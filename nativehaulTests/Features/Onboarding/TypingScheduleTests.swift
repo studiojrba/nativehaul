@@ -48,6 +48,7 @@ struct TypingScheduleTests {
     @Test func theWelcomeTakesAFewSecondsNotAMinute() {
         let duration = TypingSchedule.duration(of: OnboardingScript.welcome)
         #expect(duration > 3)
-        #expect(duration < 10)
+        // 0.1.1 adds the trust beat (note 8), so the welcome runs a little longer; still seconds, not a minute.
+        #expect(duration < 12)
     }
 }

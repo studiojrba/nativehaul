@@ -1,8 +1,8 @@
 import Observation
 
 /// The app's sound: the looping background music and the interface sounds, behind the listener's Settings choices
-/// (audio brief, spec §5). Music starts once the main shell is reached, fades out while a game runs and comes back
-/// when the player returns.
+/// (audio brief, spec §5). Music starts once the main window is up (onboarding included, from its first screen —
+/// 0.1.1 note 1), fades out while a game runs and comes back when the player returns.
 @MainActor
 @Observable
 final class AudioController {
@@ -15,7 +15,7 @@ final class AudioController {
         }
     }
 
-    /// Whether the main shell has been reached (music never plays over onboarding).
+    /// Whether the main window is up (the shell or onboarding).
     private(set) var isShellActive = false
     /// Whether a launched game is running (music stays out of its way).
     private(set) var isGameRunning = false
@@ -32,13 +32,13 @@ final class AudioController {
         preferences = store.load()
     }
 
-    /// Call when the main shell appears (after onboarding).
+    /// Call when the main window appears (the shell or onboarding).
     func shellDidAppear() {
         isShellActive = true
         applyMusic()
     }
 
-    /// Call when onboarding takes over the window again (the tour replay).
+    /// Call when the main window goes away.
     func shellDidDisappear() {
         isShellActive = false
         applyMusic()

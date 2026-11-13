@@ -85,7 +85,7 @@ struct SegmentedStageBar: View {
                 StageSegment(name: "Prepare", fill: 1, role: .completed),
                 StageSegment(name: "Verify", fill: 1, role: .completed),
                 StageSegment(name: "Patch", fill: 0.4, role: .current),
-                StageSegment(name: "Shaders", fill: 0, role: .upcoming),
+                StageSegment(name: "Finishing", fill: 0, role: .upcoming),
                 StageSegment(name: "Ready", fill: 0, role: .upcoming),
             ],
             explanation: "Applying updates and DLC."

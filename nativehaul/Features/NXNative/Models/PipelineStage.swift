@@ -1,7 +1,7 @@
 import Foundation
 
 /// The six stages a build shows on the Builds page (spec §3.4), whatever the engine calls its own steps:
-/// Found → Prepare → Verify → Patch → Shaders → Ready.
+/// Found → Prepare → Verify → Patch → Finishing → Ready.
 enum PipelineStage: Int, CaseIterable, Comparable, Sendable {
     /// Queued: nativehaul has the game.
     case found
@@ -11,8 +11,8 @@ enum PipelineStage: Int, CaseIterable, Comparable, Sendable {
     case verify
     /// Rewriting, patching, applying updates and DLC.
     case patch
-    /// Shaders, then packing the app.
-    case shaders
+    /// The engine's last steps (its shader translation and packing) before Ready.
+    case finishing
     /// Built.
     case ready
 
@@ -23,7 +23,7 @@ enum PipelineStage: Int, CaseIterable, Comparable, Sendable {
         case .prepare: "Prepare"
         case .verify: "Verify"
         case .patch: "Patch"
-        case .shaders: "Shaders"
+        case .finishing: "Finishing"
         case .ready: "Ready"
         }
     }
@@ -35,7 +35,7 @@ enum PipelineStage: Int, CaseIterable, Comparable, Sendable {
         case .prepare: "Getting everything ready to play."
         case .verify: "Checking every file is exactly where it should be."
         case .patch: "Applying updates and DLC."
-        case .shaders: "Warming shaders so nothing stutters."
+        case .finishing: "Packing it up as a Mac app."
         case .ready: "All done. Go on, play it."
         }
     }

@@ -32,8 +32,8 @@ struct KeysFileStatus: Equatable, Sendable {
         path.map { ($0 as NSString).abbreviatingWithTildeInPath } ?? Self.notFound
     }
 
-    /// Shown when no keys file exists anywhere nativehaul looks.
+    /// Shown when no library key exists anywhere nativehaul looks.
     static let notFound = "Not found on this Mac yet"
     /// The row's sub-line.
-    static let purpose = "Your prod.keys — only needed to build Switch games"
+    static let purpose = "Your library key, only needed to build Switch games"
 }

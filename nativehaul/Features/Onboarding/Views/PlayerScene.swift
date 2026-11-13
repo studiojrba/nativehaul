@@ -1,68 +1,109 @@
 import SwiftUI
 
-/// The player scene (spec §3.6 "Player"): a banner when the keys file is in place, then a card per real player found
-/// (the user's emulator apps and the nxnative engine). Nothing found is said plainly.
+/// The emulator scene (notes 5, 12): a banner for what is already here, a card per emulator found (real name, icon,
+/// version, where it is) and per emulator on offer from its official source (version and source shown, ticked or not),
+/// and — once the user says go — each install's real progress, signature verdict and Install button.
 struct PlayerScene: View {
-    /// The real state.
-    let facts: OnboardingFacts
-
-    private static let tints: [WashSlot] = [.sky, .blush, .mint, .butter, .lilac, .peach]
+    /// The conversation.
+    let viewModel: OnboardingChatViewModel
 
     var body: some View {
-        VStack(spacing: KitMetrics.Spacing.gutter) {
-            if hasKeys {
-                Label("Keys file in place", systemImage: "checkmark")
-                    .font(Typeface.sans(TypeStyle.Size.body))
-                    .foregroundStyle(Theme.ink)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, ShellLayout.OnboardingScenes.bannerHorizontal)
-                    .padding(.vertical, ShellLayout.OnboardingScenes.bannerVertical)
-                    .background(Capsule().fill(Theme.wash(.mint).opacity(ShellLayout.OnboardingScenes.bannerOpacity)))
-            }
-            if facts.players.isEmpty {
-                Text("No players found yet")
-                    .font(Typeface.sans(TypeStyle.Size.label))
-                    .foregroundStyle(Theme.inkMute)
-                    .frame(maxWidth: .infinity)
-                    .padding(KitMetrics.Spacing.section)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: KitMetrics.Radius.panel, style: .continuous)
-                            .strokeBorder(
-                                Theme.ink.opacity(ShellLayout.OnboardingScenes.keysDashOpacity),
-                                style: StrokeStyle(
-                                    lineWidth: ShellLayout.OnboardingScenes.dashWidth,
-                                    dash: ShellLayout.OnboardingScenes.dash
-                                )
-                            )
-                    }
-            }
-            LazyVGrid(
-                columns: [GridItem(.flexible(), spacing: KitMetrics.Spacing.gutter), GridItem(.flexible())],
-                spacing: KitMetrics.Spacing.gutter
-            ) {
-                ForEach(Array(shown.enumerated()), id: \.element.id) { index, player in
-                    PlayerCard(player: player, tint: Self.tints[index % Self.tints.count])
-                        .riseIn(delay: Double(index) * ShellLayout.Onboarding.actionStagger)
-                }
+        VStack(alignment: .leading, spacing: ShellLayout.OnboardingBuild.contentTop) {
+            Label(banner, systemImage: facts.emulators.isEmpty ? "circle" : "checkmark.circle")
+                .font(Typeface.sans(TypeStyle.Size.small))
+                .foregroundStyle(Theme.ink)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, ShellLayout.OnboardingBuild.bannerHorizontal)
+                .padding(.vertical, ShellLayout.OnboardingBuild.bannerVertical)
+                .background(Capsule().fill(Theme.wash(.mint).opacity(ShellLayout.OnboardingBuild.bannerOpacity)))
+            if viewModel.installs.isEmpty {
+                cards
+            } else {
+                installs
             }
         }
-        .frame(maxWidth: ShellLayout.OnboardingScenes.playerMaxWidth)
+        .tutorialPanel(padding: ShellLayout.OnboardingBuild.panelPaddingCompact)
+        .frame(maxWidth: ShellLayout.OnboardingBuild.folderMaxWidth)
     }
 
-    private var shown: [DetectedPlayer] {
-        Array(facts.players.prefix(ShellLayout.OnboardingScenes.maximumPlayers))
+    private var facts: OnboardingFacts {
+        viewModel.facts
     }
 
-    private var hasKeys: Bool {
-        facts.detectedKeys != nil || facts.keysOutcome == .placed || facts.keysOutcome == .alreadyThere
+    private var banner: String {
+        let found = facts.emulators
+        guard !found.isEmpty else { return "No emulator apps found yet" }
+        return found.count == 1 ? "\(found[0].name) is installed" : "\(found.count) emulators installed"
+    }
+
+    private var cards: some View {
+        LazyVGrid(
+            columns: [
+                GridItem(.flexible(), spacing: ShellLayout.OnboardingBuild.stepGap),
+                GridItem(.flexible()),
+            ],
+            spacing: ShellLayout.OnboardingBuild.stepGap
+        ) {
+            ForEach(Array(entries.enumerated()), id: \.offset) { index, content in
+                card(content).riseIn(delay: Double(index) * ShellLayout.Onboarding.actionStagger)
+            }
+        }
+    }
+
+    private var entries: [EmulatorCard.Content] {
+        let found = facts.emulators.map(EmulatorCard.Content.found)
+        let offers = facts.emulatorOffers.map {
+            EmulatorCard.Content.offer($0, isTicked: viewModel.selectedOfferIDs.contains($0.id))
+        }
+        return Array((found + offers).prefix(ShellLayout.OnboardingBuild.maximumCards))
+    }
+
+    private func card(_ content: EmulatorCard.Content) -> some View {
+        EmulatorCard(content: content) {
+            if case let .offer(offer, _) = content {
+                viewModel.toggleOffer(offer.id)
+            }
+        }
+    }
+
+    private var installs: some View {
+        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+            ForEach(viewModel.installs, id: \.entry.id) { install in
+                VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                    Text(install.entry.name)
+                        .font(Typeface.sans(TypeStyle.Size.small, weight: .medium))
+                        .foregroundStyle(Theme.ink)
+                    ComponentInstallControl(viewModel: install)
+                    Text(sourceLine(for: install.entry))
+                        .font(Typeface.sans(TypeStyle.Size.micro))
+                        .foregroundStyle(Theme.inkMute)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, ShellLayout.OnboardingBuild.closingCardHorizontal)
+                .padding(.vertical, ShellLayout.OnboardingBuild.closingCardVertical)
+                .background(
+                    RoundedRectangle(cornerRadius: ShellLayout.OnboardingBuild.closingCardRadius, style: .continuous)
+                        .fill(Theme.paper2)
+                )
+            }
+        }
+    }
+
+    private func sourceLine(for entry: ComponentEntry) -> String {
+        let offer = EmulatorOffer(entry: entry, isRecommended: false)
+        return "\(offer.versionLabel) · \(offer.sourceLabel)"
     }
 }
 
 #Preview {
     var facts = OnboardingFacts()
-    facts.players = MockPlayerDetector.preview.detectedPlayers()
-    facts.keysOutcome = .placed
+    facts.emulatorOffers = ComponentCatalog.bundled().components.map {
+        EmulatorOffer(entry: $0, isRecommended: EmulatorOffer.recommendedIDs.contains($0.id))
+    }
+    let viewModel = OnboardingChatViewModel(setup: MockOnboardingSetup(facts: facts), sleep: { _ in })
     return AppearancePreviewPair {
-        PlayerScene(facts: facts).padding(DesignTokens.Spacing.xl)
+        PlayerScene(viewModel: viewModel)
+            .task { await viewModel.start() }
+            .padding(DesignTokens.Spacing.xl)
     }
 }

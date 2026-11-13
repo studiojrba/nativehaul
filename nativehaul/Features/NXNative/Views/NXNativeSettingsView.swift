@@ -26,7 +26,7 @@ struct NXNativeSettingsView: View {
                         }
                     }
                 }
-                LabeledContent("prod.keys") { pathText(viewModel.keysDescription) }
+                LabeledContent("Library key") { pathText(viewModel.keysDescription) }
                 TextField(
                     "Arguments ({input} {output} {titleID} {title})",
                     text: $viewModel.configuration.argumentTemplate

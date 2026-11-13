@@ -59,7 +59,7 @@ struct NXNativeSwitch2LayoutTests {
             files: files, disk: FixedDiskSpaceProvider(bytes: .max), appBundlePath: "/Applications/nativehaul.app",
             homeDirectory: Play.home
         ).run(for: BuildJob(sourcePath: Fix.source, title: Fix.title), configuration: Play.resolved(files))
-        #expect(report.checks.first { $0.kind == .keys }?.message == "Please provide your prod.keys.")
+        #expect(report.checks.first { $0.kind == .keys }?.message == "Please provide your library key.")
         #expect(!report.canBuild)
     }
 

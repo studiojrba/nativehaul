@@ -40,16 +40,15 @@ struct RootLifecycle: ViewModifier {
             .onChange(of: isOnboarding) { _, onboarding in
                 if onboarding {
                     shell.exitCouch()
-                    environment.audio.shellDidDisappear()
                 } else {
-                    environment.audio.shellDidAppear()
                     openInSavedMode()
                 }
             }
             .task {
                 isOnboarding = !environment.onboarding.hasCompletedOnboarding
+                // Music plays from the first screen, onboarding included (note 1).
+                environment.audio.shellDidAppear()
                 if !isOnboarding {
-                    environment.audio.shellDidAppear()
                     openInSavedMode()
                 }
                 environment.watcher.start()

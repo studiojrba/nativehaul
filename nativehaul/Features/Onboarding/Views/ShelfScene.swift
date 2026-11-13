@@ -1,11 +1,15 @@
 import SwiftUI
 
-/// The games scene (spec §3.6 "Shelf"): a header bar with the chosen folder (home-abbreviated) and its status —
-/// "Waiting for you…" → "Looking…" → "{n} games" once the last cover lands — over 18 slots. Real covers from the scan
-/// rise in 70ms apart; fewer real games fill fewer slots, the rest stay dashed.
+/// The games scene (spec §3.6 "Shelf"): a header bar with the folder (home-abbreviated) and its status —
+/// "Waiting for you…" → "Looking…" → "{n} games" once the last cover lands — over 18 slots. While the question is
+/// open, hovering or focusing an answer previews its folder in the bar (note 2). Real covers from the scan rise in
+/// 70ms apart, each Switch game showing what sits beside it ("Base + update + 2 DLC"); fewer real games fill fewer
+/// slots, the rest stay dashed.
 struct ShelfScene: View {
-    /// The folder shown, if one was chosen.
+    /// The folder shown: the chosen one, or the hovered answer's preview.
     let folderLabel: String?
+    /// Whether the folder is chosen (not just previewed).
+    var isChosen = true
     /// Whether the scan is running.
     let isScanning: Bool
     /// What it found.
@@ -76,6 +80,24 @@ struct ShelfScene: View {
                 .overlay {
                     ArtworkFill(path: cover.imagePath, title: cover.title, placeholderSize: TypeStyle.Size.small)
                 }
+                .overlay(alignment: .bottom) {
+                    if let contents = cover.contents {
+                        Text(contents.summary)
+                            .font(Typeface.sans(ShellLayout.OnboardingBuild.badgeSize))
+                            .foregroundStyle(Theme.lamp)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
+                            .padding(ShellLayout.OnboardingBuild.badgePadding)
+                            .background(
+                                RoundedRectangle(
+                                    cornerRadius: ShellLayout.OnboardingBuild.badgeRadius,
+                                    style: .continuous
+                                )
+                                .fill(Theme.bezel.opacity(ShellLayout.OnboardingBuild.badgeOpacity))
+                            )
+                            .padding(ShellLayout.OnboardingBuild.badgeInset)
+                    }
+                }
                 .clipShape(shape)
                 .elevation(.small)
                 .riseIn(delay: Double(slot) * ShellLayout.OnboardingScenes.coverStagger)
@@ -93,7 +115,7 @@ struct ShelfScene: View {
     }
 
     private var status: String {
-        guard folderLabel != nil else { return "Waiting for you…" }
+        guard folderLabel != nil, isChosen else { return "Waiting for you…" }
         guard let scan, !isScanning, hasFilled else { return "Looking…" }
         if scan.isUnreadable {
             return "Couldn’t open it"

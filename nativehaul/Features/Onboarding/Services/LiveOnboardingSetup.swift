@@ -17,6 +17,8 @@ final class LiveOnboardingSetup: OnboardingSetupPerforming {
     private let fileVault: any FileVaultStatusProviding
     private let players: any PlayerDetecting
     private let modePreferences: any ModePreferenceStoring
+    /// Installs emulators from their official sources.
+    let components: any ComponentUpdating
     private let store: any OnboardingStoring
     private let onLibraryChanged: @MainActor () -> Void
 
@@ -35,6 +37,7 @@ final class LiveOnboardingSetup: OnboardingSetupPerforming {
         fileVault = environment.fileVault
         self.players = players
         modePreferences = environment.modePreferences
+        components = environment.components
         store = environment.onboarding
         self.onLibraryChanged = onLibraryChanged
     }
@@ -67,6 +70,7 @@ final class LiveOnboardingSetup: OnboardingSetupPerforming {
         facts.externalVolume = detected.externals.first { $0.mountPath != detected.volume?.mountPath }
         facts.detectedKeys = detected.keys.isValid ? detected.keys.path : nil
         facts.players = players.detectedPlayers()
+        facts.emulatorOffers = emulatorOffers(found: facts.emulators)
         facts.fileVault = await fileVault.status()
         return facts
     }
@@ -111,6 +115,35 @@ final class LiveOnboardingSetup: OnboardingSetupPerforming {
         store.hasCompletedOnboarding = true
     }
 
+    var keysExtensions: [String] {
+        services.locator.resolve(engineConfiguration.load()).keysRequest.allowedExtensions
+    }
+
+    /// The catalog's emulators that aren't on this Mac, the recommended ones ticked when none are found.
+    private func emulatorOffers(found: [DetectedPlayer]) -> [EmulatorOffer] {
+        let foundIDs = Set(found.compactMap(\.profile?.id))
+        return components.catalog.components
+            .filter { !foundIDs.contains($0.id) && components.status(for: $0.id) == .notInstalled }
+            .map {
+                EmulatorOffer(entry: $0, isRecommended: found.isEmpty && EmulatorOffer.recommendedIDs.contains($0.id))
+            }
+    }
+
+    /// What the folder scan sorted together, by base game ID (read-only: file names and package headers).
+    private func groupings(in folders: [String]) async -> [String: ScanContents] {
+        let scanner = GameFolderScanner(files: services.files)
+        return await Task.detached {
+            var found: [String: ScanContents] = [:]
+            for folder in folders {
+                guard case let .games(games, _) = scanner.scan(folder) else { continue }
+                for game in games where !game.titleID.isEmpty {
+                    found[game.titleID.uppercased()] = ScanContents(details: game.details)
+                }
+            }
+            return found
+        }.value
+    }
+
     private func scan(folders: [String]) async -> OnboardingScan {
         let summary = try? await importer.scanConfiguredFolders()
         onLibraryChanged()
@@ -121,6 +154,7 @@ final class LiveOnboardingSetup: OnboardingSetupPerforming {
             return folders.contains { normalized.hasPrefix($0 + "/") }
         }
         let isUnreadable = !folders.isEmpty && folders.allSatisfy(unreadable.contains)
-        return OnboardingScan.from(games: games, isUnreadable: isUnreadable)
+        let contents = await groupings(in: folders)
+        return OnboardingScan.from(games: games, contents: contents, isUnreadable: isUnreadable)
     }
 }

@@ -59,8 +59,8 @@ struct SettingsRow<Control: View>: View {
     AppearancePreviewPair {
         VStack(spacing: 0) {
             SettingsRow(
-                label: "Switch keys file",
-                sub: "~/Switch/ProdKeys/prod.keys",
+                label: "Library key",
+                sub: "~/Switch/Keys",
                 isSubMonospaced: true,
                 badge: "Valid"
             ) {

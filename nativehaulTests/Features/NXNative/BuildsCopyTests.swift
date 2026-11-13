@@ -23,7 +23,7 @@ struct BuildsCopyTests {
     @Test func rowStatusLines() {
         #expect(BuildsCopy.rowStatus(for: job(.succeeded)) == "Ready")
         #expect(BuildsCopy.rowStatus(for: job(.queued)) == "Queued")
-        #expect(BuildsCopy.rowStatus(for: job(.building, lines: BuildsPageTests.midBuild)) == "Shaders · 92%")
+        #expect(BuildsCopy.rowStatus(for: job(.building, lines: BuildsPageTests.midBuild)) == "Finishing · 92%")
         #expect(BuildsCopy.rowStatus(for: job(.failed, lines: ["[2/6] rewrite: 10%"])) == "Patch · didn’t finish")
         #expect(BuildsCopy.rowStatus(for: job(.awaitingCleanup)) == "Needs your OK")
     }
@@ -32,7 +32,7 @@ struct BuildsCopyTests {
         #expect(BuildsCopy.note(for: job(.building, lines: BuildsPageTests.midBuild), isQueueRunning: true)
             == "Working on step 3 of 6: shaders.")
         #expect(BuildsCopy
-            .note(for: job(.queued), isQueueRunning: false) == "Queued. Start building when you’re ready.")
+            .note(for: job(.queued), isQueueRunning: false) == "Queued. Press Begin build when you’re ready.")
         var failed = job(.failed)
         failed.failureReason = "Preflight checks failed."
         #expect(BuildsCopy.note(for: failed, isQueueRunning: false) == "Preflight checks failed.")

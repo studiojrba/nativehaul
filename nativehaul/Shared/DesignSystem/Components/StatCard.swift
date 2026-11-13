@@ -29,7 +29,7 @@ struct StatCard: View {
 #Preview {
     AppearancePreviewPair {
         HStack(spacing: ShellLayout.Builds.statsGap) {
-            StatCard(label: "Stage", value: "Shaders")
+            StatCard(label: "Stage", value: "Finishing")
             StatCard(label: "Time left", value: "5:10")
         }
         .padding(DesignTokens.Spacing.xl)

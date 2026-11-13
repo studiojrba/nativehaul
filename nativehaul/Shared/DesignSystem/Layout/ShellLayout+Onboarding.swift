@@ -36,8 +36,8 @@ extension ShellLayout {
         /// "Skip the tour" hover fill: `surface` at this opacity.
         static let skipHoverOpacity: Double = 0.60
 
-        /// Page 1: column maximum width (the settled ~680px).
-        static let welcomeMaxWidth: CGFloat = 680
+        /// Page 1: column maximum width (Make `max-w-[560px]`).
+        static let welcomeMaxWidth: CGFloat = 560
         /// Page 1: top padding.
         static let welcomeTop: CGFloat = 80
         /// Page 1: bottom padding.
@@ -60,12 +60,12 @@ extension ShellLayout {
         static let taglineTop: CGFloat = 12
         /// Page 1: cluster to conversation.
         static let conversationTop: CGFloat = 24
-        /// Page 1: bubble text size (settled ~28px).
-        static let welcomeBubbleSize: CGFloat = 28
-        /// Page 1: bubble line height (settled ~1.45).
-        static let welcomeBubbleLineHeight: CGFloat = 1.45
-        /// Page 1: "Sure, let's go" size (settled ~18px).
-        static let welcomeButtonSize: CGFloat = 18
+        /// Page 1: bubble text size — the same 16px as every other bubble (note 1, Make `text-[16px]`).
+        static let welcomeBubbleSize: CGFloat = 16
+        /// Page 1: bubble line height (Make `leading-[1.5]`).
+        static let welcomeBubbleLineHeight: CGFloat = 1.5
+        /// Page 1: "Sure, let’s go" size — the same 15px as every answer (Make `text-[15px]`).
+        static let welcomeButtonSize: CGFloat = 15
         /// Page 1: the reserved slot for the button.
         static let buttonSlot: CGFloat = 52
         /// Page 1: bubbles to button.

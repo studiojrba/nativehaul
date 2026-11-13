@@ -9,6 +9,8 @@ struct ArtworkFill: View {
     let title: String
     /// Placeholder title size.
     var placeholderSize: CGFloat = TypeStyle.DisplaySize.tagline
+    /// Whether the placeholder shows the title.
+    var showsTitle = true
 
     var body: some View {
         Group {
@@ -20,13 +22,15 @@ struct ArtworkFill: View {
             } else {
                 ZStack {
                     Theme.cream2
-                    Text(title)
-                        .font(Typeface.display(placeholderSize))
-                        .foregroundStyle(Theme.inkSoft)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(DesignTokens.Lines.title)
-                        .minimumScaleFactor(DesignTokens.Typography.minimumScale)
-                        .padding(DesignTokens.Spacing.md)
+                    if showsTitle {
+                        Text(title)
+                            .font(Typeface.display(placeholderSize))
+                            .foregroundStyle(Theme.inkSoft)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(DesignTokens.Lines.title)
+                            .minimumScaleFactor(DesignTokens.Typography.minimumScale)
+                            .padding(DesignTokens.Spacing.md)
+                    }
                 }
             }
         }

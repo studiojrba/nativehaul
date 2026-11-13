@@ -116,12 +116,16 @@ struct PreflightRunner: Sendable {
 
     private func titleIDCheck(_ title: TitleInfo) -> PreflightCheck {
         guard title.hasValidTitleID else {
-            return PreflightCheck(kind: .titleID, outcome: .failed, message: "Title ID must be 16 hexadecimal digits.")
+            return PreflightCheck(
+                kind: .titleID,
+                outcome: .failed,
+                message: "The game ID must be 16 hexadecimal digits."
+            )
         }
         guard !title.isNonRetailTitleID else {
             return PreflightCheck(
                 kind: .titleID, outcome: .warning,
-                message: "Non-retail title ID. Some engine versions reject these in their profile check "
+                message: "Non-retail game ID. Some engine versions reject these in their profile check "
                     + "— see Troubleshooting."
             )
         }

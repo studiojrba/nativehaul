@@ -66,7 +66,7 @@ struct DirectoriesSettingsGroup: View {
 
     private var keysRow: some View {
         SettingsRow(
-            label: "Switch keys file",
+            label: "Library key",
             sub: viewModel.keys.displayPath,
             isSubMonospaced: viewModel.keys.path != nil,
             badge: viewModel.keys.isValid ? "Valid" : nil,

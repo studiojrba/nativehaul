@@ -110,7 +110,7 @@ struct NXNativeDefaultOnTests {
         model.enqueue(sourcePath: Fix.source, title: Fix.title)
         let job = try #require(model.jobs.first)
         #expect(model.needsKeys(job))
-        #expect(job.preflight?.checks.first { $0.kind == .keys }?.message == "Please provide your prod.keys.")
+        #expect(job.preflight?.checks.first { $0.kind == .keys }?.message == "Please provide your library key.")
     }
 
     @Test func keysOverrideBeatsDetection() {

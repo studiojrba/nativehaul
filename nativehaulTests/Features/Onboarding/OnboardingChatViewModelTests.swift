@@ -40,6 +40,9 @@ struct OnboardingChatViewModelTests {
         #expect(appMessages(viewModel) == OnboardingScript.welcome)
         #expect(viewModel.isReady)
         #expect(viewModel.actions.map(\.label) == ["Sure, let’s go"])
+        #expect(appMessages(viewModel).contains(
+            "A few things worth knowing: I only ask for what I actually need, nothing extra."
+        ))
         #expect(viewModel.beat.step == 0)
     }
 
@@ -54,8 +57,11 @@ struct OnboardingChatViewModelTests {
         try await viewModel.choose(action("suggested", in: viewModel))
         #expect(setup.addedFolders == [folder])
         #expect(viewModel.beat == .found)
-        #expect(viewModel.beat.step == 1)
+        #expect(viewModel.beat.step == 2)
         let said = appMessages(viewModel)
+        #expect(said.contains(OnboardingScript.scanning))
+        #expect(!viewModel.typist.isWaiting)
+        #expect(!viewModel.typist.messages.contains { $0.text == OnboardingScript.scanningPlaceholder })
         #expect(said.contains("Ooh. 18 games in ~/Games."))
         #expect(said.contains("Lantern Coast, Moss & Ember, Tideborn… you’ve got excellent taste."))
         #expect(viewModel.typist.messages.contains { $0.sender == .user && $0.text == "Use ~/Games" })
@@ -74,19 +80,66 @@ struct OnboardingChatViewModelTests {
     }
 
     @Test func thePickedFolderIsTheReplyAndCancellingKeepsTheQuestionOpen() async throws {
-        let (viewModel, setup) = model()
+        let panel = MockFilePanel()
+        let setup = MockOnboardingSetup()
+        let viewModel = OnboardingChatViewModel(setup: setup, panel: panel, sleep: { _ in })
         await viewModel.start()
         try await viewModel.choose(action("start", in: viewModel))
         try await viewModel.choose(action("pick", in: viewModel))
-        #expect(viewModel.picker == .folder)
-        await viewModel.picked(nil)
+        #expect(panel.folderAsks == 1)
         #expect(viewModel.beat == .games)
         #expect(viewModel.isReady)
-        try await viewModel.choose(action("pick", in: viewModel))
         let url = URL(fileURLWithPath: NSHomeDirectory() + "/ROMs")
-        await viewModel.picked(url)
+        panel.folder = url
+        try await viewModel.choose(action("pick", in: viewModel))
         #expect(setup.addedFolders == [url.path(percentEncoded: false)])
         #expect(viewModel.typist.messages.contains { $0.text == "This one: ~/ROMs" })
+    }
+
+    @Test func hoveringOrFocusingTheSuggestedFolderPreviewsItAndLeavingResets() async throws {
+        var facts = OnboardingFacts()
+        facts.suggestedFolder = NSHomeDirectory() + "/Switch/Games"
+        let (viewModel, _) = model(facts: facts)
+        await viewModel.start()
+        try await viewModel.choose(action("start", in: viewModel))
+        #expect(viewModel.previewFolderLabel == nil)
+        viewModel.hoveredActionID = "suggested"
+        #expect(viewModel.previewFolderLabel == "~/Switch/Games")
+        viewModel.hoveredActionID = "pick"
+        #expect(viewModel.previewFolderLabel == nil)
+        viewModel.hoveredActionID = nil
+        #expect(viewModel.previewFolderLabel == nil)
+    }
+
+    @Test func soundsPlayFromTheFirstScreen() async throws {
+        let played = SoundRecorder()
+        let viewModel = OnboardingChatViewModel(
+            setup: MockOnboardingSetup(),
+            sleep: { _ in },
+            playSound: { played.sounds.append($0) }
+        )
+        await viewModel.start()
+        viewModel.hoveredActionID = "start"
+        try await viewModel.choose(action("start", in: viewModel))
+        viewModel.skipTour()
+        #expect(played.sounds == [.navigate, .confirm, .back])
+    }
+
+    @Test func theBuildTutorialFollowsTheScanThenTheLibraryKeyThenEmulators() async {
+        let (viewModel, _) = await OnboardingConversation.at(.buildIntro)
+        #expect(appMessages(viewModel).contains(
+            "The big feature here: you can build your Switch games natively with nxnative."
+        ))
+        var order: [OnboardingBeat] = [viewModel.beat]
+        let forward = ["next", "default", "skip"]
+        while viewModel.beat != .player, let next = viewModel.actions.first(where: { forward.contains($0.id) }) {
+            await viewModel.choose(next)
+            order.append(viewModel.beat)
+        }
+        #expect(order == [.buildIntro, .buildFolder, .buildBegin, .install, .buildLaunch, .buildNote, .keys, .player])
+        let said = appMessages(viewModel).joined(separator: " ").lowercased()
+        #expect(!said.contains("warm"))
+        #expect(said.contains("begin build"))
     }
 
     @Test func theReplaySaysWhichFoldersAreSetUpInsteadOfReAsking() async throws {
@@ -113,15 +166,18 @@ struct OnboardingChatViewModelTests {
         var facts = OnboardingFacts()
         let drive = VolumeInfo(name: "Fast SSD", mountPath: "/Volumes/Fast SSD", freeBytes: 1, totalBytes: 2)
         facts.externalVolume = drive
-        let (viewModel, setup) = model(facts: facts)
-        await viewModel.start()
-        try await viewModel.choose(action("start", in: viewModel))
-        try await viewModel.choose(action("pick", in: viewModel))
-        await viewModel.picked(URL(fileURLWithPath: "/tmp/games"))
-        try await viewModel.choose(action("next", in: viewModel))
+        let (viewModel, setup) = await OnboardingConversation.at(.install, facts: facts)
         #expect(viewModel.beat == .install)
         try await viewModel.choose(action("external", in: viewModel))
         #expect(setup.installLocations == ["/Volumes/Fast SSD/nativehaul"])
-        #expect(viewModel.beat == .keys)
+        #expect(viewModel.beat == .buildLaunch)
+    }
+
+    @Test func theScanGroupingIsReadFromTheFolderScansDetails() {
+        let full = ScanContents(details: "Base game · update v65536 · 3 DLC")
+        #expect(full.summary == "Base + update + 3 DLC")
+        #expect(full.hasExtras)
+        #expect(!ScanContents(details: "Base game").hasExtras)
+        #expect(ScanContents(details: "Base game · update").summary == "Base + update")
     }
 }

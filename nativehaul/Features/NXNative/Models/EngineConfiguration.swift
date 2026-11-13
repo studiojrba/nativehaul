@@ -50,12 +50,12 @@ struct EngineConfiguration: Codable, Equatable, Sendable {
         Self.expand(keysPath ?? Self.defaultKeysPath)
     }
 
-    /// "Please provide your prod.keys" — the user's own file, copied to where the engine reads it.
+    /// "Please provide your library key" — the user's own file, copied to where the engine reads it.
     var keysRequest: UserFileRequest {
         let path = keysPath ?? Self.defaultKeysPath
         return UserFileRequest(
-            fileDescription: "prod.keys",
-            reason: "Building a Switch game needs the keys from your own console.",
+            fileDescription: "library key",
+            reason: "Building a Switch game needs the library key from your own console.",
             destinationFolder: (path as NSString).deletingLastPathComponent,
             destinationFileName: (path as NSString).lastPathComponent,
             allowedExtensions: ["keys"]

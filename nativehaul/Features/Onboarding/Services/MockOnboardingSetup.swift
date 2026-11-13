@@ -22,11 +22,20 @@ final class MockOnboardingSetup: OnboardingSetupPerforming {
     private(set) var isCompleted = false
     /// Scans run.
     private(set) var scanCount = 0
+    /// The emulator installer.
+    let components: any ComponentUpdating
+    /// The library key picker's extensions.
+    let keysExtensions = ["keys"]
 
     /// Creates the mock.
-    init(facts: OnboardingFacts = OnboardingFacts(), scanResult: OnboardingScan = .empty) {
+    init(
+        facts: OnboardingFacts = OnboardingFacts(),
+        scanResult: OnboardingScan = .empty,
+        components: any ComponentUpdating = MockComponentUpdater()
+    ) {
         self.facts = facts
         self.scanResult = scanResult
+        self.components = components
     }
 
     func loadFacts() async -> OnboardingFacts {

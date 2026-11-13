@@ -6,24 +6,29 @@ enum OnboardingScene: String, Sendable {
     case welcome
     /// The games folder and its covers.
     case shelf
+    /// The Switch build tutorial.
+    case build
     /// The drives.
     case disk
-    /// The keys drop zone.
+    /// The library key drop zone.
     case keys
-    /// The players found.
+    /// The emulators found, and the ones on offer.
     case player
     /// The TV.
     case couch
+    /// "Your shelf is ready."
+    case closing
 
     /// The background wash for the scene.
     var washes: [WashSlot] {
         switch self {
         case .welcome: [.cream, .blush, .sky]
         case .shelf: [.butter, .cream, .mint]
-        case .disk: [.sky, .lilac, .butter]
+        case .build, .disk: [.sky, .lilac, .butter]
         case .keys: [.blush, .cream, .butter]
         case .player: [.mint, .sky, .cream]
         case .couch: [.cream, .sky, .blush]
+        case .closing: [.cream, .butter, .blush]
         }
     }
 }

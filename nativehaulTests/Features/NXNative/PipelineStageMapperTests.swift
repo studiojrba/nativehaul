@@ -2,7 +2,8 @@ import Foundation
 @testable import nativehaul
 import Testing
 
-/// Spec §3.4, ADR 0056: the engine's real `[k/n] name` progress mapped onto Found → Prepare → Verify → Patch → Shaders
+/// Spec §3.4, ADR 0056: the engine's real `[k/n] name` progress mapped onto Found → Prepare → Verify → Patch →
+/// Finishing
 /// → Ready, by name with a positional fallback, never running backwards.
 @MainActor
 struct PipelineStageMapperTests {
@@ -19,8 +20,8 @@ struct PipelineStageMapperTests {
     }
 
     @Test(arguments: [
-        ("extract", PipelineStage.prepare), ("rewrite", .patch), ("heap", .patch), ("shaders", .shaders),
-        ("package", .shaders), ("verify", .verify), ("Hash check", .verify), ("patch_nso", .patch),
+        ("extract", PipelineStage.prepare), ("rewrite", .patch), ("heap", .patch), ("shaders", .finishing),
+        ("package", .finishing), ("verify", .verify), ("Hash check", .verify), ("patch_nso", .patch),
     ])
     func realEngineStepsMapByName(name: String, stage: PipelineStage) {
         #expect(Mapper.stage(forEngineStep: name) == stage)
@@ -32,8 +33,8 @@ struct PipelineStageMapperTests {
         #expect(Mapper.stage(forStep: 2, of: 6) == .prepare)
         #expect(Mapper.stage(forStep: 3, of: 6) == .verify)
         #expect(Mapper.stage(forStep: 5, of: 6) == .patch)
-        #expect(Mapper.stage(forStep: 6, of: 6) == .shaders)
-        #expect(Mapper.stage(forStep: 4, of: 4) == .shaders)
+        #expect(Mapper.stage(forStep: 6, of: 6) == .finishing)
+        #expect(Mapper.stage(forStep: 4, of: 4) == .finishing)
         #expect(Mapper.stage(forStep: 0, of: 0) == .prepare)
     }
 
@@ -46,11 +47,11 @@ struct PipelineStageMapperTests {
 
     @Test func midBuildTheCurrentStepSetsTheStageAndItsProgress() {
         let position = Mapper.position(for: job(.building, lines: BuildsPageTests.midBuild))
-        #expect(position.stage == .shaders)
+        #expect(position.stage == .finishing)
         #expect(abs(position.inStage - 0.64) < tolerance)
         #expect(position.percent == 92)
         #expect(position.fill(of: .patch) == 1)
-        #expect(abs(position.fill(of: .shaders) - 0.64) < tolerance)
+        #expect(abs(position.fill(of: .finishing) - 0.64) < tolerance)
         #expect(position.fill(of: .ready) == 0)
     }
 
@@ -95,7 +96,7 @@ struct PipelineStageMapperTests {
     }
 
     @Test func theStagesReadAsDesigned() {
-        #expect(PipelineStage.allCases.map(\.name) == ["Found", "Prepare", "Verify", "Patch", "Shaders", "Ready"])
+        #expect(PipelineStage.allCases.map(\.name) == ["Found", "Prepare", "Verify", "Patch", "Finishing", "Ready"])
         #expect(PipelineStage.verify.explanation == "Checking every file is exactly where it should be.")
         #expect(PipelineStage.ready.explanation == "All done. Go on, play it.")
     }

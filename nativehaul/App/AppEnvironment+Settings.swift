@@ -6,6 +6,8 @@ extension AppEnvironment {
     func makeOnboardingChatViewModel(onFinish: @escaping @MainActor () -> Void) -> OnboardingChatViewModel {
         OnboardingChatViewModel(
             setup: LiveOnboardingSetup(environment: self, players: makePlayerDetector()),
+            panel: OpenPanelPresenter(),
+            playSound: { [audio] in audio.play($0) },
             onFinish: onFinish
         )
     }

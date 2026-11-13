@@ -1,10 +1,9 @@
 import SwiftUI
-import UniformTypeIdentifiers
 
 /// Onboarding (spec §3.6), inside the main window in place of the shell, always at the desk: the top bar, page 1's
 /// centred welcome, then the split layout — the conversation on the left in its own bottom-anchored scroll region with
 /// the answers under it, the preview scene on the right. The page itself never scrolls. Pickers are the native open
-/// panel (folders only for the games folder).
+/// panel (folders only for the games folder), shown by the view model's ``FilePanelPresenting``.
 struct OnboardingScreen: View {
     /// The conversation.
     let viewModel: OnboardingChatViewModel
@@ -46,10 +45,6 @@ struct OnboardingScreen: View {
         }
         .ignoresSafeArea()
         .onGeometryChange(for: CGSize.self, of: \.size) { size = $0 }
-        .fileImporter(isPresented: pickerBinding, allowedContentTypes: contentTypes) { result in
-            let url = try? result.get()
-            Task { await viewModel.picked(url) }
-        }
         .task {
             viewModel.revealsInstantly = reduceMotion
             await viewModel.start()
@@ -75,21 +70,6 @@ struct OnboardingScreen: View {
                 .padding(.top, ShellLayout.Onboarding.sceneTop)
                 .padding(.trailing, ShellLayout.Onboarding.sceneTrailing)
         }
-    }
-
-    private var pickerBinding: Binding<Bool> {
-        Binding(
-            get: { viewModel.picker != nil },
-            set: { isShown in
-                if !isShown {
-                    viewModel.picker = nil
-                }
-            }
-        )
-    }
-
-    private var contentTypes: [UTType] {
-        viewModel.picker == .keys ? [UTType(filenameExtension: "keys"), .data].compactMap(\.self) : [.folder]
     }
 }
 

@@ -17,14 +17,14 @@ struct UserProvidedFileTests {
             .run(for: job(), configuration: Fix.configuration)
         let keys = report.checks.first { $0.kind == .keys }
         #expect(keys?.outcome == .failed)
-        #expect(keys?.message == "Please provide your prod.keys.")
+        #expect(keys?.message == "Please provide your library key.")
     }
 
     @Test func providedKeysAreCopiedUnderTheRightNameAndNeverOverwritten() throws {
         let files = InMemoryFileOperations()
         files.addFile("/Users/me/Downloads/my console keys.keys", contents: Data("mine".utf8))
         let request = Fix.configuration.keysRequest
-        #expect(request.prompt == "Please provide your prod.keys")
+        #expect(request.prompt == "Please provide your library key")
         #expect(request.allowedExtensions == ["keys"])
         #expect(!UserFilePlacer.isProvided(request, files: files))
         let outcome = try UserFilePlacer.place("/Users/me/Downloads/my console keys.keys", for: request, files: files)
@@ -86,6 +86,6 @@ struct UserProvidedFileTests {
         viewModel.provideKeys(at: "/Users/me/prod.keys", for: id)
         let after = try #require(viewModel.jobs.first)
         #expect(!viewModel.needsKeys(after))
-        #expect(viewModel.providedFileMessage == "Thanks — your prod.keys is in place.")
+        #expect(viewModel.providedFileMessage == "Thanks, your library key is in place.")
     }
 }

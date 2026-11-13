@@ -18,12 +18,21 @@ struct OnboardingFacts: Equatable, Sendable {
     var externalVolume: VolumeInfo?
     /// Whether the user picked the external drive.
     var usesExternal = false
-    /// The keys file already on this Mac, if found (detected, not re-demanded — ADR 0021).
+    /// The library key already on this Mac, if found (detected, not re-demanded — ADR 0021).
     var detectedKeys: String?
     /// What happened at the keys step.
     var keysOutcome: KeysOutcome?
     /// Players found.
     var players: [DetectedPlayer] = []
+    /// Emulators that can be set up from their official sources (not on this Mac yet).
+    var emulatorOffers: [EmulatorOffer] = []
+    /// The mode chosen at the couch-or-desk beat.
+    var chosenMode: AppMode?
     /// FileVault, for the couch note.
     var fileVault = FileVaultStatus.unknown
+
+    /// The emulators found (players other than the build engine).
+    var emulators: [DetectedPlayer] {
+        players.filter { $0.kind != .buildEngine }
+    }
 }

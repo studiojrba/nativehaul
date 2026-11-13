@@ -76,7 +76,7 @@ struct KeysScene: View {
                 .font(.system(size: ShellLayout.OnboardingScenes.fileIcon))
                 .foregroundStyle(Theme.ink)
                 .frame(maxHeight: .infinity)
-            Text("prod.keys")
+            Text("library.key")
                 .font(.system(size: TypeStyle.Size.caption, design: .monospaced))
                 .foregroundStyle(Theme.ink)
                 .padding(.bottom, DesignTokens.Spacing.lg)
