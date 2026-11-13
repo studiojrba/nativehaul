@@ -126,13 +126,14 @@ struct ShellViewModelTests {
         #expect(shell.buildsFocusTitleID == nil)
     }
 
-    @Test func couchIsADocumentedNoOpUntilItsPhase() {
+    @Test func theCouchPillEntersCouchAndTheWayBackKeepsTheDesktop() {
         let shell = shell()
-        var entered = false
-        shell.onEnterCouch = { entered = true }
+        shell.go(to: .library)
         shell.enterCouch()
-        #expect(entered)
+        #expect(shell.mode == .couch)
+        shell.exitCouch()
         #expect(shell.mode == .desktop)
+        #expect(shell.screen == .library)
     }
 
     @Test func theIslandHasFourScreensInOrder() {

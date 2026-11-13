@@ -63,9 +63,10 @@ struct RootPresentations: ViewModifier {
             ?? libraryViewModel.metadataSummary?.description
     }
 
-    /// Alerts never appear over a running game; they wait until nativehaul is back (ADR 0030 Layer 1).
+    /// Alerts never appear over a running game; they wait until nativehaul is back (ADR 0030 Layer 1). Nor over couch,
+    /// where a controller can't dismiss them: they wait for the desktop (ADR 0058).
     private var alertBinding: Binding<Bool> {
-        Binding(get: { alertMessage != nil && !environment.handoff.isGameRunning }, set: {
+        Binding(get: { alertMessage != nil && !environment.handoff.isGameRunning && shell.mode == .desktop }, set: {
             if !$0 {
                 clearAlert()
             }

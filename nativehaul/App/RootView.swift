@@ -3,8 +3,9 @@ import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// The main window: onboarding in place of the shell while it runs (ADR 0057), otherwise the 0.1.0 desktop shell
-/// (``AppShellView``) around the current screen, plus everything the window does that isn't visual — the playtime
+/// The main window: onboarding in place of the shell while it runs (ADR 0057), couch mode full screen in place of the
+/// desktop while it is on (ADR 0058), otherwise the 0.1.0 desktop shell (``AppShellView``) around the current screen,
+/// plus everything the window does that isn't visual — the playtime
 /// watcher, automatic upkeep, library reloads, sheets and the file
 /// importer/exporter driven by the menu bar, and alerts that wait while a game runs (ADR 0030).
 struct RootView: View {
@@ -15,6 +16,7 @@ struct RootView: View {
     @State private var buildsViewModel: BuildsViewModel
     @State private var homeViewModel: HomeViewModel
     @State private var shell: ShellViewModel
+    @State private var couch: CouchViewModel
     @State private var isOnboarding: Bool
     @State private var onboarding: OnboardingChatViewModel?
 
@@ -25,24 +27,31 @@ struct RootView: View {
         _libraryViewModel = State(initialValue: libraryViewModel)
         let nxnativeViewModel = environment.makeNXNativeViewModel { libraryViewModel.reload() }
         _nxnativeViewModel = State(initialValue: nxnativeViewModel)
-        _buildsViewModel = State(initialValue: BuildsViewModel(
+        let buildsViewModel = BuildsViewModel(
             queue: nxnativeViewModel,
             library: { libraryViewModel.games },
             paletteExtractor: environment.paletteExtractor
-        ))
-        _homeViewModel = State(initialValue: HomeViewModel(
-            library: libraryViewModel,
-            paletteExtractor: environment.paletteExtractor
-        ))
+        )
+        _buildsViewModel = State(initialValue: buildsViewModel)
+        let homeViewModel = HomeViewModel(library: libraryViewModel, paletteExtractor: environment.paletteExtractor)
+        _homeViewModel = State(initialValue: homeViewModel)
         let isFirstRun = !environment.onboarding.hasCompletedOnboarding
         _isOnboarding = State(initialValue: isFirstRun)
         _onboarding = State(initialValue: nil)
         let audio = environment.audio
-        _shell = State(initialValue: ShellViewModel(
+        let shell = ShellViewModel(
             makeLaunch: environment.makeGameLaunchViewModel(for:),
             isAppActive: { NSApplication.shared.isActive },
             onNavigate: { audio.play(.navigate) },
             onBack: { audio.play(.back) }
+        )
+        _shell = State(initialValue: shell)
+        _couch = State(initialValue: environment.makeCouchViewModel(
+            home: homeViewModel,
+            library: libraryViewModel,
+            builds: buildsViewModel,
+            isAppActive: { NSApplication.shared.isActive },
+            exitToDesktop: { shell.exitCouch() }
         ))
     }
 
@@ -50,6 +59,8 @@ struct RootView: View {
         Group {
             if let onboarding, isOnboarding, !environment.handoff.isGameRunning {
                 OnboardingScreen(viewModel: onboarding)
+            } else if shell.mode == .couch {
+                CouchRootView(viewModel: couch)
             } else {
                 AppShellView(
                     shell: shell,
@@ -72,6 +83,7 @@ struct RootView: View {
             environment: environment,
             libraryViewModel: libraryViewModel,
             shell: shell,
+            couch: couch,
             isOnboarding: $isOnboarding
         ))
         .modifier(RootPresentations(environment: environment, libraryViewModel: libraryViewModel, shell: shell))

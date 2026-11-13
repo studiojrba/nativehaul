@@ -49,9 +49,9 @@ extension AppEnvironment {
             appearance: makeLiveAppearance(),
             paletteExtractor: ArtworkPaletteExtractor(),
             fileRevealer: WorkspaceFileRevealer(),
-            modePreferences: UserDefaultsModePreferenceStore(),
             volumes: LiveVolumeInspector(),
-            fileVault: FdesetupFileVaultStatus()
+            fileVault: FdesetupFileVaultStatus(),
+            couch: .live
         )
     }
 

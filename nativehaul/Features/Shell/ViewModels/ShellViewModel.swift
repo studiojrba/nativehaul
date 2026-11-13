@@ -35,8 +35,6 @@ final class ShellViewModel {
     /// The tool sheet on show (Series, Collections, Stats, Playtime Tracking).
     var presentedTool: ToolSheet?
 
-    /// What entering couch mode does. Couch arrives in a later phase; until then it is a no-op (``AppMode``).
-    @ObservationIgnored var onEnterCouch: @MainActor () -> Void = {}
     @ObservationIgnored private let makeLaunch: @MainActor (Game) -> GameLaunchViewModel
     @ObservationIgnored private let isAppActive: @MainActor () -> Bool
     @ObservationIgnored private let onNavigate: @MainActor () -> Void
@@ -98,9 +96,18 @@ final class ShellViewModel {
         screen = detailOrigin
     }
 
-    /// The top bar's Couch mode pill.
+    /// The top bar's Couch mode pill, the saved "Open in" choice at launch, or the Go menu: couch takes the window
+    /// (ADR 0058). The desktop's own state (screen, Detail, search) is kept for the way back.
     func enterCouch() {
-        onEnterCouch()
+        guard mode != .couch else { return }
+        launchingGame = nil
+        mode = .couch
+    }
+
+    /// Back to the desktop (the controller's View button, couch Settings, or the Go menu).
+    func exitCouch() {
+        guard mode != .desktop else { return }
+        mode = .desktop
     }
 
     // MARK: Search

@@ -64,12 +64,22 @@ final class AppEnvironment {
     let paletteExtractor: any GamePaletteExtracting
     /// Shows games in Finder (Detail, ADR 0056).
     let fileRevealer: any FileRevealing
-    /// The mode nativehaul opens in and controller rumble (ADR 0057).
-    let modePreferences: any ModePreferenceStoring
     /// Mounted volumes, for the install step (ADR 0057).
     let volumes: any VolumeInspecting
     /// FileVault status, for the couch note (ADR 0057).
     let fileVault: any FileVaultStatusProviding
+    /// Couch mode's dependencies (ADR 0057, ADR 0058).
+    let couch: CouchEnvironment
+
+    /// The mode nativehaul opens in and controller rumble (ADR 0057).
+    var modePreferences: any ModePreferenceStoring {
+        couch.modePreferences
+    }
+
+    /// The per-game "Open windowed" override for couch launches (ADR 0058).
+    var windowedLaunches: any WindowedLaunchStoring {
+        couch.windowedLaunches
+    }
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -102,9 +112,9 @@ final class AppEnvironment {
         appearance: AppearanceController? = nil,
         paletteExtractor: any GamePaletteExtracting = MockGamePaletteExtractor(),
         fileRevealer: (any FileRevealing)? = nil,
-        modePreferences: (any ModePreferenceStoring)? = nil,
         volumes: any VolumeInspecting = MockVolumeInspector.preview,
-        fileVault: any FileVaultStatusProviding = FixedFileVaultStatus()
+        fileVault: any FileVaultStatusProviding = FixedFileVaultStatus(),
+        couch: CouchEnvironment = CouchEnvironment()
     ) {
         self.container = container
         self.repository = repository
@@ -136,9 +146,9 @@ final class AppEnvironment {
         self.appearance = appearance ?? .preview
         self.paletteExtractor = paletteExtractor
         self.fileRevealer = fileRevealer ?? RecordingFileRevealer()
-        self.modePreferences = modePreferences ?? InMemoryModePreferenceStore()
         self.volumes = volumes
         self.fileVault = fileVault
+        self.couch = couch
     }
 
     /// Seeded in-memory environment with mock services for SwiftUI previews.

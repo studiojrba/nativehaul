@@ -2,7 +2,8 @@ import SwiftUI
 
 /// The menu bar (ADR 0055): everything the 0.1.0 nav island leaves out stays one menu away — adding, importing,
 /// exporting and tidying the library, the Library filters, the Go menu with ⌘1–⌘4 for the island's screens, ⌘K for
-/// search, ⌘[ for Back, and ⌥⌘1–⌥⌘4 for Series, Collections, Stats and Playtime Tracking (each in a sheet).
+/// search, ⇧⌘F for couch mode (ADR 0058), ⌘[ for Back, and ⌥⌘1–⌥⌘4 for Series, Collections, Stats and Playtime
+/// Tracking (each in a sheet).
 struct ShellCommands: Commands {
     @FocusedValue(\.shellViewModel) private var shell
     @FocusedValue(\.libraryViewModel) private var library
@@ -76,6 +77,15 @@ struct ShellCommands: Commands {
         Button("Find a Game…") { shell?.requestSearchFocus() }
             .keyboardShortcut("k")
             .disabled(shell == nil)
+        Button(shell?.mode == .couch ? "Leave Couch Mode" : "Couch Mode") {
+            if shell?.mode == .couch {
+                shell?.exitCouch()
+            } else {
+                shell?.enterCouch()
+            }
+        }
+        .keyboardShortcut("f", modifiers: [.command, .shift])
+        .disabled(shell == nil)
         Divider()
         ForEach(ToolSheet.allCases) { tool in
             Button(tool.title) { shell?.presentedTool = tool }
