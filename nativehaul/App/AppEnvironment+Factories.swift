@@ -204,19 +204,6 @@ extension AppEnvironment {
         UpdatesSettingsViewModel(updater: components, appUpdater: appUpdater)
     }
 
-    /// Builds the first-run walkthrough. `onFinish` closes it.
-    func makeOnboardingViewModel(onFinish: @escaping @MainActor () -> Void) -> OnboardingViewModel {
-        OnboardingViewModel(
-            store: onboarding,
-            status: LiveOnboardingStatus(
-                gameFolders: gameFolders,
-                tracking: trackingPreferences,
-                emulators: emulators
-            ),
-            onFinish: onFinish
-        )
-    }
-
     /// Builds the launch view model for a game.
     func makeGameLaunchViewModel(for game: Game) -> GameLaunchViewModel {
         GameLaunchViewModel(

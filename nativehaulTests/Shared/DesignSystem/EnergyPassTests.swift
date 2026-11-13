@@ -40,7 +40,8 @@ struct EnergyPassTests {
     @Test func theAccentStaysOnPlayNavAndLinks() throws {
         let allowed: Set = [
             "Theme.swift", "NativehaulApp.swift", "NavIslandButton.swift",
-            "OnboardingWelcomeView.swift",
+            // The onboarding caret is the accent by spec (§4.4); it is drawn in the bubble's text renderer.
+            "BubbleRevealRenderer.swift",
         ]
         let enumerator = FileManager.default.enumerator(at: sourceRoot, includingPropertiesForKeys: nil)
         var offenders: [String] = []

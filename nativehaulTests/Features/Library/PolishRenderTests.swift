@@ -66,12 +66,9 @@ struct PolishRenderTests {
     @Test func otherScreensRender() throws {
         let (environment, _) = try dressedEnvironment()
         renderBoth(ToolSheetView(tool: .stats, environment: environment), width: 1280, name: "stats")
-        renderBoth(
-            OnboardingWelcomeView().padding(DesignTokens.Spacing.xxl)
-                .frame(maxWidth: .infinity, maxHeight: .infinity).background(Theme.canvas),
-            width: 900,
-            name: "welcome"
-        )
+        let welcome = OnboardingChatViewModel(setup: MockOnboardingSetup(), sleep: { _ in })
+        welcome.revealsInstantly = true
+        renderBoth(OnboardingScreen(viewModel: welcome), width: 900, name: "welcome")
         let builds = BuildsViewModel(
             queue: environment.makeNXNativeViewModel {},
             library: { [] },

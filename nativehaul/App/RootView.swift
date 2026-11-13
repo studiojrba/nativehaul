@@ -3,8 +3,9 @@ import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// The main window: the 0.1.0 desktop shell (``AppShellView``) around the current screen, plus everything the window
-/// does that isn't visual — onboarding, the playtime watcher, automatic upkeep, library reloads, sheets and the file
+/// The main window: onboarding in place of the shell while it runs (ADR 0057), otherwise the 0.1.0 desktop shell
+/// (``AppShellView``) around the current screen, plus everything the window does that isn't visual — the playtime
+/// watcher, automatic upkeep, library reloads, sheets and the file
 /// importer/exporter driven by the menu bar, and alerts that wait while a game runs (ADR 0030).
 struct RootView: View {
     /// App dependencies.
@@ -14,7 +15,8 @@ struct RootView: View {
     @State private var buildsViewModel: BuildsViewModel
     @State private var homeViewModel: HomeViewModel
     @State private var shell: ShellViewModel
-    @State private var isOnboarding = false
+    @State private var isOnboarding: Bool
+    @State private var onboarding: OnboardingChatViewModel?
 
     /// Creates the root view.
     init(environment: AppEnvironment) {
@@ -32,6 +34,9 @@ struct RootView: View {
             library: libraryViewModel,
             paletteExtractor: environment.paletteExtractor
         ))
+        let isFirstRun = !environment.onboarding.hasCompletedOnboarding
+        _isOnboarding = State(initialValue: isFirstRun)
+        _onboarding = State(initialValue: nil)
         let audio = environment.audio
         _shell = State(initialValue: ShellViewModel(
             makeLaunch: environment.makeGameLaunchViewModel(for:),
@@ -42,15 +47,24 @@ struct RootView: View {
     }
 
     var body: some View {
-        AppShellView(
-            shell: shell,
-            games: libraryViewModel.games,
-            hasBuildInProgress: nxnativeViewModel.hasBuildInProgress,
-            appearance: environment.appearance
-        ) {
-            screen
+        Group {
+            if let onboarding, isOnboarding, !environment.handoff.isGameRunning {
+                OnboardingScreen(viewModel: onboarding)
+            } else {
+                AppShellView(
+                    shell: shell,
+                    games: libraryViewModel.games,
+                    hasBuildInProgress: nxnativeViewModel.hasBuildInProgress,
+                    appearance: environment.appearance
+                ) {
+                    screen
+                }
+            }
         }
         .background { WindowChromeView() }
+        .onChange(of: isOnboarding, initial: true) { _, isOn in
+            onboarding = isOn ? makeOnboarding() : nil
+        }
         .environment(environment)
         .focusedSceneValue(\.shellViewModel, shell)
         .focusedSceneValue(\.libraryViewModel, libraryViewModel)
@@ -100,6 +114,14 @@ struct RootView: View {
             BuildsPage(viewModel: buildsViewModel, shell: shell)
         case .settings:
             SettingsPage(environment: environment)
+        }
+    }
+
+    /// A fresh conversation (onboarding never resets prefs or the appearance; finishing returns to the shell).
+    private func makeOnboarding() -> OnboardingChatViewModel {
+        environment.makeOnboardingChatViewModel {
+            isOnboarding = false
+            Task { await libraryViewModel.runAutomaticUpkeep() }
         }
     }
 

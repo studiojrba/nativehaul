@@ -64,6 +64,12 @@ final class AppEnvironment {
     let paletteExtractor: any GamePaletteExtracting
     /// Shows games in Finder (Detail, ADR 0056).
     let fileRevealer: any FileRevealing
+    /// The mode nativehaul opens in and controller rumble (ADR 0057).
+    let modePreferences: any ModePreferenceStoring
+    /// Mounted volumes, for the install step (ADR 0057).
+    let volumes: any VolumeInspecting
+    /// FileVault status, for the couch note (ADR 0057).
+    let fileVault: any FileVaultStatusProviding
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -95,7 +101,10 @@ final class AppEnvironment {
         audio: AudioController? = nil,
         appearance: AppearanceController? = nil,
         paletteExtractor: any GamePaletteExtracting = MockGamePaletteExtractor(),
-        fileRevealer: (any FileRevealing)? = nil
+        fileRevealer: (any FileRevealing)? = nil,
+        modePreferences: (any ModePreferenceStoring)? = nil,
+        volumes: any VolumeInspecting = MockVolumeInspector.preview,
+        fileVault: any FileVaultStatusProviding = FixedFileVaultStatus()
     ) {
         self.container = container
         self.repository = repository
@@ -127,6 +136,9 @@ final class AppEnvironment {
         self.appearance = appearance ?? .preview
         self.paletteExtractor = paletteExtractor
         self.fileRevealer = fileRevealer ?? RecordingFileRevealer()
+        self.modePreferences = modePreferences ?? InMemoryModePreferenceStore()
+        self.volumes = volumes
+        self.fileVault = fileVault
     }
 
     /// Seeded in-memory environment with mock services for SwiftUI previews.
@@ -165,7 +177,7 @@ final class AppEnvironment {
     private static var previewNXNativeServices: NXNativeServices {
         let files = InMemoryFileOperations()
         files.addFile("/Users/demo/Switch/nxnative", executable: true)
-        files.addFile("/Users/demo/Switch/ProdKeys/prod.keys")
+        files.addFile("/Users/demo/Switch/ProdKeys/prod.keys", contents: Data("preview keys".utf8))
         files.addFile("/Users/demo/Switch/Staging/Tideborn.nsp", contents: Data(repeating: 0, count: previewTitleBytes))
         return NXNativeServices(
             files: files,

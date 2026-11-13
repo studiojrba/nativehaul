@@ -52,9 +52,9 @@ enum OnboardingModule: String, CaseIterable, Identifiable, Sendable {
     /// Where to set this up later.
     var laterLocation: String {
         switch self {
-        case .findGames: "Settings → Game Folders"
-        case .switchPorts: "Settings → Tracking"
-        case .emulators: "Settings → Emulators"
+        case .findGames: "Settings → Directories"
+        case .switchPorts: "Settings → Behind the scenes → Playtime tracking"
+        case .emulators: "Settings → Behind the scenes → Emulators by system"
         }
     }
 }

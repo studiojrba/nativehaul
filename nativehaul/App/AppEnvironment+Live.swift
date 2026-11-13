@@ -38,10 +38,7 @@ extension AppEnvironment {
             steamGridDBKey: SteamGridDBKeyStore(secrets: secrets),
             igdbCredentials: IGDBCredentialStore(secrets: secrets),
             retroAchievementsCredentials: RetroAchievementsCredentialStore(secrets: secrets),
-            retroAchievements: RetroAchievementsService(client: RetroAchievementsClient(
-                http: ThrottledHTTPClient(base: URLSessionHTTPClient(), policy: .metadata),
-                credentials: RetroAchievementsCredentialStore(secrets: secrets)
-            )),
+            retroAchievements: makeLiveRetroAchievements(secrets: secrets),
             onboarding: UserDefaultsOnboardingStore(),
             emulators: emulators,
             components: makeLiveComponents(emulators: emulators),
@@ -51,8 +48,18 @@ extension AppEnvironment {
             audio: makeLiveAudio(),
             appearance: makeLiveAppearance(),
             paletteExtractor: ArtworkPaletteExtractor(),
-            fileRevealer: WorkspaceFileRevealer()
+            fileRevealer: WorkspaceFileRevealer(),
+            modePreferences: UserDefaultsModePreferenceStore(),
+            volumes: LiveVolumeInspector(),
+            fileVault: FdesetupFileVaultStatus()
         )
+    }
+
+    private static func makeLiveRetroAchievements(secrets: any SecretStore) -> RetroAchievementsService {
+        RetroAchievementsService(client: RetroAchievementsClient(
+            http: ThrottledHTTPClient(base: URLSessionHTTPClient(), policy: .metadata),
+            credentials: RetroAchievementsCredentialStore(secrets: secrets)
+        ))
     }
 
     private static func makeLiveAppearance() -> AppearanceController {
