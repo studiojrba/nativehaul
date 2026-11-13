@@ -58,14 +58,6 @@ enum DesignTokens {
         static let setupMaxWidth: CGFloat = 640
     }
 
-    /// Icon rail (collapsed: icons only; expanded on hover: icons + labels).
-    enum Rail {
-        static let collapsedWidth: CGFloat = 56
-        static let expandedWidth: CGFloat = 232
-        static let itemHeight: CGFloat = 36
-        static let iconWidth: CGFloat = 24
-    }
-
     /// Three-column game details layout.
     enum Details {
         static let quickListWidth: CGFloat = 220

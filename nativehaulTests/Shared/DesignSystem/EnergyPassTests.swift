@@ -31,7 +31,7 @@ struct EnergyPassTests {
     }
 
     @Test func theFadesStayUnderASecond() {
-        #expect(DesignTokens.Home.crossfadeSeconds < 1)
+        #expect(HeroTiming.wash < 1)
         #expect(DesignTokens.Motion.standard < 1)
     }
 
@@ -39,7 +39,7 @@ struct EnergyPassTests {
     /// inside the shared design-system components that own its treatments (ember buttons, switches, progress, focus).
     @Test func theAccentStaysOnPlayNavAndLinks() throws {
         let allowed: Set = [
-            "Theme.swift", "NativehaulApp.swift", "RailItemRow.swift", "LaunchButton.swift",
+            "Theme.swift", "NativehaulApp.swift", "NavIslandButton.swift", "LaunchButton.swift",
             "OnboardingWelcomeView.swift",
         ]
         let enumerator = FileManager.default.enumerator(at: sourceRoot, includingPropertiesForKeys: nil)

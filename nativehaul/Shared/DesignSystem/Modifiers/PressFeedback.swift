@@ -1,18 +1,20 @@
 import SwiftUI
 
 /// Press feedback and the hand cursor (spec §4.3): hover lifts 2pt, pressing drops 1pt at 98% scale, both on the
-/// 380ms house easing. Clickable things show the pointing hand; disabled ones keep the arrow.
+/// 380ms house easing. Clickable things show the pointing hand; disabled ones keep the arrow. While a shelf is being
+/// dragged, press transforms are off (spec §4.2).
 struct PressFeedback: ViewModifier {
     /// Whether the control is being pressed.
     let isPressed: Bool
 
     @State private var isHovered = false
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.isShelfDragging) private var isShelfDragging
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func body(content: Content) -> some View {
         content
-            .scaleEffect(isPressed ? KitMetrics.Press.pressedScale : 1)
+            .scaleEffect(isPressed && !isShelfDragging ? KitMetrics.Press.pressedScale : 1)
             .offset(y: offset)
             .animation(reduceMotion ? nil : Motion.press, value: isPressed)
             .animation(reduceMotion ? nil : Motion.press, value: isHovered)
@@ -21,6 +23,9 @@ struct PressFeedback: ViewModifier {
     }
 
     private var offset: CGFloat {
+        if isShelfDragging {
+            return 0
+        }
         if isPressed {
             return KitMetrics.Press.pressedDrop
         }

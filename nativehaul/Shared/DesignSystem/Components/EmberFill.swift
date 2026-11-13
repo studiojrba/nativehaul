@@ -40,7 +40,7 @@ struct EmberFill<S: InsettableShape>: View {
 #Preview {
     AppearancePreviewPair {
         EmberFill(shape: Capsule())
-            .frame(width: DesignTokens.Home.playWidth, height: KitMetrics.PillButton.height)
+            .frame(width: DesignTokens.Cover.detailWidth, height: KitMetrics.PillButton.height)
             .padding(KitMetrics.Spacing.section)
     }
 }

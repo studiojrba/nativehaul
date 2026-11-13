@@ -11,6 +11,8 @@ struct PillProgressBar: View {
     var fill: Color = Theme.accent
     /// Whether the fill gets the night glow (accent fills only).
     var glows = true
+    /// How the fill moves to a new value (300ms ease-settle unless given; the launch overlay fills over 2.4s).
+    var fillAnimation: Animation?
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -25,7 +27,7 @@ struct PillProgressBar: View {
             }
         }
         .frame(height: height)
-        .animation(reduceMotion ? nil : Motion.settle(Motion.Duration.quick), value: clamped)
+        .animation(reduceMotion ? nil : fillAnimation ?? Motion.settle(Motion.Duration.quick), value: clamped)
         .accessibilityElement()
         .accessibilityValue(Text(clamped, format: .percent.precision(.fractionLength(0))))
     }

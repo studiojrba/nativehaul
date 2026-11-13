@@ -70,6 +70,6 @@ struct WashBackground: View {
 #Preview {
     AppearancePreviewPair {
         WashBackground(slots: [.sky, .butter, .blush])
-            .frame(height: DesignTokens.Home.ambientHeight / 2)
+            .frame(height: ShellLayout.Library.washHeight / 2)
     }
 }
