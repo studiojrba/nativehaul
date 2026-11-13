@@ -33,13 +33,8 @@ struct PolishRenderTests {
         return (environment, games)
     }
 
-    private func shell(_ content: some View, environment: AppEnvironment, selection: SidebarDestination) -> some View {
-        RailShell(selection: .constant(selection), libraryViewModel: environment.makeLibraryViewModel()) {
-            NavigationStack { content }
-        }
-        .tint(Theme.accent)
-        .environment(environment)
-        .modelContainer(environment.container)
+    private func shell(_ content: some View, environment: AppEnvironment, screen: AppScreen) -> some View {
+        LibraryRenderFixture.shell(content, environment: environment, screen: screen)
     }
 
     private func renderBoth(_ view: some View, width: Double, name: String) {
@@ -52,21 +47,16 @@ struct PolishRenderTests {
     @Test(arguments: [900.0, 1100.0, 1280.0])
     func gridAndDetailRenders(width: Double) throws {
         let (environment, games) = try dressedEnvironment()
-        let grid = LibraryGridView(viewModel: environment.makeLibraryViewModel())
-        renderBoth(shell(grid, environment: environment, selection: .library(.all)), width: width, name: "grid")
+        let grid = LibraryRenderFixture.library(environment.makeLibraryViewModel())
+        renderBoth(shell(grid, environment: environment, screen: .library), width: width, name: "grid")
         let game = try #require(games.first)
-        let detail = GameDetailView(
-            viewModel: environment.makeGameDetailViewModel(for: game),
-            launchViewModel: environment.makeGameLaunchViewModel(for: game),
-            quickListGames: games
-        ) { _ in }
-        renderBoth(shell(detail, environment: environment, selection: .library(.all)), width: width, name: "detail")
+        let detail = DetailPage(game: game, quickListGames: games, back: {}, open: { _ in })
+        renderBoth(shell(detail, environment: environment, screen: .detail), width: width, name: "detail")
     }
 
     @Test func otherScreensRender() throws {
         let (environment, _) = try dressedEnvironment()
-        let stats = StatsView(viewModel: environment.makeStatsViewModel())
-        renderBoth(shell(stats, environment: environment, selection: .stats), width: 1280, name: "stats")
+        renderBoth(ToolSheetView(tool: .stats, environment: environment), width: 1280, name: "stats")
         renderBoth(
             OnboardingWelcomeView().padding(DesignTokens.Spacing.xxl)
                 .frame(maxWidth: .infinity, maxHeight: .infinity).background(Theme.canvas),
@@ -74,9 +64,14 @@ struct PolishRenderTests {
             name: "welcome"
         )
         renderBoth(shell(
-            NXNativeDashboardView(viewModel: environment.makeNXNativeViewModel {}),
+            BuildsPage(viewModel: environment.makeNXNativeViewModel {}),
             environment: environment,
-            selection: .nxnative
+            screen: .builds
         ), width: 1280, name: "builds")
+        renderBoth(
+            shell(SettingsPage(environment: environment), environment: environment, screen: .settings),
+            width: 1280,
+            name: "settings"
+        )
     }
 }

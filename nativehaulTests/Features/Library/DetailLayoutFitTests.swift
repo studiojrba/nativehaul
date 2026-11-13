@@ -44,7 +44,7 @@ struct DetailLayoutFitTests {
     func detailPageFitsTheWindow(windowWidth: Double) throws {
         let environment = AppEnvironment.preview
         let (game, games) = try detailGame(environment)
-        let available = CGFloat(windowWidth) - DesignTokens.Rail.collapsedWidth
+        let available = CGFloat(windowWidth) - ShellLayout.Chrome.islandClearance
         let view = detail(environment, game: game, games: games)
         #expect(fittedWidth(view, width: available) <= available + 1)
         render(view, width: available, name: "detail-\(Int(windowWidth))-dark", appearance: .darkAqua)

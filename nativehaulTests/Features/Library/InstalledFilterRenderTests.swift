@@ -3,7 +3,7 @@ import AppKit
 import SwiftUI
 import Testing
 
-/// Offscreen renders of All Games with the Installed filter on, at the guarded widths.
+/// Offscreen renders of Library with the menu bar's Installed filter on, at the guarded widths.
 @MainActor
 struct InstalledFilterRenderTests {
     private static let height: CGFloat = 900
@@ -18,11 +18,11 @@ struct InstalledFilterRenderTests {
         try environment.repository.save()
         let viewModel = environment.makeLibraryViewModel()
         viewModel.filter.installedOnly = true
-        #expect(viewModel.visibleGames.count == Self.installedCount)
+        #expect(viewModel.shelfGames.count == Self.installedCount)
         let screen = LibraryRenderFixture.shell(
-            LibraryGridView(viewModel: viewModel),
+            LibraryRenderFixture.library(viewModel),
             environment: environment,
-            selection: .library(.all)
+            screen: .library
         )
         let size = CGSize(width: width, height: Self.height)
         #expect(OffscreenRenderer.render(

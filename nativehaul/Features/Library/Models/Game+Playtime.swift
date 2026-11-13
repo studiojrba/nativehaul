@@ -16,3 +16,19 @@ extension Game {
         return PlaytimeBreakdown(secondsBySource: totals)
     }
 }
+
+extension Game {
+    /// Seconds from the single biggest real source (tracked or self-reported), never a sum across sources (ADR 0006,
+    /// spec §1.10). HLTB estimates never count. `0` when nothing is recorded.
+    var biggestRealPlaytimeSeconds: Int {
+        playtimeBreakdown().entries
+            .filter { !$0.source.isEstimate }
+            .map(\.seconds)
+            .max() ?? 0
+    }
+
+    /// When the game was last played: its latest recorded session, else its stored last-played date.
+    var lastPlayedDate: Date? {
+        sessions.map(\.endedAt).max() ?? lastPlayedAt
+    }
+}

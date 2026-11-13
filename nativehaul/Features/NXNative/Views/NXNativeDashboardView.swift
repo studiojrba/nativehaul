@@ -46,6 +46,14 @@ struct NXNativeDashboardView: View {
 
     /// Fixed parents (QA Finding #2 contract): the queue keeps a third of the page, the job detail two thirds.
     private var content: some View {
+        VStack(spacing: DesignTokens.Spacing.none) {
+            actions
+            HairlineDivider()
+            columns
+        }
+    }
+
+    private var columns: some View {
         GeometryReader { proxy in
             let detailWidth = (proxy.size.width * DesignTokens.Builds.detailShare).rounded(.down)
             HStack(spacing: DesignTokens.Spacing.none) {
@@ -57,7 +65,6 @@ struct NXNativeDashboardView: View {
                     .clipped()
             }
         }
-        .toolbar { toolbarContent }
     }
 
     private var queueColumn: some View {
@@ -88,8 +95,10 @@ struct NXNativeDashboardView: View {
         .background(Theme.canvas)
     }
 
-    @ToolbarContentBuilder private var toolbarContent: some ToolbarContent {
-        ToolbarItemGroup {
+    /// The queue's actions (a toolbar before the 0.1.0 shell hid the title bar).
+    private var actions: some View {
+        HStack(spacing: DesignTokens.Spacing.sm) {
+            Spacer(minLength: 0)
             Button("Add Job", systemImage: "plus") { isAddingJob = true }
             if viewModel.isProcessing {
                 Button("Cancel Build", systemImage: "stop.fill") { viewModel.cancel() }
@@ -98,6 +107,8 @@ struct NXNativeDashboardView: View {
                     .disabled(!viewModel.jobs.contains { $0.status == .queued })
             }
         }
+        .padding(DesignTokens.Spacing.sm)
+        .background(Theme.surface)
     }
 }
 

@@ -101,7 +101,7 @@ struct BuildsPageTests {
         }
         let queue = await midBuildQueue(title: Self.longTitle, art: shots)
         let job = try #require(queue.selectedJob)
-        let available = CGFloat(width) - DesignTokens.Rail.collapsedWidth
+        let available = CGFloat(width) - ShellLayout.Chrome.islandClearance
         let detailWidth = (available * DesignTokens.Builds.detailShare).rounded(.down)
         let detail = BuildJobDetailView(job: job, viewModel: queue) { _ in }
         let fitted = NSHostingController(rootView: detail)
@@ -109,7 +109,7 @@ struct BuildsPageTests {
         #expect(fitted <= detailWidth + 1)
         let page = NXNativeDashboardView(viewModel: queue)
             .environment(AppEnvironment.preview)
-            .padding(.leading, DesignTokens.Rail.collapsedWidth)
+            .padding(.leading, ShellLayout.Chrome.islandClearance)
             .background(Theme.canvas)
             .tint(Theme.accent)
         let size = CGSize(width: width, height: Self.height)

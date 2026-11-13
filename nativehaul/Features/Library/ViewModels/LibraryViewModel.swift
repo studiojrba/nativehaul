@@ -9,6 +9,8 @@ final class LibraryViewModel {
     private(set) var games: [Game] = []
     /// Active section and search.
     var filter = LibraryFilter()
+    /// The Library page's sort order.
+    var sort = LibrarySort.recentlyPlayed
     /// Last error to surface, if any.
     var errorMessage: String?
     /// Last import result, if any.

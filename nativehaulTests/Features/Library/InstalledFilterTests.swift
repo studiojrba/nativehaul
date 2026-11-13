@@ -47,7 +47,8 @@ struct InstalledFilterTests {
         #expect(viewModel.visibleGames.map(\.title) == ["Installed Port", "ROM Copy"])
         #expect(viewModel.installedSplit.unknown.map(\.title) == ["Unknown"])
         #expect(viewModel.installedSplit.notInstalledCount == 1)
-        #expect(viewModel.jumpBackIn().map(\.title) == ["Installed Port"])
+        #expect(viewModel.isFiltered)
+        #expect(viewModel.filterDescription == "Installed only")
 
         viewModel.filter.section = .playing
         #expect(viewModel.visibleGames.map(\.title) == ["Installed Port"])

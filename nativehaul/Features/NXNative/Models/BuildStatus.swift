@@ -28,3 +28,10 @@ enum BuildStatus: String, Codable, Sendable {
         [.succeeded, .failed, .cancelled].contains(self)
     }
 }
+
+extension BuildStatus {
+    /// `true` while the engine is checking or building (not merely queued or waiting on the user).
+    var isInProgress: Bool {
+        self == .preflight || self == .building
+    }
+}

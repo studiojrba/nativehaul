@@ -65,39 +65,4 @@ struct JumpBackInTests {
         _ = game("Backlog only", in: repository)
         #expect(try JumpBackIn.games(from: repository.fetchGames(), now: now).isEmpty)
     }
-
-    @Test func lineShowsLastPlayedAndTheLargestRealSourceNeverMerged() throws {
-        let repository = try MockLibraryRepository()
-        let mixed = game("Mixed", sessionEndedDaysAgo: 1, sessionHours: 2, in: repository)
-        mixed.selfReportedSeconds = 10 * 3600
-        #expect(JumpBackIn.line(for: mixed, now: now, calendar: calendar) == "Yesterday · 10h 00m · SelfReported")
-        let tracked = game("Tracked", sessionEndedDaysAgo: 0.1, sessionHours: 2, in: repository)
-        #expect(JumpBackIn.line(for: tracked, now: now, calendar: calendar) == "Today · 2h 00m · MacTracked")
-        let idle = game("Idle", status: .playing, in: repository)
-        #expect(JumpBackIn.line(for: idle, now: now, calendar: calendar) == "Playing")
-        #expect(JumpBackIn.timePlayed(for: idle) == nil)
-        #expect(JumpBackIn.timePlayed(for: mixed) == "10h 00m · SelfReported")
-    }
-
-    @Test func relativeDays() {
-        #expect(JumpBackIn.relativeDay(now, now: now, calendar: calendar) == "Today")
-        #expect(JumpBackIn.relativeDay(now.addingTimeInterval(-day), now: now, calendar: calendar) == "Yesterday")
-        #expect(JumpBackIn.relativeDay(now.addingTimeInterval(-3 * day), now: now, calendar: calendar) == "3 days ago")
-        #expect(!JumpBackIn.relativeDay(now.addingTimeInterval(-10 * day), now: now, calendar: calendar)
-            .contains("ago"))
-        #expect(JumpBackIn.relativeDay(now.addingTimeInterval(day), now: now, calendar: calendar) == "Today")
-    }
-
-    @Test func shelfShowsOnAllGamesOnlyAndNotWhileSearching() throws {
-        let repository = try MockLibraryRepository()
-        _ = game("Recent", sessionEndedDaysAgo: 1, in: repository)
-        let viewModel = LibraryViewModel(repository: repository, transfer: MockLibraryTransferService())
-        viewModel.reload()
-        #expect(viewModel.jumpBackIn(now: now).map(\.title) == ["Recent"])
-        viewModel.filter.searchText = "Rec"
-        #expect(viewModel.jumpBackIn(now: now).isEmpty)
-        viewModel.filter.searchText = ""
-        viewModel.filter.section = .backlog
-        #expect(viewModel.jumpBackIn(now: now).isEmpty)
-    }
 }
