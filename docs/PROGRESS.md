@@ -1720,3 +1720,14 @@ Cut from Phase 0's tip (e0457b0). ADR 0054.
   and cards, serif display + Geist UI text; pure black and cold materials removed.
 - 🟡 Sidebar Light/Dark toggle: arrives with the Phase 2 shell (Settings → Appearance works now).
 - Build: `** TEST SUCCEEDED **` (475 tests). Lint: clean.
+
+## 0.1.0 · Phase 6 · release candidate install (2026-11-13, on feature/v010-couch @ 5cfb5e4)
+- ✅ `true` (no `--publish`): archive, Developer ID export, app **notarized (Accepted) and stapled**,
+  DMG notarized (Accepted) and stapled, Gatekeeper `accepted · source=Notarized Developer ID` for app and DMG, signed
+  appcast. DMG sha256 `47ad3691…9c94`. Nothing tagged, published or pushed.
+- ✅ Previous `/Applications/nativehaul.app` (1.0.0 build 2) backed up to
+  `/Users/jrbaprz/Projects/nativehaul/.recovery/home/nativehaul-backup-20261113-033804/nativehaul-1.0.0-b2.app`; notarized 0.1.0 (3) installed; `spctl` accepted.
+- ✅ Launched once and left running for J.R: window on screen; store opened and migrated (18 games, new
+  `ZISFAVORITE` column present); bundle icon is the n. mark. Screen capture is not permitted in the run, so the
+  on-screen library view itself was not screenshotted.
+- Full report: `docs/reports/0.1.0-overnight-report.md`.

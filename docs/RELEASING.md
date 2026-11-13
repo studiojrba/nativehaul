@@ -42,7 +42,7 @@ clean-machine test passed and the polish list closed.
 published.
 
 ## Before publishing 0.1.0 (open)
-- [ ] Notarized 0.1.0 (3) built with `scripts/release.sh` (no `--publish`) — see the overnight report.
+- [x] Notarized 0.1.0 (3) built with `scripts/release.sh` (no `--publish`) — see the overnight report.
 - [ ] J.R's eyes on the redesign (both appearances), couch mode on real controller hardware, and the copy log in
       `docs/reports/0.1.0-overnight-report.md`.
 - [ ] Clean-machine install (below), on a Mac, fresh user or VM that never had nativehaul.
