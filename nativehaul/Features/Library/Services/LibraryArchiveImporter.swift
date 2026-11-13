@@ -60,6 +60,7 @@ struct LibraryArchiveImporter {
         game.appBundlePath = record.appBundlePath
         game.selfReportedSeconds = record.selfReportedSeconds
         game.hltbID = record.hltbID
+        game.isFavorite = record.isFavorite ?? false
         game.developer = record.developer
         game.genres = record.genres ?? []
         game.tags = record.tags ?? []

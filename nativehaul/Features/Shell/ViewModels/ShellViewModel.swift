@@ -12,6 +12,8 @@ final class ShellViewModel {
     private(set) var detailGameID: UUID?
     /// Where Detail was opened from (Back returns there).
     private(set) var detailOrigin = AppScreen.home
+    /// The title ID Builds should select when it opens (set by Detail's build link), until Builds takes it.
+    private(set) var buildsFocusTitleID: String?
     /// Desktop or couch.
     private(set) var mode = AppMode.desktop
     /// The top bar's search text.
@@ -72,6 +74,17 @@ final class ShellViewModel {
         screen = .detail
     }
 
+    /// Opens Builds focused on a title (Detail's build link).
+    func openBuilds(focusing titleID: String?) {
+        buildsFocusTitleID = titleID
+        go(to: .builds)
+    }
+
+    /// Builds has selected the focused title.
+    func buildsFocusTaken() {
+        buildsFocusTitleID = nil
+    }
+
     /// Leaves Detail for the screen it was opened from.
     func back() {
         guard screen == .detail else { return }
@@ -110,16 +123,17 @@ final class ShellViewModel {
 
     // MARK: Launch
 
-    /// Plays `game` from the shell. Games with no way to launch open their Detail instead, which says why and offers
-    /// any missing file. The overlay shows until the handoff completes (``handoffCompleted()``) or the launch fails.
-    func play(_ game: Game) async {
+    /// Plays `game` from the shell, by `option` (default: its primary route). Games with no way to launch open their
+    /// Detail instead, which says why and offers any missing file. The overlay shows until the handoff completes
+    /// (``handoffCompleted()``) or the launch fails.
+    func play(_ game: Game, option: LaunchOption? = nil) async {
         let launch = makeLaunch(game)
         guard launch.primaryOption != nil else {
             open(gameID: game.id)
             return
         }
         launchingGame = game
-        await launch.launch()
+        await launch.launch(option)
         launchFinished(errorMessage: launch.errorMessage)
     }
 

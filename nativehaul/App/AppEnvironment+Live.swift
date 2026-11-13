@@ -50,7 +50,8 @@ extension AppEnvironment {
             appUpdater: SparkleAppUpdater(),
             audio: makeLiveAudio(),
             appearance: makeLiveAppearance(),
-            paletteExtractor: ArtworkPaletteExtractor()
+            paletteExtractor: ArtworkPaletteExtractor(),
+            fileRevealer: WorkspaceFileRevealer()
         )
     }
 

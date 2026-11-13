@@ -90,6 +90,7 @@ enum GameMerger {
         survivor.emulatedSystemRaw = survivor.emulatedSystemRaw ?? duplicate.emulatedSystemRaw
         survivor.selfReportedSeconds = survivor.selfReportedSeconds ?? duplicate.selfReportedSeconds
         survivor.hltbID = survivor.hltbID ?? duplicate.hltbID
+        survivor.isFavorite = survivor.isFavorite || duplicate.isFavorite
         survivor.developer = survivor.developer ?? duplicate.developer
         survivor.heroImagePath = survivor.heroImagePath ?? duplicate.heroImagePath
         if survivor.trailerVideoURL == nil {

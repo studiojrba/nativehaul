@@ -19,6 +19,27 @@ extension AppEnvironment {
         GameDetailViewModel(game: game, repository: repository, hltb: hltb)
     }
 
+    /// Builds Detail's view model (ADR 0056). `buildBadge` reports the game's real build badge; `library` lists the
+    /// shelf for "Also on your shelf".
+    func makeDetailViewModel(
+        for game: Game,
+        buildBadge: @escaping @MainActor () -> LibraryBuildBadge?,
+        library: @escaping @MainActor () -> [Game]
+    ) -> DetailViewModel {
+        let hltb = hltb
+        return DetailViewModel(
+            game: game,
+            launch: makeGameLaunchViewModel(for: game),
+            details: makeGameDetailViewModel(for: game),
+            repository: repository,
+            revealer: fileRevealer,
+            paletteExtractor: paletteExtractor,
+            buildBadge: buildBadge,
+            library: library,
+            hltbSeconds: { hltb.cachedEstimate(for: game.id)?.seconds(for: .mainStory) }
+        )
+    }
+
     /// Builds the tracking dashboard view model.
     func makeTrackingViewModel(onLibraryChanged: @escaping @MainActor () -> Void) -> TrackingViewModel {
         TrackingViewModel(

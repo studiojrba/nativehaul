@@ -3,7 +3,8 @@ import AppKit
 import SwiftUI
 import Testing
 
-/// QA Finding #2: the detail page must always fit inside the window. Measures what SwiftUI asks for at a given width
+/// QA Finding #2: the detail page must always fit inside the window (0.1.0 layout, ADR 0056). Measures what SwiftUI
+/// asks for at a given width
 /// (anything wider would be cut off at the window's edge) and saves offscreen renders for a visual check.
 @MainActor
 struct DetailLayoutFitTests {
@@ -28,12 +29,14 @@ struct DetailLayoutFitTests {
     }
 
     private func detail(_ environment: AppEnvironment, game: Game, games: [Game]) -> some View {
-        GameDetailView(
-            viewModel: environment.makeGameDetailViewModel(for: game),
-            launchViewModel: environment.makeGameLaunchViewModel(for: game),
-            quickListGames: games
-        ) { _ in }
-            .environment(environment)
+        DetailScreen(
+            viewModel: environment.makeDetailViewModel(for: game, buildBadge: { nil }, library: { games }),
+            back: {},
+            play: { _ in },
+            open: { _ in },
+            openBuilds: {}
+        )
+        .environment(environment)
     }
 
     private func fittedWidth(_ view: some View, width: CGFloat) -> CGFloat {
@@ -44,26 +47,26 @@ struct DetailLayoutFitTests {
     func detailPageFitsTheWindow(windowWidth: Double) throws {
         let environment = AppEnvironment.preview
         let (game, games) = try detailGame(environment)
-        let available = CGFloat(windowWidth) - ShellLayout.Chrome.islandClearance
+        let available = CGFloat(windowWidth)
         let view = detail(environment, game: game, games: games)
         #expect(fittedWidth(view, width: available) <= available + 1)
         render(view, width: available, name: "detail-\(Int(windowWidth))-dark", appearance: .darkAqua)
         render(view, width: available, name: "detail-\(Int(windowWidth))-light", appearance: .aqua)
     }
 
-    @Test func railPartsFitTheRail() {
-        let inner = DesignTokens.Details.rightRailWidth - 2 * DesignTokens.Spacing.lg
+    @Test func detailPartsFitTheColumn() {
+        let column = DesignTokens.Layout.detailMinWidth
+        let rows = [
+            DetailSpecRow(label: "Plays with", value: Self.longTitle),
+            DetailSpecRow(label: "Build status", value: "Update available", style: .status(isReady: false)),
+        ]
         let game = Game(title: Self.longTitle)
-        game.appBundlePath = "/Users/demo/Switch/Games/\(Self.longTitle).app"
-        let launch = GameLaunchViewModel(game: game, launcher: RecordingGameLauncher(), watcher: MockPlaytimeWatcher())
-        let unplayable = GameLaunchViewModel(
-            game: Game(title: "Logbook only"), launcher: RecordingGameLauncher(), watcher: MockPlaytimeWatcher()
-        )
-        let rows = GameInfoBuilder.rows(for: game) + [GameInfoRow(label: "Developer", value: Self.longTitle)]
-        #expect(fittedWidth(LaunchButton(viewModel: launch), width: inner) <= inner + 1)
-        #expect(fittedWidth(LaunchButton(viewModel: unplayable), width: inner) <= inner + 1)
-        #expect(fittedWidth(GameInfoList(rows: rows), width: inner) <= inner + 1)
-        #expect(fittedWidth(HLTBChipsView(chips: HLTBChip.chips(for: nil)), width: inner) <= inner + 1)
+        let notes = DetailLaunchNotes(launch: GameLaunchViewModel(
+            game: game, launcher: RecordingGameLauncher(), watcher: MockPlaytimeWatcher()
+        ))
+        #expect(fittedWidth(DetailSpecsTable(rows: rows), width: column) <= column + 1)
+        #expect(fittedWidth(notes, width: column) <= column + 1)
+        #expect(fittedWidth(EditorialNoteCard(quote: Self.longTitle), width: column) <= column + 1)
     }
 
     @Test func centrePartsWrapAtANarrowWidth() {

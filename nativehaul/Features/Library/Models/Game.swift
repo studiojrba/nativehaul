@@ -59,6 +59,8 @@ final class Game {
     var retroAchievementsGameID: Int?
     /// HowLongToBeat game identifier, when known (used for a direct link-out; never fetched).
     var hltbID: Int?
+    /// Marked as a favourite on Detail. Defaulted, so older stores migrate without a step (ADR 0056).
+    var isFavorite: Bool = false
     /// Recorded play sessions.
     @Relationship(deleteRule: .cascade, inverse: \PlaySession.game) var sessions: [PlaySession] = []
     /// External guide links (link-out only).

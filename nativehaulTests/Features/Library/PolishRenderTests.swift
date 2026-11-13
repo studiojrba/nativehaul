@@ -50,7 +50,16 @@ struct PolishRenderTests {
         let grid = LibraryRenderFixture.library(environment.makeLibraryViewModel())
         renderBoth(shell(grid, environment: environment, screen: .library), width: width, name: "grid")
         let game = try #require(games.first)
-        let detail = DetailPage(game: game, quickListGames: games, back: {}, open: { _ in })
+        let detail = DetailPage(
+            environment: environment,
+            game: game,
+            library: { games },
+            badge: { _ in nil },
+            back: {},
+            play: { _ in },
+            open: { _ in },
+            openBuilds: {}
+        )
         renderBoth(shell(detail, environment: environment, screen: .detail), width: width, name: "detail")
     }
 
@@ -63,8 +72,14 @@ struct PolishRenderTests {
             width: 900,
             name: "welcome"
         )
+        let builds = BuildsViewModel(
+            queue: environment.makeNXNativeViewModel {},
+            library: { [] },
+            paletteExtractor: MockGamePaletteExtractor()
+        )
+        let shellModel = ShellViewModel(makeLaunch: environment.makeGameLaunchViewModel(for:))
         renderBoth(shell(
-            BuildsPage(viewModel: environment.makeNXNativeViewModel {}),
+            BuildsPage(viewModel: builds, shell: shellModel),
             environment: environment,
             screen: .builds
         ), width: 1280, name: "builds")

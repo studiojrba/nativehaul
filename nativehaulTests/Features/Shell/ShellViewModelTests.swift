@@ -107,6 +107,25 @@ struct ShellViewModelTests {
         #expect(shell.detailGameID == logbook.id)
     }
 
+    @Test func detailCanPlayByAChosenRoute() async {
+        let launcher = RecordingGameLauncher()
+        let shell = shell(launcher: launcher)
+        let game = playable()
+        let route = LaunchOption(title: "Play elsewhere", target: .application(path: "/Other.app"), isTracked: false)
+        await shell.play(game, option: route)
+        #expect(launcher.launched == [.application(path: "/Other.app")])
+    }
+
+    @Test func detailsBuildLinkOpensBuildsFocusedOnTheTitleOnce() {
+        let shell = shell()
+        shell.open(gameID: UUID())
+        shell.openBuilds(focusing: "0100ABCD00010000")
+        #expect(shell.screen == .builds)
+        #expect(shell.buildsFocusTitleID == "0100ABCD00010000")
+        shell.buildsFocusTaken()
+        #expect(shell.buildsFocusTitleID == nil)
+    }
+
     @Test func couchIsADocumentedNoOpUntilItsPhase() {
         let shell = shell()
         var entered = false

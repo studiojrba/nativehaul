@@ -33,4 +33,6 @@ struct GameRecord: Codable, Equatable, Sendable {
     var emulatedSystem: String?
     var sessions: [SessionRecord]
     var guides: [GuideRecord]?
+    /// Optional; older archives omit it.
+    var isFavorite: Bool?
 }

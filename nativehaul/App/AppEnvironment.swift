@@ -62,6 +62,8 @@ final class AppEnvironment {
     let appearance: AppearanceController
     /// Derives colour palettes from cover art (ADR 0054).
     let paletteExtractor: any GamePaletteExtracting
+    /// Shows games in Finder (Detail, ADR 0056).
+    let fileRevealer: any FileRevealing
 
     /// Creates an environment from explicit dependencies.
     init(
@@ -92,7 +94,8 @@ final class AppEnvironment {
         appUpdater: any AppUpdating = MockAppUpdater(),
         audio: AudioController? = nil,
         appearance: AppearanceController? = nil,
-        paletteExtractor: any GamePaletteExtracting = MockGamePaletteExtractor()
+        paletteExtractor: any GamePaletteExtracting = MockGamePaletteExtractor(),
+        fileRevealer: (any FileRevealing)? = nil
     ) {
         self.container = container
         self.repository = repository
@@ -123,6 +126,7 @@ final class AppEnvironment {
         self.audio = audio ?? .preview
         self.appearance = appearance ?? .preview
         self.paletteExtractor = paletteExtractor
+        self.fileRevealer = fileRevealer ?? RecordingFileRevealer()
     }
 
     /// Seeded in-memory environment with mock services for SwiftUI previews.

@@ -51,7 +51,8 @@ enum LibraryArchiveMapper {
                     id: guide.id, title: guide.title, author: guide.author, url: guide.url,
                     chapters: guide.chapters, currentChapterID: guide.currentChapterID, addedAt: guide.addedAt
                 )
-            }
+            },
+            isFavorite: game.isFavorite ? true : nil
         )
     }
 
