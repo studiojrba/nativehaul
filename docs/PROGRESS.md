@@ -1731,3 +1731,13 @@ Cut from Phase 0's tip (e0457b0). ADR 0054.
   `ZISFAVORITE` column present); bundle icon is the n. mark. Screen capture is not permitted in the run, so the
   on-screen library view itself was not screenshotted.
 - Full report: `docs/reports/0.1.0-overnight-report.md`.
+
+## 0.1.1 · feature/v011-polish-r1 (2026-11-13)
+- ✅🧪 Onboarding re-ordered with the build tutorial, emulator offer and closing beat; 16pt intro; sounds from page 1;
+  folder hover/focus preview; NSOpenPanel picks; scan dots; base/update/DLC grouping (ADR 0059).
+- ✅🧪 Library key wording sweep; Shaders → Finishing; Begin build.
+- ✅🧪 Shared build log on Builds, Detail and the tutorial, narrated from real engine output.
+- ✅🧪 Home curated shelves from real data; drawn covers as default art; friendlier empty states.
+- ✅ DEBUG screenshot harness; 44 captures in `docs/reports/0.1.1-screens/`.
+- 🟡 Controller focus preview in onboarding follows keyboard focus; not verified on a real controller.
+- Version 0.1.1 (4). Tests: 715 passing. Lint: clean.

@@ -16,7 +16,13 @@ Polish round 1: onboarding, the build log, Home's shelves and drawn covers.
   the first screen, and the tour now runs games folder → quick scan → how Switch builds work → emulators → couch or
   desk → a short goodbye with a "Let's play" button.
 - **Wording:** your Switch library file is called your library key everywhere.
-- **Builds:** the last stage before Ready is called Finishing.
+- **Builds:** the last stage before Ready is called Finishing, and the start button reads Begin build.
+
+### Added
+- **Build log:** a plain-language log of what the build is really doing, on Builds and on a game's page.
+- **Home shelves:** Fresh on your shelf, Not started yet and more, each from your own library.
+- **Drawn covers:** every game without cover art gets its own drawn poster.
+- **Emulators in the tour:** set up the ones you'd like from their official sources, with version and source shown.
 
 ## [0.1.0] - 2026-11-13
 
