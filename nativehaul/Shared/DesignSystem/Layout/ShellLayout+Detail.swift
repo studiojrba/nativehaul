@@ -58,6 +58,8 @@ extension ShellLayout {
         static let underlineOpacity: Double = 0.20
         /// Action row / notes to the specs table.
         static let specsTop: CGFloat = 64
+        /// Build link to the build log (Make `mt-6`).
+        static let logTop: CGFloat = 24
         /// Spec row vertical padding.
         static let specRowVertical: CGFloat = 18
         /// Build status dot.

@@ -61,6 +61,7 @@ struct DetailScreen: View {
                             isLive: buildLog.isLive,
                             windowHeight: windowHeight
                         )
+                        .padding(.top, ShellLayout.Detail.logTop - DesignTokens.Spacing.md)
                     }
                     DetailLaunchNotes(launch: viewModel.launch)
                 }
