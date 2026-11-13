@@ -1577,6 +1577,32 @@ Cut from `feature/release-pipeline` (fd6d321).
 - Build: `** BUILD SUCCEEDED **`, `** TEST SUCCEEDED **` (441 tests). Lint: clean.
 - Library data backed up to `/Users/jrbaprz/Projects/nativehaul/.recovery/home/nativehaul-backup-20261113-002944/` before any new build ran.
 
+## 0.1.0 · Phase 3 · feature/v010-detail-builds (2026-11-13, overnight run)
+Cut from Phase 2's tip (f8def21). ADR 0056.
+- ✅ 🧪 **Detail** (`Features/Detail`): sticky visual column (game wash + lifts, "{studio} — {year}") beside a scrolling
+  column — Back pill, "{genre} · {year}", title, real description, Play/Start (shell launch, other routes menu, every
+  launch state incl. "Please provide your ___"), persisted favourite, Show in Finder, build link to Builds focused on the
+  title, specs table (only real rows; biggest-source playtime; "HLTB estimate"), screenshots, editorial note, "Also on
+  your shelf", and "More about this game" (Manage, playtime per source, sessions, series, RetroAchievements, guides,
+  info list, trailer).
+- ✅ 🧪 **The case**: a six-face 3D box (`CaseProjection` + `projectionEffect`), drag to spin, hover parallax, settle to
+  the nearest side over 1100ms, turn button, float, sheen, floor shadow, grab cursor, Reduce Motion. Red for Switch
+  ports, charcoal for others; generic `CaseMark`.
+- ✅ 🧪 **Favourite**: `Game.isFavorite` (additive, defaulted; archive + merge carry it).
+- ✅ 🧪 **Builds**: "In the oven" list (Building / Fresh out), the selected build on its wash panel (slideshow,
+  "{version} · {size}", real job note, Start/Stop building — no pause exists — or "Ready to play", six-segment bar with
+  the current stage's explanation, Stage / Time left / Plays with). `PipelineStageMapper` maps the engine's real
+  `[k/n] name` steps onto Found → Ready, never backwards. Add a build, Tools (known issues, choose/re-detect the
+  engine), engine-not-found Choose…, switched-off, prod.keys prompt, tidy-up plan, checks, log, re-queue and remove
+  all kept.
+- ✅ 🧪 Models/tests: `CaseSpin`, `CaseProjection`, `DetailFacts`, `RelatedGames`, `CaseBarcode`, `DetailBuildState`,
+  `DetailViewModel`, `PipelineStage(Mapper)`, `PipelinePosition`, `BuildsCopy`, `BuildsViewModel`, shell `openBuilds` /
+  `play(option:)`.
+- 🟡 Drag/hover feel, the case in the running app and both appearances: unverified on hardware (no screen capture
+  in this session; `ImageRenderer` renders in `/Users/jrbaprz/Projects/nativehaul/.recovery/home/nativehaul-0.1.0-work/screens/phase3-*`).
+- 🟡 *Pending J.R*: "Screenshots" heading instead of "From your last session"; charcoal case for non-Switch games.
+- Build: `** TEST SUCCEEDED **` (570 tests). Lint: clean.
+
 ## 0.1.0 · Phase 2 · feature/v010-desktop-core (2026-11-13, overnight run)
 Cut from Phase 1's tip (1168ad0). ADR 0055.
 - ✅ 🧪 **Shell** (`Features/Shell`): hidden title bar, nav island (Home/Library/Builds/Settings, tooltips, Builds dot
