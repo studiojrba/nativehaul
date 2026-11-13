@@ -1577,6 +1577,26 @@ Cut from `feature/release-pipeline` (fd6d321).
 - Build: `** BUILD SUCCEEDED **`, `** TEST SUCCEEDED **` (441 tests). Lint: clean.
 - Library data backed up to `/Users/jrbaprz/Projects/nativehaul/.recovery/home/nativehaul-backup-20261113-002944/` before any new build ran.
 
+## 0.1.0 · Phase 2 · feature/v010-desktop-core (2026-11-13, overnight run)
+Cut from Phase 1's tip (1168ad0). ADR 0055.
+- ✅ 🧪 **Shell** (`Features/Shell`): hidden title bar, nav island (Home/Library/Builds/Settings, tooltips, Builds dot
+  from real build state, sun/moon appearance switch), top bar (wordmark pill holding the real window buttons, ⌘K search
+  over title/studio/genre with 5 results and the "Nothing called…" empty state, Couch mode pill → no-op until Phase 5),
+  launch overlay dismissed by the real handoff or failure, Detail remembers its origin, pages start at the top.
+- ✅ **Menu bar**: Add Game ⌘N; Library menu (import/export, scan, merge, metadata, section + Installed filters); Go menu
+  (⌘1–4, ⌘[, ⌘K, ⌥⌘1–4 Series/Collections/Stats/Tracking as sheets).
+- ✅ 🧪 **Home** on the real library: hero carousel (§4.1 choreography, text fade 350/450, wash crossfade, dots,
+  looping chevrons, ←/→, 7s auto-advance, hover pause, Reduce Motion fades), template hero copy, calm fallback,
+  Continue playing (ranks 2–4) on a full-bleed shelf, whole-shelf card. Curated shelves hidden (no real source).
+- ✅ 🧪 **Library**: "Your shelf." header, widened subtitle (*pending J.R*), sort pill (Recently played / A–Z /
+  Most played), adaptive grid with real build badges, staggered rise re-run on sort.
+- ✅ 🧪 **Shelf component** (`ShelfScroller`): drag with 5pt threshold, grabbing cursor, swallowed click, momentum,
+  wheel cancels glide, chevron paging that fades at the ends.
+- ✅ 🧪 Models: `LastPlayedPhrase`, `DurationFormatting.playtime`, `ShortTitle`, `LibrarySort`, `ShelfSummary`,
+  `LibraryBuildBadge`, `GameSearch`, `HeroCopyWriter`, `HeroCarousel`, `CaseChoreography`, `CubicBezier.value(at:)`.
+- 🟡 Detail, Builds, Settings: existing screens inside the new shell (Phases 3–4).
+- 🟡 Couch mode pill: no-op (Phase 5). Window-button placement, hover/drag feel: unverified on hardware.
+
 ## 0.1.0 · Phase 1 · feature/v010-design-system (2026-11-13, overnight run)
 Cut from Phase 0's tip (e0457b0). ADR 0054.
 - ✅ 🧪 **One token set** (`Shared/DesignSystem/Tokens`): `ThemeTokens.light/.dark` (spec §2.1–2.3, all core

@@ -87,28 +87,35 @@ enum LibraryRenderFixture {
         path == installedPath || FileManager.default.fileExists(atPath: path)
     }
 
-    /// Home wired for renders, with a launcher that sees the fake installed app.
-    static func home(_ environment: AppEnvironment) -> HomeView {
-        HomeView(
-            libraryViewModel: environment.makeLibraryViewModel(),
-            makeLaunch: { game in
-                GameLaunchViewModel(
-                    game: game,
-                    launcher: RecordingGameLauncher(),
-                    watcher: MockPlaytimeWatcher(),
-                    fileExists: { $0 == installedPath }
-                )
-            },
-            onAddGame: {},
-            onBrowseLibrary: {},
-            fileExists: fileExists
+    /// Home wired for renders.
+    static func home(_: AppEnvironment, library: LibraryViewModel) -> HomeScreen {
+        HomeScreen(
+            viewModel: HomeViewModel(library: library, paletteExtractor: MockGamePaletteExtractor()),
+            play: { _ in },
+            open: { _ in },
+            seeAll: {},
+            addGame: {}
         )
     }
 
-    /// Wraps a screen the way ``RootView`` does: icon rail, canvas, accent, environment.
-    static func shell(_ content: some View, environment: AppEnvironment, selection: SidebarDestination) -> some View {
-        RailShell(selection: .constant(selection), libraryViewModel: environment.makeLibraryViewModel()) {
-            NavigationStack { content }
+    /// Library wired for renders.
+    static func library(_ viewModel: LibraryViewModel) -> LibraryScreen {
+        LibraryScreen(viewModel: viewModel, badge: { _ in nil }, open: { _ in }, play: { _ in }, addGame: {})
+    }
+
+    /// Wraps a screen the way ``RootView`` does: the 0.1.0 shell (nav island, top bar), accent and environment.
+    static func shell(_ content: some View, environment: AppEnvironment, screen: AppScreen) -> some View {
+        let shell = ShellViewModel(makeLaunch: environment.makeGameLaunchViewModel(for:))
+        if screen != .home {
+            shell.go(to: screen == .detail ? .library : screen)
+        }
+        return AppShellView(
+            shell: shell,
+            games: (try? environment.repository.fetchGames()) ?? [],
+            hasBuildInProgress: false,
+            appearance: environment.appearance
+        ) {
+            content
         }
         .tint(Theme.accent)
         .environment(environment)
