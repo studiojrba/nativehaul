@@ -1577,6 +1577,39 @@ Cut from `feature/release-pipeline` (fd6d321).
 - Build: `** BUILD SUCCEEDED **`, `** TEST SUCCEEDED **` (441 tests). Lint: clean.
 - Library data backed up to `/Users/jrbaprz/Projects/nativehaul/.recovery/home/nativehaul-backup-20261113-002944/` before any new build ran.
 
+## 0.1.0 · Phase 4 · feature/v010-settings-onboarding (2026-11-13, overnight run)
+Cut from Phase 3's tip (2bab0d1). ADR 0057.
+- ✅ 🧪 **Settings** (`Features/Settings`, `Features/Players`): one in-window page, opened from the nav island and ⌘,
+  (no separate window).
+  - Groups: Appearance, Audio (designed in the same style, with the CC0 credit), Directories, Players, API keys,
+    Couch mode and Behind the scenes.
+  - **Directories:** several game folders, and adding one scans at once. Install location is the engine's real
+    output folder. The Switch keys file shows the detected path, Valid only when the file is really there.
+  - **Players:** the real emulator apps (per-system Default / Make default) and the nxnative engine (on/off,
+    Choose…, Use detected).
+  - **API keys:** start empty, Keychain only, read off the main thread.
+  - **Behind the scenes:** nativehaul updates inline, and the older forms (emulator updates, emulators by system,
+    tracking, engine details) in sheets.
+  - Replay tour card. Footer: "nativehaul {version} · for Switch ports and emulator classics on your Mac".
+- ✅ 🧪 **`ModePreferenceStoring`**: `defaultMode` (desktop) and rumble (on), UserDefaults store plus mock, for Phase 5.
+- ✅ 🧪 **Onboarding** (`Features/Onboarding`): the chat runs in the main window in place of the shell (no music, never
+  over a game).
+  - Top bar with the n. mark, six progress dots and Skip.
+  - Page 1 is a centred 680pt column with ~28pt bubbles. A hidden reservation keeps the logo still, and the column
+    scales down to fit short windows.
+  - Beats 2+ use the split layout with scenes that react to hover.
+  - The answers do real things: add and scan the folder (real count and titles), report real free space (the
+    external-drive answer only when one is mounted), acknowledge detected keys or place the user's file without
+    overwriting, list the players found, and write defaultMode. The FileVault note comes from `fdesetup status`.
+  - Chat engine per §4.4: a `TextRenderer` reveal, a caret outside the flow, exact timings and the follow logic.
+- ✅ Removed: the old onboarding sheet, its view model and views, the old settings tabs and the separate Settings
+  window. Store and status services kept.
+- 🟡 Typing and scroll feel, hover and drop: unverified on hardware. There was no screen capture in this session;
+  offscreen renders are in `/Users/jrbaprz/Projects/nativehaul/.recovery/home/nativehaul-0.1.0-work/screens/phase4-*`.
+- 🟡 *Pending J.R*: replacement copy (footer, keys/keysHelp lines, steps card, FileVault notes, "Use my external
+  drive", the Settings intro). Emulator enable toggles and "Pre-build shaders" are omitted: no real setting exists.
+- Build: `** TEST SUCCEEDED **` (612 tests). Lint: clean.
+
 ## 0.1.0 · Phase 3 · feature/v010-detail-builds (2026-11-13, overnight run)
 Cut from Phase 2's tip (f8def21). ADR 0056.
 - ✅ 🧪 **Detail** (`Features/Detail`): sticky visual column (game wash + lifts, "{studio} — {year}") beside a scrolling
